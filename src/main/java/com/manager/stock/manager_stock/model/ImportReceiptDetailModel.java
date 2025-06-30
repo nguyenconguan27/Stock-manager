@@ -12,6 +12,15 @@ public class ImportReceiptDetailModel {
     private double unitPrice;
     private double totalPrice;
 
+    public ImportReceiptDetailModel(long id, long importReceiptId, long productId, int plannedQuantity, int actualQuantity, double unitPrice, double totalPrice) {
+        this.id = id;
+        this.importReceiptId = importReceiptId;
+        this.productId = productId;
+        this.plannedQuantity = plannedQuantity;
+        this.actualQuantity = actualQuantity;
+        this.unitPrice = unitPrice;
+        this.totalPrice = totalPrice;
+    }
 
     public long getId() {
         return id;

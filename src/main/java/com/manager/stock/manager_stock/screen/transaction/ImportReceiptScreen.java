@@ -8,6 +8,8 @@ import com.manager.stock.manager_stock.model.tableData.ImportReceiptDetailModelT
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptModelTable;
 import com.manager.stock.manager_stock.utils.GenericConverterFromModelToTableData;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -23,8 +25,16 @@ public class ImportReceiptScreen extends VBox {
 
     private final TableView<ImportReceiptModelTable> receiptTable = new TableView<>();
     private final TableView<ImportReceiptDetailModelTable> productTable = new TableView<>();
+    private static ImportReceiptScreen instance;
 
-    public ImportReceiptScreen() {
+    public static ImportReceiptScreen getInstance() {
+        if (instance == null) {
+            instance = new ImportReceiptScreen();
+        }
+        return instance;
+    }
+
+    private ImportReceiptScreen() {
         setSpacing(10);
         setPadding(new Insets(10));
 
@@ -62,26 +72,25 @@ public class ImportReceiptScreen extends VBox {
         TableColumn<ImportReceiptModelTable, String> colWarehouse = createColumn("Kho", ImportReceiptModelTable::warehouseNameProperty);
         TableColumn<ImportReceiptModelTable, Number> colTotalPrice = createColumn("Tổng tiền", ImportReceiptModelTable::totalPriceProperty);
         TableColumn<ImportReceiptModelTable, String> colTotalPriceInWord = createColumn("Bằng chữ", ImportReceiptModelTable::totalPriceInWordProperty);
-
         receiptTable.getColumns().setAll(
                 colId, colInvoiceNumber, colCreateAt, colDeliveredBy,
                 colInvoice, colCompany, colWarehouse, colTotalPrice, colTotalPriceInWord
         );
-        receiptTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY); // ⚠ Cho phép scroll ngang
+        receiptTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
         receiptTable.setPrefHeight(250);
 
         // Khi chọn dòng → hiện chi tiết
         receiptTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
-                List<ImportReceiptDetailModel> importReceiptDetailModels = new ArrayList<>();
-                showItemDetails(importReceiptDetailModels);
+                ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
+                presenter.loadImportReceiptDetailList(newVal.getId());
             }
         });
 
         // Bọc table trong ScrollPane để có scroll ngang
         ScrollPane scrollPane = new ScrollPane(receiptTable);
         scrollPane.setFitToHeight(true);
-        scrollPane.setFitToWidth(true); // Cho phép scroll ngang khi cần
+        scrollPane.setFitToWidth(true);
         scrollPane.setPadding(new Insets(5));
         scrollPane.setStyle("-fx-background-color:transparent;");
 
@@ -89,8 +98,6 @@ public class ImportReceiptScreen extends VBox {
         box.setSpacing(5);
         return box;
     }
-
-
 
     private VBox createItemDetailByReceipt() {
         TableColumn<ImportReceiptDetailModelTable, Number> colProductId = new TableColumn<>("Mã SP");
@@ -117,10 +124,18 @@ public class ImportReceiptScreen extends VBox {
         return box;
     }
 
-
     private <T, R> TableColumn<T, R> createColumn(String title, Function<T, ObservableValue<R>> propertyFunc) {
         TableColumn<T, R> col = new TableColumn<>(title);
         col.setCellValueFactory(cell -> propertyFunc.apply(cell.getValue()));
+
+        col.setCellFactory(column -> new TableCell<T, R>() {
+            @Override
+            protected void updateItem(R item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? "" : item.toString());
+            }
+        });
+
         return col;
     }
 
@@ -130,12 +145,13 @@ public class ImportReceiptScreen extends VBox {
                 importReceiptModels, ImportReceiptModelMapper.INSTANCE::toViewModel
         );
         receiptTable.getItems().setAll(tableModels);
+//        receiptTable.refresh();
+
     }
 
-    private void showItemDetails(List<ImportReceiptDetailModel> receiptTableModel) {
+    public void showItemDetails(List<ImportReceiptDetailModel> receiptTableModel) {
         List<ImportReceiptDetailModelTable> detailTables =
                 GenericConverterFromModelToTableData.convertToList(receiptTableModel, ImportReceiptDetailModelMapper.INSTANCE::toViewModel);
-
         productTable.getItems().setAll(detailTables);
     }
 
@@ -177,4 +193,9 @@ public class ImportReceiptScreen extends VBox {
         return searchRow;
     }
 
+    public void clearImportReceiptDetailsTable() {
+        if(productTable.getItems() != null) {
+            productTable.getItems().clear();
+        }
+    }
 }
