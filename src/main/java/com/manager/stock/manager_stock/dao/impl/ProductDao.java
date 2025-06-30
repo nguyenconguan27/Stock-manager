@@ -1,4 +1,4 @@
-package com.manager.stock.manager_stock.dao;
+package com.manager.stock.manager_stock.dao.impl;
 
 import com.manager.stock.manager_stock.model.ProductModel;
 

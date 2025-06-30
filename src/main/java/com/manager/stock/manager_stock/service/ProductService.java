@@ -1,6 +1,6 @@
 package com.manager.stock.manager_stock.service;
 
-import com.manager.stock.manager_stock.dao.ProductDao;
+import com.manager.stock.manager_stock.dao.impl.ProductDao;
 import com.manager.stock.manager_stock.model.ProductModel;
 
 import java.util.List;

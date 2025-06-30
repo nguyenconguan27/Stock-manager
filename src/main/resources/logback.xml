@@ -1,0 +1,79 @@
+<configuration debug="false">
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+<!--    <property name="LOG_DIR" value="logs" />-->
+        <property name="LOG_DIR" value="D:\stock-management\logs" />
+
+    <!-- Appender cho service -->
+    <appender name="SERVICE_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/service.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/service.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender cho DAO -->
+    <appender name="DAO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/dao.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/dao.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="UTILS_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/utils.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/utils.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="CONFIG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/config.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/config.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Console (dev only) -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.manager.stock.manager_stock.service" level="DEBUG" additivity="false">
+        <appender-ref ref="SERVICE_FILE"/>
+    </logger>
+
+    <logger name="com.manager.stock.manager_stock.dao" level="DEBUG" additivity="false">
+        <appender-ref ref="DAO_FILE"/>
+    </logger>
+
+    <logger name="com.manager.stock.manager_stock.utils" level="DEBUG" additivity="false">
+        <appender-ref ref="UTILS_FILE"/>
+    </logger>
+
+    <logger name="com.manager.stock.manager_stock.config" level="DEBUG" additivity="false">
+        <appender-ref ref="CONFIG_FILE"/>
+    </logger>
+
+    <!-- Logger mặc định -->
+    <root level="ERROR">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

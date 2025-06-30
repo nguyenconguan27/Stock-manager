@@ -3,12 +3,10 @@ package com.manager.stock.manager_stock;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.dashBroad.DashBoardScreen;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -42,6 +40,14 @@ public class MainApplication extends Application {
     }
 
     public static void main(String[] args) {
+        try {
+            System.out.println("Start connect database...");
+            TestConnect.getConnection();
+            System.out.println("Connect database success!");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         launch();
     }
 }
