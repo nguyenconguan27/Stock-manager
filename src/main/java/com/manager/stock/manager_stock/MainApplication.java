@@ -5,6 +5,7 @@ import com.manager.stock.manager_stock.screen.dashBroad.DashBoardScreen;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -16,10 +17,12 @@ public class MainApplication extends Application {
     public void start(Stage stage) throws IOException {
         BorderPane root = new BorderPane();
 
-        HBox topBar = new HBox();
+        BorderPane topBar = new BorderPane();
         Button back = new Button("\u2190 Back");
         Button forward = new Button("Forward \u2192");
-        topBar.getChildren().addAll(back, forward);
+        topBar.setLeft(back);
+        topBar.setRight(forward);
+        topBar.setStyle("-fx-border-color: lightgray; -fx-border-width: 0 0 1 0; -fx-padding: 5 10");
 
         back.setOnAction(e -> {
             ScreenNavigator.goBack();
@@ -40,14 +43,6 @@ public class MainApplication extends Application {
     }
 
     public static void main(String[] args) {
-        try {
-            System.out.println("Start connect database...");
-            TestConnect.getConnection();
-            System.out.println("Connect database success!");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
         launch();
     }
 }

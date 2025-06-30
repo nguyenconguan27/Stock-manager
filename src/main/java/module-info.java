@@ -12,6 +12,7 @@ module com.manager.stock.manager_stock {
     requires org.slf4j;
     requires java.sql;
     requires jdk.incubator.vector;
+    requires java.desktop;
 
     opens com.manager.stock.manager_stock to javafx.fxml;
     exports com.manager.stock.manager_stock;

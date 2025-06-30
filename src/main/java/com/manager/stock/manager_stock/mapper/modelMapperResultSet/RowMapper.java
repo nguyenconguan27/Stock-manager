@@ -1,4 +1,4 @@
-package com.manager.stock.manager_stock.mapper;
+package com.manager.stock.manager_stock.mapper.modelMapperResultSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

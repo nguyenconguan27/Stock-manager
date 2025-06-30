@@ -3,8 +3,7 @@ package com.manager.stock.manager_stock.dao.impl;
 import com.manager.stock.manager_stock.config.AppConfig;
 import com.manager.stock.manager_stock.dao.GenericDao;
 import com.manager.stock.manager_stock.exception.DaoException;
-import com.manager.stock.manager_stock.mapper.RowMapper;
-import javafx.scene.shape.LineTo;
+import com.manager.stock.manager_stock.mapper.modelMapperResultSet.RowMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

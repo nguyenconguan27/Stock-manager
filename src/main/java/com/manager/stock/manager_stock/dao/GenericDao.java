@@ -1,6 +1,6 @@
 package com.manager.stock.manager_stock.dao;
 
-import com.manager.stock.manager_stock.mapper.RowMapper;
+import com.manager.stock.manager_stock.mapper.modelMapperResultSet.RowMapper;
 
 import java.util.List;
 
