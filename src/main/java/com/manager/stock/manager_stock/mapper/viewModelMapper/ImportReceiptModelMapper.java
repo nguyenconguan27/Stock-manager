@@ -20,8 +20,7 @@ public class ImportReceiptModelMapper implements ViewModelMapper<ImportReceiptMo
                 model.getInvoice(),
                 model.getCompanyName(),
                 model.getWarehouseName(),
-                model.getTotalPrice(),
-                model.getTotalPriceInWord()
+                model.getTotalPrice()
         );
     }
 }

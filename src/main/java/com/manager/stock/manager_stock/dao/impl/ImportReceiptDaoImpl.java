@@ -65,6 +65,83 @@ public class ImportReceiptDaoImpl implements IImportReceiptDao {
                             "Kho Đà Nẵng",
                             15800000,
                             "Mười lăm triệu tám trăm nghìn đồng"
+                    ),
+                    new ImportReceiptModel(
+                            3L,
+                            "PN003",
+                            "2024-06-10",
+                            "Lê Văn C",
+                            "HD003",
+                            "Công ty Cổ phần Gạch Ngói",
+                            "Kho Đà Nẵng",
+                            15800000,
+                            "Mười lăm triệu tám trăm nghìn đồng"
+                    ),
+                    new ImportReceiptModel(
+                            3L,
+                            "PN003",
+                            "2024-06-10",
+                            "Lê Văn C",
+                            "HD003",
+                            "Công ty Cổ phần Gạch Ngói",
+                            "Kho Đà Nẵng",
+                            15800000,
+                            "Mười lăm triệu tám trăm nghìn đồng"
+                    ),
+                    new ImportReceiptModel(
+                            3L,
+                            "PN003",
+                            "2024-06-10",
+                            "Lê Văn C",
+                            "HD003",
+                            "Công ty Cổ phần Gạch Ngói",
+                            "Kho Đà Nẵng",
+                            15800000,
+                            "Mười lăm triệu tám trăm nghìn đồng"
+                    ),
+                    new ImportReceiptModel(
+                            3L,
+                            "PN003",
+                            "2024-06-10",
+                            "Lê Văn C",
+                            "HD003",
+                            "Công ty Cổ phần Gạch Ngói",
+                            "Kho Đà Nẵng",
+                            15800000,
+                            "Mười lăm triệu tám trăm nghìn đồng"
+                    ),
+                    new ImportReceiptModel(
+                            3L,
+                            "PN003",
+                            "2024-06-10",
+                            "Lê Văn C",
+                            "HD003",
+                            "Công ty Cổ phần Gạch Ngói",
+                            "Kho Đà Nẵng",
+                            15800000,
+                            "Mười lăm triệu tám trăm nghìn đồng"
+                    ),
+                    new ImportReceiptModel(
+                            3L,
+                            "PN003",
+                            "2024-06-10",
+                            "Lê Văn C",
+                            "HD003",
+                            "Công ty Cổ phần Gạch Ngói",
+                            "Kho Đà Nẵng",
+                            15800000,
+                            "Mười lăm triệu tám trăm nghìn đồng"
+                    ),
+                    new ImportReceiptModel(
+                            3L,
+                            "PN003",
+                            "2024-06-10",
+                            "Lê Văn C",
+                            "HD003",
+                            "Công ty Cổ phần Gạch Ngói",
+                            "Kho Đà Nẵng",
+                            15800000,
+                            "Mười lăm triệu tám trăm nghìn đồng"
                     )
             );
         }

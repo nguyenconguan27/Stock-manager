@@ -20,7 +20,8 @@ public class ImportReceiptDetailModelMapper implements ViewModelMapper<ImportRec
                 model.getPlannedQuantity(),
                 model.getActualQuantity(),
                 model.getUnitPrice(),
-                model.getTotalPrice()
+                model.getTotalPrice(),
+                model.getProductName()
         );
     }
 }

@@ -19,21 +19,21 @@ public class ImportReceiptDetailDaoImpl implements IImportReceiptDetailDao {
     private ImportReceiptDetailDaoImpl() {
         sampleData.put(1L,
                 Arrays.asList(
-                        new ImportReceiptDetailModel(1L, 1L, 101L, 10, 9, 50000, 9 * 50000),
-                        new ImportReceiptDetailModel(2L, 1L, 102L, 15, 15, 70000, 15 * 70000)
+                        new ImportReceiptDetailModel(1L, 1L, 101L, 10, 9, 50000, 9 * 50000, "Sản phẩm 1"),
+                        new ImportReceiptDetailModel(2L, 1L, 102L, 15, 15, 70000, 15 * 70000, "Sản phẩm 1")
                 ));
 
         sampleData.put(2L,
                 Arrays.asList(
-                        new ImportReceiptDetailModel(3L, 2L, 103L, 20, 18, 45000, 18 * 45000),
-                        new ImportReceiptDetailModel(4L, 2L, 104L, 10, 10, 40000, 10 * 40000)
+                        new ImportReceiptDetailModel(3L, 2L, 103L, 20, 18, 45000, 18 * 45000, "Sản phẩm 1"),
+                        new ImportReceiptDetailModel(4L, 2L, 104L, 10, 10, 40000, 10 * 40000, "Sản phẩm 1")
                 )
         );
 
         sampleData.put(3L,
                 Arrays.asList(
-                        new ImportReceiptDetailModel(5L, 3L, 105L, 5, 5, 100000, 5 * 100000),
-                        new ImportReceiptDetailModel(6L, 3L, 106L, 8, 8, 75000, 8 * 75000)
+                        new ImportReceiptDetailModel(5L, 3L, 105L, 5, 5, 100000, 5 * 100000, "Sản phẩm 1"),
+                        new ImportReceiptDetailModel(6L, 3L, 106L, 8, 8, 75000, 8 * 75000, "Sản phẩm 1")
                 )
         );
     }

@@ -1,6 +1,5 @@
 package com.manager.stock.manager_stock.screen;
 
-import com.dlsc.formsfx.model.structure.StringField;
 import com.manager.stock.manager_stock.screen.product.ProductPresenter;
 import com.manager.stock.manager_stock.screen.product.ProductScreen;
 import com.manager.stock.manager_stock.screen.productGroup.ProductGroupScreen;
@@ -8,7 +7,6 @@ import com.manager.stock.manager_stock.screen.transaction.ExportReceiptScreen;
 import com.manager.stock.manager_stock.screen.transaction.ImportReceiptPresenter;
 import com.manager.stock.manager_stock.screen.transaction.ImportReceiptScreen;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -88,16 +86,16 @@ public class ScreenNavigator {
         rootItem.setExpanded(true);
 
         rootItem.getChildren().addAll(
-                createItem("Quản lý nhóm sản phẩm", "/com/manager/stock/manager_stock/icon/receipt.png", 16, 16),
-                createItem("Quản lý sản phẩm", "/com/manager/stock/manager_stock/icon/receipt.png", 16, 16)
+                createItem("Quản lý nhóm sản phẩm", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16),
+                createItem("Quản lý sản phẩm", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16)
         );
 
-        TreeItem<String> transactionManagerItem = createItem("Quản lý phiếu nhập/xuất", "/com/manager/stock/manager_stock/icon/receipt.png", 16,16);
+        TreeItem<String> transactionManagerItem = createItem("Quản lý phiếu nhập/xuất", "/com/manager/stock/manager_stock/icons/receipt.png", 16,16);
         // tạo các item con bao gồm phiếu nhập và phiếu xuất
         transactionManagerItem.setExpanded(true);
         transactionManagerItem.getChildren().addAll(
-                createItem("Phiếu nhập", "/com/manager/stock/manager_stock/icon/receipt.png", 16, 16),
-                createItem("Phiếu xuất",  "/com/manager/stock/manager_stock/icon/receipt.png", 16, 16)
+                createItem("Phiếu nhập", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16),
+                createItem("Phiếu xuất", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16)
         );
         rootItem.getChildren().add(transactionManagerItem);
         TreeView<String> treeView = new TreeView<>(rootItem);

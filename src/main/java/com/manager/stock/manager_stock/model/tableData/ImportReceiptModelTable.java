@@ -19,7 +19,7 @@ public class ImportReceiptModelTable {
 
     public ImportReceiptModelTable(Long id, String invoiceNumber, String createAt, String deliveredBy,
                                    String invoice, String companyName, String warehouseName,
-                                   double totalPrice, String totalPriceInWord) {
+                                   double totalPrice) {
         this.id.set(id);
         this.invoiceNumber.set(invoiceNumber);
         this.createAt.set(createAt);
@@ -28,7 +28,6 @@ public class ImportReceiptModelTable {
         this.companyName.set(companyName);
         this.warehouseName.set(warehouseName);
         this.totalPrice.set(totalPrice);
-        this.totalPriceInWord.set(totalPriceInWord);
 
     }
 

@@ -13,10 +13,11 @@ public class ImportReceiptDetailModelTable {
     private final IntegerProperty actualQuantity = new SimpleIntegerProperty();
     private final DoubleProperty unitPrice = new SimpleDoubleProperty();
     private final DoubleProperty totalPrice = new SimpleDoubleProperty();
+    private final StringProperty productName = new SimpleStringProperty();
 
     public ImportReceiptDetailModelTable(long id, long importReceiptId, long productId,
                                          int plannedQuantity, int actualQuantity,
-                                         double unitPrice, double totalPrice) {
+                                         double unitPrice, double totalPrice, String productName) {
         this.id.set(id);
         this.importReceiptId.set(importReceiptId);
         this.productId.set(productId);
@@ -24,6 +25,7 @@ public class ImportReceiptDetailModelTable {
         this.actualQuantity.set(actualQuantity);
         this.unitPrice.set(unitPrice);
         this.totalPrice.set(totalPrice);
+        this.productName.set(productName);
     }
 
     // Property methods
@@ -34,6 +36,7 @@ public class ImportReceiptDetailModelTable {
     public IntegerProperty actualQuantityProperty() { return actualQuantity; }
     public DoubleProperty unitPriceProperty() { return unitPrice; }
     public DoubleProperty totalPriceProperty() { return totalPrice; }
+    public StringProperty productNameProperty() { return productName; }
 
     // Getter methods
     public long getId() { return id.get(); }
@@ -43,4 +46,5 @@ public class ImportReceiptDetailModelTable {
     public int getActualQuantity() { return actualQuantity.get(); }
     public double getUnitPrice() { return unitPrice.get(); }
     public double getTotalPrice() { return totalPrice.get(); }
+    public String getProductName() { return productName.get(); }
 }
