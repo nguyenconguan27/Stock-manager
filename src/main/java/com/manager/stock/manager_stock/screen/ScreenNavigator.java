@@ -118,8 +118,7 @@ public class ScreenNavigator {
                     break;
                 case "Quản lý sản phẩm":
                     ProductScreen productScreen = new ProductScreen();
-                    ProductPresenter productPresenter = new ProductPresenter();
-                    productPresenter.loadProductData();
+                    productScreen.showProducts();
                     ScreenNavigator.navigateTo(productScreen);
                     break;
                 case "Phiếu nhập":
