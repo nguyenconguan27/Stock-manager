@@ -88,16 +88,16 @@ public class ScreenNavigator {
         rootItem.setExpanded(true);
 
         rootItem.getChildren().addAll(
-                createItem("Quản lý nhóm sản phẩm", "/com/manager/stock/manager_stock/icon/receipt.png", 16, 16),
-                createItem("Quản lý sản phẩm", "/com/manager/stock/manager_stock/icon/receipt.png", 16, 16)
+                createItem("Quản lý nhóm sản phẩm", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16),
+                createItem("Quản lý sản phẩm", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16)
         );
 
-        TreeItem<String> transactionManagerItem = createItem("Quản lý phiếu nhập/xuất", "/com/manager/stock/manager_stock/icon/receipt.png", 16,16);
+        TreeItem<String> transactionManagerItem = createItem("Quản lý phiếu nhập/xuất", "/com/manager/stock/manager_stock/icons/receipt.png", 16,16);
         // tạo các item con bao gồm phiếu nhập và phiếu xuất
         transactionManagerItem.setExpanded(true);
         transactionManagerItem.getChildren().addAll(
-                createItem("Phiếu nhập", "/com/manager/stock/manager_stock/icon/receipt.png", 16, 16),
-                createItem("Phiếu xuất",  "/com/manager/stock/manager_stock/icon/receipt.png", 16, 16)
+                createItem("Phiếu nhập", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16),
+                createItem("Phiếu xuất",  "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16)
         );
         rootItem.getChildren().add(transactionManagerItem);
         TreeView<String> treeView = new TreeView<>(rootItem);
@@ -136,7 +136,13 @@ public class ScreenNavigator {
 
     private static TreeItem<String> createItem(String name, String iconPath, int height, int width) {
         Label label = new Label();
-        Image image = new Image(Objects.requireNonNull(ScreenNavigator.class.getResource(iconPath).toExternalForm()));
+        Image image = null;
+        try {
+            image = new Image(ScreenNavigator.class.getResource(iconPath).toExternalForm());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(height);
         imageView.setFitWidth(width);

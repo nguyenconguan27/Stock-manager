@@ -163,7 +163,6 @@ public class ImportReceiptScreen extends VBox {
                 System.out.println("Clicked ID: " + id);
             }
         });
-
     }
 
     private void setColumnPercentWidth(TableColumn<?, ?> col, double percent) {
@@ -189,7 +188,7 @@ public class ImportReceiptScreen extends VBox {
     }
 
     private VBox createItemDetailByReceipt() {
-        TableColumn<ImportReceiptDetailModelTable, Number> colProductId = CreateColumnTableUtil.createColumn("Mã SP", ImportReceiptDetailModelTable::productIdProperty);
+        TableColumn<ImportReceiptDetailModelTable, String> colProductId = CreateColumnTableUtil.createColumn("Mã SP", ImportReceiptDetailModelTable::productIdProperty);
         TableColumn<ImportReceiptDetailModelTable, String> colProductName = CreateColumnTableUtil.createColumn("Tên SP", ImportReceiptDetailModelTable::productNameProperty);
         TableColumn<ImportReceiptDetailModelTable, Number> colPlannedQty = CreateColumnTableUtil.createColumn("SL theo CT", ImportReceiptDetailModelTable::plannedQuantityProperty);
         TableColumn<ImportReceiptDetailModelTable, Number> colActualQty = CreateColumnTableUtil.createColumn("SL thực tế", ImportReceiptDetailModelTable::actualQuantityProperty);

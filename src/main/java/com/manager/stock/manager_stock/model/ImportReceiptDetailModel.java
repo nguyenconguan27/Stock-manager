@@ -6,14 +6,14 @@ package com.manager.stock.manager_stock.model;
 public class ImportReceiptDetailModel {
     private long id;
     private long importReceiptId;
-    private long productId;
+    private String productId;
     private int plannedQuantity;
     private int actualQuantity;
     private double unitPrice;
     private double totalPrice;
     private String productName;
 
-    public ImportReceiptDetailModel(long id, long importReceiptId, long productId, int plannedQuantity, int actualQuantity, double unitPrice, double totalPrice, String productName) {
+    public ImportReceiptDetailModel(long id, long importReceiptId, String productId, int plannedQuantity, int actualQuantity, double unitPrice, double totalPrice, String productName) {
         this.id = id;
         this.importReceiptId = importReceiptId;
         this.productId = productId;
@@ -40,11 +40,11 @@ public class ImportReceiptDetailModel {
         this.importReceiptId = importReceiptId;
     }
 
-    public long getProductId() {
+    public String getProductId() {
         return productId;
     }
 
-    public void setProductId(long productId) {
+    public void setProductId(String productId) {
         this.productId = productId;
     }
 

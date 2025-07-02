@@ -42,7 +42,7 @@ public class ImportReceiptPresenter {
         return importReceiptDetailService.findAllByImportReceiptId(importReceiptId);
     }
 
-    public List<ProductModel> findAllProduct() {
-        return null;
+    public List<ProductModel> loadAllProduct() {
+        return productService.getAllProducts();
     }
 }

@@ -8,14 +8,14 @@ import javafx.beans.property.*;
 public class ImportReceiptDetailModelTable {
     private final LongProperty id = new SimpleLongProperty();
     private final LongProperty importReceiptId = new SimpleLongProperty();
-    private final LongProperty productId = new SimpleLongProperty();
+    private final StringProperty productId = new SimpleStringProperty();
     private final IntegerProperty plannedQuantity = new SimpleIntegerProperty();
     private final IntegerProperty actualQuantity = new SimpleIntegerProperty();
     private final DoubleProperty unitPrice = new SimpleDoubleProperty();
     private final DoubleProperty totalPrice = new SimpleDoubleProperty();
     private final StringProperty productName = new SimpleStringProperty();
 
-    public ImportReceiptDetailModelTable(long id, long importReceiptId, long productId,
+    public ImportReceiptDetailModelTable(long id, long importReceiptId, String productId,
                                          int plannedQuantity, int actualQuantity,
                                          double unitPrice, double totalPrice, String productName) {
         this.id.set(id);
@@ -31,7 +31,7 @@ public class ImportReceiptDetailModelTable {
     // Property methods
     public LongProperty idProperty() { return id; }
     public LongProperty importReceiptIdProperty() { return importReceiptId; }
-    public LongProperty productIdProperty() { return productId; }
+    public StringProperty productIdProperty() { return productId; }
     public IntegerProperty plannedQuantityProperty() { return plannedQuantity; }
     public IntegerProperty actualQuantityProperty() { return actualQuantity; }
     public DoubleProperty unitPriceProperty() { return unitPrice; }
@@ -41,10 +41,11 @@ public class ImportReceiptDetailModelTable {
     // Getter methods
     public long getId() { return id.get(); }
     public long getImportReceiptId() { return importReceiptId.get(); }
-    public Long getProductId() { return productId.get(); }
+    public String getProductId() { return productId.get(); }
     public int getPlannedQuantity() { return plannedQuantity.get(); }
     public int getActualQuantity() { return actualQuantity.get(); }
     public double getUnitPrice() { return unitPrice.get(); }
     public double getTotalPrice() { return totalPrice.get(); }
     public String getProductName() { return productName.get(); }
+
 }
