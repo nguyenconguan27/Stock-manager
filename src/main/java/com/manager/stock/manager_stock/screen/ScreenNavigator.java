@@ -119,13 +119,12 @@ public class ScreenNavigator {
                 case "Quản lý sản phẩm":
                     ProductScreen productScreen = new ProductScreen();
                     ProductPresenter productPresenter = new ProductPresenter();
-                    productPresenter.loadProductData();
+                    productPresenter.loadProductListData();
                     ScreenNavigator.navigateTo(productScreen);
                     break;
                 case "Phiếu nhập":
                     ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
-                    ImportReceiptPresenter importReceiptPresenter = new ImportReceiptPresenter();
-                    importReceiptPresenter.loadImportReceiptList();
+                    importReceiptScreen.showTable();
                     ScreenNavigator.navigateTo(importReceiptScreen);
                     break;
                 case "Phiếu xuất":
@@ -137,7 +136,7 @@ public class ScreenNavigator {
 
     private static TreeItem<String> createItem(String name, String iconPath, int height, int width) {
         Label label = new Label();
-        Image image = new Image(Objects.requireNonNull(ScreenNavigator.class.getResourceAsStream(iconPath)));
+        Image image = new Image(Objects.requireNonNull(ScreenNavigator.class.getResource(iconPath).toExternalForm()));
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(height);
         imageView.setFitWidth(width);

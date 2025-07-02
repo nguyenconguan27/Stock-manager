@@ -8,6 +8,7 @@ import com.manager.stock.manager_stock.service.IImportReceiptService;
 import com.manager.stock.manager_stock.service.ProductService;
 import com.manager.stock.manager_stock.service.impl.ImportReceiptDetailServiceImpl;
 import com.manager.stock.manager_stock.service.impl.ImportReceiptServiceImpl;
+import com.manager.stock.manager_stock.service.impl.ProductServiceImpl;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class ImportReceiptPresenter {
     private ImportReceiptPresenter() {
         importReceiptService = ImportReceiptServiceImpl.getInstance();
         importReceiptDetailService = ImportReceiptDetailServiceImpl.getInstance();
-        productService = new ProductService();
+        productService = new ProductServiceImpl();
     }
 
     public static ImportReceiptPresenter getInstance() {
