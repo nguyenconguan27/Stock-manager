@@ -2,8 +2,10 @@ package com.manager.stock.manager_stock.screen.transaction;
 
 import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
 import com.manager.stock.manager_stock.model.ImportReceiptModel;
+import com.manager.stock.manager_stock.model.ProductModel;
 import com.manager.stock.manager_stock.service.IImportReceiptDetailService;
 import com.manager.stock.manager_stock.service.IImportReceiptService;
+import com.manager.stock.manager_stock.service.ProductService;
 import com.manager.stock.manager_stock.service.impl.ImportReceiptDetailServiceImpl;
 import com.manager.stock.manager_stock.service.impl.ImportReceiptServiceImpl;
 
@@ -13,15 +15,15 @@ import java.util.List;
  * @author Trọng Hướng
  */
 public class ImportReceiptPresenter {
-    private final ImportReceiptScreen importReceiptScreen;
     private final IImportReceiptService importReceiptService;
     private final IImportReceiptDetailService importReceiptDetailService;
     private static ImportReceiptPresenter instance;
+    private final ProductService productService;
 
     private ImportReceiptPresenter() {
-        importReceiptScreen = ImportReceiptScreen.getInstance();
         importReceiptService = ImportReceiptServiceImpl.getInstance();
         importReceiptDetailService = ImportReceiptDetailServiceImpl.getInstance();
+        productService = new ProductService();
     }
 
     public static ImportReceiptPresenter getInstance() {
@@ -31,17 +33,15 @@ public class ImportReceiptPresenter {
         return instance;
     }
 
-    public void loadImportReceiptList() {
-        List<ImportReceiptModel> importReceiptModels = importReceiptService.findAll();
-        importReceiptScreen.showTable(importReceiptModels);
+    public List<ImportReceiptModel> loadImportReceiptList() {
+        return importReceiptService.findAll();
     }
 
-    public void loadImportReceiptDetailList(long importReceiptId) {
-        List<ImportReceiptDetailModel> importReceiptDetailModels = importReceiptDetailService.findAllByImportReceiptId(importReceiptId);
-        importReceiptScreen.showItemDetails(importReceiptDetailModels);
+    public List<ImportReceiptDetailModel> loadImportReceiptDetailList(long importReceiptId) {
+        return importReceiptDetailService.findAllByImportReceiptId(importReceiptId);
     }
 
-    public void clearImportReceiptDetailsTable() {
-        importReceiptScreen.clearImportReceiptDetailsTable();
+    public List<ProductModel> findAllProduct() {
+        return null;
     }
 }

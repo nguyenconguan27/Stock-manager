@@ -41,7 +41,7 @@ public class ImportReceiptDetailModelTable {
     // Getter methods
     public long getId() { return id.get(); }
     public long getImportReceiptId() { return importReceiptId.get(); }
-    public long getProductId() { return productId.get(); }
+    public Long getProductId() { return productId.get(); }
     public int getPlannedQuantity() { return plannedQuantity.get(); }
     public int getActualQuantity() { return actualQuantity.get(); }
     public double getUnitPrice() { return unitPrice.get(); }

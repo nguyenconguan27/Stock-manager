@@ -64,22 +64,10 @@ public class ScreenNavigator {
     }
 
     private static void setLeftScreen() {
-//        Button btnProduct = new Button("Quản lý nhóm sản phẩm");
-//        btnProduct.setOnAction(e -> {
-//            ProductScreen productScreen = new ProductScreen();
-//            ProductPresenter productPresenter = new ProductPresenter();
-//
-//            productPresenter.loadProductData();
-//            ScreenNavigator.navigateTo(productScreen);
-//        });
-//
-//        Button btnProductGroup = new Button("Quản lý sản phẩm");
-//        btnProductGroup.setOnAction(e -> {
-//            ScreenNavigator.navigateTo(new ProductGroupScreen());
-//        });
 
         VBox leftScreen = new VBox(10);
-        leftScreen.setStyle("-fx-padding: 10 0 0 0;");
+//        leftScreen.setStyle("-fx-background-color: #e1f0f7");
+        leftScreen.setStyle("-fx-padding: 10 0 0 0; -fx-background-color: #e1f0f7");
 
         // init treeView
         TreeItem<String> rootItem = new TreeItem<>();
@@ -108,28 +96,24 @@ public class ScreenNavigator {
         // add sự kiện click
         treeView.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
             if (newItem == null) return;
-            ImportReceiptPresenter importReceiptPresenter = ImportReceiptPresenter.getInstance();
             ProductPresenter productPresenter = new ProductPresenter();
             String selected = newItem.getValue();
             switch (selected) {
                 case "Quản lý nhóm sản phẩm":
                     ScreenNavigator.navigateTo(new ProductGroupScreen());
-                    importReceiptPresenter.clearImportReceiptDetailsTable();
                     break;
                 case "Quản lý sản phẩm":
                     ProductScreen productScreen = new ProductScreen();
                     productPresenter.loadProductData();
-                    importReceiptPresenter.clearImportReceiptDetailsTable();
                     ScreenNavigator.navigateTo(productScreen);
                     break;
                 case "Phiếu nhập":
-                    ImportReceiptScreen importReceiptScreen = ImportReceiptScreen.getInstance();
-                    importReceiptPresenter.loadImportReceiptList();
+                    ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
+                    importReceiptScreen.showTable();
                     ScreenNavigator.navigateTo(importReceiptScreen);
                     break;
                 case "Phiếu xuất":
                     ScreenNavigator.navigateTo(new ExportReceiptScreen());
-                    importReceiptPresenter.clearImportReceiptDetailsTable();
                     break;
             }
         });
