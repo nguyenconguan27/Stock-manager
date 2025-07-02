@@ -9,4 +9,5 @@ import java.util.List;
  */
 public interface IImportReceiptDetailDao {
     List<ImportReceiptDetailModel> findAllByImportReceiptId(long importReceiptId);
+    int save(List<ImportReceiptDetailModel> importReceiptDetailModels, long importReceiptId);
 }

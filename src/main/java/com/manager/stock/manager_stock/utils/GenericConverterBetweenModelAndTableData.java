@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 /**
  * @author Trọng Hướng
  */
-public class GenericConverterFromModelToTableData {
+public class GenericConverterBetweenModelAndTableData {
     public static <T, R> List<R> convertToList(List<T> inputList, Function<T, R> converter) {
         if(inputList.isEmpty()){
             return List.of();
@@ -15,5 +15,13 @@ public class GenericConverterFromModelToTableData {
         return inputList.stream()
                         .map(converter)
                         .collect(Collectors.toList());
+    }
+    public static <T, R> List<R> convertToListModel(List<T> inputListDataTable, Function<T, R> converter) {
+        if(inputListDataTable.isEmpty()){
+            return List.of();
+        }
+        return inputListDataTable.stream()
+                .map(converter)
+                .collect(Collectors.toList());
     }
 }

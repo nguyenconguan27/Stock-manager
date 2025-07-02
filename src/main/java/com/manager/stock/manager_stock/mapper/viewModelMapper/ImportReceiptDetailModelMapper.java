@@ -24,4 +24,18 @@ public class ImportReceiptDetailModelMapper implements ViewModelMapper<ImportRec
                 model.getProductName()
         );
     }
+
+    @Override
+    public ImportReceiptDetailModel fromViewModelToModel(ImportReceiptDetailModelTable viewModel) {
+        return new ImportReceiptDetailModel(
+                viewModel.getId(),
+                viewModel.getImportReceiptId(),
+                viewModel.getProductId(),
+                viewModel.getPlannedQuantity(),
+                viewModel.getActualQuantity(),
+                viewModel.getUnitPrice(),
+                viewModel.getTotalPrice(),
+                viewModel.getProductName()
+        );
+    }
 }

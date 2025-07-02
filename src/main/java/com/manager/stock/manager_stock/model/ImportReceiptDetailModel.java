@@ -13,6 +13,8 @@ public class ImportReceiptDetailModel {
     private double totalPrice;
     private String productName;
 
+    public ImportReceiptDetailModel() {}
+
     public ImportReceiptDetailModel(long id, long importReceiptId, String productId, int plannedQuantity, int actualQuantity, double unitPrice, double totalPrice, String productName) {
         this.id = id;
         this.importReceiptId = importReceiptId;
@@ -86,5 +88,19 @@ public class ImportReceiptDetailModel {
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    @Override
+    public String toString() {
+        return "ImportReceiptDetailModel{" +
+                "id=" + id +
+                ", importReceiptId=" + importReceiptId +
+                ", productId='" + productId + '\'' +
+                ", plannedQuantity=" + plannedQuantity +
+                ", actualQuantity=" + actualQuantity +
+                ", unitPrice=" + unitPrice +
+                ", totalPrice=" + totalPrice +
+                ", productName='" + productName + '\'' +
+                '}';
     }
 }

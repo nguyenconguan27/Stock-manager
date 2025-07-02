@@ -48,4 +48,6 @@ public class ImportReceiptDetailModelTable {
     public double getTotalPrice() { return totalPrice.get(); }
     public String getProductName() { return productName.get(); }
 
+    public void setActualQuantity(int  actualQuantity) { this.actualQuantity.set(actualQuantity); }
+    public void setTotalPrice(double totalPrice) { this.totalPrice.set(totalPrice); }
 }

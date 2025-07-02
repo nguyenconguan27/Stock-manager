@@ -18,6 +18,8 @@ public class ImportReceiptModel {
     private String totalPriceInWord;
     private List<ImportReceiptDetailModel> importReceiptDetails;
 
+    public ImportReceiptModel() {}
+
     public ImportReceiptModel(Long id, String invoiceNumber, String createAt, String deliveredBy, String invoice, String companyName, String warehouseName, double totalPrice, String totalPriceInWord) {
         this.id = id;
         this.invoiceNumber = invoiceNumber;

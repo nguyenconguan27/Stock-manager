@@ -3,6 +3,7 @@ package com.manager.stock.manager_stock.service.impl;
 import com.manager.stock.manager_stock.dao.IImportReceiptDao;
 import com.manager.stock.manager_stock.dao.IImportReceiptDetailDao;
 import com.manager.stock.manager_stock.dao.impl.ImportReceiptDetailDaoImpl;
+import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
 import com.manager.stock.manager_stock.service.IImportReceiptDetailService;
 
@@ -29,5 +30,10 @@ public class ImportReceiptDetailServiceImpl implements IImportReceiptDetailServi
     @Override
     public List<ImportReceiptDetailModel> findAllByImportReceiptId(long importReceiptId) {
         return importReceiptDetailDao.findAllByImportReceiptId(importReceiptId);
+    }
+
+    @Override
+    public int save(List<ImportReceiptDetailModel> importReceiptDetailModels, long importReceiptId) throws DaoException {
+        return importReceiptDetailDao.save(importReceiptDetailModels, importReceiptId);
     }
 }

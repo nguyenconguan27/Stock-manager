@@ -20,12 +20,18 @@ public class AbstractDao<T> implements GenericDao<T> {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public Connection getConnection() throws SQLException {
-        final String url = AppConfig.getString("db.url");
-        final Properties props = new Properties();
-        props.setProperty("user", AppConfig.getString("db.user"));
-        props.setProperty("password", AppConfig.getString("db.password"));
-        logger.debug("Start connect to database..., user = {}, password = {}", AppConfig.getString("db.user"), AppConfig.getString("db.password") );
-        return DriverManager.getConnection(url, props);
+        try {
+            final String url = AppConfig.getString("db.url");
+            final Properties props = new Properties();
+            props.setProperty("user", AppConfig.getString("db.user"));
+            props.setProperty("password", AppConfig.getString("db.password"));
+            logger.debug("Start connect to database..., user = {}, password = {}", AppConfig.getString("db.user"), AppConfig.getString("db.password") );
+            System.out.println(String.format("Start connect to database..., user = {%s}, password = {%s}", AppConfig.getString("db.user"), AppConfig.getString("db.password") ));
+            return DriverManager.getConnection(url, props);
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
     private void setParams(PreparedStatement stmt, Object...params) {
@@ -105,7 +111,7 @@ public class AbstractDao<T> implements GenericDao<T> {
     }
 
     @Override
-    public long save(String sql, Object... parameters) {
+    public int save(String sql, List<Object[]> parameters) {
         logger.debug("Start insert of database with sql: {}", sql);
         logger.debug("Start insert of database with params: {}", parameters);
         PreparedStatement stmt = null;
@@ -113,11 +119,17 @@ public class AbstractDao<T> implements GenericDao<T> {
         try {
             connection = getConnection();
             stmt = connection.prepareStatement(sql);
-            setParams(stmt, parameters);
-            return stmt.executeUpdate();
+            for(Object[] params : parameters) {
+                setParams(stmt, params);
+                stmt.addBatch();
+            }
+            int[] insertResult = stmt.executeBatch();
+            logger.info(String.format("Insert success: {%d} rows.", insertResult.length));
+            return insertResult.length;
         }
         catch (SQLException e) {
             logger.error("SQL Exception while inserting database with sql: {}", sql, e);
+            e.printStackTrace();
             throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
         }
         finally {
@@ -136,7 +148,7 @@ public class AbstractDao<T> implements GenericDao<T> {
     }
 
     @Override
-    public long update(String sql, Object... parameters) {
+    public int update(String sql, Object... parameters) {
         return 0;
     }
 

@@ -17,7 +17,7 @@ public class AddCssStyleForBtnUtil {
                         "-fx-alignment: center;" +
                         "-fx-graphic-text-gap: 8px;" +
                         "-fx-background-radius: 4px;" +
-                        "-fx-border-color: #d0d0d0;" +
+                        "-fx-border-color: #b0d0d8;" +
                         "-fx-border-width: 1px;" +
                         "-fx-border-radius: 4px;" +
                         "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1);";
@@ -25,6 +25,7 @@ public class AddCssStyleForBtnUtil {
         String buttonHoverStyle =
                 "-fx-background-color: #d1eff7;" +
                         "-fx-border-color: #b0d0d8;" +
+//                        "-fx-text-fill: white;" +
                         "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);";
 
         String buttonPressedStyle =

@@ -1,5 +1,6 @@
 package com.manager.stock.manager_stock.mapper.viewModelMapper;
 
+import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
 import com.manager.stock.manager_stock.model.ImportReceiptModel;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptModelTable;
 
@@ -14,7 +15,7 @@ public class ImportReceiptModelMapper implements ViewModelMapper<ImportReceiptMo
     public ImportReceiptModelTable toViewModel(ImportReceiptModel model) {
         return new ImportReceiptModelTable(
                 model.getId(),
-                model.getInvoiceNumber(),
+                model.getInvoiceNumber(), // số phiếu ==> mã phiếu nhập
                 model.getCreateAt(),
                 model.getDeliveredBy(),
                 model.getInvoice(),
@@ -22,5 +23,10 @@ public class ImportReceiptModelMapper implements ViewModelMapper<ImportReceiptMo
                 model.getWarehouseName(),
                 model.getTotalPrice()
         );
+    }
+
+    @Override
+    public ImportReceiptModel fromViewModelToModel(ImportReceiptModelTable viewModel) {
+        return null;
     }
 }

@@ -9,4 +9,5 @@ import java.util.List;
  */
 public interface IImportReceiptDao {
     List<ImportReceiptModel> findAll();
+    long save(ImportReceiptModel importReceiptModel);
 }

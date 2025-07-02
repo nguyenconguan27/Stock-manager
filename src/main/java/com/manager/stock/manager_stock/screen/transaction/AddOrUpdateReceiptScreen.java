@@ -1,9 +1,13 @@
 package com.manager.stock.manager_stock.screen.transaction;
 
+import com.manager.stock.manager_stock.exception.DaoException;
+import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
+import com.manager.stock.manager_stock.model.ImportReceiptModel;
 import com.manager.stock.manager_stock.model.ProductModel;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptDetailModelTable;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.utils.AddCssStyleForBtnUtil;
+import com.manager.stock.manager_stock.utils.AlertUtils;
 import com.manager.stock.manager_stock.utils.CreateColumnTableUtil;
 import com.manager.stock.manager_stock.utils.CreateTopBarOfReceiptUtil;
 import javafx.application.Platform;
@@ -15,10 +19,13 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.*;
+import javafx.stage.Screen;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 
 import java.text.Normalizer;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +40,9 @@ public class AddOrUpdateReceiptScreen extends VBox {
     private final ObservableList<ProductModel> allProducts = FXCollections.observableArrayList();
     private FilteredList<ProductModel> filteredProducts = new FilteredList<>(allProducts, p -> true);
     private final ObservableList<ImportReceiptDetailModelTable> productDetails = FXCollections.observableArrayList();
+
+    private TextField tfInvoiceNumber, tfInvoice, tfDeliveredBy, tfCompanyName, tfWareHouse;
+    private DatePicker dpCreateAt;
 
     public AddOrUpdateReceiptScreen() {
         importReceiptPresenter = ImportReceiptPresenter.getInstance();
@@ -49,17 +59,17 @@ public class AddOrUpdateReceiptScreen extends VBox {
         leftForm.setPadding(new Insets(15));
 
         leftForm.add(new Label("Ngày tạo *"), 0, 0);
-        DatePicker dpCreateAt = new DatePicker();
+        dpCreateAt = new DatePicker();
         leftForm.add(dpCreateAt, 1, 0);
 
         // mã hóa đơn
         leftForm.add(new Label("Số hóa đơn *"), 0, 1);
-        TextField tfInvoiceNumber = new TextField();
+        tfInvoiceNumber = new TextField();
         leftForm.add(tfInvoiceNumber, 1, 1);
 
         // ghi chú
-        leftForm.add(new Label("Nội dung *"), 0, 2);
-        TextField tfInvoice = new TextField();
+        leftForm.add(new Label("Mã hóa đơn *"), 0, 2);
+        tfInvoice = new TextField();
         leftForm.add(tfInvoice, 1, 2);
 
         // === Form bên phải ===
@@ -69,15 +79,15 @@ public class AddOrUpdateReceiptScreen extends VBox {
         rightForm.setPadding(new Insets(15));
 
         rightForm.add(new Label("Người giao hàng"), 0, 0);
-        TextField tfStatus = new TextField();
-        rightForm.add(tfStatus, 1, 0);
+        tfDeliveredBy = new TextField();
+        rightForm.add(tfDeliveredBy, 1, 0);
 
         rightForm.add(new Label("Tên công ty"), 0, 1);
-        TextField tfDeliveredBy = new TextField();
-        rightForm.add(tfDeliveredBy, 1, 1);
+        tfCompanyName = new TextField();
+        rightForm.add(tfCompanyName, 1, 1);
 
-        rightForm.add(new Label("Tên công ty"), 0, 2);
-        TextField tfWareHouse = new TextField();
+        rightForm.add(new Label("Kho"), 0, 2);
+        tfWareHouse = new TextField();
         rightForm.add(tfWareHouse, 1, 2);
 
         // === Gộp 2 cột vào một hàng ngang ===
@@ -313,7 +323,49 @@ public class AddOrUpdateReceiptScreen extends VBox {
         productTable.setItems(productDetails);
 
         // khởi tạo 2 button submit và cancel
+        HBox actionRow = new HBox(10);
 
+        Button saveBtn = new Button("Save");
+        AddCssStyleForBtnUtil.addCssStyleForBtn(saveBtn);
+        saveBtn.setOnMouseClicked(e -> {
+            String createAtStr = dpCreateAt.getValue().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            ImportReceiptModel importReceiptModel = new ImportReceiptModel(
+                    null,
+                    tfInvoiceNumber.getText(),
+                    createAtStr,
+                    tfDeliveredBy.getText(),
+                    tfInvoice.getText(),
+                    tfCompanyName.getText(),
+                    tfWareHouse.getText(),
+                    0,
+                    null
+            );
+            ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
+            try {
+                System.out.println("Save import receipt: " + importReceiptModel);
+                presenter.saveImportReceipt(importReceiptModel, productDetails);
+                AlertUtils.alert("Thêm mới phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
+                ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
+                importReceiptScreen.showTable();
+                ScreenNavigator.navigateTo(importReceiptScreen);
+            }
+            catch (DaoException exception) {
+                AlertUtils.alert(exception.getMessage(), "ERROR", "Lỗi khi thực hiện lưu phiếu nhập.", "Lỗi khi thực hiện lưu phiếu nhập.");
+            }
+        });
+
+        Button cancelBtn = new Button("Cancel");
+        AddCssStyleForBtnUtil.addCssStyleForBtn(cancelBtn);
+        cancelBtn.setOnMouseClicked(e -> {
+            ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
+            importReceiptScreen.showTable();
+            ScreenNavigator.navigateTo(importReceiptScreen);
+        });
+
+        actionRow.getChildren().addAll(saveBtn, cancelBtn);
+        actionRow.setStyle("-fx-padding: 5; -fx-background-color: #e1f0f7; -fx-border-color: #c1dfee; -fx-border-width: 1px;");
+
+        box.getChildren().add(actionRow);
         return box;
     }
 
@@ -325,18 +377,26 @@ public class AddOrUpdateReceiptScreen extends VBox {
     }
 
     private void addProductToTableProductOfReceipt(ProductModel product, int actualQuantity, int plannedQuantity, long unitPrice) {
-        System.out.println(String.format("Them moi san pham: %s - %s - %d - %d - %d",
-                                        product.getId(), product.getName(), actualQuantity, plannedQuantity, unitPrice));
-        productDetails.add(new ImportReceiptDetailModelTable(
-                System.currentTimeMillis(),
-                0,
-                product.getId(),
-                plannedQuantity,
-                actualQuantity,
-                unitPrice,
-                actualQuantity * unitPrice,
-                product.getName())
-        );
+        ImportReceiptDetailModelTable productExists = productDetails.stream()
+                        .filter(p -> (p.getProductId().equals(product.getId()) && p.getUnitPrice() == unitPrice))
+                        .findFirst()
+                        .orElse(null);
+        if(productExists != null) {
+            productExists.setActualQuantity(productExists.getActualQuantity() + actualQuantity);
+            productExists.setTotalPrice(productExists.getTotalPrice() + (plannedQuantity * unitPrice));
+        }
+        else {
+            productDetails.add(new ImportReceiptDetailModelTable(
+                    System.currentTimeMillis(),
+                    0,
+                    product.getId(),
+                    plannedQuantity,
+                    actualQuantity,
+                    unitPrice,
+                    actualQuantity * unitPrice,
+                    product.getName())
+            );
+        }
         productTable.refresh();
     }
 }

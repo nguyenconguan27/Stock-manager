@@ -1,30 +1,28 @@
 package com.manager.stock.manager_stock.screen.transaction;
 
+import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptDetailModelMapper;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptModelMapper;
 import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
 import com.manager.stock.manager_stock.model.ImportReceiptModel;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptDetailModelTable;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptModelTable;
+import com.manager.stock.manager_stock.utils.AlertUtils;
 import com.manager.stock.manager_stock.utils.CreateColumnTableUtil;
 import com.manager.stock.manager_stock.utils.CreateTopBarOfReceiptUtil;
-import com.manager.stock.manager_stock.utils.GenericConverterFromModelToTableData;
-import com.sun.source.tree.ImportTree;
+import com.manager.stock.manager_stock.utils.GenericConverterBetweenModelAndTableData;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-import java.util.HashMap;
+import java.text.Normalizer;
 import java.util.List;
 
 public class ImportReceiptScreen extends VBox {
@@ -91,10 +89,10 @@ public class ImportReceiptScreen extends VBox {
 
     private void createImportReceiptTable() {
         TableColumn<ImportReceiptModelTable, Number> colId = CreateColumnTableUtil.createColumn("Mã phiếu", ImportReceiptModelTable::idProperty);
-        TableColumn<ImportReceiptModelTable, String> colInvoiceNumber = CreateColumnTableUtil.createColumn("Số phiếu nhập", ImportReceiptModelTable::invoiceNumberProperty);
+        TableColumn<ImportReceiptModelTable, String> colInvoiceNumber = CreateColumnTableUtil.createColumn("Số hóa đơn", ImportReceiptModelTable::invoiceNumberProperty);
         TableColumn<ImportReceiptModelTable, String> colCreateAt = CreateColumnTableUtil.createColumn("Ngày tạo", ImportReceiptModelTable::createAtProperty);
         TableColumn<ImportReceiptModelTable, String> colDeliveredBy = CreateColumnTableUtil.createColumn("Người giao", ImportReceiptModelTable::deliveredByProperty);
-        TableColumn<ImportReceiptModelTable, String> colInvoice = CreateColumnTableUtil.createColumn("Số hóa đơn", ImportReceiptModelTable::invoiceProperty);
+        TableColumn<ImportReceiptModelTable, String> colInvoice = CreateColumnTableUtil.createColumn("Số phiếu nhập", ImportReceiptModelTable::invoiceProperty);
         TableColumn<ImportReceiptModelTable, String> colCompany = CreateColumnTableUtil.createColumn("Công ty", ImportReceiptModelTable::companyNameProperty);
         TableColumn<ImportReceiptModelTable, String> colWarehouse = CreateColumnTableUtil.createColumn("Kho", ImportReceiptModelTable::warehouseNameProperty);
         TableColumn<ImportReceiptModelTable, Number> colTotalPrice = CreateColumnTableUtil.createColumn("Thành tiền", ImportReceiptModelTable::totalPriceProperty);
@@ -157,7 +155,6 @@ public class ImportReceiptScreen extends VBox {
         receiptTable.setOnMouseClicked(event -> {
             ImportReceiptModelTable selected = receiptTable.getSelectionModel().getSelectedItem();
             if (selected != null) {
-                ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
                 long id = selected.getId();
                 showItemDetails(id);
                 System.out.println("Clicked ID: " + id);
@@ -261,25 +258,43 @@ public class ImportReceiptScreen extends VBox {
     }
 
     public void showTable() {
-        ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
-        List<ImportReceiptModel> importReceiptModels = presenter.loadImportReceiptList();
-        List<ImportReceiptModelTable> tableModels = GenericConverterFromModelToTableData.convertToList(
-                importReceiptModels, ImportReceiptModelMapper.INSTANCE::toViewModel
-        );
-        allReceiptData.setAll(tableModels);
-        receiptData.setAll(tableModels);
-        updatePagination();
+        try {
+            ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
+            List<ImportReceiptModel> importReceiptModels = presenter.loadImportReceiptList();
+            List<ImportReceiptModelTable> tableModels = GenericConverterBetweenModelAndTableData.convertToList(
+                    importReceiptModels, ImportReceiptModelMapper.INSTANCE::toViewModel
+            );
+            allReceiptData.setAll(tableModels);
+            receiptData.setAll(tableModels);
+            updatePagination();
+        }
+        catch (DaoException e) {
+            AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi", "Lỗi khi load dữ liệu.");
+        }
     }
 
     private void showItemDetails(long importReceiptId) {
-        ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
-        List<ImportReceiptDetailModel> importReceiptDetailModels = presenter.loadImportReceiptDetailList(importReceiptId);
-        List<ImportReceiptDetailModelTable> detailTables =
-                GenericConverterFromModelToTableData.convertToList(importReceiptDetailModels, ImportReceiptDetailModelMapper.INSTANCE::toViewModel);
-        productData.setAll(detailTables);
-        allProductData.setAll(detailTables);
-        productTable.setItems(productData);
-        updateTableHeight(productTable, productData.size());
+        try {
+            ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
+            List<ImportReceiptDetailModel> importReceiptDetailModels = presenter.loadImportReceiptDetailList(importReceiptId);
+            for (ImportReceiptDetailModel importReceiptDetailModel : importReceiptDetailModels) {
+                System.out.println(importReceiptDetailModel);
+            }
+            List<ImportReceiptDetailModelTable> detailTables =
+                    GenericConverterBetweenModelAndTableData.convertToList(importReceiptDetailModels, ImportReceiptDetailModelMapper.INSTANCE::toViewModel);
+            productData.setAll(detailTables);
+            allProductData.setAll(detailTables);
+            productTable.setItems(productData);
+            updateTableHeight(productTable, productData.size());
+        }
+        catch (NullPointerException e) {
+            e.printStackTrace();
+            AlertUtils.alert("Đã xảy ra lỗi trong quá trình xử lý. Vui lòng thử lại sau hoặc liên hệ hỗ trợ.", "ERROR", "Lỗi", "Lỗi trong quá trình xem danh sách sản phẩm của phiếu nhập: " + importReceiptId);
+        }
+        catch (DaoException e) {
+            e.printStackTrace();
+            AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi", "Lỗi trong quá trình xem danh sách sản phẩm của phiếu nhập: " + importReceiptId);
+        }
     }
 
     private HBox createFilterRow() {
@@ -344,21 +359,21 @@ public class ImportReceiptScreen extends VBox {
 
     private void filterReceipts() {
         ObservableList<ImportReceiptModelTable> filteredData = FXCollections.observableArrayList();
-        String idFilter = tfId.getText() != null ? tfId.getText().trim().toLowerCase() : "";
-        String invoiceNumberFilter = tfInvoiceNumber.getText() != null ? tfInvoiceNumber.getText().trim().toLowerCase() : "";
-        String createAtFilter = tfCreateAt.getText() != null ? tfCreateAt.getText().trim().toLowerCase() : "";
-        String invoiceFilter = tfInvoice.getText() != null ? tfInvoice.getText().trim().toLowerCase() : "";
-        String companyFilter = tfCompany.getText() != null ? tfCompany.getText().trim().toLowerCase() : "";
-        String warehouseFilter = tfWarehouse.getText() != null ? tfWarehouse.getText().trim().toLowerCase() : "";
+        String idFilter = normalizeString(tfId.getText() != null ? tfId.getText().trim().toLowerCase() : "");
+        String invoiceNumberFilter = normalizeString(tfInvoiceNumber.getText() != null ? tfInvoiceNumber.getText().trim().toLowerCase() : "");
+        String createAtFilter = normalizeString(tfCreateAt.getText() != null ? tfCreateAt.getText().trim().toLowerCase() : "");
+        String invoiceFilter = normalizeString(tfInvoice.getText() != null ? tfInvoice.getText().trim().toLowerCase() : "");
+        String companyFilter = normalizeString(tfCompany.getText() != null ? tfCompany.getText().trim().toLowerCase() : "");
+        String warehouseFilter = normalizeString(tfWarehouse.getText() != null ? tfWarehouse.getText().trim().toLowerCase() : "");
 
         for (ImportReceiptModelTable item : allReceiptData) {
             boolean match = true;
-            String idStr = item.getId() != null ? String.valueOf(item.getId()).toLowerCase() : "";
-            String invoiceNumber = item.getInvoiceNumber() != null ? item.getInvoiceNumber().toLowerCase() : "";
-            String createAt = item.getCreateAt() != null ? item.getCreateAt().toLowerCase() : "";
-            String invoice = item.getInvoice() != null ? item.getInvoice().toLowerCase() : "";
-            String company = item.getCompanyName() != null ? item.getCompanyName().toLowerCase() : "";
-            String warehouse = item.getWarehouseName() != null ? item.getWarehouseName().toLowerCase() : "";
+            String idStr = normalizeString(item.getId() != null ? String.valueOf(item.getId()).toLowerCase() : "");
+            String invoiceNumber = normalizeString(item.getInvoiceNumber() != null ? item.getInvoiceNumber().toLowerCase() : "");
+            String createAt = normalizeString(item.getCreateAt() != null ? item.getCreateAt().toLowerCase() : "");
+            String invoice = normalizeString(item.getInvoice() != null ? item.getInvoice().toLowerCase() : "");
+            String company = normalizeString(item.getCompanyName() != null ? item.getCompanyName().toLowerCase() : "");
+            String warehouse = normalizeString(item.getWarehouseName() != null ? item.getWarehouseName().toLowerCase() : "");
 
             if (!idFilter.isEmpty() && !idStr.contains(idFilter)) match = false;
             if (!invoiceNumberFilter.isEmpty() && !invoiceNumber.contains(invoiceNumberFilter)) match = false;
@@ -376,12 +391,12 @@ public class ImportReceiptScreen extends VBox {
 
     private void filterProductOfReceipt() {
         ObservableList<ImportReceiptDetailModelTable> filteredData = FXCollections.observableArrayList();
-        String productIdInput = tfProductIdImportReceipt.getText() != null ? tfProductIdImportReceipt.getText().trim().toLowerCase() : "";
-        String productNameInput = tfProductNameImportReceipt.getText() != null ? tfProductNameImportReceipt.getText().trim().toLowerCase() : "";
+        String productIdInput = normalizeString(tfProductIdImportReceipt.getText() != null ? tfProductIdImportReceipt.getText().trim().toLowerCase() : "");
+        String productNameInput = normalizeString(tfProductNameImportReceipt.getText() != null ? tfProductNameImportReceipt.getText().trim().toLowerCase() : "");
         for (ImportReceiptDetailModelTable item : allProductData) {
             boolean match = true;
-            String idStr = item.getProductId() != null ? String.valueOf(item.getId()).toLowerCase() : "";
-            String productNameStr = item.getProductName() != null ? item.getProductName().toLowerCase() : "";
+            String idStr = normalizeString(item.getProductId() != null ? String.valueOf(item.getId()).toLowerCase() : "");
+            String productNameStr = normalizeString(item.getProductName() != null ? item.getProductName().toLowerCase() : "");
 
             if (!productIdInput.isEmpty() && !idStr.contains(productIdInput)) match = false;
             if (!productNameInput.isEmpty() && !productNameStr.contains(productNameInput)) match = false;
@@ -410,4 +425,10 @@ public class ImportReceiptScreen extends VBox {
         table.setMinHeight(HEADER_HEIGHT);
     }
 
+    private String normalizeString(String input) {
+        if (input == null) return "";
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        return normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                .toLowerCase();
+    }
 }
