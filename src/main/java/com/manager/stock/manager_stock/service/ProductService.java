@@ -1,17 +1,13 @@
 package com.manager.stock.manager_stock.service;
 
-import com.manager.stock.manager_stock.dao.impl.ProductDao;
 import com.manager.stock.manager_stock.model.ProductModel;
 
 import java.util.List;
 
-/**
- * @author Trọng Hướng
- */
-public class ProductService {
-    private final ProductDao productDao = new ProductDao();
+public interface ProductService {
+    List<ProductModel> getAllProducts();
 
-    public List<ProductModel> getAllProducts() {
-        return productDao.getAll();
-    }
+    List<ProductModel> getByName(String text);
+
+    List<ProductModel> getByGroup(String groupId);
 }

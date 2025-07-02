@@ -17,4 +17,6 @@ module com.manager.stock.manager_stock {
 
     opens com.manager.stock.manager_stock to javafx.fxml;
     exports com.manager.stock.manager_stock;
+
+    opens com.manager.stock.manager_stock.model to javafx.base;
 }

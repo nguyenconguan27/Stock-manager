@@ -37,6 +37,7 @@ public class MainApplication extends Application {
         ScreenNavigator.navigateTo(new DashBoardScreen());
 
         Scene scene = new Scene(root, 1000, 600);
+        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         stage.setTitle("Ứng dụng quản lý kho");
         stage.setScene(scene);
         stage.show();

@@ -9,11 +9,36 @@ import java.util.List;
  * @author Trọng Hướng
  */
 public class ProductDao {
+    public static ProductDao INSTANCE;
+
+    public static ProductDao getInstance() {
+        if (INSTANCE == null) {
+            return new ProductDao();
+        }
+        return INSTANCE;
+    }
+
+    public ProductDao() {
+    }
+
     public List<ProductModel> getAll() {
         return Arrays.asList(
-                new ProductModel("P001", "Thép", 50),
-                new ProductModel("P002", "Gạch", 120),
-                new ProductModel("P003", "Cát", 70)
+                new ProductModel("P001", "Thép", 50, "cái", 100),
+                new ProductModel("P002", "Gạch", 120, "cái", 100),
+                new ProductModel("P003", "Cát", 70, "cái", 23)
+        );
+    }
+
+    public List<ProductModel> findByName(String text) {
+        return Arrays.asList(
+                new ProductModel("P001", "Thép", 50, "cái", 100)
+        );
+    }
+
+    public List<ProductModel> findByGroup(String groupId) {
+        return Arrays.asList(
+                new ProductModel("P001", "Thép", 50, "cái", 100),
+                new ProductModel("P003", "Cát", 70, "cái", 23)
         );
     }
 }

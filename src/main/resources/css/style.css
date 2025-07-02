@@ -1,0 +1,38 @@
+/* Product list css */
+#product-list-label {
+    -fx-font-size: 18px;
+}
+#inventory-product-table {
+    -fx-background-color: #e6f1f8;
+    -fx-table-cell-border-color: transparent;
+    -fx-padding: 5;
+    -fx-border-color: #cde3f6;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+#inventory-product-table .column-header-background {
+    -fx-background-color: #d0e6f7;
+}
+#inventory-product-table .column-header,
+#inventory-product-table .filler {
+    -fx-size: 35px;
+    -fx-border-color: #d0e6f7;
+    -fx-border-width: 0 0 1 1;
+    -fx-alignment: CENTER_LEFT;
+    -fx-font-weight: bold;
+}
+#inventory-product-table .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: #cde3f6;
+    -fx-border-width: 0 0 1 0;
+}
+#inventory-product-table .table-row-cell:filled:selected,
+#inventory-product-table .table-row-cell:focused:selected {
+    -fx-background-color: #4a9bd3;
+    -fx-text-fill: white;
+}
+#inventory-product-table .table-cell {
+    -fx-padding: 6px;
+    -fx-font-size: 13px;
+}

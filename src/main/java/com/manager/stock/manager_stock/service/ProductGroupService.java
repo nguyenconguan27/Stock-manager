@@ -1,8 +1,9 @@
 package com.manager.stock.manager_stock.service;
 
-/**
- * @author Trọng Hướng
- */
-public class ProductGroupService {
+import com.manager.stock.manager_stock.model.ProductGroup;
 
+import java.util.List;
+
+public interface ProductGroupService {
+    List<ProductGroup> getAll();
 }
