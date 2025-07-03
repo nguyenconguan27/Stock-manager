@@ -40,13 +40,10 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
 
     @Override
     public long save(ImportReceiptModel importReceiptModel) throws DaoException {
-        String sql = "INSERT INTO import_receipt (id, invoice_number, create_at, delivered_by, invoice, company_name, warehouse_name, total_price, total_price_in_word) " +
-                    " values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO import_receipt (invoice_number, create_at, delivered_by, invoice, company_name, warehouse_name, total_price, total_price_in_word) " +
+                    " values (?, ?, ?, ?, ?, ?, ?, ?)";
         List<Object[]> parameters = new ArrayList<>();
-        System.out.println("Save(Dao)");
-        long importReceiptId = System.nanoTime();
         parameters.add(new Object[]{
-                importReceiptId,
                 importReceiptModel.getInvoiceNumber(),
                 importReceiptModel.getCreateAt(),
                 importReceiptModel.getDeliveredBy(),
@@ -56,7 +53,38 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
                 importReceiptModel.getTotalPrice(),
                 importReceiptModel.getTotalPriceInWord()
         });
+        return save(sql, parameters);
+    }
+
+    @Override
+    public void update(ImportReceiptModel importReceiptModel) throws DaoException {
+        String sql = "UPDATE import_receipt set invoice_number = ?, create_at = ?, delivered_by = ?, " +
+                    "invoice = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ? " +
+                    " where id = ?";
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[]{
+                importReceiptModel.getInvoiceNumber(),
+                importReceiptModel.getCreateAt(),
+                importReceiptModel.getDeliveredBy(),
+                importReceiptModel.getInvoice(),
+                importReceiptModel.getCompanyName(),
+                importReceiptModel.getWarehouseName(),
+                importReceiptModel.getTotalPrice(),
+                importReceiptModel.getTotalPriceInWord(),
+                importReceiptModel.getId()
+        });
         save(sql, parameters);
-        return importReceiptId;
+    }
+
+    @Override
+    public void delete(List<Long> ids) {
+        String sql = "DELETE from import_receipt where id in [";
+        for(int i = 0; i < ids.size(); i++) {
+            sql += "?";
+            if(i != ids.size() - 1) {
+                sql += ",";
+            }
+        }
+        delete(sql, ids);
     }
 }

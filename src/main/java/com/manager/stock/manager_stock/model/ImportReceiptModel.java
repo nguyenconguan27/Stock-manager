@@ -16,6 +16,7 @@ public class ImportReceiptModel {
     private String warehouseName;
     private double totalPrice;
     private String totalPriceInWord;
+//    private String totalPriceFormat;
     private List<ImportReceiptDetailModel> importReceiptDetails;
 
     public ImportReceiptModel() {}
@@ -112,6 +113,14 @@ public class ImportReceiptModel {
     public void setImportReceiptDetails(List<ImportReceiptDetailModel> importReceiptDetails) {
         this.importReceiptDetails = importReceiptDetails;
     }
+
+//    public String getTotalPriceFormat() {
+//        return totalPriceFormat;
+//    }
+//
+//    public void setTotalPriceFormat(String totalPriceFormat) {
+//        this.totalPriceFormat = totalPriceFormat;
+//    }
 
     @Override
     public String toString() {

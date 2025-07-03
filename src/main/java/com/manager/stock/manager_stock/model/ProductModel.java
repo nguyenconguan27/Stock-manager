@@ -4,15 +4,17 @@ package com.manager.stock.manager_stock.model;
  * @author Trọng Hướng
  */
 public class ProductModel {
-    private String id;
+    private Long id;
+    private String code;
     private String name;
     private int quantity;
     private String unit;
     private int unitPrice;
     private String createdAt;
 
-    public ProductModel(String id, String name, int quantity, String unit, int unitPrice) {
+    public ProductModel(long id, String code, String name, int quantity, String unit, int unitPrice) {
         this.id = id;
+        this.code = code;
         this.name = name;
         this.quantity = quantity;
         this.unit = unit;
@@ -43,13 +45,6 @@ public class ProductModel {
         return createdAt;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -65,5 +60,21 @@ public class ProductModel {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

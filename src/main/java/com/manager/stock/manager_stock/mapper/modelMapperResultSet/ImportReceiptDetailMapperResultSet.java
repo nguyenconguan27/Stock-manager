@@ -21,11 +21,11 @@ public class ImportReceiptDetailMapperResultSet implements RowMapper<ImportRecei
                 case "id":
                     importReceiptDetailModel.setId(resultSet.getLong(columnName));
                     break;
-                case "importReceipt_id":
+                case "import_receipt_id":
                     importReceiptDetailModel.setImportReceiptId(resultSet.getLong(columnName));
                     break;
                 case "product_id":
-                    importReceiptDetailModel.setProductId(resultSet.getString(columnName));
+                    importReceiptDetailModel.setProductId(resultSet.getLong(columnName));
                     break;
                 case "planned_quantity":
                     importReceiptDetailModel.setPlannedQuantity(resultSet.getInt(columnName));
@@ -41,6 +41,9 @@ public class ImportReceiptDetailMapperResultSet implements RowMapper<ImportRecei
                     break;
                 case "product_name":
                     importReceiptDetailModel.setProductName(resultSet.getString(columnName));
+                    break;
+                case "product_code":
+                    importReceiptDetailModel.setProductCode(resultSet.getString(columnName));
                     break;
             }
         }

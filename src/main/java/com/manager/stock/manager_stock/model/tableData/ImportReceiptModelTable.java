@@ -16,10 +16,11 @@ public class ImportReceiptModelTable {
     private final StringProperty warehouseName = new SimpleStringProperty();
     private final DoubleProperty totalPrice = new SimpleDoubleProperty();
     private final StringProperty totalPriceInWord = new SimpleStringProperty();
+    private final StringProperty totalPriceFormat = new SimpleStringProperty();
 
     public ImportReceiptModelTable(Long id, String invoiceNumber, String createAt, String deliveredBy,
                                    String invoice, String companyName, String warehouseName,
-                                   double totalPrice) {
+                                   double totalPrice, String totalPriceFormat) {
         this.id.set(id);
         this.invoiceNumber.set(invoiceNumber);
         this.createAt.set(createAt);
@@ -28,7 +29,7 @@ public class ImportReceiptModelTable {
         this.companyName.set(companyName);
         this.warehouseName.set(warehouseName);
         this.totalPrice.set(totalPrice);
-
+        this.totalPriceFormat.set(totalPriceFormat);
     }
 
     // Getters for properties
@@ -41,6 +42,7 @@ public class ImportReceiptModelTable {
     public StringProperty warehouseNameProperty() { return warehouseName; }
     public DoubleProperty totalPriceProperty() { return totalPrice; }
     public StringProperty totalPriceInWordProperty() { return totalPriceInWord; }
+    public StringProperty totalPriceFormatProperty() { return totalPriceFormat; }
 
     // Getters for values (optional if needed)
     public Long getId() { return id.get(); }

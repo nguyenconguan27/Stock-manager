@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface GenericDao<T> {
     <T> List<T> query(String sql, RowMapper<T> mapper, Object...parameters);
-    int save(String sql, List<Object[]> parameters);
+    long save(String sql, List<Object[]> parameters);
     int update(String sql, Object... parameters);
     void delete(String sql, List<Long> ids);
 }

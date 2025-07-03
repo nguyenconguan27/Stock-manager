@@ -16,27 +16,8 @@ import java.util.*;
 public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailModel> implements IImportReceiptDetailDao {
 
     private static ImportReceiptDetailDaoImpl instance;
-    private HashMap<Long, List<ImportReceiptDetailModel>> sampleData = new HashMap<>();
     private ImportReceiptDetailDaoImpl() {
-        sampleData.put(1L,
-                Arrays.asList(
-                        new ImportReceiptDetailModel(1L, 1L, "101", 10, 9, 50000, 9 * 50000, "Sản phẩm 1"),
-                        new ImportReceiptDetailModel(2L, 1L, "102", 15, 15, 70000, 15 * 70000, "Sản phẩm 1")
-                ));
 
-        sampleData.put(2L,
-                Arrays.asList(
-                        new ImportReceiptDetailModel(3L, 2L, "103", 20, 18, 45000, 18 * 45000, "Sản phẩm 1"),
-                        new ImportReceiptDetailModel(4L, 2L, "104", 10, 10, 40000, 10 * 40000, "Sản phẩm 1")
-                )
-        );
-
-        sampleData.put(3L,
-                Arrays.asList(
-                        new ImportReceiptDetailModel(5L, 3L, "105", 5, 5, 100000, 5 * 100000, "Sản phẩm 1"),
-                        new ImportReceiptDetailModel(6L, 3L, "106", 8, 8, 75000, 8 * 75000, "Sản phẩm 1")
-                )
-        );
     }
 
     public static ImportReceiptDetailDaoImpl getInstance() {
@@ -48,18 +29,20 @@ public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailM
 
     @Override
     public List<ImportReceiptDetailModel> findAllByImportReceiptId(long importReceiptId) {
-        String sql = "SELECT * FROM import_receipt_detail WHERE import_receipt_id = ?";
+        String sql = "SELECT ird.*, p.code as product_code, p.\"name\" as product_name FROM import_receipt_detail ird\n" +
+                "join import_receipt ir on ird.import_receipt_id = ir.id \n" +
+                "join product p on p.id = ir.id \n" +
+                "WHERE import_receipt_id = ?";
         return query(sql, new ImportReceiptDetailMapperResultSet(), importReceiptId);
     }
 
     @Override
-    public int save(List<ImportReceiptDetailModel> importReceiptDetailModels, long importReceiptId) throws DaoException {
-        String sql = "INSERT INTO import_receipt_detail (id, import_receipt_id, product_id, planned_quantity, actual_quantity, unit_price, total_price, product_name)" +
-                    " values (?, ?, ?, ?, ?, ?, ?, ?)";
+    public long save(List<ImportReceiptDetailModel> importReceiptDetailModels, long importReceiptId) throws DaoException {
+        String sql = "INSERT INTO import_receipt_detail (import_receipt_id, product_id, planned_quantity, actual_quantity, unit_price, total_price, product_name)" +
+                    " values (?, ?, ?, ?, ?, ?, ?)";
         List<Object[]> parameters = new ArrayList<>();
         for(ImportReceiptDetailModel importReceiptDetailModel : importReceiptDetailModels){
             parameters.add(new Object[]{
-                    System.nanoTime(),
                     importReceiptId,
                     importReceiptDetailModel.getProductId(),
                     importReceiptDetailModel.getPlannedQuantity(),
@@ -70,5 +53,22 @@ public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailM
             });
         }
         return save(sql, parameters);
+    }
+
+    @Override
+    public void update(List<ImportReceiptDetailModel> importReceiptDetailModels) throws DaoException {
+        String sql = "UPDATE import_receipt_detail set planned_quantity = ?, actual_quantity = ?, unit_price = ?, total_price = ?" +
+                    " where id = ?";
+        List<Object[]> parameters = new ArrayList<>();
+        for(ImportReceiptDetailModel importReceiptDetailModel : importReceiptDetailModels){
+            parameters.add(new Object[]{
+                importReceiptDetailModel.getPlannedQuantity(),
+                importReceiptDetailModel.getActualQuantity(),
+                importReceiptDetailModel.getUnitPrice(),
+                importReceiptDetailModel.getTotalPrice(),
+                importReceiptDetailModel.getId()
+            });
+        }
+        save(sql, parameters);
     }
 }

@@ -111,7 +111,7 @@ public class AbstractDao<T> implements GenericDao<T> {
     }
 
     @Override
-    public int save(String sql, List<Object[]> parameters) {
+    public long save(String sql, List<Object[]> parameters) {
         logger.debug("Start insert of database with sql: {}", sql);
         logger.debug("Start insert of database with params: {}", parameters);
         PreparedStatement stmt = null;
@@ -123,12 +123,15 @@ public class AbstractDao<T> implements GenericDao<T> {
                 setParams(stmt, params);
                 stmt.addBatch();
             }
+            if(parameters.size() == 1) {
+                return stmt.executeUpdate();
+            }
             int[] insertResult = stmt.executeBatch();
             logger.info(String.format("Insert success: {%d} rows.", insertResult.length));
             return insertResult.length;
         }
         catch (SQLException e) {
-            logger.error("SQL Exception while inserting database with sql: {}", sql, e);
+            logger.error("SQL Exception while save database with sql: {}", sql, e);
             e.printStackTrace();
             throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
         }
@@ -161,7 +164,9 @@ public class AbstractDao<T> implements GenericDao<T> {
         try {
             connection = getConnection();
             stmt = connection.prepareStatement(sql);
-            setParams(stmt, ids);
+            for(Long id : ids) {
+                setParams(stmt, id);
+            }
             stmt.executeUpdate();
         }
         catch (SQLException e) {

@@ -6,16 +6,19 @@ package com.manager.stock.manager_stock.model;
 public class ImportReceiptDetailModel {
     private long id;
     private long importReceiptId;
-    private String productId;
+    private long productId;
     private int plannedQuantity;
     private int actualQuantity;
     private double unitPrice;
     private double totalPrice;
     private String productName;
+    private String unitPriceFormat;
+    private String totalPriceFormat;
+    private String productCode;
 
     public ImportReceiptDetailModel() {}
 
-    public ImportReceiptDetailModel(long id, long importReceiptId, String productId, int plannedQuantity, int actualQuantity, double unitPrice, double totalPrice, String productName) {
+    public ImportReceiptDetailModel(long id, long importReceiptId, long productId, int plannedQuantity, int actualQuantity, double unitPrice, double totalPrice, String productName, String productCode) {
         this.id = id;
         this.importReceiptId = importReceiptId;
         this.productId = productId;
@@ -24,6 +27,7 @@ public class ImportReceiptDetailModel {
         this.unitPrice = unitPrice;
         this.totalPrice = totalPrice;
         this.productName = productName;
+        this.productCode = productCode;
     }
 
     public long getId() {
@@ -42,11 +46,11 @@ public class ImportReceiptDetailModel {
         this.importReceiptId = importReceiptId;
     }
 
-    public String getProductId() {
+    public long getProductId() {
         return productId;
     }
 
-    public void setProductId(String productId) {
+    public void setProductId(long productId) {
         this.productId = productId;
     }
 
@@ -90,6 +94,30 @@ public class ImportReceiptDetailModel {
         this.productName = productName;
     }
 
+    public String getUnitPriceFormat() {
+        return unitPriceFormat;
+    }
+
+    public void setUnitPriceFormat(String unitPriceFormat) {
+        this.unitPriceFormat = unitPriceFormat;
+    }
+
+    public String getTotalPriceFormat() {
+        return totalPriceFormat;
+    }
+
+    public void setTotalPriceFormat(String totalPriceFormat) {
+        this.totalPriceFormat = totalPriceFormat;
+    }
+
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
+    }
+
     @Override
     public String toString() {
         return "ImportReceiptDetailModel{" +
@@ -100,6 +128,7 @@ public class ImportReceiptDetailModel {
                 ", actualQuantity=" + actualQuantity +
                 ", unitPrice=" + unitPrice +
                 ", totalPrice=" + totalPrice +
+                ", productCode=" + productCode +
                 ", productName='" + productName + '\'' +
                 '}';
     }

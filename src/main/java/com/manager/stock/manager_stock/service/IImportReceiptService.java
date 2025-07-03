@@ -10,4 +10,6 @@ import java.util.List;
 public interface IImportReceiptService {
     List<ImportReceiptModel> findAll();
     long save(ImportReceiptModel importReceiptModel);
+    void update(ImportReceiptModel importReceiptModel);
+    void delete(long id);
 }

@@ -33,7 +33,12 @@ public class ImportReceiptDetailServiceImpl implements IImportReceiptDetailServi
     }
 
     @Override
-    public int save(List<ImportReceiptDetailModel> importReceiptDetailModels, long importReceiptId) throws DaoException {
+    public long save(List<ImportReceiptDetailModel> importReceiptDetailModels, long importReceiptId) throws DaoException {
         return importReceiptDetailDao.save(importReceiptDetailModels, importReceiptId);
+    }
+
+    @Override
+    public void update(List<ImportReceiptDetailModel> importReceiptDetailModels) throws DaoException {
+        importReceiptDetailDao.update(importReceiptDetailModels);
     }
 }

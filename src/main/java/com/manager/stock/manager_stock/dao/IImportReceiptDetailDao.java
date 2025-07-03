@@ -9,5 +9,6 @@ import java.util.List;
  */
 public interface IImportReceiptDetailDao {
     List<ImportReceiptDetailModel> findAllByImportReceiptId(long importReceiptId);
-    int save(List<ImportReceiptDetailModel> importReceiptDetailModels, long importReceiptId);
+    long save(List<ImportReceiptDetailModel> importReceiptDetailModels, long importReceiptId);
+    void update(List<ImportReceiptDetailModel> importReceiptDetailModels);
 }

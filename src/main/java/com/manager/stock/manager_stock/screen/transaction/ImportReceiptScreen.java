@@ -34,17 +34,18 @@ public class ImportReceiptScreen extends VBox {
     private final ObservableList<ImportReceiptModelTable> receiptData = FXCollections.observableArrayList(); // Filtered data
     private final ObservableList<ImportReceiptDetailModelTable> allProductData = FXCollections.observableArrayList();
     private final ObservableList<ImportReceiptDetailModelTable> productData = FXCollections.observableArrayList();
-    private int itemsPerPage = 5;
+    private int itemsPerPage = 10;
     private TextField tfId, tfInvoiceNumber, tfCreateAt, tfInvoice, tfCompany, tfWarehouse, tfProductNameImportReceipt, tfProductIdImportReceipt;
     private static final double ROW_HEIGHT = 30.0;
     private static final double HEADER_HEIGHT = 30.0;
     private static final double MAX_TABLE_HEIGHT = 400.0;
+    private ImportReceiptModelTable selected;
 
     public ImportReceiptScreen() {
         setSpacing(0);
         setStyle("-fx-padding: 0 5px 0 5px; -fx-background-insets: 0; -fx-background-color: #e1f0f7");
 
-        HBox topBar = CreateTopBarOfReceiptUtil.createTopBar();
+        HBox topBar = CreateTopBarOfReceiptUtil.createTopBar(this::getReceiptSelected);
         HBox inputSearch = createFilterRow();
 
         createImportReceiptTable();
@@ -95,7 +96,7 @@ public class ImportReceiptScreen extends VBox {
         TableColumn<ImportReceiptModelTable, String> colInvoice = CreateColumnTableUtil.createColumn("Số phiếu nhập", ImportReceiptModelTable::invoiceProperty);
         TableColumn<ImportReceiptModelTable, String> colCompany = CreateColumnTableUtil.createColumn("Công ty", ImportReceiptModelTable::companyNameProperty);
         TableColumn<ImportReceiptModelTable, String> colWarehouse = CreateColumnTableUtil.createColumn("Kho", ImportReceiptModelTable::warehouseNameProperty);
-        TableColumn<ImportReceiptModelTable, Number> colTotalPrice = CreateColumnTableUtil.createColumn("Thành tiền", ImportReceiptModelTable::totalPriceProperty);
+        TableColumn<ImportReceiptModelTable, String> colTotalPrice = CreateColumnTableUtil.createColumn("Thành tiền", ImportReceiptModelTable::totalPriceFormatProperty);
 
         setColumnPercentWidth(colId,           5);
         setColumnPercentWidth(colInvoiceNumber,10);
@@ -153,11 +154,10 @@ public class ImportReceiptScreen extends VBox {
         });
 
         receiptTable.setOnMouseClicked(event -> {
-            ImportReceiptModelTable selected = receiptTable.getSelectionModel().getSelectedItem();
+            selected = receiptTable.getSelectionModel().getSelectedItem();
             if (selected != null) {
                 long id = selected.getId();
                 showItemDetails(id);
-                System.out.println("Clicked ID: " + id);
             }
         });
     }
@@ -185,12 +185,12 @@ public class ImportReceiptScreen extends VBox {
     }
 
     private VBox createItemDetailByReceipt() {
-        TableColumn<ImportReceiptDetailModelTable, String> colProductId = CreateColumnTableUtil.createColumn("Mã SP", ImportReceiptDetailModelTable::productIdProperty);
+        TableColumn<ImportReceiptDetailModelTable, String> colProductId = CreateColumnTableUtil.createColumn("Mã SP", ImportReceiptDetailModelTable::codeProperty);
         TableColumn<ImportReceiptDetailModelTable, String> colProductName = CreateColumnTableUtil.createColumn("Tên SP", ImportReceiptDetailModelTable::productNameProperty);
         TableColumn<ImportReceiptDetailModelTable, Number> colPlannedQty = CreateColumnTableUtil.createColumn("SL theo CT", ImportReceiptDetailModelTable::plannedQuantityProperty);
         TableColumn<ImportReceiptDetailModelTable, Number> colActualQty = CreateColumnTableUtil.createColumn("SL thực tế", ImportReceiptDetailModelTable::actualQuantityProperty);
-        TableColumn<ImportReceiptDetailModelTable, Number> colUnitPrice = CreateColumnTableUtil.createColumn("Đơn giá", ImportReceiptDetailModelTable::unitPriceProperty);
-        TableColumn<ImportReceiptDetailModelTable, Number> colTotalPrice = CreateColumnTableUtil.createColumn("Thành tiền", ImportReceiptDetailModelTable::totalPriceProperty);
+        TableColumn<ImportReceiptDetailModelTable, String> colUnitPrice = CreateColumnTableUtil.createColumn("Đơn giá", ImportReceiptDetailModelTable::unitPriceFormatProperty);
+        TableColumn<ImportReceiptDetailModelTable, String> colTotalPrice = CreateColumnTableUtil.createColumn("Thành tiền", ImportReceiptDetailModelTable::totalPriceFormatProperty);
 
         setColumnPercentWidth(colProductId,           15);
         setColumnPercentWidth(colProductName,15);
@@ -277,9 +277,6 @@ public class ImportReceiptScreen extends VBox {
         try {
             ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
             List<ImportReceiptDetailModel> importReceiptDetailModels = presenter.loadImportReceiptDetailList(importReceiptId);
-            for (ImportReceiptDetailModel importReceiptDetailModel : importReceiptDetailModels) {
-                System.out.println(importReceiptDetailModel);
-            }
             List<ImportReceiptDetailModelTable> detailTables =
                     GenericConverterBetweenModelAndTableData.convertToList(importReceiptDetailModels, ImportReceiptDetailModelMapper.INSTANCE::toViewModel);
             productData.setAll(detailTables);
@@ -430,5 +427,9 @@ public class ImportReceiptScreen extends VBox {
         String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
         return normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
                 .toLowerCase();
+    }
+
+    public ImportReceiptModelTable getReceiptSelected () {
+        return this.selected;
     }
 }

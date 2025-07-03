@@ -1,21 +1,25 @@
 package com.manager.stock.manager_stock.utils;
 
+import com.manager.stock.manager_stock.model.tableData.ImportReceiptModelTable;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.transaction.AddOrUpdateReceiptScreen;
 import com.manager.stock.manager_stock.screen.transaction.ImportReceiptScreen;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+
+import java.util.function.Supplier;
 
 /**
  * @author Trọng Hướng
  */
 public class CreateTopBarOfReceiptUtil {
 
-    public static HBox createTopBar() {
+    public static HBox createTopBar(Supplier<ImportReceiptModelTable> importReceiptModelSelected) {
         Image addIcon = new Image(CreateTopBarOfReceiptUtil.class.getResource("/com/manager/stock/manager_stock/icons/add.png").toExternalForm()); // Or .svg, .jpg, etc.
         Image editIcon = new Image(CreateTopBarOfReceiptUtil.class.getResource("/com/manager/stock/manager_stock/icons/pencil.png").toExternalForm());
         Image deleteIcon = new Image(CreateTopBarOfReceiptUtil.class.getResource("/com/manager/stock/manager_stock/icons/delete.png").toExternalForm());
@@ -35,10 +39,42 @@ public class CreateTopBarOfReceiptUtil {
             ((ImageView)btn.getGraphic()).setPreserveRatio(true);
 
             AddCssStyleForBtnUtil.addCssStyleForBtn(btn);
-
+            String btnType = btn.getText();
             btn.setOnMouseClicked((e) -> {
-                AddOrUpdateReceiptScreen addOrUpdateReceiptScreen = new AddOrUpdateReceiptScreen();
-                ScreenNavigator.navigateTo(addOrUpdateReceiptScreen);
+                switch (btnType) {
+                    case "Thêm":
+                        AddOrUpdateReceiptScreen addReceiptScreen = new AddOrUpdateReceiptScreen(null);
+                        ScreenNavigator.navigateTo(addReceiptScreen);
+                        break;
+                    case "Sửa":
+                        try {
+                            System.out.println("Chỉnh sửa hóa đơn");
+                            if(importReceiptModelSelected != null) {
+                                System.out.println(importReceiptModelSelected.get());
+                                AddOrUpdateReceiptScreen updateReceiptScreen = new AddOrUpdateReceiptScreen(importReceiptModelSelected.get());
+                                ScreenNavigator.navigateTo(updateReceiptScreen);
+                            }
+                            else {
+                                System.out.println("Không có hóa đơn nào được chọn.");
+                            }
+                        }
+                        catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                        break;
+                    case "Xóa":
+                        System.out.println("Xóa hóa đơn");
+                        break;
+                    case "Tải lại":
+                        System.out.println("Tải lại toàn bộ hóa đơn");
+                        break;
+                    case "In":
+                        System.out.println("In hóa đơn");
+                        break;
+                    case "Xuất":
+                        System.out.println("Xuất hóa đơn");
+                        break;
+                }
             });
         }
 

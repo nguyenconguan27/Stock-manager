@@ -7,6 +7,7 @@ import com.manager.stock.manager_stock.model.ImportReceiptModel;
 import com.manager.stock.manager_stock.screen.transaction.ImportReceiptPresenter;
 import com.manager.stock.manager_stock.service.IImportReceiptService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,7 +35,18 @@ public class ImportReceiptServiceImpl implements IImportReceiptService {
 
     @Override
     public long save(ImportReceiptModel importReceiptModel) throws DaoException {
-        System.out.println("Save(service)");
         return importReceiptDao.save(importReceiptModel);
+    }
+
+    @Override
+    public void update(ImportReceiptModel importReceiptModel) throws DaoException {
+        importReceiptDao.update(importReceiptModel);
+    }
+
+    @Override
+    public void delete(long id) throws  DaoException {
+        List<Long> ids = new ArrayList<>();
+        ids.add(id);
+        importReceiptDao.delete(ids);
     }
 }
