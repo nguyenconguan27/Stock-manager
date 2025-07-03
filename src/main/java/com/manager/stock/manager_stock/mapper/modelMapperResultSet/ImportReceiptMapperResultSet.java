@@ -46,6 +46,9 @@ public class ImportReceiptMapperResultSet implements RowMapper<ImportReceiptMode
                     case "total_price_in_word":
                         importReceiptModel.setTotalPriceInWord(resultSet.getString(columnName));
                         break;
+                    case "academic_year":
+                        importReceiptModel.setAcademicYear(resultSet.getInt(columnName));
+                        break;
                 }
             }
             return importReceiptModel;

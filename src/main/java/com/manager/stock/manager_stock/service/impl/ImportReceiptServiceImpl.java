@@ -8,7 +8,9 @@ import com.manager.stock.manager_stock.screen.transaction.ImportReceiptPresenter
 import com.manager.stock.manager_stock.service.IImportReceiptService;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Trọng Hướng
@@ -29,8 +31,8 @@ public class ImportReceiptServiceImpl implements IImportReceiptService {
     }
 
     @Override
-    public List<ImportReceiptModel> findAll() throws DaoException{
-        return importReceiptDao.findAll();
+    public List<ImportReceiptModel> findAllByAcademicYear(Optional<Integer> academicYear) throws DaoException{
+        return importReceiptDao.findAllByAcademicYear(academicYear.orElse(Calendar.getInstance().get(Calendar.YEAR)));
     }
 
     @Override

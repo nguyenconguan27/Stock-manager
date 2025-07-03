@@ -16,6 +16,7 @@ public class ExportReceiptModel {
     private String wareHouse;
     private Double totalPrice;
     private String totalPriceInWord;
+    private int academicYear;
     private List<ExportReceiptDetailModel> exportReceiptDetailModels;
 
     public ExportReceiptModel() {
@@ -100,5 +101,13 @@ public class ExportReceiptModel {
 
     public void setExportReceiptDetailModels(List<ExportReceiptDetailModel> exportReceiptDetailModels) {
         this.exportReceiptDetailModels = exportReceiptDetailModels;
+    }
+
+    public int getAcademicYear() {
+        return academicYear;
+    }
+
+    public void setAcademicYear(int academicYear) {
+        this.academicYear = academicYear;
     }
 }

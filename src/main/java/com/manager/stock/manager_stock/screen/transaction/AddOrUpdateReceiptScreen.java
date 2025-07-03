@@ -25,6 +25,7 @@ import javafx.util.converter.NumberStringConverter;
 import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +45,8 @@ public class AddOrUpdateReceiptScreen extends VBox {
     private double totalPriceOfReceipt = 0;
     private Label totalPriceLabel = new Label(FormatMoney.format(0));
     private Set<Long> changeIdsOfReceiptDetails = new HashSet<>();
+    private HashMap<Long, Integer> changeQuantityByProductMap = new HashMap<>();
+    private HashMap<Long, Double> changeTotalPriceByProductMap = new HashMap<>();
 
     private TextField tfInvoiceNumber, tfInvoice, tfDeliveredBy, tfCompanyName, tfWareHouse;
     private DatePicker dpCreateAt;
@@ -381,16 +384,18 @@ public class AddOrUpdateReceiptScreen extends VBox {
             }
             try {
                 System.out.println("Save import receipt: " + importReceiptModel);
+                // thêm mới hóa đơn nhập
                 if(oldImportReceiptModelTable == null) {
                     presenter.saveImportReceipt(importReceiptModel, productDetails);
                     AlertUtils.alert("Thêm mới phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
                 }
+                // Cập nhật hóa đơn nhập
                 else {
                     List<ImportReceiptDetailModelTable> newProductDetails = productDetails.stream()
                                     .filter(importReceiptDetailModelTable -> changeIdsOfReceiptDetails.contains(importReceiptDetailModelTable.getId()) || importReceiptDetailModelTable.getId() == -1)
                                     .collect(Collectors.toList());
                     ImportReceiptModel oldImportReceiptModel = ImportReceiptModelMapper.INSTANCE.fromViewModelToModel(oldImportReceiptModelTable);
-                    presenter.updateImportReceipt(importReceiptModel, oldImportReceiptModel, newProductDetails);
+                    presenter.updateImportReceipt(importReceiptModel, oldImportReceiptModel, newProductDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
                     AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
                 }
                 ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
@@ -449,12 +454,18 @@ public class AddOrUpdateReceiptScreen extends VBox {
         totalPriceOfReceipt += currentTotalPrice;
         totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
         if(productExists != null) {
-            int actualQuantityCurrent =  productExists.getActualQuantity() + actualQuantity;
+            int actualQuantityCurrent = productExists.getActualQuantity() + actualQuantity;
             double totalPriceCurrent = productExists.getTotalPrice() + currentTotalPrice;
             productExists.setActualQuantity(actualQuantityCurrent);
             productExists.setTotalPrice(totalPriceCurrent);
             productExists.setTotalPriceFormat(FormatMoney.format(totalPriceCurrent));
             changeIdsOfReceiptDetails.add(productExists.getId());
+            //
+            int changeQuantityByProduct = changeQuantityByProductMap.getOrDefault(productExists.getProductId(), 0);
+            changeQuantityByProductMap.put(productExists.getProductId(), changeQuantityByProduct + actualQuantity);
+
+            double changeTotalPriceByProduct = changeTotalPriceByProductMap.getOrDefault(productExists.getProductId(), 0.0);
+            changeTotalPriceByProductMap.put(productExists.getProductId(), changeTotalPriceByProduct + currentTotalPrice);
         }
         else {
             productDetails.add(new ImportReceiptDetailModelTable(
@@ -470,6 +481,8 @@ public class AddOrUpdateReceiptScreen extends VBox {
                     FormatMoney.format(currentTotalPrice),
                     product.getCode()
             ));
+            changeQuantityByProductMap.put(product.getId(), actualQuantity);
+            changeTotalPriceByProductMap.put(product.getId(), currentTotalPrice);
         }
         productTable.refresh();
     }

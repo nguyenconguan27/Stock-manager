@@ -16,6 +16,7 @@ public class ImportReceiptModel {
     private String warehouseName;
     private double totalPrice;
     private String totalPriceInWord;
+    private int academicYear;
 //    private String totalPriceFormat;
     private List<ImportReceiptDetailModel> importReceiptDetails;
 
@@ -114,6 +115,13 @@ public class ImportReceiptModel {
         this.importReceiptDetails = importReceiptDetails;
     }
 
+    public int getAcademicYear() {
+        return academicYear;
+    }
+
+    public void setAcademicYear(int academicYear) {
+        this.academicYear = academicYear;
+    }
 //    public String getTotalPriceFormat() {
 //        return totalPriceFormat;
 //    }

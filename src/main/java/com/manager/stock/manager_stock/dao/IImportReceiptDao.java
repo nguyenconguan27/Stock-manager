@@ -8,7 +8,7 @@ import java.util.List;
  * @author Trọng Hướng
  */
 public interface IImportReceiptDao {
-    List<ImportReceiptModel> findAll();
+    List<ImportReceiptModel> findAllByAcademicYear(int academicYear);
     long save(ImportReceiptModel importReceiptModel);
     void update(ImportReceiptModel importReceiptModel);
     void delete(List<Long> ids);

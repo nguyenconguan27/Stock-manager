@@ -260,7 +260,7 @@ public class ImportReceiptScreen extends VBox {
     public void showTable() {
         try {
             ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
-            List<ImportReceiptModel> importReceiptModels = presenter.loadImportReceiptList();
+            List<ImportReceiptModel> importReceiptModels = presenter.loadImportReceiptList(null);
             List<ImportReceiptModelTable> tableModels = GenericConverterBetweenModelAndTableData.convertToList(
                     importReceiptModels, ImportReceiptModelMapper.INSTANCE::toViewModel
             );

@@ -33,9 +33,9 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
     }
 
     @Override
-    public List<ImportReceiptModel> findAll() throws DaoException {
-        String sql = "SELECT * from import_receipt";
-        return query(sql, new ImportReceiptMapperResultSet());
+    public List<ImportReceiptModel> findAllByAcademicYear(int academicYear) throws DaoException {
+        String sql = "SELECT * from import_receipt where academic_year = ? group by academic_year, id ;";
+        return query(sql, new ImportReceiptMapperResultSet(), academicYear);
     }
 
     @Override
