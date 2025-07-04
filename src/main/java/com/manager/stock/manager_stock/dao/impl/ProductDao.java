@@ -23,7 +23,7 @@ public class ProductDao {
 
     public List<ProductModel> getAll() {
         return Arrays.asList(
-                new ProductModel(1, "P001", "Thép", 50, "cái", 100),
+                new ProductModel(4, "P001", "Thép", 50, "cái", 100),
                 new ProductModel(2, "P002", "Gạch", 120, "cái", 100),
                 new ProductModel(3, "P003", "Cát", 70, "cái", 23)
         );
@@ -31,13 +31,13 @@ public class ProductDao {
 
     public List<ProductModel> findByName(String text) {
         return Arrays.asList(
-                new ProductModel(1, "P001", "Thép", 50, "cái", 100)
+                new ProductModel(4, "P001", "Thép", 50, "cái", 100)
         );
     }
 
     public List<ProductModel> findByGroup(String groupId) {
         return Arrays.asList(
-                new ProductModel(1, "P001", "Thép", 50, "cái", 100),
+                new ProductModel(4, "P001", "Thép", 50, "cái", 100),
                 new ProductModel(3, "P003", "Cát", 70, "cái", 23)
         );
     }

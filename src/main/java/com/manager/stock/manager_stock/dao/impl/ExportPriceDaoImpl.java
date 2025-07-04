@@ -6,6 +6,7 @@ import com.manager.stock.manager_stock.mapper.modelMapperResultSet.ExportPriceMa
 import com.manager.stock.manager_stock.model.ExportPriceModel;
 import com.manager.stock.manager_stock.service.impl.ExportPriceServiceImpl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,18 +44,20 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
     }
 
     @Override
-    public void save(ExportPriceModel exportPriceModel) throws DaoException {
+    public void save(List<ExportPriceModel> exportPriceModels) throws DaoException {
         String sql = "INSERT INTO export_price(product_id, export_time, export_price, quantity_in_stock, quantity_imported, import_price) " +
                     "values (?, ?, ?, ?, ?, ?)";
         List<Object[]> parameters = new ArrayList<>();
-        parameters.add(new Object[] {
-            exportPriceModel.getProductId(),
-            System.currentTimeMillis(),
-            exportPriceModel.getExportPrice(),
-            exportPriceModel.getQuantityInStock(),
-            exportPriceModel.getQuantityImported(),
-            exportPriceModel.getImportPrice()
-        });
+        for(ExportPriceModel exportPriceModel : exportPriceModels){
+            parameters.add(new Object[] {
+                exportPriceModel.getProductId(),
+                LocalDateTime.now(),
+                exportPriceModel.getExportPrice(),
+                exportPriceModel.getQuantityInStock(),
+                exportPriceModel.getQuantityImported(),
+                exportPriceModel.getImportPrice()
+            });
+        }
         save(sql, parameters);
     }
 }

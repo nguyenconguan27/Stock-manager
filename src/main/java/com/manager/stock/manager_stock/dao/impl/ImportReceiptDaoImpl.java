@@ -40,8 +40,8 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
 
     @Override
     public long save(ImportReceiptModel importReceiptModel) throws DaoException {
-        String sql = "INSERT INTO import_receipt (invoice_number, create_at, delivered_by, invoice, company_name, warehouse_name, total_price, total_price_in_word) " +
-                    " values (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO import_receipt (invoice_number, create_at, delivered_by, invoice, company_name, warehouse_name, total_price, total_price_in_word, academic_year) " +
+                    " values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         List<Object[]> parameters = new ArrayList<>();
         parameters.add(new Object[]{
                 importReceiptModel.getInvoiceNumber(),
@@ -51,7 +51,8 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
                 importReceiptModel.getCompanyName(),
                 importReceiptModel.getWarehouseName(),
                 importReceiptModel.getTotalPrice(),
-                importReceiptModel.getTotalPriceInWord()
+                importReceiptModel.getTotalPriceInWord(),
+                importReceiptModel.getAcademicYear()
         });
         return save(sql, parameters);
     }
@@ -78,13 +79,14 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
 
     @Override
     public void delete(List<Long> ids) {
-        String sql = "DELETE from import_receipt where id in [";
+        String sql = "DELETE from import_receipt where id in (";
         for(int i = 0; i < ids.size(); i++) {
-            sql += "?";
+            sql += ids.get(i);
             if(i != ids.size() - 1) {
                 sql += ",";
             }
         }
-        delete(sql, ids);
+        sql += ")";
+        delete(sql);
     }
 }

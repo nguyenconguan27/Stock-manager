@@ -1,9 +1,18 @@
 package com.manager.stock.manager_stock.utils;
 
+import com.manager.stock.manager_stock.exception.DaoException;
+import com.manager.stock.manager_stock.interfaceActionHandler.TopBarActionHandler;
+import com.manager.stock.manager_stock.model.ImportReceiptModel;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptModelTable;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.transaction.AddOrUpdateReceiptScreen;
 import com.manager.stock.manager_stock.screen.transaction.ImportReceiptScreen;
+import com.manager.stock.manager_stock.service.IExportPriceService;
+import com.manager.stock.manager_stock.service.IExportReceiptService;
+import com.manager.stock.manager_stock.service.IImportReceiptService;
+import com.manager.stock.manager_stock.service.impl.ExportPriceServiceImpl;
+import com.manager.stock.manager_stock.service.impl.ExportReceiptServiceImpl;
+import com.manager.stock.manager_stock.service.impl.ImportReceiptServiceImpl;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -12,6 +21,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -19,7 +29,7 @@ import java.util.function.Supplier;
  */
 public class CreateTopBarOfReceiptUtil {
 
-    public static HBox createTopBar(Supplier<ImportReceiptModelTable> importReceiptModelSelected) {
+    public static HBox createTopBar(TopBarActionHandler handler) {
         Image addIcon = new Image(CreateTopBarOfReceiptUtil.class.getResource("/com/manager/stock/manager_stock/icons/add.png").toExternalForm()); // Or .svg, .jpg, etc.
         Image editIcon = new Image(CreateTopBarOfReceiptUtil.class.getResource("/com/manager/stock/manager_stock/icons/pencil.png").toExternalForm());
         Image deleteIcon = new Image(CreateTopBarOfReceiptUtil.class.getResource("/com/manager/stock/manager_stock/icons/delete.png").toExternalForm());
@@ -34,48 +44,23 @@ public class CreateTopBarOfReceiptUtil {
         Button btnPrint = new Button("In", new ImageView(printIcon));
         Button btnExport = new Button("Xuất", new ImageView(exportIcon));
 
-        for (Button btn : new Button[]{btnAdd, btnEdit, btnDelete, btnReload, btnPrint, btnExport}) {
-            ((ImageView)btn.getGraphic()).setFitWidth(16);
-            ((ImageView)btn.getGraphic()).setPreserveRatio(true);
+        Map<Button, Runnable> buttonActions = Map.of(
+                btnAdd, handler::onAdd,
+                btnEdit, handler::onEdit,
+                btnDelete, handler::onDelete,
+                btnReload, handler::onReload,
+                btnPrint, handler::onPrint,
+                btnExport, handler::onExport
+        );
 
+        for (Map.Entry<Button, Runnable> entry : buttonActions.entrySet()) {
+            Button btn = entry.getKey();
+            ImageView imageView = (ImageView) btn.getGraphic();
+            imageView.setFitWidth(16);
+            imageView.setPreserveRatio(true);
             AddCssStyleForBtnUtil.addCssStyleForBtn(btn);
-            String btnType = btn.getText();
-            btn.setOnMouseClicked((e) -> {
-                switch (btnType) {
-                    case "Thêm":
-                        AddOrUpdateReceiptScreen addReceiptScreen = new AddOrUpdateReceiptScreen(null);
-                        ScreenNavigator.navigateTo(addReceiptScreen);
-                        break;
-                    case "Sửa":
-                        try {
-                            System.out.println("Chỉnh sửa hóa đơn");
-                            if(importReceiptModelSelected != null) {
-                                System.out.println(importReceiptModelSelected.get());
-                                AddOrUpdateReceiptScreen updateReceiptScreen = new AddOrUpdateReceiptScreen(importReceiptModelSelected.get());
-                                ScreenNavigator.navigateTo(updateReceiptScreen);
-                            }
-                            else {
-                                System.out.println("Không có hóa đơn nào được chọn.");
-                            }
-                        }
-                        catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                        break;
-                    case "Xóa":
-                        System.out.println("Xóa hóa đơn");
-                        break;
-                    case "Tải lại":
-                        System.out.println("Tải lại toàn bộ hóa đơn");
-                        break;
-                    case "In":
-                        System.out.println("In hóa đơn");
-                        break;
-                    case "Xuất":
-                        System.out.println("Xuất hóa đơn");
-                        break;
-                }
-            });
+
+            btn.setOnMouseClicked(e -> entry.getValue().run());
         }
 
         // HBox for the top bar
@@ -91,7 +76,45 @@ public class CreateTopBarOfReceiptUtil {
                         "-fx-alignment: center-left;" +
                         "-fx-spacing: 10px;"
         );
-
         return topBar;
     }
+
+    private void delete(long id) throws DaoException {
+        //
+    }
 }
+
+
+/*
+*for (Button btn : new Button[]{btnAdd, btnEdit, btnDelete, btnReload, btnPrint, btnExport}) {
+            ((ImageView)btn.getGraphic()).setFitWidth(16);
+            ((ImageView)btn.getGraphic()).setPreserveRatio(true);
+
+            AddCssStyleForBtnUtil.addCssStyleForBtn(btn);
+            String btnType = btn.getText();
+            btn.setOnMouseClicked((e) -> {
+                switch (btnType) {
+                    case "Thêm":
+
+                        break;
+                    case "Sửa":
+
+                        break;
+                    case "Xóa":
+
+                        break;
+                    case "Tải lại":
+                        System.out.println("Tải lại toàn bộ hóa đơn");
+                        break;
+                    case "In":
+                        System.out.println("In hóa đơn");
+                        break;
+                    case "Xuất":
+                        System.out.println("Xuất hóa đơn");
+                        break;
+                }
+            });
+        }
+*
+*
+* */

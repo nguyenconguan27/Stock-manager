@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -63,6 +65,9 @@ public class AbstractDao<T> implements GenericDao<T> {
                 else if(param == null) {
                     stmt.setNull(index, Types.NULL);
                 }
+                else if(param instanceof LocalDateTime) {
+                    stmt.setTimestamp(index, Timestamp.valueOf((LocalDateTime) param));
+                }
             }
         }
         catch (SQLException e) {
@@ -113,39 +118,51 @@ public class AbstractDao<T> implements GenericDao<T> {
     @Override
     public long save(String sql, List<Object[]> parameters) {
         logger.debug("Start insert of database with sql: {}", sql);
-        logger.debug("Start insert of database with params: {}", parameters);
+        parameters.forEach(p -> logger.debug("Params: {}", Arrays.toString(p)));
         PreparedStatement stmt = null;
         Connection connection = null;
         try {
             connection = getConnection();
+            if (parameters.size() == 1) {
+                stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                setParams(stmt, parameters.get(0));
+                int affectedRows = stmt.executeUpdate();
+
+                if (affectedRows == 0) {
+                    throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
+                }
+
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return generatedKeys.getLong(1);
+                    } else {
+                        throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
+                    }
+                }
+            }
             stmt = connection.prepareStatement(sql);
-            for(Object[] params : parameters) {
+            for (Object[] params : parameters) {
                 setParams(stmt, params);
                 stmt.addBatch();
-            }
-            if(parameters.size() == 1) {
-                return stmt.executeUpdate();
             }
             int[] insertResult = stmt.executeBatch();
             logger.info(String.format("Insert success: {%d} rows.", insertResult.length));
             return insertResult.length;
-        }
-        catch (SQLException e) {
+
+        } catch (SQLException e) {
             logger.error("SQL Exception while save database with sql: {}", sql, e);
             e.printStackTrace();
             throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
-        }
-        finally {
+        } finally {
             try {
-                if(stmt != null) {
+                if (stmt != null) {
                     stmt.close();
                 }
-                if(connection != null) {
+                if (connection != null) {
                     connection.close();
                 }
-            }
-            catch (SQLException e) {
-                logger.error("SQL Exception while closing ResultSet or Statement or Connection: {}", e.getMessage(), e);
+            } catch (SQLException e) {
+                logger.error("SQL Exception while closing Statement or Connection: {}", e.getMessage(), e);
             }
         }
     }
@@ -156,15 +173,15 @@ public class AbstractDao<T> implements GenericDao<T> {
     }
 
     @Override
-    public void delete(String sql, List<Long> ids) {
+    public void delete(String sql, Object...params) {
         logger.debug("Start delete of database with sql: {}", sql);
-        logger.debug("Start delete of database with ids: {}", ids);
+        logger.debug("Start delete of database with ids: {}", params);
         PreparedStatement stmt = null;
         Connection connection = null;
         try {
             connection = getConnection();
             stmt = connection.prepareStatement(sql);
-            for(Long id : ids) {
+            for(Object id : params) {
                 setParams(stmt, id);
             }
             stmt.executeUpdate();

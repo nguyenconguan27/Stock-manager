@@ -6,6 +6,8 @@ import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.model.ExportPriceModel;
 import com.manager.stock.manager_stock.service.IExportPriceService;
 
+import java.util.List;
+
 /**
  * @author Trọng Hướng
  */
@@ -30,7 +32,7 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     }
 
     @Override
-    public void save(ExportPriceModel exportPriceModel) throws DaoException {
-        exportPriceDao.save(exportPriceModel);
+    public void save(List<ExportPriceModel> exportPriceModels) throws DaoException {
+        exportPriceDao.save(exportPriceModels);
     }
 }

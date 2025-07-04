@@ -23,14 +23,14 @@ public class InventoryDetailDaoImpl extends AbstractDao<InventoryDetailModel> im
 
     @Override
     public List<InventoryDetailModel> findAllByAcademicYearAndProductId(List<Long> productIds, int academicYear) throws DaoException {
-        String sql = "select * from inventory_detail where academicYear = ? and product_id in [ ";
+        String sql = "select * from inventory_detail where academic_year = ? and product_id in (";
         for(int i = 0; i < productIds.size(); i++) {
             sql += productIds.get(i);
             if(i <  productIds.size()-1) {
                 sql += ",";
             }
         }
-        sql += " ]";
+        sql += " )";
         return query(sql, new InventoryDetailMapperResultSet(), academicYear);
     }
 

@@ -36,9 +36,9 @@ public class InventoryDetailMapperResultSet implements RowMapper<InventoryDetail
                         break;
                 }
             }
+            return inventoryDetailModel;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 }

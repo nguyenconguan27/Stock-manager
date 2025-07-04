@@ -1,6 +1,7 @@
 package com.manager.stock.manager_stock.screen.transaction;
 
 import com.manager.stock.manager_stock.exception.DaoException;
+import com.manager.stock.manager_stock.interfaceActionHandler.TopBarActionHandler;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptDetailModelMapper;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptModelMapper;
 import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
@@ -53,7 +54,39 @@ public class AddOrUpdateReceiptScreen extends VBox {
 
     public AddOrUpdateReceiptScreen(ImportReceiptModelTable importReceiptModelTable) {
         importReceiptPresenter = ImportReceiptPresenter.getInstance();
-        HBox topBar = CreateTopBarOfReceiptUtil.createTopBar(null);
+
+        HBox topBar = CreateTopBarOfReceiptUtil.createTopBar(new TopBarActionHandler() {
+            @Override
+            public void onAdd() {
+
+            }
+
+            @Override
+            public void onEdit() {
+
+            }
+
+            @Override
+            public void onDelete() {
+
+            }
+
+            @Override
+            public void onReload() {
+
+            }
+
+            @Override
+            public void onPrint() {
+
+            }
+
+            @Override
+            public void onExport() {
+
+            }
+        });
+
         VBox formAddNew = createFormAddNew(importReceiptModelTable);
         getChildren().addAll(topBar, formAddNew, createTableItemDetailByReceipt(importReceiptModelTable));
     }
@@ -386,7 +419,7 @@ public class AddOrUpdateReceiptScreen extends VBox {
                 System.out.println("Save import receipt: " + importReceiptModel);
                 // thêm mới hóa đơn nhập
                 if(oldImportReceiptModelTable == null) {
-                    presenter.saveImportReceipt(importReceiptModel, productDetails);
+                    presenter.saveImportReceipt(importReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
                     AlertUtils.alert("Thêm mới phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
                 }
                 // Cập nhật hóa đơn nhập

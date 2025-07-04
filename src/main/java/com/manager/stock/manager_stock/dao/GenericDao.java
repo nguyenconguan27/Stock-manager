@@ -11,5 +11,5 @@ public interface GenericDao<T> {
     <T> List<T> query(String sql, RowMapper<T> mapper, Object...parameters);
     long save(String sql, List<Object[]> parameters);
     int update(String sql, Object... parameters);
-    void delete(String sql, List<Long> ids);
+    void delete(String sql, Object... parameters);
 }

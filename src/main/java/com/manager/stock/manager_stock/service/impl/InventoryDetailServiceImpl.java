@@ -33,15 +33,13 @@ public class InventoryDetailServiceImpl implements IInventoryDetailService {
     @Override
     public HashMap<Long, InventoryDetailModel> findAllByAcademicYearAndProductId(int academicYear, List<Long> productIds) throws DaoException {
         List<InventoryDetailModel> inventoryDetailModels = inventoryDetailDao.findAllByAcademicYearAndProductId(productIds, academicYear);
-
-        HashMap<Long, InventoryDetailModel> inventoryDetailModelHashMap = inventoryDetailModels.stream()
+        return inventoryDetailModels.stream()
                 .collect(Collectors.toMap(
-                        InventoryDetailModel::getId,
+                        InventoryDetailModel::getProductId,
                         Function.identity(),
                         (existing, replacement) -> replacement,
                         HashMap::new
                 ));
-        return inventoryDetailModelHashMap;
     }
 
     @Override

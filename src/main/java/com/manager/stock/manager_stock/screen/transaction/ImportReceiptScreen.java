@@ -1,12 +1,14 @@
 package com.manager.stock.manager_stock.screen.transaction;
 
 import com.manager.stock.manager_stock.exception.DaoException;
+import com.manager.stock.manager_stock.interfaceActionHandler.TopBarActionHandler;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptDetailModelMapper;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptModelMapper;
 import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
 import com.manager.stock.manager_stock.model.ImportReceiptModel;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptDetailModelTable;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptModelTable;
+import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.utils.AlertUtils;
 import com.manager.stock.manager_stock.utils.CreateColumnTableUtil;
 import com.manager.stock.manager_stock.utils.CreateTopBarOfReceiptUtil;
@@ -24,6 +26,7 @@ import javafx.scene.layout.VBox;
 
 import java.text.Normalizer;
 import java.util.List;
+import java.util.Optional;
 
 public class ImportReceiptScreen extends VBox {
 
@@ -45,7 +48,61 @@ public class ImportReceiptScreen extends VBox {
         setSpacing(0);
         setStyle("-fx-padding: 0 5px 0 5px; -fx-background-insets: 0; -fx-background-color: #e1f0f7");
 
-        HBox topBar = CreateTopBarOfReceiptUtil.createTopBar(this::getReceiptSelected);
+        HBox topBar = CreateTopBarOfReceiptUtil.createTopBar(new TopBarActionHandler() {
+            @Override
+            public void onAdd() {
+                AddOrUpdateReceiptScreen addReceiptScreen = new AddOrUpdateReceiptScreen(null);
+                ScreenNavigator.navigateTo(addReceiptScreen);
+            }
+
+            @Override
+            public void onEdit() {
+                try {
+                    System.out.println("Chỉnh sửa hóa đơn");
+                    if(selected != null) {
+                        System.out.println(selected);
+                        AddOrUpdateReceiptScreen updateReceiptScreen = new AddOrUpdateReceiptScreen(selected);
+                        ScreenNavigator.navigateTo(updateReceiptScreen);
+                    }
+                    else {
+                        AlertUtils.alert("Vui lòng chọn hóa đơn cần sửa.", "WARNING", "Cảnh báo", "Chưa chọn hóa đơn.");
+                    }
+                }
+                catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onDelete() {
+                System.out.println("Xóa hóa đơn");
+                if(selected != null) {
+                    System.out.println("Xóa hóa đơn:  " + selected);
+                    boolean isConfirmDelete = AlertUtils.confirm("Bạn có chắc muốn xóa phiếu số: " + selected.getInvoice());
+                    if(isConfirmDelete) {
+
+                    }
+                }
+                else {
+                    AlertUtils.alert("Vui lòng chọn hóa đơn muốn xóa.", "WARNING", "Cảnh báo", "Chưa chọn hóa đơn nào");
+                }
+            }
+
+            @Override
+            public void onReload() {
+
+            }
+
+            @Override
+            public void onPrint() {
+
+            }
+
+            @Override
+            public void onExport() {
+
+            }
+        });
         HBox inputSearch = createFilterRow();
 
         createImportReceiptTable();
@@ -260,7 +317,7 @@ public class ImportReceiptScreen extends VBox {
     public void showTable() {
         try {
             ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
-            List<ImportReceiptModel> importReceiptModels = presenter.loadImportReceiptList(null);
+            List<ImportReceiptModel> importReceiptModels = presenter.loadImportReceiptList(Optional.empty());
             List<ImportReceiptModelTable> tableModels = GenericConverterBetweenModelAndTableData.convertToList(
                     importReceiptModels, ImportReceiptModelMapper.INSTANCE::toViewModel
             );
