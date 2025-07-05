@@ -10,9 +10,11 @@ import com.manager.stock.manager_stock.screen.transaction.ImportReceiptPresenter
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Trọng Hướng
@@ -88,5 +90,11 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
         }
         sql += ")";
         delete(sql);
+    }
+
+    @Override
+    public void deleteByIdWithTransaction(long id, Connection connection) throws DaoException{
+        String sql = "DELETE FROM import_receipt where id = ?";
+        deleteWithinTransaction(sql, connection, id);
     }
 }

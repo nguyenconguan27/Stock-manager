@@ -14,4 +14,5 @@ public interface GenericDao<T> {
     int update(String sql, Object... parameters);
     void delete(String sql, Object... parameters);
     void deleteWithinTransaction(String sql, Connection connection, Object...params);
+    long saveWithinTransaction(String sql, Connection connection, List<Object[]> parameters);
 }

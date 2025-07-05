@@ -42,6 +42,7 @@ public class ImportReceiptScreen extends VBox {
     private static final double ROW_HEIGHT = 30.0;
     private static final double HEADER_HEIGHT = 30.0;
     private static final double MAX_TABLE_HEIGHT = 400.0;
+    private final SplitPane splitPane = new SplitPane();
     private ImportReceiptModelTable selected;
 
     public ImportReceiptScreen() {
@@ -80,7 +81,12 @@ public class ImportReceiptScreen extends VBox {
                     System.out.println("Xóa hóa đơn:  " + selected);
                     boolean isConfirmDelete = AlertUtils.confirm("Bạn có chắc muốn xóa phiếu số: " + selected.getInvoice());
                     if(isConfirmDelete) {
-
+                        ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
+                        boolean isDeleteSuccess = presenter.deleteImportReceipt(selected);
+                        if(isDeleteSuccess) {
+                            AlertUtils.alert("Xóa phiếu nhập thành công.", "INFORMATION", "Thành công", "Xóa thành công");
+                            showTable();
+                        }
                     }
                 }
                 else {
@@ -90,7 +96,8 @@ public class ImportReceiptScreen extends VBox {
 
             @Override
             public void onReload() {
-
+                showTable();
+                showItemDetails(0);
             }
 
             @Override
@@ -121,7 +128,6 @@ public class ImportReceiptScreen extends VBox {
         itemDetailSection.setPadding(Insets.EMPTY);
         itemDetailSection.setStyle("-fx-padding: 0;");
 
-        SplitPane splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.VERTICAL);
         splitPane.getItems().addAll(receiptSection, itemDetailSection);
         splitPane.setDividerPositions(0.6);
@@ -133,12 +139,6 @@ public class ImportReceiptScreen extends VBox {
             -fx-border-width: 0;
             -fx-divider-width: 1;
         """);
-
-        Platform.runLater(() -> {
-            for (Node node : splitPane.lookupAll(".split-pane-divider")) {
-                node.setVisible(false);
-            }
-        });
 
         VBox.setVgrow(splitPane, Priority.ALWAYS);
 
@@ -174,16 +174,16 @@ public class ImportReceiptScreen extends VBox {
         receiptTable.setPrefHeight(600);
         receiptTable.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #c1dfee; -fx-border-width: 1px;");
 
-        Platform.runLater(() -> {
-            receiptTable.lookupAll(".column-header").forEach(node -> {
-                node.setStyle("-fx-background-color: #e1f0f7; -fx-pref-height: 35px; " +
-                        "-fx-border-width: 0 1px 0 0; -fx-border-color: #c1dfee");
-            });
-
-            receiptTable.lookupAll(".column-header .label").forEach(label -> {
-                label.setStyle("-fx-text-fill: #34536e;");
-            });
-        });
+//        Platform.runLater(() -> {
+//            receiptTable.lookupAll(".column-header").forEach(node -> {
+//                node.setStyle("-fx-background-color: #e1f0f7; -fx-pref-height: 35px; " +
+//                        "-fx-border-width: 0 1px 0 0; -fx-border-color: #c1dfee");
+//            });
+//
+//            receiptTable.lookupAll(".column-header .label").forEach(label -> {
+//                label.setStyle("-fx-text-fill: #34536e;");
+//            });
+//        });
 
         receiptTable.setRowFactory(tv -> new TableRow<>() {
             @Override
@@ -272,17 +272,6 @@ public class ImportReceiptScreen extends VBox {
 
         box.setStyle("-fx-padding: 0; -fx-background-insets: 0;");
 
-        Platform.runLater(() -> {
-            productTable.lookupAll(".column-header").forEach(node -> {
-                node.setStyle("-fx-background-color: #e1f0f7; -fx-pref-height: 35px; " +
-                        "-fx-border-width: 0 1px 0 0; -fx-border-color: #c1dfee");
-            });
-
-            productTable.lookupAll(".column-header .label").forEach(label -> {
-                label.setStyle("-fx-text-fill: #34536e;");
-            });
-        });
-
         productTable.setRowFactory(tv -> new TableRow<>() {
             @Override
             protected void updateItem(ImportReceiptDetailModelTable item, boolean empty) {
@@ -316,6 +305,7 @@ public class ImportReceiptScreen extends VBox {
 
     public void showTable() {
         try {
+            this.getStylesheets().add(this.getClass().getResource("/com/manager/stock/manager_stock/css/importReceipt/importReceipt.css").toExternalForm());
             ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
             List<ImportReceiptModel> importReceiptModels = presenter.loadImportReceiptList(Optional.empty());
             List<ImportReceiptModelTable> tableModels = GenericConverterBetweenModelAndTableData.convertToList(

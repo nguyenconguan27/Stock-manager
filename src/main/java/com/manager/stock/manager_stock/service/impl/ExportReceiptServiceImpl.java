@@ -9,8 +9,10 @@ import com.manager.stock.manager_stock.service.IExportReceiptService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Trọng Hướng
@@ -32,9 +34,11 @@ public class ExportReceiptServiceImpl implements IExportReceiptService {
 
     @Override
     public List<ExportReceiptIdAndCreateDate> findExportReceiptIdAndCreatedAtByProductIdsAndYearAndMinCreatedAt(List<Long> productIds, int academicYear, String minCreateAt) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDateTime localDateTime = LocalDateTime.parse(minCreateAt, formatter);
-        return exportReceiptDao.findExportReceiptIdAndCreatedAtByProductIdsAndYearAndMinCreatedAt(productIds, academicYear, localDateTime);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+                .withZone(ZoneId.of("Asia/Ho_Chi_Minh"));
+//        LocalDateTime localDateTime = LocalDateTime.parse(minCreateAt, formatter);
+        LocalDate localDate = LocalDate.parse(minCreateAt, formatter);
+        return exportReceiptDao.findExportReceiptIdAndCreatedAtByProductIdsAndYearAndMinCreatedAt(productIds, academicYear, localDate);
     }
 
     @Override

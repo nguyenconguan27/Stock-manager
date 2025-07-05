@@ -6,6 +6,8 @@ import com.manager.stock.manager_stock.model.ExportReceiptModel;
 import com.manager.stock.manager_stock.model.dto.ExportReceiptIdAndCreateDate;
 import com.manager.stock.manager_stock.model.dto.ProductIdAndActualQuantityAndTotalPriceOfReceipt;
 
+import java.sql.Connection;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,22 +29,21 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
     }
 
     @Override
-    public List<ExportReceiptIdAndCreateDate> findExportReceiptIdAndCreatedAtByProductIdsAndYearAndMinCreatedAt(List<Long> productIds, int academicYear, LocalDateTime minCreateAt) {
-        String idsStr = productIds.stream().map(id -> "?").collect(Collectors.joining(","));
+    public List<ExportReceiptIdAndCreateDate> findExportReceiptIdAndCreatedAtByProductIdsAndYearAndMinCreatedAt(List<Long> productIds, int academicYear, LocalDate minCreateAt) {
+        productIds.add(0L);
+        String idsStr = productIds.stream().map(String::valueOf).collect(Collectors.joining(","));
         String sql = "select er.id, er.create_at from export_receipt_detail erd \n" +
                     "inner join export_receipt er on\n" +
                     "erd.export_receipt_id = er.id \n" +
                     "where erd.product_id in (" + idsStr + ") \n" +
                     "and er.academic_year = ? \n" +
                     "and to_date(er.create_at, '%d/%m/%Y') >= ?";
-        List<Object> parameters = new ArrayList<>(productIds);
-        parameters.add(academicYear);
-        parameters.add(minCreateAt);
+        System.out.println(minCreateAt);
         return query(sql, rs -> new ExportReceiptIdAndCreateDate(
                 rs.getLong("id"),
                 rs.getString("create_at"),
                 rs.getDouble("total_quantity")
-        ), parameters.toArray());
+        ), academicYear, minCreateAt);
     }
 
     @Override
@@ -69,5 +70,14 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
 
         List<Object> parameters = new ArrayList<>(ids);
         delete(sql, parameters.toArray());
+    }
+
+    @Override
+    public void deleteByIdsWithTransaction(List<Long> ids, Connection connection) throws DaoException{
+        String idsStr = ids.stream().map(id -> "?").collect(Collectors.joining(","));
+        String sql = "DELETE FROM export_receipt where id in (" + idsStr + ")";
+
+        List<Object> parameters = new ArrayList<>(ids);
+        deleteWithinTransaction(sql, connection, parameters.toArray());
     }
 }

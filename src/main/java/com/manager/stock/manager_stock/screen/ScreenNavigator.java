@@ -7,6 +7,8 @@ import com.manager.stock.manager_stock.screen.productGroup.ProductGroupScreen;
 import com.manager.stock.manager_stock.screen.transaction.ExportReceiptScreen;
 import com.manager.stock.manager_stock.screen.transaction.ImportReceiptPresenter;
 import com.manager.stock.manager_stock.screen.transaction.ImportReceiptScreen;
+import com.manager.stock.manager_stock.utils.CreateLoadingUtil;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -14,10 +16,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 import java.util.Objects;
 import java.util.Stack;
@@ -44,6 +43,10 @@ public class ScreenNavigator {
         setScreenInternal(newScreen);
     }
 
+    public static void showLoadingTemporary() {
+        setScreenInternal(CreateLoadingUtil.createLoading());
+    }
+
     public static void goBack() {
         if(!backStack.isEmpty()) {
             forwardStack.push(currentScreen);
@@ -66,20 +69,6 @@ public class ScreenNavigator {
     }
 
     private static void setLeftScreen() {
-//        Button btnProduct = new Button("Quản lý nhóm sản phẩm");
-//        btnProduct.setOnAction(e -> {
-//            ProductScreen productScreen = new ProductScreen();
-//            ProductPresenter productPresenter = new ProductPresenter();
-//
-//            productPresenter.loadProductData();
-//            ScreenNavigator.navigateTo(productScreen);
-//        });
-//
-//        Button btnProductGroup = new Button("Quản lý sản phẩm");
-//        btnProductGroup.setOnAction(e -> {
-//            ScreenNavigator.navigateTo(new ProductGroupScreen());
-//        });
-
         VBox leftScreen = new VBox(10);
         leftScreen.setStyle("-fx-padding: 10 0 0 0;");
 
@@ -123,10 +112,16 @@ public class ScreenNavigator {
                     ScreenNavigator.navigateTo(productScreen);
                     break;
                 case "Phiếu nhập":
-                    ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
-                    importReceiptScreen.showTable();
-                    ScreenNavigator.navigateTo(importReceiptScreen);
-                    break;
+                    ScreenNavigator.showLoadingTemporary();
+                    new Thread(() -> {
+                        ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
+
+                        Platform.runLater(() -> {
+                            importReceiptScreen.showTable();
+                            ScreenNavigator.navigateTo(importReceiptScreen);
+                        });
+                    }).start();
+                   break;
                 case "Phiếu xuất":
                     ScreenNavigator.navigateTo(new ExportReceiptScreen());
                     break;

@@ -6,6 +6,7 @@ import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.mapper.modelMapperResultSet.InventoryDetailMapperResultSet;
 import com.manager.stock.manager_stock.model.InventoryDetailModel;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,5 +63,19 @@ public class InventoryDetailDaoImpl extends AbstractDao<InventoryDetailModel> im
             });
         }
         save(sql, parameters);
+    }
+
+    @Override
+    public void updateWithTransaction(List<InventoryDetailModel> inventoryDetailModels, Connection connection) throws DaoException {
+        String sql = "UPDATE inventory_detail set quantity = ?, total_price = ? where id = ?";
+        List<Object[]> parameters = new ArrayList<>();
+        for(InventoryDetailModel inventoryDetailModel : inventoryDetailModels){
+            parameters.add(new Object[]{
+                    inventoryDetailModel.getQuantity(),
+                    inventoryDetailModel.getTotalPrice(),
+                    inventoryDetailModel.getId()
+            });
+        }
+        saveWithinTransaction(sql, connection, parameters);
     }
 }
