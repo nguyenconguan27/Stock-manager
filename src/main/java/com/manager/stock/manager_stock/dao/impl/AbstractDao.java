@@ -21,7 +21,7 @@ public class AbstractDao<T> implements GenericDao<T> {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public Connection getConnection() throws SQLException {
+    protected Connection getConnection() throws SQLException {
         try {
             final String url = AppConfig.getString("db.url");
             final Properties props = new Properties();
@@ -180,6 +180,7 @@ public class AbstractDao<T> implements GenericDao<T> {
         Connection connection = null;
         try {
             connection = getConnection();
+            connection.setAutoCommit(false);
             stmt = connection.prepareStatement(sql);
             for(Object id : params) {
                 setParams(stmt, id);
@@ -188,6 +189,12 @@ public class AbstractDao<T> implements GenericDao<T> {
         }
         catch (SQLException e) {
             logger.error("SQL Exception while deleting database with sql: {}", sql, e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                logger.error("SQL Exception while rollback database with sql: {}", sql, ex);
+                throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
+            }
             throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
         }
         finally {
@@ -197,6 +204,35 @@ public class AbstractDao<T> implements GenericDao<T> {
                 }
                 if(connection != null) {
                     connection.close();
+                }
+            }
+            catch (SQLException e) {
+                logger.error("SQL Exception while closing ResultSet or Statement or Connection: {}", e.getMessage(), e);
+            }
+        }
+    }
+
+    @Override
+    public void deleteWithinTransaction(String sql, Connection connection, Object...params) {
+        logger.debug("Start delete of database with sql: {}", sql);
+        logger.debug("Start delete of database with ids: {}", params);
+        PreparedStatement stmt = null;
+        try {
+            stmt = connection.prepareStatement(sql);
+            for(Object id : params) {
+                setParams(stmt, id);
+            }
+            stmt.executeUpdate();
+            connection.commit();
+        }
+        catch (SQLException e) {
+            logger.error("SQL Exception while deleting database with sql: {}", sql, e);
+            throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
+        }
+        finally {
+            try {
+                if(stmt != null) {
+                    stmt.close();
                 }
             }
             catch (SQLException e) {

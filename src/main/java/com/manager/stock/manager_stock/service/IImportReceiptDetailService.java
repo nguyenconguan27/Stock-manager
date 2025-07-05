@@ -13,5 +13,5 @@ public interface IImportReceiptDetailService {
     long save(List<ImportReceiptDetailModel> importReceiptDetailModels, long importReceiptId);
     void update(List<ImportReceiptDetailModel> importReceiptDetailModels);
     List<ProductIdAndActualQuantityAndTotalPriceOfReceipt> findAllProductIdByImportReceipt(long importReceiptId);
-    void deleteByImportReceipt(long importReceiptId);
+    void deleteImportReceiptByImportReceipt(long importReceiptId);
 }

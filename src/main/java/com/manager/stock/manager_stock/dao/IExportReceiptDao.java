@@ -12,4 +12,5 @@ import java.util.List;
 public interface IExportReceiptDao {
     List<ExportReceiptIdAndCreateDate> findExportReceiptIdAndCreatedAtByProductIdsAndYearAndMinCreatedAt(List<Long> productIds, int academicYear, LocalDateTime minCreateAt);
     List<ProductIdAndActualQuantityAndTotalPriceOfReceipt> findProductIdAndTotalPriceAndTotalQuantityByExportReceipt(List<Long> exportReceiptIds);
+    void deleteByIds(List<Long> ids);
 }

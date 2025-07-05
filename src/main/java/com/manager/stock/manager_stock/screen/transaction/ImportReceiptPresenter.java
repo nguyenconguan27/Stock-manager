@@ -292,14 +292,6 @@ public class ImportReceiptPresenter {
         // trường hợp tính từ khi hóa đơn nhập đang chọn được tạo cho đến thời điểm thực hiện xóa cho có hóa đơn xuất nào
         if(exportReceiptIdAndCreateDates.isEmpty()) {
             // Cập nhật lại tồn kho và xóa chi tiết hóa đơn nhập và hóa đơn nhập
-            try {
-                importReceiptDetailService.deleteByImportReceipt(importReceiptModelTable.getId());
-            }
-            catch (DaoException e) {
-                AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi", "Lỗi hệ thống.");
-                return;
-            }
-
             for(InventoryDetailModel inventoryDetailModel : inventoryDetailModels.values()) {
                 int newQuantity = inventoryDetailModel.getQuantity() - actualQuantityInImportReceiptByProductIdMap.get(inventoryDetailModel.getProductId());
                 double newTotalPrice = inventoryDetailModel.getTotalPrice() - totalPriceInImportReceiptByProductIdMap.get(inventoryDetailModel.getProductId());
@@ -308,6 +300,7 @@ public class ImportReceiptPresenter {
                 inventoryDetailModelsToUpdate.add(inventoryDetailModel);
             }
         }
+        // truường hợp phiếu nhập có liên quan đến phiếu xuất
         else {
             // gửi thông báo alert confirm: có danh sách hóa đơn xuất rồi, cần xóa trước khi hóa đơn nhập được xóa
             StringBuilder messageConfirm = new StringBuilder();
@@ -340,7 +333,29 @@ public class ImportReceiptPresenter {
                 inventoryDetailModel.setTotalPrice(newTotalPrice);
                 inventoryDetailModelsToUpdate.add(inventoryDetailModel);
             }
+
+            // thực hiện xóa chi tiết phiếu xuất và các phiếu xuất
+            try {
+                presenter.deleteById(exportReceiptIds);
+            }
+            catch (DaoException e) {
+                AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi", "Lỗi hệ thống");
+                return;
+            }
+        }
+
+        // xóa phiếu nhập
+        try {
+            importReceiptService.delete(importReceiptModelTable.getId());
+        }
+        catch (DaoException e) {
+            AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi", "Lỗi hệ thống");
+            return;
         }
         inventoryDetailService.update(inventoryDetailModelsToUpdate);
+    }
+
+    private void deleteImportReceiptDetailByImportReceipt(long importReceiptId) {
+
     }
 }

@@ -38,4 +38,8 @@ public class ExportReceiptPresenter {
                     HashMap::new
                 ));
     }
+
+    public void deleteById(List<Long> exportReceiptIds) throws DaoException {
+        exportReceiptService.deleteByIds(exportReceiptIds);
+    }
 }

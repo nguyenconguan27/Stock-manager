@@ -48,7 +48,7 @@ public class ImportReceiptDetailServiceImpl implements IImportReceiptDetailServi
     }
 
     @Override
-    public void deleteByImportReceipt(long importReceiptId) throws DaoException {
+    public void deleteImportReceiptByImportReceipt(long importReceiptId) throws DaoException {
         importReceiptDetailDao.deleteByImportReceipt(importReceiptId);
     }
 }

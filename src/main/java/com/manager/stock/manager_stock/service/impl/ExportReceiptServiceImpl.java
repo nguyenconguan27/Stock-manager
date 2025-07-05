@@ -41,4 +41,9 @@ public class ExportReceiptServiceImpl implements IExportReceiptService {
     public List<ProductIdAndActualQuantityAndTotalPriceOfReceipt> findProductIdAndTotalPriceAndTotalQuantityByExportReceipt(List<Long> exportReceiptIds) throws DaoException {
         return exportReceiptDao.findProductIdAndTotalPriceAndTotalQuantityByExportReceipt(exportReceiptIds);
     }
+
+    @Override
+    public void deleteByIds(List<Long> ids) {
+        exportReceiptDao.deleteByIds(ids);
+    }
 }

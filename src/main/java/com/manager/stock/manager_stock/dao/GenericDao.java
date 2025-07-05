@@ -2,6 +2,7 @@ package com.manager.stock.manager_stock.dao;
 
 import com.manager.stock.manager_stock.mapper.modelMapperResultSet.RowMapper;
 
+import java.sql.Connection;
 import java.util.List;
 
 /**
@@ -12,4 +13,5 @@ public interface GenericDao<T> {
     long save(String sql, List<Object[]> parameters);
     int update(String sql, Object... parameters);
     void delete(String sql, Object... parameters);
+    void deleteWithinTransaction(String sql, Connection connection, Object...params);
 }

@@ -61,4 +61,13 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
 
         ), parameters.toArray());
     }
+
+    @Override
+    public void deleteByIds(List<Long> ids) throws DaoException {
+        String idsStr = ids.stream().map(id -> "?").collect(Collectors.joining(","));
+        String sql = "DELETE FROM export_receipt where id in (" + idsStr + ")";
+
+        List<Object> parameters = new ArrayList<>(ids);
+        delete(sql, parameters.toArray());
+    }
 }
