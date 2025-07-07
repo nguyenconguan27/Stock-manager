@@ -3,18 +3,14 @@ package com.manager.stock.manager_stock.dao.impl;
 import com.manager.stock.manager_stock.dao.IImportReceiptDao;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.mapper.modelMapperResultSet.ImportReceiptMapperResultSet;
-import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptModelMapper;
 import com.manager.stock.manager_stock.model.ImportReceiptModel;
-import com.manager.stock.manager_stock.model.ProductModel;
-import com.manager.stock.manager_stock.screen.transaction.ImportReceiptPresenter;
+import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Trọng Hướng

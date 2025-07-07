@@ -9,47 +9,157 @@ import com.manager.stock.manager_stock.model.ImportReceiptModel;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptDetailModelTable;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptModelTable;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
+import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter;
 import com.manager.stock.manager_stock.utils.AlertUtils;
 import com.manager.stock.manager_stock.utils.CreateColumnTableUtil;
-import com.manager.stock.manager_stock.utils.CreateTopBarOfReceiptUtil;
 import com.manager.stock.manager_stock.utils.GenericConverterBetweenModelAndTableData;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-import java.text.Normalizer;
 import java.util.List;
 import java.util.Optional;
 
-public class ImportReceiptScreen extends VBox {
+public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTable, ImportReceiptDetailModelTable> {
 
-    private final TableView<ImportReceiptModelTable> receiptTable = new TableView<>();
-    private final TableView<ImportReceiptDetailModelTable> productTable = new TableView<>();
-    private Pagination receiptPagination;
-    private final ObservableList<ImportReceiptModelTable> allReceiptData = FXCollections.observableArrayList(); // Original data
-    private final ObservableList<ImportReceiptModelTable> receiptData = FXCollections.observableArrayList(); // Filtered data
-    private final ObservableList<ImportReceiptDetailModelTable> allProductData = FXCollections.observableArrayList();
-    private final ObservableList<ImportReceiptDetailModelTable> productData = FXCollections.observableArrayList();
-    private int itemsPerPage = 10;
     private TextField tfId, tfInvoiceNumber, tfCreateAt, tfInvoice, tfCompany, tfWarehouse, tfProductNameImportReceipt, tfProductIdImportReceipt;
-    private static final double ROW_HEIGHT = 30.0;
-    private static final double HEADER_HEIGHT = 30.0;
-    private static final double MAX_TABLE_HEIGHT = 400.0;
-    private final SplitPane splitPane = new SplitPane();
-    private ImportReceiptModelTable selected;
 
     public ImportReceiptScreen() {
-        setSpacing(0);
-        setStyle("-fx-padding: 0 5px 0 5px; -fx-background-insets: 0; -fx-background-color: #e1f0f7");
+        super();
+    }
 
-        HBox topBar = CreateTopBarOfReceiptUtil.createTopBar(new TopBarActionHandler() {
+    @Override
+    protected void createReceiptTable() {
+        TableColumn<ImportReceiptModelTable, Number> colId = CreateColumnTableUtil.createColumn("Mã phiếu", ImportReceiptModelTable::idProperty);
+        TableColumn<ImportReceiptModelTable, String> colInvoiceNumber = CreateColumnTableUtil.createColumn("Số hóa đơn", ImportReceiptModelTable::invoiceNumberProperty);
+        TableColumn<ImportReceiptModelTable, String> colCreateAt = CreateColumnTableUtil.createColumn("Ngày tạo", ImportReceiptModelTable::createAtProperty);
+        TableColumn<ImportReceiptModelTable, String> colDeliveredBy = CreateColumnTableUtil.createColumn("Người giao", ImportReceiptModelTable::deliveredByProperty);
+        TableColumn<ImportReceiptModelTable, String> colInvoice = CreateColumnTableUtil.createColumn("Số phiếu nhập", ImportReceiptModelTable::invoiceProperty);
+        TableColumn<ImportReceiptModelTable, String> colCompany = CreateColumnTableUtil.createColumn("Công ty", ImportReceiptModelTable::companyNameProperty);
+        TableColumn<ImportReceiptModelTable, String> colWarehouse = CreateColumnTableUtil.createColumn("Kho", ImportReceiptModelTable::warehouseNameProperty);
+        TableColumn<ImportReceiptModelTable, String> colTotalPrice = CreateColumnTableUtil.createColumn("Thành tiền", ImportReceiptModelTable::totalPriceFormatProperty);
+
+        setColumnPercentWidth(colId,           5);
+        setColumnPercentWidth(colInvoiceNumber,10);
+        setColumnPercentWidth(colCreateAt,     10);
+        setColumnPercentWidth(colDeliveredBy,  10);
+        setColumnPercentWidth(colInvoice,      10);
+        setColumnPercentWidth(colCompany,      25);
+        setColumnPercentWidth(colWarehouse,    20);
+        setColumnPercentWidth(colTotalPrice,   10);
+
+        receiptTable.getColumns().setAll(
+                colId, colInvoiceNumber, colCreateAt, colDeliveredBy,
+                colInvoice, colCompany, colWarehouse, colTotalPrice
+        );
+        receiptTable.getColumns().forEach(col -> col.setResizable(false));
+
+        receiptTable.setItems(receiptData);
+        receiptTable.setPrefHeight(600);
+        receiptTable.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #c1dfee; -fx-border-width: 1px;");
+
+        receiptTable.setRowFactory(tv -> new TableRow<>() {
+            @Override
+            protected void updateItem(ImportReceiptModelTable item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setStyle("");
+                } else if (isSelected()) {
+                    setStyle("-fx-background-color: #2f7a9a; -fx-text-fill: white;");
+                } else {
+                    if (getIndex() % 2 == 0) {
+                        setStyle("-fx-background-color: #ffffff;");
+                    } else {
+                        setStyle("-fx-background-color: #e0f2f7;");
+                    }
+                }
+            }
+            {
+                selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+
+                    updateItem(getItem(), isEmpty());
+                });
+            }
+        });
+
+        receiptTable.setOnMouseClicked(event -> {
+            selected = receiptTable.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                long id = selected.getId();
+                showItemDetails(id);
+            }
+        });
+    }
+
+    @Override
+    protected VBox createItemDetailByReceipt() {
+        TableColumn<ImportReceiptDetailModelTable, String> colProductId = CreateColumnTableUtil.createColumn("Mã SP", ImportReceiptDetailModelTable::codeProperty);
+        TableColumn<ImportReceiptDetailModelTable, String> colProductName = CreateColumnTableUtil.createColumn("Tên SP", ImportReceiptDetailModelTable::productNameProperty);
+        TableColumn<ImportReceiptDetailModelTable, Number> colPlannedQty = CreateColumnTableUtil.createColumn("SL theo CT", ImportReceiptDetailModelTable::plannedQuantityProperty);
+        TableColumn<ImportReceiptDetailModelTable, Number> colActualQty = CreateColumnTableUtil.createColumn("SL thực tế", ImportReceiptDetailModelTable::actualQuantityProperty);
+        TableColumn<ImportReceiptDetailModelTable, String> colUnitPrice = CreateColumnTableUtil.createColumn("Đơn giá", ImportReceiptDetailModelTable::unitPriceFormatProperty);
+        TableColumn<ImportReceiptDetailModelTable, String> colTotalPrice = CreateColumnTableUtil.createColumn("Thành tiền", ImportReceiptDetailModelTable::totalPriceFormatProperty);
+
+        setColumnPercentWidth(colProductId,           15);
+        setColumnPercentWidth(colProductName,15);
+        setColumnPercentWidth(colPlannedQty,     15);
+        setColumnPercentWidth(colActualQty,  15);
+        setColumnPercentWidth(colUnitPrice,      20);
+        setColumnPercentWidth(colTotalPrice,      20);
+
+        productTable.getColumns().addAll(
+                colProductId, colProductName, colPlannedQty, colActualQty, colUnitPrice, colTotalPrice
+        );
+        productTable.setPrefHeight(600);
+        productTable.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #c1dfee; -fx-border-width: 1px;");
+
+        productTable.getColumns().forEach(col -> {
+            col.setResizable(false);
+        });
+
+        VBox box = new VBox(productTable);
+        box.setSpacing(0);
+        box.setPadding(Insets.EMPTY);
+
+        box.setStyle("-fx-padding: 0; -fx-background-insets: 0;");
+
+        productTable.setRowFactory(tv -> new TableRow<>() {
+            @Override
+            protected void updateItem(ImportReceiptDetailModelTable item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setStyle("");
+                } else if (isSelected()) {
+                    setStyle("-fx-background-color: #2f7a9a; -fx-text-fill: white;");
+                } else {
+                    if (getIndex() % 2 == 0) {
+                        setStyle("-fx-background-color: #ffffff;");
+                    } else {
+                        setStyle("-fx-background-color: #e0f2f7;");
+                    }
+                }
+            }
+            {
+                selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+
+                    updateItem(getItem(), isEmpty());
+                });
+            }
+        });
+
+        HBox inputSearch = createFilterRowProductOfImportReceipt();
+        box.getChildren().add(inputSearch);
+        return box;
+    }
+
+    @Override
+    protected TopBarActionHandler getTopBarHandler() {
+        return new TopBarActionHandler() {
             @Override
             public void onAdd() {
                 AddOrUpdateReceiptScreen addReceiptScreen = new AddOrUpdateReceiptScreen(null);
@@ -109,239 +219,11 @@ public class ImportReceiptScreen extends VBox {
             public void onExport() {
 
             }
-        });
-        HBox inputSearch = createFilterRow();
-
-        createImportReceiptTable();
-        createPagination();
-
-        VBox receiptSection = new VBox(receiptTable, receiptPagination);
-        receiptSection.setSpacing(0);
-        receiptSection.setPadding(Insets.EMPTY);
-        receiptSection.setStyle("-fx-padding: 0; -fx-background-insets: 0;");
-
-        receiptTable.setPadding(Insets.EMPTY);
-        receiptPagination.setPadding(Insets.EMPTY);
-        receiptPagination.setStyle("-fx-padding: 0; -fx-background-insets: 0;");
-
-        VBox itemDetailSection = createItemDetailByReceipt();
-        itemDetailSection.setPadding(Insets.EMPTY);
-        itemDetailSection.setStyle("-fx-padding: 0;");
-
-        splitPane.setOrientation(Orientation.VERTICAL);
-        splitPane.getItems().addAll(receiptSection, itemDetailSection);
-        splitPane.setDividerPositions(0.6);
-        splitPane.setPadding(Insets.EMPTY);
-        splitPane.setStyle("""
-            -fx-padding: 0;
-            -fx-background-insets: 0;
-            -fx-background-color: transparent;
-            -fx-border-width: 0;
-            -fx-divider-width: 1;
-        """);
-
-        VBox.setVgrow(splitPane, Priority.ALWAYS);
-
-        getChildren().addAll(topBar, inputSearch, splitPane);
+        };
     }
 
-    private void createImportReceiptTable() {
-        TableColumn<ImportReceiptModelTable, Number> colId = CreateColumnTableUtil.createColumn("Mã phiếu", ImportReceiptModelTable::idProperty);
-        TableColumn<ImportReceiptModelTable, String> colInvoiceNumber = CreateColumnTableUtil.createColumn("Số hóa đơn", ImportReceiptModelTable::invoiceNumberProperty);
-        TableColumn<ImportReceiptModelTable, String> colCreateAt = CreateColumnTableUtil.createColumn("Ngày tạo", ImportReceiptModelTable::createAtProperty);
-        TableColumn<ImportReceiptModelTable, String> colDeliveredBy = CreateColumnTableUtil.createColumn("Người giao", ImportReceiptModelTable::deliveredByProperty);
-        TableColumn<ImportReceiptModelTable, String> colInvoice = CreateColumnTableUtil.createColumn("Số phiếu nhập", ImportReceiptModelTable::invoiceProperty);
-        TableColumn<ImportReceiptModelTable, String> colCompany = CreateColumnTableUtil.createColumn("Công ty", ImportReceiptModelTable::companyNameProperty);
-        TableColumn<ImportReceiptModelTable, String> colWarehouse = CreateColumnTableUtil.createColumn("Kho", ImportReceiptModelTable::warehouseNameProperty);
-        TableColumn<ImportReceiptModelTable, String> colTotalPrice = CreateColumnTableUtil.createColumn("Thành tiền", ImportReceiptModelTable::totalPriceFormatProperty);
-
-        setColumnPercentWidth(colId,           5);
-        setColumnPercentWidth(colInvoiceNumber,10);
-        setColumnPercentWidth(colCreateAt,     10);
-        setColumnPercentWidth(colDeliveredBy,  10);
-        setColumnPercentWidth(colInvoice,      10);
-        setColumnPercentWidth(colCompany,      25);
-        setColumnPercentWidth(colWarehouse,    20);
-        setColumnPercentWidth(colTotalPrice,   10);
-
-        receiptTable.getColumns().setAll(
-                colId, colInvoiceNumber, colCreateAt, colDeliveredBy,
-                colInvoice, colCompany, colWarehouse, colTotalPrice
-        );
-        receiptTable.getColumns().forEach(col -> col.setResizable(false));
-
-        receiptTable.setItems(receiptData);
-        receiptTable.setPrefHeight(600);
-        receiptTable.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #c1dfee; -fx-border-width: 1px;");
-
-//        Platform.runLater(() -> {
-//            receiptTable.lookupAll(".column-header").forEach(node -> {
-//                node.setStyle("-fx-background-color: #e1f0f7; -fx-pref-height: 35px; " +
-//                        "-fx-border-width: 0 1px 0 0; -fx-border-color: #c1dfee");
-//            });
-//
-//            receiptTable.lookupAll(".column-header .label").forEach(label -> {
-//                label.setStyle("-fx-text-fill: #34536e;");
-//            });
-//        });
-
-        receiptTable.setRowFactory(tv -> new TableRow<>() {
-            @Override
-            protected void updateItem(ImportReceiptModelTable item, boolean empty) {
-                super.updateItem(item, empty);
-
-                if (empty || item == null) {
-                    setStyle("");
-                } else if (isSelected()) {
-                    setStyle("-fx-background-color: #2f7a9a; -fx-text-fill: white;");
-                } else {
-                    if (getIndex() % 2 == 0) {
-                        setStyle("-fx-background-color: #ffffff;");
-                    } else {
-                        setStyle("-fx-background-color: #e0f2f7;");
-                    }
-                }
-            }
-            {
-                selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
-
-                    updateItem(getItem(), isEmpty());
-                });
-            }
-        });
-
-        receiptTable.setOnMouseClicked(event -> {
-            selected = receiptTable.getSelectionModel().getSelectedItem();
-            if (selected != null) {
-                long id = selected.getId();
-                showItemDetails(id);
-            }
-        });
-    }
-
-    private void setColumnPercentWidth(TableColumn<?, ?> col, double percent) {
-        receiptTable.widthProperty().addListener((obs, oldVal, newVal) -> {
-            double width = newVal.doubleValue();
-            col.setPrefWidth(width * percent / 100.0);
-        });
-    }
-
-    private void createPagination() {
-        receiptPagination = new Pagination();
-        receiptPagination.setPageFactory(pageIndex -> {
-            int fromIndex = pageIndex * itemsPerPage;
-            int toIndex = Math.min(fromIndex + itemsPerPage, receiptData.size());
-            receiptTable.setItems(FXCollections.observableArrayList(receiptData.subList(fromIndex, toIndex)));
-            updateTableHeight(receiptTable, Math.min(itemsPerPage, receiptData.size()));
-            return new VBox(receiptTable);
-        });
-
-        receiptPagination.getStylesheets().add(
-            ImportReceiptScreen.class.getResource("/com/manager/stock/manager_stock/css/importReceipt/pagination.css").toExternalForm()
-        );
-    }
-
-    private VBox createItemDetailByReceipt() {
-        TableColumn<ImportReceiptDetailModelTable, String> colProductId = CreateColumnTableUtil.createColumn("Mã SP", ImportReceiptDetailModelTable::codeProperty);
-        TableColumn<ImportReceiptDetailModelTable, String> colProductName = CreateColumnTableUtil.createColumn("Tên SP", ImportReceiptDetailModelTable::productNameProperty);
-        TableColumn<ImportReceiptDetailModelTable, Number> colPlannedQty = CreateColumnTableUtil.createColumn("SL theo CT", ImportReceiptDetailModelTable::plannedQuantityProperty);
-        TableColumn<ImportReceiptDetailModelTable, Number> colActualQty = CreateColumnTableUtil.createColumn("SL thực tế", ImportReceiptDetailModelTable::actualQuantityProperty);
-        TableColumn<ImportReceiptDetailModelTable, String> colUnitPrice = CreateColumnTableUtil.createColumn("Đơn giá", ImportReceiptDetailModelTable::unitPriceFormatProperty);
-        TableColumn<ImportReceiptDetailModelTable, String> colTotalPrice = CreateColumnTableUtil.createColumn("Thành tiền", ImportReceiptDetailModelTable::totalPriceFormatProperty);
-
-        setColumnPercentWidth(colProductId,           15);
-        setColumnPercentWidth(colProductName,15);
-        setColumnPercentWidth(colPlannedQty,     15);
-        setColumnPercentWidth(colActualQty,  15);
-        setColumnPercentWidth(colUnitPrice,      20);
-        setColumnPercentWidth(colTotalPrice,      20);
-
-        productTable.getColumns().addAll(
-                colProductId, colProductName, colPlannedQty, colActualQty, colUnitPrice, colTotalPrice
-        );
-        productTable.setPrefHeight(600);
-        productTable.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #c1dfee; -fx-border-width: 1px;");
-
-        productTable.getColumns().forEach(col -> {
-           col.setResizable(false);
-        });
-
-        VBox box = new VBox(productTable);
-        box.setSpacing(0);
-        box.setPadding(Insets.EMPTY);
-
-        box.setStyle("-fx-padding: 0; -fx-background-insets: 0;");
-
-        productTable.setRowFactory(tv -> new TableRow<>() {
-            @Override
-            protected void updateItem(ImportReceiptDetailModelTable item, boolean empty) {
-                super.updateItem(item, empty);
-
-                if (empty || item == null) {
-                    setStyle("");
-                } else if (isSelected()) {
-                    setStyle("-fx-background-color: #2f7a9a; -fx-text-fill: white;");
-                } else {
-                    if (getIndex() % 2 == 0) {
-                        setStyle("-fx-background-color: #ffffff;");
-                    } else {
-                        setStyle("-fx-background-color: #e0f2f7;");
-                    }
-                }
-            }
-            {
-                selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
-
-                    updateItem(getItem(), isEmpty());
-                });
-            }
-        });
-
-        // set input search for product table
-        HBox inputSearch = createFilterRowProductOfImportReceipt();
-        box.getChildren().add(inputSearch);
-        return box;
-    }
-
-    public void showTable() {
-        try {
-            this.getStylesheets().add(this.getClass().getResource("/com/manager/stock/manager_stock/css/importReceipt/importReceipt.css").toExternalForm());
-            ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
-            List<ImportReceiptModel> importReceiptModels = presenter.loadImportReceiptList(Optional.empty());
-            List<ImportReceiptModelTable> tableModels = GenericConverterBetweenModelAndTableData.convertToList(
-                    importReceiptModels, ImportReceiptModelMapper.INSTANCE::toViewModel
-            );
-            allReceiptData.setAll(tableModels);
-            receiptData.setAll(tableModels);
-            updatePagination();
-        }
-        catch (DaoException e) {
-            AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi", "Lỗi khi load dữ liệu.");
-        }
-    }
-
-    private void showItemDetails(long importReceiptId) {
-        try {
-            ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
-            List<ImportReceiptDetailModel> importReceiptDetailModels = presenter.loadImportReceiptDetailList(importReceiptId);
-            List<ImportReceiptDetailModelTable> detailTables =
-                    GenericConverterBetweenModelAndTableData.convertToList(importReceiptDetailModels, ImportReceiptDetailModelMapper.INSTANCE::toViewModel);
-            productData.setAll(detailTables);
-            allProductData.setAll(detailTables);
-            productTable.setItems(productData);
-            updateTableHeight(productTable, productData.size());
-        }
-        catch (NullPointerException e) {
-            e.printStackTrace();
-            AlertUtils.alert("Đã xảy ra lỗi trong quá trình xử lý. Vui lòng thử lại sau hoặc liên hệ hỗ trợ.", "ERROR", "Lỗi", "Lỗi trong quá trình xem danh sách sản phẩm của phiếu nhập: " + importReceiptId);
-        }
-        catch (DaoException e) {
-            e.printStackTrace();
-            AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi", "Lỗi trong quá trình xem danh sách sản phẩm của phiếu nhập: " + importReceiptId);
-        }
-    }
-
-    private HBox createFilterRow() {
+    @Override
+    protected HBox createFilterRow() {
         tfId = new TextField();
         tfId.setPromptText("Tìm mã phiếu");
         tfId.textProperty().addListener((obs, oldVal, newVal) -> filterReceipts());
@@ -381,6 +263,44 @@ public class ImportReceiptScreen extends VBox {
         filterRow.setPadding(new Insets(2));
         filterRow.setStyle("-fx-background-color: #e1f0f7; -fx-padding: 5px; -fx-spacing: 5px; -fx-border-width: 0 0 1px 0; -fx-border-color: #c0e0eb");
         return filterRow;
+    }
+
+    public void showTable() {
+        try {
+            this.getStylesheets().add(this.getClass().getResource("/com/manager/stock/manager_stock/css/importReceipt/importReceipt.css").toExternalForm());
+            ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
+            List<ImportReceiptModel> importReceiptModels = presenter.loadImportReceiptList(Optional.empty());
+            List<ImportReceiptModelTable> tableModels = GenericConverterBetweenModelAndTableData.convertToList(
+                    importReceiptModels, ImportReceiptModelMapper.INSTANCE::toViewModel
+            );
+            allReceiptData.setAll(tableModels);
+            receiptData.setAll(tableModels);
+            updatePagination();
+        }
+        catch (DaoException e) {
+            AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi", "Lỗi khi load dữ liệu.");
+        }
+    }
+
+    private void showItemDetails(long importReceiptId) {
+        try {
+            ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
+            List<ImportReceiptDetailModel> importReceiptDetailModels = presenter.loadImportReceiptDetailList(importReceiptId);
+            List<ImportReceiptDetailModelTable> detailTables =
+                    GenericConverterBetweenModelAndTableData.convertToList(importReceiptDetailModels, ImportReceiptDetailModelMapper.INSTANCE::toViewModel);
+            productData.setAll(detailTables);
+            allProductData.setAll(detailTables);
+            productTable.setItems(productData);
+            updateTableHeight(productTable, productData.size());
+        }
+        catch (NullPointerException e) {
+            e.printStackTrace();
+            AlertUtils.alert("Đã xảy ra lỗi trong quá trình xử lý. Vui lòng thử lại sau hoặc liên hệ hỗ trợ.", "ERROR", "Lỗi", "Lỗi trong quá trình xem danh sách sản phẩm của phiếu nhập: " + importReceiptId);
+        }
+        catch (DaoException e) {
+            e.printStackTrace();
+            AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi", "Lỗi trong quá trình xem danh sách sản phẩm của phiếu nhập: " + importReceiptId);
+        }
     }
 
     private HBox createFilterRowProductOfImportReceipt() {
@@ -450,33 +370,5 @@ public class ImportReceiptScreen extends VBox {
             }
         }
         productData.setAll(filteredData);
-    }
-
-    private void updatePagination() {
-        int pageCount = (int) Math.ceil((double) receiptData.size() / itemsPerPage);
-        receiptPagination.setPageCount(pageCount > 0 ? pageCount : 1);
-        receiptPagination.setCurrentPageIndex(0);
-        int fromIndex = 0;
-        int toIndex = Math.min(itemsPerPage, receiptData.size());
-        receiptTable.setItems(FXCollections.observableArrayList(receiptData.subList(fromIndex, toIndex)));
-        updateTableHeight(receiptTable, Math.min(itemsPerPage, receiptData.size()));
-    }
-
-    private void updateTableHeight(TableView<?> table, int itemCount) {
-        double prefHeight = HEADER_HEIGHT + (itemCount * ROW_HEIGHT);
-//        table.setPrefHeight(300);
-        table.setMaxHeight(MAX_TABLE_HEIGHT);
-        table.setMinHeight(HEADER_HEIGHT);
-    }
-
-    private String normalizeString(String input) {
-        if (input == null) return "";
-        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
-        return normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                .toLowerCase();
-    }
-
-    public ImportReceiptModelTable getReceiptSelected () {
-        return this.selected;
     }
 }

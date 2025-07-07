@@ -4,7 +4,6 @@ import com.manager.stock.manager_stock.dao.IImportReceiptDao;
 import com.manager.stock.manager_stock.dao.impl.ImportReceiptDaoImpl;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.model.ImportReceiptModel;
-import com.manager.stock.manager_stock.screen.transaction.ImportReceiptPresenter;
 import com.manager.stock.manager_stock.service.IImportReceiptService;
 
 import java.util.ArrayList;

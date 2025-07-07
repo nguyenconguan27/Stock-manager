@@ -1,4 +1,4 @@
-package com.manager.stock.manager_stock.screen.transaction;
+package com.manager.stock.manager_stock.screen.transaction.presenter;
 
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.exception.DivisionByZeroException;

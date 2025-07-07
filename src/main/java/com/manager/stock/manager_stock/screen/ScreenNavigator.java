@@ -1,16 +1,13 @@
 package com.manager.stock.manager_stock.screen;
 
-import com.dlsc.formsfx.model.structure.StringField;
 import com.manager.stock.manager_stock.screen.product.ProductPresenter;
 import com.manager.stock.manager_stock.screen.product.ProductScreen;
 import com.manager.stock.manager_stock.screen.productGroup.ProductGroupScreen;
 import com.manager.stock.manager_stock.screen.transaction.ExportReceiptScreen;
-import com.manager.stock.manager_stock.screen.transaction.ImportReceiptPresenter;
 import com.manager.stock.manager_stock.screen.transaction.ImportReceiptScreen;
 import com.manager.stock.manager_stock.utils.CreateLoadingUtil;
 import javafx.application.Platform;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -18,7 +15,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
-import java.util.Objects;
 import java.util.Stack;
 
 /**
@@ -123,7 +119,15 @@ public class ScreenNavigator {
                     }).start();
                    break;
                 case "Phiếu xuất":
-                    ScreenNavigator.navigateTo(new ExportReceiptScreen());
+                    ScreenNavigator.showLoadingTemporary();
+                    new Thread(() -> {
+                        ExportReceiptScreen exportReceiptScreen = new ExportReceiptScreen();
+
+                        Platform.runLater(() -> {
+                            exportReceiptScreen.showTable();
+                            ScreenNavigator.navigateTo(exportReceiptScreen);
+                        });
+                    }).start();
                     break;
             }
         });

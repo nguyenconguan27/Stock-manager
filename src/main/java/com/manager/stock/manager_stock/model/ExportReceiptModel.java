@@ -23,6 +23,18 @@ public class ExportReceiptModel {
         this.exportReceiptDetailModels = new ArrayList<>();
     }
 
+    public ExportReceiptModel(long id, String invoiceNumber, String createAt, String receiver, String receiveAddress, String reason, String wareHouse, Double totalPrice, String totalPriceInWord) {
+        this.id = id;
+        this.invoiceNumber = invoiceNumber;
+        this.createAt = createAt;
+        this.receiver = receiver;
+        this.receiveAddress = receiveAddress;
+        this.reason = reason;
+        this.wareHouse = wareHouse;
+        this.totalPrice = totalPrice;
+        this.totalPriceInWord = totalPriceInWord;
+    }
+
     public long getId() {
         return id;
     }

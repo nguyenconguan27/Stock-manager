@@ -3,6 +3,7 @@ package com.manager.stock.manager_stock.service.impl;
 import com.manager.stock.manager_stock.dao.IExportReceiptDao;
 import com.manager.stock.manager_stock.dao.impl.ExportReceiptDaoImpl;
 import com.manager.stock.manager_stock.exception.DaoException;
+import com.manager.stock.manager_stock.model.ExportReceiptModel;
 import com.manager.stock.manager_stock.model.dto.ExportReceiptIdAndCreateDate;
 import com.manager.stock.manager_stock.model.dto.ProductIdAndActualQuantityAndTotalPriceOfReceipt;
 import com.manager.stock.manager_stock.service.IExportReceiptService;
@@ -49,5 +50,10 @@ public class ExportReceiptServiceImpl implements IExportReceiptService {
     @Override
     public void deleteByIds(List<Long> ids) {
         exportReceiptDao.deleteByIds(ids);
+    }
+
+    @Override
+    public List<ExportReceiptModel> findAllByAcademicYear(int academicYear) throws DaoException {
+        return exportReceiptDao.findAllByAcademicYear(academicYear);
     }
 }

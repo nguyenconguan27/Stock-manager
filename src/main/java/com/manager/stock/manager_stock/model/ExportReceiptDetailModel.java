@@ -11,6 +11,22 @@ public class ExportReceiptDetailModel {
     private int actualQuantity;
     private double unitPrice;
     private double totalPrice;
+    private String productName;
+    private String productCode;
+
+    public ExportReceiptDetailModel() {}
+
+    public ExportReceiptDetailModel(long id, long exportReceiptId, long productId, int plannedQuantity, int actualQuantity, double unitPrice, double totalPrice, String productName, String productCode) {
+        this.id = id;
+        this.exportReceiptId = exportReceiptId;
+        this.productId = productId;
+        this.plannedQuantity = plannedQuantity;
+        this.actualQuantity = actualQuantity;
+        this.unitPrice = unitPrice;
+        this.totalPrice = totalPrice;
+        this.productName = productName;
+        this.productCode = productCode;
+    }
 
     public long getId() {
         return id;
@@ -66,5 +82,21 @@ public class ExportReceiptDetailModel {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
     }
 }

@@ -2,6 +2,7 @@ package com.manager.stock.manager_stock.dao.impl;
 
 import com.manager.stock.manager_stock.dao.IExportReceiptDao;
 import com.manager.stock.manager_stock.exception.DaoException;
+import com.manager.stock.manager_stock.mapper.modelMapperResultSet.ExportReceiptMapperResultSet;
 import com.manager.stock.manager_stock.model.ExportReceiptModel;
 import com.manager.stock.manager_stock.model.dto.ExportReceiptIdAndCreateDate;
 import com.manager.stock.manager_stock.model.dto.ProductIdAndActualQuantityAndTotalPriceOfReceipt;
@@ -79,5 +80,11 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
 
         List<Object> parameters = new ArrayList<>(ids);
         deleteWithinTransaction(sql, connection, parameters.toArray());
+    }
+
+    @Override
+    public List<ExportReceiptModel> findAllByAcademicYear(int academicYear) {
+        String sql = "SELECT * from export_receipt where academic_year = ?";
+        return query(sql, new ExportReceiptMapperResultSet(), academicYear);
     }
 }
