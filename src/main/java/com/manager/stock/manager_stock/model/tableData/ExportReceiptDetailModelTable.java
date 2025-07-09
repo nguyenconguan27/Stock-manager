@@ -18,7 +18,7 @@ public class ExportReceiptDetailModelTable {
     private final StringProperty unitPriceFormat = new SimpleStringProperty();
     private final StringProperty totalPriceFormat = new SimpleStringProperty();
 
-    public ExportReceiptDetailModelTable(long id, long exportReceiptId, long productId, int plannedQuantity, int actualQuantity, Double totalPrice, Double unitPrice,
+    public ExportReceiptDetailModelTable(long id, long exportReceiptId, long productId, int plannedQuantity, int actualQuantity, double totalPrice, double unitPrice,
                                          String productName, String unitPriceFormat, String totalPriceFormat, String productCoe) {
         this.id.set(id);
         this.exportReceiptId.set(exportReceiptId);
@@ -48,11 +48,15 @@ public class ExportReceiptDetailModelTable {
 
     public long getId() {return this.id.get();}
     public long getExportReceiptId() {return this.exportReceiptId.get();}
-    public long getProductId() {return this.productId.get();}
+    public Long getProductId() {return this.productId.get();}
     public int getPlannedQuantity() {return this.plannedQuantity.get();}
     public int getActualQuantity() {return this.actualQuantity.get();}
     public double getTotalPrice() {return this.totalPrice.get();}
     public double getUnitPrice() {return this.unitPrice.get();}
     public String getProductName() {return this.productName.get();}
     public String getProductCode() {return this.productCode.get();}
+
+    public void setActualQuantity(int actualQuantity) {this.actualQuantity.set(actualQuantity);}
+    public void setTotalPrice(double totalPrice) {this.totalPrice.set(totalPrice);}
+    public void setTotalPriceFormat(String totalPriceFormat) {this.totalPriceFormat.set(totalPriceFormat);}
 }

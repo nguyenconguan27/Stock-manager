@@ -122,4 +122,21 @@ public class ExportReceiptModel {
     public void setAcademicYear(int academicYear) {
         this.academicYear = academicYear;
     }
+
+    @Override
+    public String toString() {
+        return "ReceiptModel{" +
+                "id=" + id +
+                ", invoiceNumber='" + invoiceNumber + '\'' +
+                ", createAt='" + createAt + '\'' +
+                ", receiver='" + receiver + '\'' +
+                ", receiveAddress='" + receiveAddress + '\'' +
+                ", reason='" + reason + '\'' +
+                ", wareHouse='" + wareHouse + '\'' +
+                ", totalPrice=" + totalPrice +
+                ", totalPriceInWord='" + totalPriceInWord + '\'' +
+                ", academicYear=" + academicYear +
+                '}';
+    }
+
 }

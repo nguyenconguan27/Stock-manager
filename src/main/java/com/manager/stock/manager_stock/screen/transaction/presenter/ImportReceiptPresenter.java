@@ -16,6 +16,7 @@ import com.manager.stock.manager_stock.utils.GenericConverterBetweenModelAndTabl
 import javafx.collections.ObservableList;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,6 +31,7 @@ public class ImportReceiptPresenter {
     private final IExportPriceService exportPriceService;
     private final IExportReceiptService exportReceiptService;
     private final IReceiptTransactionService receiptTransactionService;
+    private final IExportReceiptDetailService exportReceiptDetailService;
     private static ImportReceiptPresenter instance;
     private final ProductService productService;
 
@@ -40,6 +42,7 @@ public class ImportReceiptPresenter {
         exportPriceService = ExportPriceServiceImpl.getInstance();
         exportReceiptService = ExportReceiptServiceImpl.getInstance();
         receiptTransactionService = ReceiptTransactionServiceImpl.getInstance();
+        exportReceiptDetailService = ExportReceiptDetailServiceImpl.getInstance();
         productService = new ProductServiceImpl();
     }
 
@@ -86,7 +89,7 @@ public class ImportReceiptPresenter {
         }
         // cập nhật tồn kho
         try {
-            updateOrSaveInventoryDetail(academicYear, importReceiptDetailModels, changeQuantityByProductMap, changeTotalPriceByProductMap);
+//            updateOrSaveInventoryDetail(academicYear, importReceiptDetailModels, changeQuantityByProductMap, changeTotalPriceByProductMap);
         }
         catch (Exception e) {
             System.out.println("Cập nhật tồn kho lỗi rồi ==> rollback phiếu nhập và chi tiết phiếu nhập.");
@@ -96,8 +99,12 @@ public class ImportReceiptPresenter {
     }
 
     public void updateImportReceipt(ImportReceiptModel importReceiptModel, ImportReceiptModel oldImportReceiptModel, List<ImportReceiptDetailModelTable> importReceiptDetailModelTables, HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap) throws DaoException {
+        // cập nhật thông tin của phiếu nhập
         importReceiptService.update(importReceiptModel);
+
+        // danh sách sản phẩm thêm mới
         List<ImportReceiptDetailModelTable> newImportReceiptDetailModelTable = new ArrayList<>();
+        // danh sách sản phẩm chỉnh sửa
         List<ImportReceiptDetailModelTable> editImportReceiptDetailModelTable = new ArrayList<>();
 
         for(ImportReceiptDetailModelTable importReceiptDetailModelTable : importReceiptDetailModelTables) {
@@ -135,7 +142,7 @@ public class ImportReceiptPresenter {
         try {
             List<ImportReceiptDetailModel> importReceiptDetailModelsOverNewAndEdit = new ArrayList<>(newImportReceiptDetailModel);
             importReceiptDetailModelsOverNewAndEdit.addAll(editImportReceiptDetailModel);
-            updateOrSaveInventoryDetail(year, importReceiptDetailModelsOverNewAndEdit, changeQuantityByProductMap, changeTotalPriceByProductMap);
+//            updateOrSaveInventoryDetail(year, importReceiptDetailModelsOverNewAndEdit, changeQuantityByProductMap, changeTotalPriceByProductMap);
         }
         catch (Exception e) {
             System.out.println("Cập nhật tồn kho lỗi rồi ==> rollback phiếu nhập và chi tiết phiếu nhập.");
@@ -143,7 +150,8 @@ public class ImportReceiptPresenter {
         }
     }
 
-    private void updateOrSaveInventoryDetail(int academicYear, List<ImportReceiptDetailModel> importReceiptDetailModels, HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap) throws DaoException {
+    // cập nhật hoặc thêm mới tồn kho và đơn giá
+    private void updateOrSaveInventoryDetail(int academicYear, List<ImportReceiptDetailModel> importReceiptDetailModels, HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap, LocalDateTime importDate, boolean isInsert) throws DaoException {
         // lấy ra tồn kho theo năm
         // Lấy danh dách product id có trong hóa đơn
         List<Long> productIds = importReceiptDetailModels.stream()
@@ -153,11 +161,15 @@ public class ImportReceiptPresenter {
         HashMap<Long, InventoryDetailModel> inventoryDetailModelMapCurrentYear = inventoryDetailService.findAllByAcademicYearAndProductId(academicYear, productIds);
         HashMap<Long, InventoryDetailModel> inventoryDetailModelMapPreviousYear = inventoryDetailService.findAllByAcademicYearAndProductId(academicYear-1, productIds);
 
-        System.out.println(inventoryDetailModelMapCurrentYear);
-        System.out.println(inventoryDetailModelMapPreviousYear);
         List<InventoryDetailModel> inventoryDetailModelsToInsert = new ArrayList<>();
         List<InventoryDetailModel> inventoryDetailModelsToUpdate = new ArrayList<>();
-        List<ExportPriceModel> exportPriceModels = new ArrayList<>();
+        List<ExportPriceModel> exportPriceModelsToInsert = new ArrayList<>();
+        List<ExportPriceModel> exportPriceModelsToUpdate = new ArrayList<>();
+
+        Map<Long, List<ExportReceiptDetailModel>> exportReceiptDetailModelsByProductAfterImportDate = exportReceiptDetailService.findAllByProductAndMinTime(productIds, importDate);
+        Map<Long, List<ExportPriceModel>> exportPriceModelsByProductAfterImportDate = exportPriceService.findAllByProductAndMinTime(productIds, importDate);
+
+        // duyệt danh sách chi tiết phiếu nhập cần sửa hoặc thêm mới
         for(ImportReceiptDetailModel importReceiptDetailModel : importReceiptDetailModels) {
             // lấy ra tồn kho của sản phẩm trong bảng tồn kho của năm hiện tại
             long productId = importReceiptDetailModel.getProductId();
@@ -165,6 +177,7 @@ public class ImportReceiptPresenter {
             double totalPrice = importReceiptDetailModel.getTotalPrice();
             InventoryDetailModel inventoryDetailModel = inventoryDetailModelMapCurrentYear.getOrDefault(productId, null);
             // Trường hợp sản phẩm này chưa từng được nhập trong năm nay (tồn kho trong năm đang không có)
+            // ==> chưa có đơn giá mới ==> chỉ có thể insert đơn giá mới
             if(inventoryDetailModel == null) {
                 // lấy tồn kho đầu năm(của năm trước) của sản phẩm
                 inventoryDetailModel = inventoryDetailModelMapPreviousYear.getOrDefault(productId, null);
@@ -173,8 +186,8 @@ public class ImportReceiptPresenter {
                     inventoryDetailModel = new InventoryDetailModel();
                     inventoryDetailModel.setProductId(productId);
                     // tính lại giá xuất trước khi update lại tồn kho
+                    exportPriceModelsToInsert.add(calculateUnitPriceOfProduct(inventoryDetailModel, totalPrice, actualQuantity));
                     System.out.println("Cập nhật giá xuất mới: " + productId + " chưa từng được nhập(không có tồn kho).");
-                    exportPriceModels.add(calculateUnitPriceOfProduct(inventoryDetailModel, totalPrice, actualQuantity));
                     inventoryDetailModel.setAcademicYear(academicYear);
                     inventoryDetailModel.setQuantity(actualQuantity);
                     inventoryDetailModel.setTotalPrice(totalPrice);
@@ -183,14 +196,18 @@ public class ImportReceiptPresenter {
                 else {
                     // tồn kho đầu năm của sản phẩm đang xét(product id)
                     System.out.println("Cập nhật giá xuất mới: " + productId + " đã tồn tại trong tồn kho của năm ngoái (tồn kho đầu năm của năm nhập hàng).");
-                    exportPriceModels.add(calculateUnitPriceOfProduct(inventoryDetailModel, totalPrice, actualQuantity));
+                    exportPriceModelsToInsert.add(calculateUnitPriceOfProduct(inventoryDetailModel, totalPrice, actualQuantity));
                     inventoryDetailModel.setQuantity(inventoryDetailModel.getQuantity() + importReceiptDetailModel.getActualQuantity());
                     inventoryDetailModel.setTotalPrice(inventoryDetailModel.getTotalPrice() + importReceiptDetailModel.getTotalPrice());
                     inventoryDetailModel.setAcademicYear(academicYear);
                     inventoryDetailModelsToInsert.add(inventoryDetailModel);
                 }
+                // cập nhật lại toàn bộ phiếu xuất
             }
             // trường hợp năm nay đã có tồn kho của sản phẩm rồi ==> cập nhật lại
+            // ==> chắc chắn có đơn giá mới rồi
+            // ==> cần cập nhật lại đơn giá đối với trường hợp cập nhật phiếu nhập
+            // và thêm mới đơn giá đối với thêm mới phiếu nhập
             else {
                 // cập nhật lại số lượng cũng như tổng tiền tồn kho của sản phẩm
                 // trước khi cập nhật, xem sản phẩm này có phải là update thêm số lượng từ phiếu cũ hay không
@@ -200,7 +217,14 @@ public class ImportReceiptPresenter {
                 double currentTotalPriceByProduct = inventoryDetailModel.getTotalPrice() + changeTotalPriceByProduct;
                 // cập nhật lại giá xuất theo đúng số lượng nhập thêm vào
                 System.out.println("Cập nhật giá xuất mới: " + productId + " đã tồn tại trong tồn kho của năm nay.");
-                exportPriceModels.add(calculateUnitPriceOfProduct(inventoryDetailModel, changeTotalPriceByProduct, changeQuantityByProduct));
+                if(isInsert) {
+                    // trường hợp thêm mới phiếu nhập ==> thêm mới đơn giá
+                    exportPriceModelsToInsert.add(calculateUnitPriceOfProduct(inventoryDetailModel, changeTotalPriceByProduct, changeQuantityByProduct));
+                }
+                else { // trường hợp chỉnh sửa phiếu nhập ==> cần chỉnh lại đơn giá
+                    List<ExportPriceModel> exportPriceModels = exportPriceModelsByProductAfterImportDate.getOrDefault(productId, new ArrayList<>());
+
+                }
                 inventoryDetailModel.setQuantity(currentQuantityInStock);
                 inventoryDetailModel.setTotalPrice(currentTotalPriceByProduct);
                 inventoryDetailModelsToUpdate.add(inventoryDetailModel);
@@ -212,10 +236,16 @@ public class ImportReceiptPresenter {
         if(!inventoryDetailModelsToUpdate.isEmpty()) {
             inventoryDetailService.update(inventoryDetailModelsToUpdate);
         }
-        if(!exportPriceModels.isEmpty()) {
-            exportPriceService.save(exportPriceModels);
+        if(!exportPriceModelsToInsert.isEmpty()) {
+            exportPriceService.save(exportPriceModelsToInsert);
         }
     }
+
+    // cập nhật hoặc thêm mới đơnn giá
+    private void addOrUpdateExportPrice() {
+
+    }
+
     // Đơn giá mới = (Thành tiên tồn kho + Thành tiền nhập) / (Số lượng tồn kho + Số lượng nhập)
     private ExportPriceModel calculateUnitPriceOfProduct(InventoryDetailModel inventoryDetailModel, double totalPriceImported, int quantityImported) {
         try {

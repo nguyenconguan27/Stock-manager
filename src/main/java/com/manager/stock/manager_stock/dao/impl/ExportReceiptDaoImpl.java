@@ -87,4 +87,21 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
         String sql = "SELECT * from export_receipt where academic_year = ?";
         return query(sql, new ExportReceiptMapperResultSet(), academicYear);
     }
+
+    @Override
+    public long save(ExportReceiptModel exportReceiptModel) {
+        String sql = "INSERT INTO export_receipt(invoice_number, create_at, receiver, receive_address, reason, warehouse, academic_year) " +
+                    "values (?, ?, ?, ?, ?, ?, ?)";
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[] {
+            exportReceiptModel.getInvoiceNumber(),
+            exportReceiptModel.getCreateAt(),
+            exportReceiptModel.getReceiver(),
+            exportReceiptModel.getReceiveAddress(),
+            exportReceiptModel.getReason(),
+            exportReceiptModel.getWareHouse(),
+            exportReceiptModel.getAcademicYear()
+        });
+        return save(sql, parameters);
+    }
 }

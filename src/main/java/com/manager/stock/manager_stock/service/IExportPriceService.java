@@ -2,12 +2,17 @@ package com.manager.stock.manager_stock.service;
 
 import com.manager.stock.manager_stock.model.ExportPriceModel;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * @author Trọng Hướng
  */
 public interface IExportPriceService {
-    double findExportPriceByProductIdAndLastTime(long productId);
+    long findExportPriceByProductIdAndLastTime(long productId);
     void save(List<ExportPriceModel> exportPriceModels);
+    HashMap<Long, List<ExportPriceModel>> findAllByProductAndMinTime(List<Long> productIds, LocalDateTime minTime);
+    void update(List<ExportPriceModel> exportPriceModels);
 }

@@ -56,4 +56,9 @@ public class ExportReceiptServiceImpl implements IExportReceiptService {
     public List<ExportReceiptModel> findAllByAcademicYear(int academicYear) throws DaoException {
         return exportReceiptDao.findAllByAcademicYear(academicYear);
     }
+
+    @Override
+    public long save(ExportReceiptModel exportReceiptModel) {
+        return exportReceiptDao.save(exportReceiptModel);
+    }
 }

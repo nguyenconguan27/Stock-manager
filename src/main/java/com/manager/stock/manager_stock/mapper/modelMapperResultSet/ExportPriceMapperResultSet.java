@@ -42,10 +42,10 @@ public class ExportPriceMapperResultSet implements RowMapper<ExportPriceModel>{
                         break;
                 }
             }
+            return exportPriceModel;
         }
         catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 }

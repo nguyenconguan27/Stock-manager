@@ -1,7 +1,6 @@
 package com.manager.stock.manager_stock.screen.transaction;
 
 import com.manager.stock.manager_stock.exception.DaoException;
-import com.manager.stock.manager_stock.interfaceActionHandler.TopBarActionHandler;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptDetailModelMapper;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptModelMapper;
 import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
@@ -13,8 +12,6 @@ import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter;
 import com.manager.stock.manager_stock.utils.*;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,75 +21,26 @@ import javafx.scene.layout.*;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 
-import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * @author Trọng Hướng
  */
-public class AddOrUpdateReceiptScreen extends VBox {
+public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen<ImportReceiptModelTable, ImportReceiptDetailModelTable> {
 
     private final ImportReceiptPresenter importReceiptPresenter;
-    private final TableView<ImportReceiptDetailModelTable> productTable = new TableView<>();
-    private boolean productLoaded = false;
-    private final ObservableList<ProductModel> allProducts = FXCollections.observableArrayList();
-    private FilteredList<ProductModel> filteredProducts = new FilteredList<>(allProducts, p -> true);
-    private final ObservableList<ImportReceiptDetailModelTable> productDetails = FXCollections.observableArrayList();
-    private double totalPriceOfReceipt = 0;
-    private Label totalPriceLabel = new Label(FormatMoney.format(0));
-    private Set<Long> changeIdsOfReceiptDetails = new HashSet<>();
-    private HashMap<Long, Integer> changeQuantityByProductMap = new HashMap<>();
-    private HashMap<Long, Double> changeTotalPriceByProductMap = new HashMap<>();
+    protected TextField tfInvoice, tfDeliveredBy, tfCompanyName;
 
-    private TextField tfInvoiceNumber, tfInvoice, tfDeliveredBy, tfCompanyName, tfWareHouse;
-    private DatePicker dpCreateAt;
-
-    public AddOrUpdateReceiptScreen(ImportReceiptModelTable importReceiptModelTable) {
+    public AddOrUpdateImportReceiptScreen(ImportReceiptModelTable importReceiptModelTable) {
+        super(importReceiptModelTable);
         importReceiptPresenter = ImportReceiptPresenter.getInstance();
-
-        HBox topBar = CreateTopBarOfReceiptUtil.createTopBar(new TopBarActionHandler() {
-            @Override
-            public void onAdd() {
-
-            }
-
-            @Override
-            public void onEdit() {
-
-            }
-
-            @Override
-            public void onDelete() {
-
-            }
-
-            @Override
-            public void onReload() {
-
-            }
-
-            @Override
-            public void onPrint() {
-
-            }
-
-            @Override
-            public void onExport() {
-
-            }
-        });
-
-        VBox formAddNew = createFormAddNew(importReceiptModelTable);
-        getChildren().addAll(topBar, formAddNew, createTableItemDetailByReceipt(importReceiptModelTable));
     }
 
-    private VBox createFormAddNew(ImportReceiptModelTable model) {
+    @Override
+    protected VBox createFormAddNew(ImportReceiptModelTable model) {
         // === Form bên trái ===
         GridPane leftForm = new GridPane();
         leftForm.setHgap(10);
@@ -271,7 +219,8 @@ public class AddOrUpdateReceiptScreen extends VBox {
         return root;
     }
 
-    private VBox createTableItemDetailByReceipt(ImportReceiptModelTable oldImportReceiptModelTable) {
+    @Override
+    protected VBox createTableItemDetailByReceipt(ImportReceiptModelTable oldImportReceiptModelTable) {
         TableView<ImportReceiptDetailModelTable> productTable = new TableView<>();
         productTable.setEditable(true);
 
@@ -457,18 +406,11 @@ public class AddOrUpdateReceiptScreen extends VBox {
         totalPriceRow.setStyle("-fx-padding: 5; -fx-background-color: #e1f0f7; -fx-border-color: #c1dfee; -fx-border-width: 1px; ");
         Label totalPriceLabelTitle = new Label("Tổng cộng: ");
         totalPriceRow.getChildren().addAll(totalPriceLabelTitle, totalPriceLabel);
-        setCssForTextFile(totalPriceLabelTitle);
-        setCssForTextFile(totalPriceLabel);
+        styleLabel(totalPriceLabelTitle);
+        styleLabel(totalPriceLabel);
 
         box.getChildren().addAll(totalPriceRow, actionRow);
         return box;
-    }
-
-    private String normalizeString(String input) {
-        if (input == null) return "";
-        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
-        return normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                .toLowerCase();
     }
 
     private void addProductToTableProductOfReceipt(ProductModel product, int actualQuantity, int plannedQuantity, long unitPrice) {
@@ -521,7 +463,4 @@ public class AddOrUpdateReceiptScreen extends VBox {
         productTable.refresh();
     }
 
-    private void setCssForTextFile(Label label) {
-        label.setStyle("-fx-border-width: 0; -fx-background-color: #e1f0f7; -fx-text-fill: #33536d; -fx-font-size: 15px");
-    }
 }

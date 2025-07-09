@@ -162,7 +162,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
         return new TopBarActionHandler() {
             @Override
             public void onAdd() {
-                AddOrUpdateReceiptScreen addReceiptScreen = new AddOrUpdateReceiptScreen(null);
+                AddOrUpdateImportReceiptScreen addReceiptScreen = new AddOrUpdateImportReceiptScreen(null);
                 ScreenNavigator.navigateTo(addReceiptScreen);
             }
 
@@ -172,7 +172,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
                     System.out.println("Chỉnh sửa hóa đơn");
                     if(selected != null) {
                         System.out.println(selected);
-                        AddOrUpdateReceiptScreen updateReceiptScreen = new AddOrUpdateReceiptScreen(selected);
+                        AddOrUpdateImportReceiptScreen updateReceiptScreen = new AddOrUpdateImportReceiptScreen(selected);
                         ScreenNavigator.navigateTo(updateReceiptScreen);
                     }
                     else {

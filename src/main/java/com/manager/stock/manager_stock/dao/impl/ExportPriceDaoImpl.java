@@ -6,9 +6,11 @@ import com.manager.stock.manager_stock.mapper.modelMapperResultSet.ExportPriceMa
 import com.manager.stock.manager_stock.model.ExportPriceModel;
 import com.manager.stock.manager_stock.service.impl.ExportPriceServiceImpl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Trọng Hướng
@@ -24,9 +26,9 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
     }
 
     @Override
-    public double findExportPriceByProductIdAndExportTime(long productId) {
+    public long findExportPriceByProductIdAndExportTime(long productId) {
         try {
-            String sql = "select export_price \n" +
+            String sql = "select id \n" +
                     "FROM export_price\n" +
                     "WHERE product_id = ?\n" +
                     "ORDER BY export_time DESC\n" +
@@ -36,7 +38,7 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
             if(exportPriceModels.isEmpty()){
                 return -1;
             }
-            return exportPriceModels.get(0).getExportPrice();
+            return exportPriceModels.get(0).getId();
         }
         catch (DaoException e) {
             throw new DaoException(e.getMessage());
@@ -59,5 +61,12 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
             });
         }
         save(sql, parameters);
+    }
+
+    @Override
+    public List<ExportPriceModel> findAllByProductAndMinTime(List<Long> productIds, LocalDateTime minTime) {
+        String productIdsStr = productIds.stream().map(Object::toString).collect(Collectors.joining(","));
+        String sql = "SELECT * FROM export_price WHERE export_time >= ? and product_id in (" + productIdsStr + ")";
+        return query(sql, new ExportPriceMapperResultSet(), productIds, minTime);
     }
 }

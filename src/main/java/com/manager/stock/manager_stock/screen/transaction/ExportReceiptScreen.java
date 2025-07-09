@@ -9,6 +9,7 @@ import com.manager.stock.manager_stock.model.ExportReceiptModel;
 import com.manager.stock.manager_stock.model.tableData.ExportReceiptDetailModelTable;
 import com.manager.stock.manager_stock.model.tableData.ExportReceiptModelTable;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptModelTable;
+import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.transaction.presenter.ExportReceiptPresenter;
 import com.manager.stock.manager_stock.utils.AlertUtils;
 import com.manager.stock.manager_stock.utils.CreateColumnTableUtil;
@@ -204,12 +205,26 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
         return new TopBarActionHandler() {
             @Override
             public void onAdd() {
-
+                AddOrUpdateExportReceiptScreen addReceiptScreen = new AddOrUpdateExportReceiptScreen(null);
+                ScreenNavigator.navigateTo(addReceiptScreen);
             }
 
             @Override
             public void onEdit() {
-
+                try {
+                    System.out.println("Chỉnh sửa hóa đơn");
+                    if(selected != null) {
+                        System.out.println(selected);
+                        AddOrUpdateExportReceiptScreen updateReceiptScreen = new AddOrUpdateExportReceiptScreen(selected);
+                        ScreenNavigator.navigateTo(updateReceiptScreen);
+                    }
+                    else {
+                        AlertUtils.alert("Vui lòng chọn hóa đơn cần sửa.", "WARNING", "Cảnh báo", "Chưa chọn hóa đơn.");
+                    }
+                }
+                catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
 
             @Override

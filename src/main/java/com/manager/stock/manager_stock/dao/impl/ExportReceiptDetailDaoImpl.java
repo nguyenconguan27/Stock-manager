@@ -1,10 +1,15 @@
 package com.manager.stock.manager_stock.dao.impl;
 
 import com.manager.stock.manager_stock.dao.IExportReceiptDetailDao;
+import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.mapper.modelMapperResultSet.ExportReceiptDetailMapperResultSet;
 import com.manager.stock.manager_stock.model.ExportReceiptDetailModel;
 
+import java.net.DatagramPacket;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Trọng Hướng
@@ -28,5 +33,47 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
                 "join product p on p.id = erd.product_id\n" +
                 "WHERE er.id = ?";
         return query(sql, new ExportReceiptDetailMapperResultSet(), exportReceiptId);
+    }
+
+    @Override
+    public List<ExportReceiptDetailModel> findAllByProductAndMinTime(List<Long> productIds, LocalDateTime minTime) {
+        String productIdsStr = productIds.stream().map(Object::toString).collect(Collectors.joining(","));
+        String sql = "select erd.* from export_receipt_detail erd \n" +
+                "join export_receipt er on\n" +
+                "erd.export_receipt_id = er.id \n" +
+                "where er.create_at >= ?\n" +
+                "and erd.product_id in (" + productIdsStr + ")";
+        return query(sql, new ExportReceiptDetailMapperResultSet(), minTime);
+    }
+
+    @Override
+    public List<Long> save(List<ExportReceiptDetailModel> exportReceiptDetailModels) {
+        String sql = "INSERT INTO export_receipt_detail(id, export_receipt_id, product_id, planned_quantity, actual_quantity, export_price_id) " +
+                    " OVERRIDING SYSTEM VALUE" +
+                    " values(?, ?, ?, ?, ?, ?)" +
+                    " RETURNING *;";
+        List<Long> ids = new ArrayList<>();
+        List<Object[]> parameters = new ArrayList<>();
+        for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
+            long id = System.currentTimeMillis();
+            parameters.add(new Object[]{
+                    id,
+                    exportReceiptDetailModel.getExportReceiptId(),
+                    exportReceiptDetailModel.getProductId(),
+                    exportReceiptDetailModel.getPlannedQuantity(),
+                    exportReceiptDetailModel.getActualQuantity(),
+                    exportReceiptDetailModel.getExportReceiptId()
+            });
+            ids.add(id);
+        }
+        save(sql, parameters);
+        return ids;
+    }
+
+    @Override
+    public void delete(List<Long> ids) throws DaoException {
+        String idsStr = ids.stream().map(Object::toString).collect(Collectors.joining(","));
+        String sql = "DELETE FROM export_receipt_detail WHERE id IN (" + idsStr + ")";
+        delete(sql);
     }
 }

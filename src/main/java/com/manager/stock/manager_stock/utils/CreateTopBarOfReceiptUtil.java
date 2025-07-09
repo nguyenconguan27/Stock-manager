@@ -2,27 +2,14 @@ package com.manager.stock.manager_stock.utils;
 
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.interfaceActionHandler.TopBarActionHandler;
-import com.manager.stock.manager_stock.model.ImportReceiptModel;
-import com.manager.stock.manager_stock.model.tableData.ImportReceiptModelTable;
-import com.manager.stock.manager_stock.screen.ScreenNavigator;
-import com.manager.stock.manager_stock.screen.transaction.AddOrUpdateReceiptScreen;
-import com.manager.stock.manager_stock.screen.transaction.ImportReceiptScreen;
-import com.manager.stock.manager_stock.service.IExportPriceService;
-import com.manager.stock.manager_stock.service.IExportReceiptService;
-import com.manager.stock.manager_stock.service.IImportReceiptService;
-import com.manager.stock.manager_stock.service.impl.ExportPriceServiceImpl;
-import com.manager.stock.manager_stock.service.impl.ExportReceiptServiceImpl;
-import com.manager.stock.manager_stock.service.impl.ImportReceiptServiceImpl;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
 import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * @author Trọng Hướng
