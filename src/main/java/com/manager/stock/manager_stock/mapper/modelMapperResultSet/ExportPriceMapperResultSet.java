@@ -37,8 +37,8 @@ public class ExportPriceMapperResultSet implements RowMapper<ExportPriceModel>{
                     case "quantity_imported":
                         exportPriceModel.setQuantityImported(resultSet.getInt(columnName));
                         break;
-                    case "import_price":
-                        exportPriceModel.setImportPrice(resultSet.getDouble(columnName));
+                    case "total_price_import":
+                        exportPriceModel.setTotalImportPrice(resultSet.getDouble(columnName));
                         break;
                 }
             }

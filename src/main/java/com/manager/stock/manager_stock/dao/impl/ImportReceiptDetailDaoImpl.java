@@ -37,8 +37,8 @@ public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailM
     @Override
     public long save(List<ImportReceiptDetailModel> importReceiptDetailModels, long importReceiptId) throws DaoException {
         try {
-            String sql = "INSERT INTO import_receipt_detail (import_receipt_id, product_id, planned_quantity, actual_quantity, unit_price, total_price, product_name)" +
-                    " values (?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO import_receipt_detail (import_receipt_id, product_id, planned_quantity, actual_quantity, unit_price, product_name)" +
+                    " values (?, ?, ?, ?, ?, ?)";
             List<Object[]> parameters = new ArrayList<>();
             for(ImportReceiptDetailModel importReceiptDetailModel : importReceiptDetailModels){
                 parameters.add(new Object[]{
@@ -47,7 +47,6 @@ public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailM
                         importReceiptDetailModel.getPlannedQuantity(),
                         importReceiptDetailModel.getActualQuantity(),
                         importReceiptDetailModel.getUnitPrice(),
-                        importReceiptDetailModel.getTotalPrice(),
                         importReceiptDetailModel.getProductName()
                 });
             }

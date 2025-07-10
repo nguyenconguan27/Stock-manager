@@ -1,5 +1,6 @@
 package com.manager.stock.manager_stock.screen.transaction;
 
+import com.browniebytes.javafx.control.DateTimePicker;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ExportReceiptDetailModelTableMapper;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptDetailModelMapper;
@@ -23,6 +24,7 @@ import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,8 +50,8 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         leftForm.setPadding(new Insets(15));
 
         leftForm.add(new Label("Ngày tạo *"), 0, 0);
-        dpCreateAt = new DatePicker();
-        leftForm.add(dpCreateAt, 1, 0);
+        dateTimePicker = new DateTimePicker(LocalDateTime.now());
+        leftForm.add(dateTimePicker, 1, 0);
 
         leftForm.add(new Label("Số hóa đơn *"), 0, 1);
         tfInvoiceNumber = new TextField();
@@ -81,7 +83,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             if (model.getCreateAt() != null && !model.getCreateAt().isEmpty()) {
                 try {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    dpCreateAt.setValue(LocalDate.parse(model.getCreateAt(), formatter));
+                    dateTimePicker.setTime(LocalDateTime.parse(model.getCreateAt(), formatter));
                 } catch (Exception e) {
                     System.err.println("Lỗi định dạng ngày: " + model.getCreateAt());
                 }
@@ -332,11 +334,11 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         Button saveBtn = new Button("Save");
         AddCssStyleForBtnUtil.addCssStyleForBtn(saveBtn);
         saveBtn.setOnMouseClicked(e -> {
-            if(dpCreateAt.getValue() == null || dpCreateAt.getValue().toString().trim().equals("")) {
+            if(dateTimePicker.dateTimeProperty() == null || dateTimePicker.dateTimeProperty().get() == null) {
                 AlertUtils.alert("Vui lòng chọn ngày nhập hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin");
                 return;
             }
-            String createAtStr = dpCreateAt.getValue().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            String createAtStr = dateTimePicker.dateTimeProperty().get().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
             String invoiceNumber = tfInvoiceNumber.getText().trim();
             String receiver = tfReceiver.getText().trim();
             String receiveAddress = tfReceiveAddress.getText().trim();

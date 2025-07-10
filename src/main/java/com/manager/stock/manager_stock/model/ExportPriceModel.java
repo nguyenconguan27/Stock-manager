@@ -11,19 +11,19 @@ public class ExportPriceModel {
     private int quantityInStock;
     private double totalPriceInStock;
     private int quantityImported;
-    private double importPrice;
+    private double totalImportPrice;
 
     public ExportPriceModel() {
     }
 
-    public ExportPriceModel(long id, long productId, long exportTime, double exportPrice, int quantityInStock, int quantityImported, double importPrice, double totalPriceInStock) {
+    public ExportPriceModel(long id, long productId, long exportTime, double exportPrice, int quantityInStock, int quantityImported, double totalImportPrice, double totalPriceInStock) {
         this.id = id;
         this.productId = productId;
         this.exportTime = exportTime;
         this.exportPrice = exportPrice;
         this.quantityInStock = quantityInStock;
         this.quantityImported = quantityImported;
-        this.importPrice = importPrice;
+        this.totalImportPrice = totalImportPrice;
         this.totalPriceInStock = totalPriceInStock;
     }
 
@@ -75,12 +75,12 @@ public class ExportPriceModel {
         this.quantityImported = quantityImported;
     }
 
-    public double getImportPrice() {
-        return importPrice;
+    public double getTotalImportPrice() {
+        return totalImportPrice;
     }
 
-    public void setImportPrice(double importPrice) {
-        this.importPrice = importPrice;
+    public void setTotalImportPrice(double totalImportPrice) {
+        this.totalImportPrice = totalImportPrice;
     }
 
     public double getTotalPriceInStock() {

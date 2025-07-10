@@ -1,5 +1,6 @@
 package com.manager.stock.manager_stock.screen.transaction;
 
+import com.browniebytes.javafx.control.DateTimePicker;
 import com.manager.stock.manager_stock.interfaceActionHandler.TopBarActionHandler;
 import com.manager.stock.manager_stock.model.ProductModel;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptDetailModelTable;
@@ -24,7 +25,8 @@ import java.util.Set;
  * @author Trọng Hướng
  */
 public abstract class BaseAddOrUpdateReceiptScreen<T, D> extends VBox {
-    protected DatePicker dpCreateAt;
+//    protected DatePicker dpCreateAt;
+    protected DateTimePicker dateTimePicker;
     protected final TableView<D> productTable = new TableView<>();
     protected boolean productLoaded = false;
     protected final ObservableList<ProductModel> allProducts = FXCollections.observableArrayList();

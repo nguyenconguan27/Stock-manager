@@ -54,6 +54,6 @@ public class ExportPriceServiceImpl implements IExportPriceService {
 
     @Override
     public void update(List<ExportPriceModel> exportPriceModels) {
-
+        exportPriceDao.update(exportPriceModels);
     }
 }

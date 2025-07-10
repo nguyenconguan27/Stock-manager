@@ -138,6 +138,13 @@
             <version>1.4.11</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/io.github.bajins/datetime-picker-javafx -->
+        <dependency>
+            <groupId>io.github.bajins</groupId>
+            <artifactId>datetime-picker-javafx</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -47,8 +47,8 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
 
     @Override
     public void save(List<ExportPriceModel> exportPriceModels) throws DaoException {
-        String sql = "INSERT INTO export_price(product_id, export_time, export_price, quantity_in_stock, quantity_imported, import_price) " +
-                    "values (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO export_price(product_id, export_time, export_price, quantity_in_stock, quantity_imported, total_price_import, total_price_in_stock) " +
+                    "values (?, ?, ?, ?, ?, ?, ?)";
         List<Object[]> parameters = new ArrayList<>();
         for(ExportPriceModel exportPriceModel : exportPriceModels){
             parameters.add(new Object[] {
@@ -57,7 +57,8 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
                 exportPriceModel.getExportPrice(),
                 exportPriceModel.getQuantityInStock(),
                 exportPriceModel.getQuantityImported(),
-                exportPriceModel.getImportPrice()
+                exportPriceModel.getTotalImportPrice(),
+                exportPriceModel.getTotalPriceInStock()
             });
         }
         save(sql, parameters);
@@ -68,5 +69,23 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
         String productIdsStr = productIds.stream().map(Object::toString).collect(Collectors.joining(","));
         String sql = "SELECT * FROM export_price WHERE export_time >= ? and product_id in (" + productIdsStr + ")";
         return query(sql, new ExportPriceMapperResultSet(), productIds, minTime);
+    }
+
+    @Override
+    public void update(List<ExportPriceModel> exportPriceModels) {
+        String sql = "UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ?" +
+                    " WHERE product_id = ?";
+        List<Object[]> parameters = new ArrayList<>();
+        for(ExportPriceModel exportPriceModel : exportPriceModels){
+            parameters.add(new Object[] {
+               exportPriceModel.getQuantityInStock(),
+               exportPriceModel.getQuantityImported(),
+               exportPriceModel.getTotalImportPrice(),
+               exportPriceModel.getExportPrice(),
+               exportPriceModel.getTotalPriceInStock(),
+               exportPriceModel.getId()
+            });
+        }
+        save(sql, parameters);
     }
 }

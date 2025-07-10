@@ -52,6 +52,6 @@ public class ExportReceiptDetailServiceImpl implements IExportReceiptDetailServi
 
     @Override
     public void update(List<ExportReceiptDetailModel> exportReceiptDetailModels) {
-
+        exportReceiptDetailDao.update(exportReceiptDetailModels);
     }
 }
