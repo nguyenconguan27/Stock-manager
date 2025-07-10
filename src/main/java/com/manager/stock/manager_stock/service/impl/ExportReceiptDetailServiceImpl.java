@@ -49,4 +49,9 @@ public class ExportReceiptDetailServiceImpl implements IExportReceiptDetailServi
     public void delete(List<Long> ids) throws DaoException {
         exportReceiptDetailDao.delete(ids);
     }
+
+    @Override
+    public void update(List<ExportReceiptDetailModel> exportReceiptDetailModels) {
+
+    }
 }

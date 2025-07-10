@@ -13,4 +13,5 @@ public interface IExportReceiptDetailDao {
     List<ExportReceiptDetailModel> findAllByProductAndMinTime(List<Long> productIds, LocalDateTime minTime);
     List<Long> save(List<ExportReceiptDetailModel> exportReceiptDetailModels);
     void delete(List<Long> ids);
+    void update(List<ExportReceiptDetailModel> exportReceiptDetailModels);
 }

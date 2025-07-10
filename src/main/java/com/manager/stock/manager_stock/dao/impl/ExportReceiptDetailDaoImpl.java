@@ -76,4 +76,11 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
         String sql = "DELETE FROM export_receipt_detail WHERE id IN (" + idsStr + ")";
         delete(sql);
     }
+
+    @Override
+    public void update(List<ExportReceiptDetailModel> exportReceiptDetailModels) {
+        String sql = "UPDATE export_receipt_detail set actual_quantity = ?, message = ?, status = ?" +
+                    "WHERE id = ?";
+
+    }
 }
