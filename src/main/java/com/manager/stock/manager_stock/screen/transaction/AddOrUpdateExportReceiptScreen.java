@@ -1,11 +1,14 @@
 package com.manager.stock.manager_stock.screen.transaction;
 
 import com.browniebytes.javafx.control.DateTimePicker;
+import com.manager.stock.manager_stock.exception.CanNotFoundException;
 import com.manager.stock.manager_stock.exception.DaoException;
+import com.manager.stock.manager_stock.exception.StockUnderFlowException;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ExportReceiptDetailModelTableMapper;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptDetailModelMapper;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptModelMapper;
 import com.manager.stock.manager_stock.model.*;
+import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
 import com.manager.stock.manager_stock.model.tableData.ExportReceiptDetailModelTable;
 import com.manager.stock.manager_stock.model.tableData.ExportReceiptModelTable;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptDetailModelTable;
@@ -109,31 +112,32 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         HBox.setHgrow(rightForm, Priority.ALWAYS);
 
         // === Form chọn sản phẩm ===
-        javafx.scene.control.Label lbProduct = new javafx.scene.control.Label("Chọn sản phẩm *");
+        Label lbProduct = new Label("Chọn sản phẩm *");
         ComboBox<ProductModel> cbProduct = new ComboBox<>();
         cbProduct.setPromptText("Tìm theo mã hoặc tên sản phẩm");
         cbProduct.setEditable(true);
         VBox productCol = new VBox(5, lbProduct, cbProduct);
 
-        javafx.scene.control.Label lbPlannedQty = new javafx.scene.control.Label("Số lượng CT *");
-        javafx.scene.control.TextField tfPlannedQty = new javafx.scene.control.TextField();
+        Label lbPlannedQty = new Label("Số lượng CT *");
+        TextField tfPlannedQty = new TextField();
         tfPlannedQty.setPrefWidth(100);
         VBox plannedQtyCol = new VBox(5, lbPlannedQty, tfPlannedQty);
 
-        javafx.scene.control.Label lbActualQty = new javafx.scene.control.Label("Số lượng thực *");
-        javafx.scene.control.TextField tfActualQty = new javafx.scene.control.TextField();
+        Label lbActualQty = new Label("Số lượng thực *");
+        TextField tfActualQty = new TextField();
         tfActualQty.setPrefWidth(100);
         VBox actualQtyCol = new VBox(5, lbActualQty, tfActualQty);
 
-        javafx.scene.control.Label lbUnitPrice = new javafx.scene.control.Label("Đơn giá *");
-        javafx.scene.control.TextField tfUnitPrice = new javafx.scene.control.TextField();
+        Label lbUnitPrice = new Label("Đơn giá *");
+        TextField tfUnitPrice = new TextField();
         tfUnitPrice.setPrefWidth(100);
+        tfUnitPrice.setEditable(false);
         VBox unitPriceCol = new VBox(5, lbUnitPrice, tfUnitPrice);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        javafx.scene.control.Button btnAddProduct = new javafx.scene.control.Button("Thêm");
+        Button btnAddProduct = new Button("Thêm");
         btnAddProduct.setPrefWidth(80);
         btnAddProduct.setPrefHeight(30);
         btnAddProduct.setStyle("-fx-background-color: #e1f0f7; -fx-text-fill: #33536d; -fx-border-width: 1; -fx-border-color: #c1dfee;");
@@ -199,6 +203,22 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             if (!cbProduct.isShowing()) cbProduct.show();
         });
 
+        cbProduct.getSelectionModel().selectedItemProperty().addListener((obs, oldProduct, newProduct) -> {
+            if (newProduct != null) {
+                ExportPriceIdAndPrice ep = presenter.findExportPriceIdAndPriceByProductAndLastTime(newProduct.getId());
+                if (ep.exportPriceId() == -1) {
+                    AlertUtils.alert("Sản phẩm này không có đơn giá, vui lòng nhập đơn giá cho sản phẩm.", "WARNING", "Cảnh báo", "Không có đơn giá.");
+                    tfUnitPrice.clear();
+                    tfUnitPrice.setUserData(null);
+                    return;
+                }
+
+                tfUnitPrice.setText(String.valueOf(ep.price()));
+                tfUnitPrice.setUserData(ep.exportPriceId());
+            }
+        });
+
+
         // === Giao diện tổng thể ===
         VBox root = new VBox(20, formColumns, productBox);
         root.setPadding(new Insets(10));
@@ -211,10 +231,12 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 ProductModel selectedProduct = cbProduct.getSelectionModel().getSelectedItem();
                 int actualQuantity = Integer.parseInt(tfActualQty.getText());
                 int plannedQuantity = Integer.parseInt(tfPlannedQty.getText());
-                long unitPrice = Long.parseLong(tfUnitPrice.getText());
+                double unitPrice = Double.parseDouble(tfUnitPrice.getText());
+                long exportPriceId = Long.parseLong(tfUnitPrice.getUserData().toString());
 
-                addProductToTableProductOfReceipt(selectedProduct, actualQuantity, plannedQuantity, unitPrice);
+                addProductToTableProductOfReceipt(selectedProduct, actualQuantity, plannedQuantity, exportPriceId, unitPrice);
             } catch (NumberFormatException ex) {
+                ex.printStackTrace();
                 AlertUtils.alert("Vui lòng nhập đúng định dạng số cho số lượng và đơn giá.", "WARNING", "Cảnh báo", "Lỗi định dạng");
             }
         });
@@ -334,47 +356,51 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         Button saveBtn = new Button("Save");
         AddCssStyleForBtnUtil.addCssStyleForBtn(saveBtn);
         saveBtn.setOnMouseClicked(e -> {
-            if(dateTimePicker.dateTimeProperty() == null || dateTimePicker.dateTimeProperty().get() == null) {
-                AlertUtils.alert("Vui lòng chọn ngày nhập hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin");
-                return;
-            }
-            String createAtStr = dateTimePicker.dateTimeProperty().get().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-            String invoiceNumber = tfInvoiceNumber.getText().trim();
-            String receiver = tfReceiver.getText().trim();
-            String receiveAddress = tfReceiveAddress.getText().trim();
-            String reason = tfReason.getText().trim();
-            String wareHouseName = tfWareHouse.getText().trim();
-            if(invoiceNumber.isEmpty()) {
-                AlertUtils.alert("Vui lòng nhập số hóa đơn.", "WARNING", "Cảnh báo", "Thiếu thông tin");
-                return;
-            }
-            if(receiver.isEmpty()) {AlertUtils.alert("Vui lòng nhập người nhận hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
-            if(receiveAddress.isEmpty()) {AlertUtils.alert("Vui lòng nhập địa chỉ nhận hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
-            if(reason.isEmpty()) {AlertUtils.alert("Vui lòng nhập lý do xuất kho.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
-            if(wareHouseName.isEmpty()) {AlertUtils.alert("Vui lòng nhập kho xuất hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
-            ExportReceiptModel exportReceiptModel = new ExportReceiptModel(
-                    receiptModelTable != null ? receiptModelTable.getId() : null,
-                    invoiceNumber,
-                    createAtStr,
-                    receiver,
-                    receiveAddress,
-                    reason,
-                    wareHouseName,
-                    totalPriceOfReceipt,
-                    FormatMoney.formatMoneyToWord((long)totalPriceOfReceipt)
-            );
-            if(productDetails.isEmpty()) {
-                AlertUtils.alert("Phiếu nhập này chưa có sản phẩm nào, vui lòng chọn ít nhất 1 sản phẩm.", "WARNING", "Cảnh báo", "Thiếu thông tin");
-                return;
-            }
             try {
-                System.out.println("Save import receipt: " + exportReceiptModel);
-                // thêm mới hóa đơn nhập
-//                if(receiptModelTable == null) {
-//                    presenter.saveImportReceipt(importReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
-//                    AlertUtils.alert("Thêm mới phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
-//                }
-//                // Cập nhật hóa đơn nhập
+                if(dateTimePicker.dateTimeProperty() == null || dateTimePicker.dateTimeProperty().get() == null) {
+                    AlertUtils.alert("Vui lòng chọn ngày nhập hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin");
+                    return;
+                }
+                String createAtStr = dateTimePicker.dateTimeProperty().get().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+                String invoiceNumber = tfInvoiceNumber.getText().trim();
+                String receiver = tfReceiver.getText().trim();
+                String receiveAddress = tfReceiveAddress.getText().trim();
+                String reason = tfReason.getText().trim();
+                String wareHouseName = tfWareHouse.getText().trim();
+                if(invoiceNumber.isEmpty()) {
+                    AlertUtils.alert("Vui lòng nhập số hóa đơn.", "WARNING", "Cảnh báo", "Thiếu thông tin");
+                    return;
+                }
+                if(receiver.isEmpty()) {AlertUtils.alert("Vui lòng nhập người nhận hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
+                if(receiveAddress.isEmpty()) {AlertUtils.alert("Vui lòng nhập địa chỉ nhận hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
+                if(reason.isEmpty()) {AlertUtils.alert("Vui lòng nhập lý do xuất kho.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
+                if(wareHouseName.isEmpty()) {AlertUtils.alert("Vui lòng nhập kho xuất hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
+                System.out.println("Total: " + totalPriceOfReceipt);
+                ExportReceiptModel exportReceiptModel = new ExportReceiptModel(
+                        receiptModelTable != null ? receiptModelTable.getId() : -1,
+                        invoiceNumber,
+                        createAtStr,
+                        receiver,
+                        receiveAddress,
+                        reason,
+                        wareHouseName,
+                        totalPriceOfReceipt,
+                        FormatMoney.formatMoneyToWord((long)totalPriceOfReceipt)
+                );
+                if(productDetails.isEmpty()) {
+                    AlertUtils.alert("Phiếu nhập này chưa có sản phẩm nào, vui lòng chọn ít nhất 1 sản phẩm.", "WARNING", "Cảnh báo", "Thiếu thông tin");
+                    return;
+                }
+                try {
+                    System.out.println("Save import receipt: " + exportReceiptModel);
+                    // thêm mới hóa đơn nhập
+                    if(receiptModelTable == null) {
+                        // changeQuantityByProductMap: số lượng sản phẩm thay đổi
+                        // changeTotalPriceByProductMap: tổng tiền thay đổi
+                        presenter.save(exportReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
+                        AlertUtils.alert("Thêm mới phiếu xuất thành công.", "INFORMATION", "Thành công", "Thành công");
+                    }
+                    // Cập nhật hóa đơn nhập
 //                else {
 //                    List<ImportReceiptDetailModelTable> newProductDetails = productDetails.stream()
 //                            .filter(importReceiptDetailModelTable -> changeIdsOfReceiptDetails.contains(importReceiptDetailModelTable.getId()) || importReceiptDetailModelTable.getId() == -1)
@@ -383,12 +409,16 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
 //                    presenter.updateImportReceipt(importReceiptModel, oldImportReceiptModel, newProductDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
 //                    AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
 //                }
-//                ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
-//                importReceiptScreen.showTable();
-//                ScreenNavigator.navigateTo(importReceiptScreen);
+                    ExportReceiptScreen exportReceiptScreen = new ExportReceiptScreen();
+                    exportReceiptScreen.showTable();
+                    ScreenNavigator.navigateTo(exportReceiptScreen);
+                }
+                catch (DaoException | StockUnderFlowException | CanNotFoundException exception) {
+                    AlertUtils.alert(exception.getMessage(), "ERROR", "Lỗi khi thực hiện thao tác với phiếu nhập.", "Lỗi khi thực hiện lưu phiếu nhập.");
+                }
             }
-            catch (DaoException exception) {
-                AlertUtils.alert(exception.getMessage(), "ERROR", "Lỗi khi thực hiện thao tác với phiếu nhập.", "Lỗi khi thực hiện lưu phiếu nhập.");
+            catch (Exception ex) {
+                ex.printStackTrace();
             }
         });
 
@@ -415,22 +445,19 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         return box;
     }
 
-    private void addProductToTableProductOfReceipt(ProductModel product, int actualQuantity, int plannedQuantity, long unitPrice) {
+    private void addProductToTableProductOfReceipt(ProductModel product, int actualQuantity, int plannedQuantity, long exportPriceId, double unitPrice) {
         ExportReceiptDetailModelTable productExists = productDetails.stream()
-                .filter(p -> (p.getProductId().equals(product.getId()) && p.getUnitPrice() == unitPrice))
+                .filter(p -> (p.getProductId().equals(product.getId())))
                 .findFirst()
                 .orElse(null);
         if(actualQuantity < 0 || plannedQuantity < 0) {
             AlertUtils.alert("Số lượng nhập không được phép nhỏ hơn 0, vui lòng nhập lại.", "WARNING", "Cảnh báo", "Nhập dữ liệu sai");
             return;
         }
-        if(unitPrice < 0) {
-            AlertUtils.alert("Đơn giá không được phép nhỏ hơn 0, vui lòng nhập lại.", "WARNING", "Cảnh báo", "Nhập dữ liệu sai");
-            return;
-        }
         double currentTotalPrice = actualQuantity * unitPrice;
         totalPriceOfReceipt += currentTotalPrice;
         totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
+        System.out.println("Export price id: " + exportPriceId);
         if(productExists != null) {
             int actualQuantityCurrent = productExists.getActualQuantity() + actualQuantity;
             double totalPriceCurrent = productExists.getTotalPrice() + currentTotalPrice;
@@ -452,12 +479,13 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     product.getId(),
                     plannedQuantity,
                     actualQuantity,
-                    unitPrice,
                     currentTotalPrice,
+                    unitPrice,
                     product.getName(),
                     FormatMoney.format(unitPrice),
                     FormatMoney.format(currentTotalPrice),
-                    product.getCode()
+                    product.getCode(),
+                    exportPriceId
             ));
             changeQuantityByProductMap.put(product.getId(), actualQuantity);
             changeTotalPriceByProductMap.put(product.getId(), currentTotalPrice);

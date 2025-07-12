@@ -9,6 +9,7 @@ import com.manager.stock.manager_stock.model.ExportReceiptDetailModel;
 import com.manager.stock.manager_stock.model.ExportReceiptModel;
 import com.manager.stock.manager_stock.model.InventoryDetailModel;
 import com.manager.stock.manager_stock.model.ProductModel;
+import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
 import com.manager.stock.manager_stock.model.dto.ProductIdAndActualQuantityAndTotalPriceOfReceipt;
 import com.manager.stock.manager_stock.model.tableData.ExportReceiptDetailModelTable;
 import com.manager.stock.manager_stock.service.*;
@@ -16,6 +17,7 @@ import com.manager.stock.manager_stock.service.impl.*;
 import com.manager.stock.manager_stock.utils.GenericConverterBetweenModelAndTableData;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
@@ -75,19 +77,25 @@ public class ExportReceiptPresenter {
         return productService.getAllProducts();
     }
 
-    public void save(ExportReceiptModel exportReceiptModel, List<ExportReceiptDetailModelTable> exportReceiptDetailModelTables, List<Long> productIds) {
+    public ExportPriceIdAndPrice findExportPriceIdAndPriceByProductAndLastTime(long productId) throws DaoException {
+        return exportPriceService.findExportPriceByProductAndLastTime(productId);
+    }
+
+    public void save(ExportReceiptModel exportReceiptModel, List<ExportReceiptDetailModelTable> exportReceiptDetailModelTables, HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap) {
         // lấy danh sách tồn kho theo sản phẩm và theo năm của phiếu xuất
-        int academicYearValue = getYearOfExportReceipt(exportReceiptModel.getCreateAt());
         List<ExportReceiptDetailModel> exportReceiptDetailModels = GenericConverterBetweenModelAndTableData.convertToListModel(
                 exportReceiptDetailModelTables, ExportReceiptDetailModelTableMapper.INSTANCE::fromViewModelToModel
         );
+        int academicYearValue = getYearOfExportReceipt(exportReceiptModel.getCreateAt());
+        List<Long> productIds = exportReceiptDetailModels.stream().map(ExportReceiptDetailModel::getProductId).collect(Collectors.toList());
         // thêm mới phiếu xuất
         List<Long> exportReceiptDetailIds = new ArrayList<>();
         long exportReceiptId = -1;
         try {
              exportReceiptId = exportReceiptService.save(exportReceiptModel);
+            System.out.println("Export receipt id : " + exportReceiptId);
             // thêm mới danh sách phiếu xuất chi tiết
-            exportReceiptDetailIds = exportReceiptDetailService.save(exportReceiptDetailModels);
+            exportReceiptDetailIds = exportReceiptDetailService.save(exportReceiptDetailModels, exportReceiptId);
 
             updateInventory(exportReceiptDetailModels, academicYearValue, productIds);
         }
@@ -97,15 +105,16 @@ public class ExportReceiptPresenter {
                 exportReceiptIds.add(exportReceiptId);
                 exportReceiptService.deleteByIds(exportReceiptIds);
             }
-            if(!exportReceiptDetailIds.isEmpty()) {
-                exportReceiptDetailService.delete(exportReceiptDetailIds);
-            }
+//            if(!exportReceiptDetailIds.isEmpty()) {
+//                exportReceiptDetailService.delete(exportReceiptDetailIds);
+//            }
             throw e;
         }
     }
 
     private void updateInventory(List<ExportReceiptDetailModel> exportReceiptDetailModels, int academicYear, List<Long> productIds) throws DaoException {
         HashMap<Long, InventoryDetailModel> inventoryDetailByProductAndAcademicYear = inventoryDetailService.findAllByAcademicYearAndProductId(academicYear, productIds);
+        System.out.println(inventoryDetailByProductAndAcademicYear.keySet());
         HashMap<Long, InventoryDetailModel> inventoryDetailByProductAndPreviousAcademicYear = inventoryDetailService.findAllByAcademicYearAndProductId(academicYear-1, productIds);
         List<InventoryDetailModel> inventoryDetailModelsToInsert = new ArrayList<>();
         List<InventoryDetailModel> inventoryDetailModelsToUpdate = new ArrayList<>();
@@ -114,8 +123,10 @@ public class ExportReceiptPresenter {
             long productId = exportReceiptDetailModel.getProductId();
             int actualQuantity = exportReceiptDetailModel.getActualQuantity();
             double exportReceiptTotalPriceByProduct = exportReceiptDetailModel.getTotalPrice();
+            System.out.println("Total: " + exportReceiptTotalPriceByProduct);
             InventoryDetailModel inventoryDetailModel = inventoryDetailByProductAndAcademicYear.getOrDefault(productId, null);
             // trường hợp năm của phiếu xuất chưa từng nhập
+            System.out.println(inventoryDetailModel);
             if(inventoryDetailModel == null) {
                 inventoryDetailModel = inventoryDetailByProductAndPreviousAcademicYear.getOrDefault(productId, null);
                 // trường hợp trong năm trước cũng chưa nhập ==> tạo mới
@@ -148,14 +159,14 @@ public class ExportReceiptPresenter {
             inventoryDetailService.save(inventoryDetailModelsToInsert);
         }
         if(!inventoryDetailModelsToUpdate.isEmpty()) {
-            inventoryDetailService.save(inventoryDetailModelsToUpdate);
+            inventoryDetailService.update(inventoryDetailModelsToUpdate);
         }
     }
 
     private int getYearOfExportReceipt(String createAt) {
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            LocalDate date = LocalDate.parse(createAt, formatter);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            LocalDateTime date = LocalDateTime.parse(createAt, formatter);
             return date.getYear();
         }
         catch (Exception e) {

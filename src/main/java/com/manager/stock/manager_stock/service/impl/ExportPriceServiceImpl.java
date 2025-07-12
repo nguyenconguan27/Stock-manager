@@ -4,6 +4,7 @@ import com.manager.stock.manager_stock.dao.IExportPriceDao;
 import com.manager.stock.manager_stock.dao.impl.ExportPriceDaoImpl;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.model.ExportPriceModel;
+import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
 import com.manager.stock.manager_stock.service.IExportPriceService;
 
 import java.time.LocalDate;
@@ -32,11 +33,6 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     }
 
     @Override
-    public long findExportPriceByProductIdAndLastTime(long productId) throws DaoException {
-        return exportPriceDao.findExportPriceByProductIdAndExportTime(productId);
-    }
-
-    @Override
     public void save(List<ExportPriceModel> exportPriceModels) throws DaoException {
         exportPriceDao.save(exportPriceModels);
     }
@@ -55,5 +51,10 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     @Override
     public void update(List<ExportPriceModel> exportPriceModels) {
         exportPriceDao.update(exportPriceModels);
+    }
+
+    @Override
+    public ExportPriceIdAndPrice findExportPriceByProductAndLastTime(long productId) throws DaoException{
+        return exportPriceDao.findExportPriceIdAndPriceByProductAndLastTime(productId);
     }
 }

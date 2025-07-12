@@ -4,6 +4,7 @@ import com.manager.stock.manager_stock.dao.IExportPriceDao;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.mapper.modelMapperResultSet.ExportPriceMapperResultSet;
 import com.manager.stock.manager_stock.model.ExportPriceModel;
+import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
 import com.manager.stock.manager_stock.service.impl.ExportPriceServiceImpl;
 
 import java.time.LocalDate;
@@ -87,5 +88,19 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
             });
         }
         save(sql, parameters);
+    }
+
+    @Override
+    public ExportPriceIdAndPrice findExportPriceIdAndPriceByProductAndLastTime(long productId) throws DaoException{
+        String sql = "select id, export_price from export_price ep \n" +
+                "where product_id = ?\n" +
+                "order by export_time desc limit 1;";
+        List<ExportPriceIdAndPrice> exportPriceIdAndPrices = query(sql, rs -> new ExportPriceIdAndPrice(
+                rs.getLong("id"), rs.getDouble("export_price")
+        ), productId);
+        if(!exportPriceIdAndPrices.isEmpty()){
+            return exportPriceIdAndPrices.get(0);
+        }
+        return new ExportPriceIdAndPrice(-1,-1);
     }
 }

@@ -29,7 +29,7 @@ public class AbstractDao<T> implements GenericDao<T> {
             props.setProperty("user", AppConfig.getString("db.user"));
             props.setProperty("password", AppConfig.getString("db.password"));
             logger.debug("Start connect to database..., user = {}, password = {}", AppConfig.getString("db.user"), AppConfig.getString("db.password") );
-            System.out.println(String.format("Start connect to database..., user = {%s}, password = {%s}", AppConfig.getString("db.user"), AppConfig.getString("db.password") ));
+//            System.out.println(String.format("Start connect to database..., user = {%s}, password = {%s}", AppConfig.getString("db.user"), AppConfig.getString("db.password") ));
             return DriverManager.getConnection(url, props);
         }
         catch (Exception e) {
@@ -191,6 +191,7 @@ public class AbstractDao<T> implements GenericDao<T> {
                 setParams(stmt, id);
             }
             stmt.executeUpdate();
+            connection.commit();
         }
         catch (SQLException e) {
             logger.error("SQL Exception while deleting database with sql: {}", sql, e);

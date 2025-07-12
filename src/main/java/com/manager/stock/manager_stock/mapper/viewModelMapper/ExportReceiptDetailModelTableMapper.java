@@ -23,7 +23,8 @@ public class ExportReceiptDetailModelTableMapper implements ViewModelMapper<Expo
                 model.getProductName(),
                 FormatMoney.format(model.getUnitPrice()),
                 FormatMoney.format(model.getTotalPrice()),
-                model.getProductCode()
+                model.getProductCode(),
+                model.getExportPriceId()
         );
     }
 
@@ -38,7 +39,10 @@ public class ExportReceiptDetailModelTableMapper implements ViewModelMapper<Expo
                 viewModel.getUnitPrice(),
                 viewModel.getTotalPrice(),
                 viewModel.getProductName(),
-                viewModel.getProductCode()
+                viewModel.getProductCode(),
+                viewModel.getExportPriceId(),
+                -1,
+                null
         );
     }
 }

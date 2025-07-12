@@ -41,8 +41,8 @@ public class ExportReceiptDetailServiceImpl implements IExportReceiptDetailServi
     }
 
     @Override
-    public List<Long> save(List<ExportReceiptDetailModel> exportReceiptDetailModels) {
-        return exportReceiptDetailDao.save(exportReceiptDetailModels);
+    public List<Long> save(List<ExportReceiptDetailModel> exportReceiptDetailModels, long exportReceiptId) {
+        return exportReceiptDetailDao.save(exportReceiptDetailModels, exportReceiptId);
     }
 
     @Override

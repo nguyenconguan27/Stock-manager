@@ -23,7 +23,7 @@ public class ExportReceiptModel {
         this.exportReceiptDetailModels = new ArrayList<>();
     }
 
-    public ExportReceiptModel(long id, String invoiceNumber, String createAt, String receiver, String receiveAddress, String reason, String wareHouse, Double totalPrice, String totalPriceInWord) {
+    public ExportReceiptModel(Long id, String invoiceNumber, String createAt, String receiver, String receiveAddress, String reason, String wareHouse, Double totalPrice, String totalPriceInWord) {
         this.id = id;
         this.invoiceNumber = invoiceNumber;
         this.createAt = createAt;

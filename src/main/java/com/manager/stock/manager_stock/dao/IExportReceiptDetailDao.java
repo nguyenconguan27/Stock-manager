@@ -11,7 +11,7 @@ import java.util.List;
 public interface IExportReceiptDetailDao {
     List<ExportReceiptDetailModel> findAllByExPortReceipt(long exportReceiptId);
     List<ExportReceiptDetailModel> findAllByProductAndMinTime(List<Long> productIds, LocalDateTime minTime);
-    List<Long> save(List<ExportReceiptDetailModel> exportReceiptDetailModels);
+    List<Long> save(List<ExportReceiptDetailModel> exportReceiptDetailModels, long exportReceiptId);
     void delete(List<Long> ids);
     void update(List<ExportReceiptDetailModel> exportReceiptDetailModels);
 }

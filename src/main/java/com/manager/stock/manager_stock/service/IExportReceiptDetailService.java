@@ -13,7 +13,7 @@ import java.util.Map;
 public interface IExportReceiptDetailService {
     List<ExportReceiptDetailModel> findAllByExportReceipt(long exportReceiptId);
     Map<Long, List<ExportReceiptDetailModel>> findAllByProductAndMinTime(List<Long> productIds, LocalDateTime minTime);
-    List<Long> save(List<ExportReceiptDetailModel> exportReceiptDetailModels);
+    List<Long> save(List<ExportReceiptDetailModel> exportReceiptDetailModels, long exportReceiptId);
     void delete(List<Long> ids);
     void update(List<ExportReceiptDetailModel> exportReceiptDetailModels);
 }

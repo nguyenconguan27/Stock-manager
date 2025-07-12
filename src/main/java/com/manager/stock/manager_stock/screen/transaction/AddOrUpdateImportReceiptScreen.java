@@ -340,6 +340,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 return;
             }
             String createAtStr = dateTimePicker.dateTimeProperty().get().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+            System.out.println("Time: " + dateTimePicker.dateTimeProperty().get());
             String invoiceNumber = tfInvoiceNumber.getText().trim();
             String deliveredBy = tfDeliveredBy.getText().trim();
             String invoice = tfInvoice.getText().trim();
@@ -379,8 +380,8 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 // Cập nhật hóa đơn nhập
                 else {
                     List<ImportReceiptDetailModelTable> newProductDetails = productDetails.stream()
-                                    .filter(importReceiptDetailModelTable -> changeIdsOfReceiptDetails.contains(importReceiptDetailModelTable.getId()) || importReceiptDetailModelTable.getId() == -1)
-                                    .collect(Collectors.toList());
+                            .filter(importReceiptDetailModelTable -> changeIdsOfReceiptDetails.contains(importReceiptDetailModelTable.getId()) || importReceiptDetailModelTable.getId() == -1)
+                            .collect(Collectors.toList());
                     ImportReceiptModel oldImportReceiptModel = ImportReceiptModelMapper.INSTANCE.fromViewModelToModel(oldImportReceiptModelTable);
                     presenter.updateImportReceipt(importReceiptModel, oldImportReceiptModel, newProductDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
                     AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");

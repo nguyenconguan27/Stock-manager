@@ -61,9 +61,12 @@ public class ImportReceiptPresenter {
         List<ImportReceiptDetailModel> importReceiptDetailModels = importReceiptDetailService.findAllByImportReceiptId(importReceiptId);
         importReceiptDetailModels
                 .forEach(importReceiptDetailModel -> {
-                    System.out.println(importReceiptDetailModel);
-                   importReceiptDetailModel.setUnitPriceFormat(FormatMoney.format(importReceiptDetailModel.getUnitPrice()));
-                   importReceiptDetailModel.setTotalPriceFormat(FormatMoney.format(importReceiptDetailModel.getTotalPrice()));
+                    double totalPrice = importReceiptDetailModel.getUnitPrice() * importReceiptDetailModel.getActualQuantity();
+//                    System.out.println("Total price: " + totalPrice);
+                    importReceiptDetailModel.setUnitPriceFormat(FormatMoney.format(importReceiptDetailModel.getUnitPrice()));
+                    importReceiptDetailModel.setTotalPriceFormat(FormatMoney.format(totalPrice));
+                    importReceiptDetailModel.setTotalPrice(totalPrice);
+//                    System.out.println(importReceiptDetailModel);
                 });
         return importReceiptDetailModels;
     }
@@ -137,10 +140,6 @@ public class ImportReceiptPresenter {
             importReceiptService.update(oldImportReceiptModel);
             throw e;
         }
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-        LocalDateTime date = LocalDateTime.parse(importReceiptModel.getCreateAt(), formatter);
-        int year = date.getYear();
         try {
             List<ImportReceiptDetailModel> importReceiptDetailModelsOverNewAndEdit = new ArrayList<>(newImportReceiptDetailModel);
             importReceiptDetailModelsOverNewAndEdit.addAll(editImportReceiptDetailModel);
@@ -329,7 +328,7 @@ public class ImportReceiptPresenter {
             for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModelsByProductAfterImportDate) {
                 // cập nhật lại số lượng theo tồn kho và đơn giá mới
                 // 1. lấy ra đơn giá mới được cập nhật
-                ExportPriceModel exportPriceModel = exportPriceModelByIdMap.getOrDefault(exportReceiptDetailModel.getUnitPriceId(), null);
+                ExportPriceModel exportPriceModel = exportPriceModelByIdMap.getOrDefault(exportReceiptDetailModel.getExportPriceId(), null);
                 // trường hợp đơn giá của sản phẩm không thay đổi
                 if(exportPriceModel == null) continue;
                 // 2. Kiểm tra xem số lượng xuất này so với số lượng tồn kho tại thời điểm của đơn giá
