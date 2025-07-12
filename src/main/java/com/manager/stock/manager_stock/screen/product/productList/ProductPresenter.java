@@ -1,13 +1,11 @@
-package com.manager.stock.manager_stock.screen.product;
+package com.manager.stock.manager_stock.screen.product.productList;
 
-import com.manager.stock.manager_stock.model.ProductGroup;
 import com.manager.stock.manager_stock.model.ProductModel;
 import com.manager.stock.manager_stock.service.ProductGroupService;
 import com.manager.stock.manager_stock.service.ProductService;
 import com.manager.stock.manager_stock.service.impl.ProductGroupServiceImpl;
 import com.manager.stock.manager_stock.service.impl.ProductServiceImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

@@ -1,21 +1,20 @@
-package com.manager.stock.manager_stock.screen.product;
+package com.manager.stock.manager_stock.screen.product.productList;
 
 import com.manager.stock.manager_stock.model.ProductGroup;
 import com.manager.stock.manager_stock.model.ProductModel;
+import com.manager.stock.manager_stock.screen.product.productDetail.ProductDetailScreen;
 import com.manager.stock.manager_stock.screen.productGroup.ProductGroupPresenter;
-import com.manager.stock.manager_stock.screen.transaction.ImportReceiptPresenter;
 import com.manager.stock.manager_stock.utils.Utils;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,6 +39,9 @@ public class ProductScreen extends VBox {
         // add button
         Button addButton = new Button("Thêm sản phẩm");
         addButton.setOnAction(e -> {
+            Stage currentStage = (Stage) addButton.getScene().getWindow();
+            ProductDetailScreen productDetailScreen = new ProductDetailScreen();
+            productDetailScreen.showPopup(currentStage);
         });
 
         // text search

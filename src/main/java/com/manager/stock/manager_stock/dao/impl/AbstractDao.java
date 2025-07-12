@@ -8,7 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -18,15 +21,6 @@ import java.util.Properties;
 public class AbstractDao<T> implements GenericDao<T> {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    public Connection getConnection() throws SQLException {
-        final String url = AppConfig.getString("db.url");
-        final Properties props = new Properties();
-        props.setProperty("user", AppConfig.getString("db.user"));
-        props.setProperty("password", AppConfig.getString("db.password"));
-        logger.debug("Start connect to database..., user = {}, password = {}", AppConfig.getString("db.user"), AppConfig.getString("db.password") );
-        return DriverManager.getConnection(url, props);
-    }
 
     private void setParams(PreparedStatement stmt, Object...params) {
         try {
@@ -57,6 +51,12 @@ public class AbstractDao<T> implements GenericDao<T> {
                 else if(param == null) {
                     stmt.setNull(index, Types.NULL);
                 }
+                else if(param instanceof LocalDateTime) {
+                    stmt.setTimestamp(index, Timestamp.valueOf((LocalDateTime) param));
+                }
+                else if (param instanceof LocalDate) {
+                    stmt.setDate(index, Date.valueOf((LocalDate) param));
+                }
             }
         }
         catch (SQLException e) {
@@ -69,11 +69,11 @@ public class AbstractDao<T> implements GenericDao<T> {
         logger.debug("Start query of database with sql: {}", sql);
         logger.debug("Start query of database with params: {}", parameters);
         ResultSet rs = null;
-        Connection connection = null;
+        Connection connection = DatasourceInitialize.getInstance();
         PreparedStatement stmt = null;
         List<T> resultsList = new ArrayList<>();
         try {
-            connection = getConnection();
+            
             stmt = connection.prepareStatement(sql);
             setParams(stmt, parameters);
             rs = stmt.executeQuery();
@@ -84,6 +84,7 @@ public class AbstractDao<T> implements GenericDao<T> {
         }
         catch (SQLException e) {
             logger.error("SQL Exception while querying database with sql: {}", sql, e);
+            e.printStackTrace();
             throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
         }
         finally {
@@ -105,19 +106,85 @@ public class AbstractDao<T> implements GenericDao<T> {
     }
 
     @Override
-    public long save(String sql, Object... parameters) {
+    public long save(String sql, List<Object[]> parameters) {
         logger.debug("Start insert of database with sql: {}", sql);
-        logger.debug("Start insert of database with params: {}", parameters);
+        parameters.forEach(p -> logger.debug("Params: {}", Arrays.toString(p)));
         PreparedStatement stmt = null;
-        Connection connection = null;
+        Connection connection = DatasourceInitialize.getInstance();
         try {
-            connection = getConnection();
+            
+            if (parameters.size() == 1) {
+                stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                setParams(stmt, parameters.get(0));
+                int affectedRows = stmt.executeUpdate();
+
+                if (affectedRows == 0) {
+                    throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
+                }
+
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return generatedKeys.getLong(1);
+                    } else {
+                        throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
+                    }
+                }
+            }
             stmt = connection.prepareStatement(sql);
-            setParams(stmt, parameters);
-            return stmt.executeUpdate();
+            for (Object[] params : parameters) {
+                setParams(stmt, params);
+                stmt.addBatch();
+            }
+            int[] insertResult = stmt.executeBatch();
+            logger.info(String.format("Insert success: {%d} rows.", insertResult.length));
+            return insertResult.length;
+
+        } catch (SQLException e) {
+            logger.error("SQL Exception while save database with sql: {}", sql, e);
+            e.printStackTrace();
+            throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                logger.error("SQL Exception while closing Statement or Connection: {}", e.getMessage(), e);
+            }
+        }
+    }
+
+    @Override
+    public int update(String sql, Object... parameters) {
+        return 0;
+    }
+
+    @Override
+    public void delete(String sql, Object...params) {
+        logger.debug("Start delete of database with sql: {}", sql);
+        logger.debug("Start delete of database with ids: {}", params);
+        PreparedStatement stmt = null;
+        Connection connection = DatasourceInitialize.getInstance();
+        try {
+            
+            connection.setAutoCommit(false);
+            stmt = connection.prepareStatement(sql);
+            for(Object id : params) {
+                setParams(stmt, id);
+            }
+            stmt.executeUpdate();
         }
         catch (SQLException e) {
-            logger.error("SQL Exception while inserting database with sql: {}", sql, e);
+            logger.error("SQL Exception while deleting database with sql: {}", sql, e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                logger.error("SQL Exception while rollback database with sql: {}", sql, ex);
+                throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
+            }
             throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
         }
         finally {
@@ -136,21 +203,18 @@ public class AbstractDao<T> implements GenericDao<T> {
     }
 
     @Override
-    public long update(String sql, Object... parameters) {
-        return 0;
-    }
-
-    @Override
-    public void delete(String sql, List<Long> ids) {
-        logger.debug("Start delete of database with sql: {}", sql);
-        logger.debug("Start delete of database with ids: {}", ids);
+    public void deleteWithinTransaction(String sql, Object...params) {
+        logger.debug("Start delete with transaction of database with sql: {}", sql);
+        logger.debug("Start delete with transaction of database with ids: {}", params);
         PreparedStatement stmt = null;
-        Connection connection = null;
+        Connection connection = DatasourceInitialize.getInstance();
         try {
-            connection = getConnection();
             stmt = connection.prepareStatement(sql);
-            setParams(stmt, ids);
+            for(Object id : params) {
+                setParams(stmt, id);
+            }
             stmt.executeUpdate();
+            connection.commit();
         }
         catch (SQLException e) {
             logger.error("SQL Exception while deleting database with sql: {}", sql, e);
@@ -161,12 +225,59 @@ public class AbstractDao<T> implements GenericDao<T> {
                 if(stmt != null) {
                     stmt.close();
                 }
-                if(connection != null) {
-                    connection.close();
-                }
             }
             catch (SQLException e) {
                 logger.error("SQL Exception while closing ResultSet or Statement or Connection: {}", e.getMessage(), e);
+            }
+        }
+    }
+
+    @Override
+    public long saveWithinTransaction(String sql, List<Object[]> parameters) {
+        logger.debug("Start insert within transaction with SQL: {}", sql);
+        parameters.forEach(p -> logger.debug("Params: {}", Arrays.toString(p)));
+        PreparedStatement stmt = null;
+        Connection connection = DatasourceInitialize.getInstance();
+        try {
+            if (parameters.size() == 1) {
+                stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                setParams(stmt, parameters.get(0));
+
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
+                }
+
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return generatedKeys.getLong(1);
+                    } else {
+                        throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
+                    }
+                }
+            } else {
+                stmt = connection.prepareStatement(sql);
+                for (Object[] params : parameters) {
+                    setParams(stmt, params);
+                    stmt.addBatch();
+                }
+
+                int[] insertResult = stmt.executeBatch();
+                logger.info("Insert success: {} rows.", insertResult.length);
+                return insertResult.length;
+            }
+
+        } catch (SQLException e) {
+            logger.error("SQL Exception while saving with transaction. SQL: {}", sql, e);
+            e.printStackTrace();
+            throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                logger.error("SQL Exception while closing Statement: {}", e.getMessage(), e);
             }
         }
     }
