@@ -32,7 +32,11 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
 
     @Override
     public List<ImportReceiptModel> findAllByAcademicYear(int academicYear) throws DaoException {
-        String sql = "SELECT * from import_receipt where academic_year = ? group by academic_year, id ;";
+        String sql = "select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir \n" +
+                "join import_receipt_detail ird on\n" +
+                "ir.id = ird.import_receipt_id\n" +
+                "where ir.academic_year = ? \n" +
+                "group by ir.id ;";
         return query(sql, new ImportReceiptMapperResultSet(), academicYear);
     }
 

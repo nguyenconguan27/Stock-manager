@@ -28,10 +28,21 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
 
     @Override
     public List<ExportReceiptDetailModel> findAllByExPortReceipt(long exportReceiptId) {
-        String sql = "SELECT erd.*, p.code as product_code, p.\"name\" as product_name FROM export_receipt_detail erd\n" +
-                "join export_receipt er on erd.export_receipt_id = er.id\n" +
-                "join product p on p.id = erd.product_id\n" +
-                "WHERE er.id = ?";
+        String sql = "select\n" +
+                "\terd.*,\n" +
+                "\tp.code as product_code,\n" +
+                "\tp.\"name\" as product_name,\n" +
+                "\tep.export_price \n" +
+                "from\n" +
+                "\texport_receipt_detail erd\n" +
+                "join export_receipt er on\n" +
+                "\terd.export_receipt_id = er.id\n" +
+                "join product p on\n" +
+                "\tp.id = erd.product_id\n" +
+                "join export_price ep on\n" +
+                "\tep.id = erd.export_price_id \n" +
+                "where\n" +
+                "\ter.id = ?";
         return query(sql, new ExportReceiptDetailMapperResultSet(), exportReceiptId);
     }
 
@@ -55,7 +66,7 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
         List<Long> ids = new ArrayList<>();
         List<Object[]> parameters = new ArrayList<>();
         for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
-            long id = System.currentTimeMillis();
+            long id = System.nanoTime();
             parameters.add(new Object[]{
                     id,
                     exportReceiptId,

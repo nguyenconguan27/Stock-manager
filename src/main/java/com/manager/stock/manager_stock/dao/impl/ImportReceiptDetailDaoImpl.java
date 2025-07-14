@@ -7,6 +7,7 @@ import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
 import com.manager.stock.manager_stock.model.dto.ProductIdAndActualQuantityAndTotalPriceOfReceipt;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Trọng Hướng
@@ -59,7 +60,7 @@ public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailM
 
     @Override
     public void update(List<ImportReceiptDetailModel> importReceiptDetailModels) throws DaoException {
-        String sql = "UPDATE import_receipt_detail set planned_quantity = ?, actual_quantity = ?, unit_price = ?, total_price = ?" +
+        String sql = "UPDATE import_receipt_detail set planned_quantity = ?, actual_quantity = ?, unit_price = ?" +
                     " where id = ?";
         List<Object[]> parameters = new ArrayList<>();
         for(ImportReceiptDetailModel importReceiptDetailModel : importReceiptDetailModels){
@@ -67,7 +68,6 @@ public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailM
                 importReceiptDetailModel.getPlannedQuantity(),
                 importReceiptDetailModel.getActualQuantity(),
                 importReceiptDetailModel.getUnitPrice(),
-                importReceiptDetailModel.getTotalPrice(),
                 importReceiptDetailModel.getId()
             });
         }
@@ -88,5 +88,12 @@ public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailM
     public void deleteByImportReceipt(long importReceiptId) throws DaoException {
         String sql = "DELETE from import_receipt_detail where import_receipt_id = ?";
         delete(sql, importReceiptId);
+    }
+
+    @Override
+    public void deleteByIds(Set<Long> ids) throws DaoException {
+        String idsStr = ids.stream().map(Object::toString).collect(Collectors.joining(","));
+        String sql = "DELETE from import_receipt_detail where id in  (" + idsStr + ")";
+        delete(sql, ids);
     }
 }

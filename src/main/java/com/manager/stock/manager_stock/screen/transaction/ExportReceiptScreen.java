@@ -297,6 +297,9 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
             List<ExportReceiptModelTable> tableModels = GenericConverterBetweenModelAndTableData.convertToList(
                     exportReceiptModels, ExportReceiptModelTableMapper.INSTANCE::toViewModel
             );
+            for(ExportReceiptModelTable table : tableModels) {
+                System.out.println("Create at: " + table.getCreateAt());
+            }
             allReceiptData.setAll(tableModels);
             receiptData.setAll(tableModels);
             updatePagination();

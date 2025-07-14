@@ -78,4 +78,14 @@ public class InventoryDetailDaoImpl extends AbstractDao<InventoryDetailModel> im
         }
         saveWithinTransaction(sql, connection, parameters);
     }
+
+    @Override
+    public int findQuantityInStockByProductIdAndAcademicYear(long productId, int academicYear) throws DaoException{
+        String sql = "select quantity from inventory_detail where product_id = ? and academic_year = ?";
+        List<Integer> quantityInStocks = query(sql, rs -> rs.getInt("quantity"), productId, academicYear);
+        if(!quantityInStocks.isEmpty()){
+            return quantityInStocks.get(0);
+        }
+        throw new CanNotFoundException("Sản phẩm chưa được nhập trong năm " + academicYear);
+    }
 }

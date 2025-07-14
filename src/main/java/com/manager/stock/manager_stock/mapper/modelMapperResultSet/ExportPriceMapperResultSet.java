@@ -25,9 +25,9 @@ public class ExportPriceMapperResultSet implements RowMapper<ExportPriceModel>{
                     case "product_id":
                         exportPriceModel.setProductId(resultSet.getLong(i));
                         break;
-                    case "export_time":
-                        exportPriceModel.setExportTime(resultSet.getLong(i));
-                        break;
+//                    case "export_time":
+//                        exportPriceModel.setExportTime(resultSet.getLong(i));
+//                        break;
                     case "export_price":
                         exportPriceModel.setExportPrice(resultSet.getDouble(i));
                         break;
@@ -39,6 +39,9 @@ public class ExportPriceMapperResultSet implements RowMapper<ExportPriceModel>{
                         break;
                     case "total_price_import":
                         exportPriceModel.setTotalImportPrice(resultSet.getDouble(columnName));
+                        break;
+                    case "total_price_in_stock":
+                        exportPriceModel.setTotalPriceInStock(resultSet.getDouble(columnName));
                         break;
                 }
             }

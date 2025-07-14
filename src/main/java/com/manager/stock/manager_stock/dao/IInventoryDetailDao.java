@@ -12,4 +12,5 @@ import java.util.List;
      void save(List<InventoryDetailModel> inventoryDetailModels);
      void update(List<InventoryDetailModel> inventoryDetailModels);
      void updateWithTransaction(List<InventoryDetailModel> inventoryDetailModels, Connection connection);
+     int findQuantityInStockByProductIdAndAcademicYear(long productId, int academicYear);
 }

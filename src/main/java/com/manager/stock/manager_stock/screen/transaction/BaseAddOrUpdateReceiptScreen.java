@@ -37,6 +37,7 @@ public abstract class BaseAddOrUpdateReceiptScreen<T, D> extends VBox {
     protected Set<Long> changeIdsOfReceiptDetails = new HashSet<>();
     protected HashMap<Long, Integer> changeQuantityByProductMap = new HashMap<>();
     protected HashMap<Long, Double> changeTotalPriceByProductMap = new HashMap<>();
+    protected Set<Long> receiptDetailIdsDeleted = new HashSet<>();
     protected TextField tfInvoiceNumber, tfWareHouse;
 
     public BaseAddOrUpdateReceiptScreen(T receiptModelTable) {

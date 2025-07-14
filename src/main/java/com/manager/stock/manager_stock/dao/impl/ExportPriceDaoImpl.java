@@ -48,18 +48,19 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
 
     @Override
     public void save(List<ExportPriceModel> exportPriceModels) throws DaoException {
-        String sql = "INSERT INTO export_price(product_id, export_time, export_price, quantity_in_stock, quantity_imported, total_price_import, total_price_in_stock) " +
-                    "values (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO export_price(product_id, export_time, export_price, quantity_in_stock, quantity_imported, total_price_import, total_price_in_stock, import_receipt_id) " +
+                    "values (?, ?, ?, ?, ?, ?, ?, ?)";
         List<Object[]> parameters = new ArrayList<>();
         for(ExportPriceModel exportPriceModel : exportPriceModels){
             parameters.add(new Object[] {
                 exportPriceModel.getProductId(),
-                LocalDateTime.now(),
+                exportPriceModel.getExportTime(),
                 exportPriceModel.getExportPrice(),
                 exportPriceModel.getQuantityInStock(),
                 exportPriceModel.getQuantityImported(),
                 exportPriceModel.getTotalImportPrice(),
-                exportPriceModel.getTotalPriceInStock()
+                exportPriceModel.getTotalPriceInStock(),
+                exportPriceModel.getImportReceiptId()
             });
         }
         save(sql, parameters);
@@ -68,8 +69,8 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
     @Override
     public List<ExportPriceModel> findAllByProductAndMinTime(List<Long> productIds, LocalDateTime minTime) {
         String productIdsStr = productIds.stream().map(Object::toString).collect(Collectors.joining(","));
-        String sql = "SELECT * FROM export_price WHERE export_time >= ? and product_id in (" + productIdsStr + ")";
-        return query(sql, new ExportPriceMapperResultSet(), productIds, minTime);
+        String sql = "SELECT * FROM export_price WHERE export_time >= ? and product_id in (" + productIdsStr + ") order by id asc";
+        return query(sql, new ExportPriceMapperResultSet(), minTime);
     }
 
     @Override
@@ -84,7 +85,7 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
                exportPriceModel.getTotalImportPrice(),
                exportPriceModel.getExportPrice(),
                exportPriceModel.getTotalPriceInStock(),
-               exportPriceModel.getId()
+               exportPriceModel.getProductId()
             });
         }
         save(sql, parameters);
@@ -102,5 +103,16 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
             return exportPriceIdAndPrices.get(0);
         }
         return new ExportPriceIdAndPrice(-1,-1);
+    }
+
+    @Override
+    public void updateExportTimeByImportReceiptId(long importReceiptId, LocalDateTime importDate) {
+        String sql = "Update export_price set export_time = ? where import_receipt_id = ?";
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[] {
+                importDate,
+                importReceiptId
+        });
+        save(sql, parameters);
     }
 }

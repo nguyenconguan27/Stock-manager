@@ -7,6 +7,7 @@ import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptModel
 import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
 import com.manager.stock.manager_stock.model.ImportReceiptModel;
 import com.manager.stock.manager_stock.model.ProductModel;
+import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptDetailModelTable;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptModelTable;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
@@ -131,6 +132,12 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         tfUnitPrice.setPrefWidth(100);
         VBox unitPriceCol = new VBox(5, lbUnitPrice, tfUnitPrice);
 
+        Label lbInventory = new Label("Tồn kho");
+        TextField tfInventory = new TextField();
+        tfInventory.setPrefWidth(100);
+        tfInventory.setEditable(false);
+        VBox inventoryCol = new VBox(5, lbInventory, tfInventory);
+
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
@@ -142,7 +149,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         VBox buttonBox = new VBox(btnAddProduct);
         buttonBox.setAlignment(Pos.BOTTOM_RIGHT);
 
-        HBox productInputs = new HBox(20, productCol, plannedQtyCol, actualQtyCol, unitPriceCol);
+        HBox productInputs = new HBox(35, productCol, plannedQtyCol, actualQtyCol, unitPriceCol, inventoryCol);
         productInputs.setAlignment(Pos.CENTER_LEFT);
 
         HBox productBox = new HBox(20, productInputs, spacer, buttonBox);
@@ -200,6 +207,15 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             if (!cbProduct.isShowing()) cbProduct.show();
         });
 
+        cbProduct.getSelectionModel().selectedItemProperty().addListener((obs, oldProduct, newProduct) -> {
+            if (newProduct != null) {
+                LocalDateTime createAtStr = dateTimePicker.dateTimeProperty().get();
+                int academicYear = createAtStr.getYear();
+                int quantityInStock = importReceiptPresenter.findQuantityInStockByProductIdAndAcademicYear(newProduct.getId(), academicYear);
+                tfInventory.setText(String.valueOf(quantityInStock));
+            }
+        });
+
         // === Giao diện tổng thể ===
         VBox root = new VBox(20, formColumns, productBox);
         root.setPadding(new Insets(10));
@@ -236,7 +252,14 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         colPlannedQty.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
         colPlannedQty.setOnEditCommit(event -> {
             ImportReceiptDetailModelTable row = event.getRowValue();
-            row.plannedQuantityProperty().set(event.getNewValue().intValue());
+
+            int oldValue = row.getPlannedQuantity();
+            int newValue = event.getNewValue().intValue();
+
+            row.setPlannedQuantity(newValue);
+
+            System.out.println("Giá trị cũ: " + oldValue);
+            System.out.println("Giá trị mới: " + newValue);
         });
 
         TableColumn<ImportReceiptDetailModelTable, Number> colActualQty = new TableColumn<>("SL thực tế");
@@ -244,10 +267,28 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         colActualQty.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
         colActualQty.setOnEditCommit(event -> {
             ImportReceiptDetailModelTable row = event.getRowValue();
-            row.actualQuantityProperty().set(event.getNewValue().intValue());
+            int newValue = event.getNewValue().intValue();
+            int oldValue = row.getActualQuantity();
+            int changeQuantity = newValue - oldValue;
+            System.out.println("Số lượng thực tế mới: " + newValue);
+            System.out.println("Số lượng thực tế cũ: " + oldValue);
+            double changeTotalPrice = changeQuantity * row.getUnitPrice();
 
-            double newTotal = row.actualQuantityProperty().get() * row.unitPriceProperty().get();
-            row.totalPriceProperty().set(newTotal);
+            if(row.getId() != null) {
+                int changeQuantityByProduct = changeQuantityByProductMap.getOrDefault(row.getProductId(), 0);
+                changeQuantityByProductMap.put(row.getProductId(), changeQuantity + changeQuantityByProduct);
+                double changeTotalPriceByProduct = changeTotalPriceByProductMap.getOrDefault(row.getProductId(), 0.0);
+                changeTotalPriceByProductMap.put(row.getProductId(), changeTotalPriceByProduct + changeTotalPrice);
+                changeIdsOfReceiptDetails.add(row.getId());
+            }
+            double newTotal = newValue * row.getUnitPrice();
+            System.out.println("New total: " + newTotal);
+            row.setTotalPrice(newTotal);
+            row.setTotalPriceFormat(FormatMoney.format(newTotal));
+            row.actualQuantityProperty().set(event.getNewValue().intValue());
+            System.out.println("Change total price: " + changeTotalPrice);
+            totalPriceOfReceipt += changeTotalPrice;
+            totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
             productTable.refresh();
         });
 
@@ -258,12 +299,11 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         colTotalPrice.setCellValueFactory(data -> data.getValue().totalPriceFormatProperty());
         TableColumn<ImportReceiptDetailModelTable, Void> colAction = new TableColumn<>("Thao tác");
         colAction.setCellFactory(param -> new TableCell<>() {
-            private final Button btnEdit = new Button("✎");
+//            private final Button btnEdit = new Button("✎");
             private final Button btnDelete = new Button("🗑");
-            private final HBox pane = new HBox(5, btnEdit, btnDelete);
-
+            private final HBox pane = new HBox(5, btnDelete);
             {
-                btnEdit.setStyle("-fx-background-color: #ffd966; -fx-cursor: hand;");
+//                btnEdit.setStyle("-fx-background-color: #ffd966; -fx-cursor: hand;");
                 btnDelete.setStyle("-fx-background-color: #f08080; -fx-cursor: hand;");
                 pane.setAlignment(Pos.CENTER);
 
@@ -271,12 +311,19 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     ImportReceiptDetailModelTable item = getTableView().getItems().get(getIndex());
                     totalPriceOfReceipt -= item.getTotalPrice();
                     totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
+                    receiptDetailIdsDeleted.add(item.getId());
+                    if(item.getId() != null){
+                        int changeQuantityByProduct = changeQuantityByProductMap.getOrDefault(item.getProductId(), 0);
+                        changeQuantityByProduct -= item.getActualQuantity();
+                        System.out.println("Remove: " + item.getProductId() + ", quantity: " + changeQuantityByProduct);
+                        changeQuantityByProductMap.put(item.getProductId(), changeQuantityByProduct);
+                    }
                     getTableView().getItems().remove(item);
                 });
 
-                btnEdit.setOnAction(event -> {
-                    getTableView().edit(getIndex(), colActualQty); // focus edit thực tế
-                });
+//                btnEdit.setOnAction(event -> {
+//                    getTableView().edit(getIndex(), colActualQty); // focus edit thực tế
+//                });
             }
 
             @Override
@@ -383,7 +430,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                             .filter(importReceiptDetailModelTable -> changeIdsOfReceiptDetails.contains(importReceiptDetailModelTable.getId()) || importReceiptDetailModelTable.getId() == -1)
                             .collect(Collectors.toList());
                     ImportReceiptModel oldImportReceiptModel = ImportReceiptModelMapper.INSTANCE.fromViewModelToModel(oldImportReceiptModelTable);
-                    presenter.updateImportReceipt(importReceiptModel, oldImportReceiptModel, newProductDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
+                    presenter.updateImportReceipt(importReceiptModel, oldImportReceiptModel, newProductDetails, changeQuantityByProductMap, changeTotalPriceByProductMap, receiptDetailIdsDeleted);
                     AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
                 }
                 ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
@@ -434,19 +481,19 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         double currentTotalPrice = actualQuantity * unitPrice;
         totalPriceOfReceipt += currentTotalPrice;
         totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
+        int changeQuantityByProduct = changeQuantityByProductMap.getOrDefault(product.getId(), 0);
+        double changeTotalPriceByProduct = changeTotalPriceByProductMap.getOrDefault(product.getId(), 0.0);
         if(productExists != null) {
             int actualQuantityCurrent = productExists.getActualQuantity() + actualQuantity;
             double totalPriceCurrent = productExists.getTotalPrice() + currentTotalPrice;
             productExists.setActualQuantity(actualQuantityCurrent);
             productExists.setTotalPrice(totalPriceCurrent);
             productExists.setTotalPriceFormat(FormatMoney.format(totalPriceCurrent));
-            changeIdsOfReceiptDetails.add(productExists.getId());
-            //
-            int changeQuantityByProduct = changeQuantityByProductMap.getOrDefault(productExists.getProductId(), 0);
-            changeQuantityByProductMap.put(productExists.getProductId(), changeQuantityByProduct + actualQuantity);
-
-            double changeTotalPriceByProduct = changeTotalPriceByProductMap.getOrDefault(productExists.getProductId(), 0.0);
-            changeTotalPriceByProductMap.put(productExists.getProductId(), changeTotalPriceByProduct + currentTotalPrice);
+            if(productExists.getId() != null) {
+                changeIdsOfReceiptDetails.add(productExists.getId());
+                changeQuantityByProductMap.put(productExists.getProductId(), changeQuantityByProduct + actualQuantity);
+                changeTotalPriceByProductMap.put(productExists.getProductId(), changeTotalPriceByProduct + currentTotalPrice);
+            }
         }
         else {
             productDetails.add(new ImportReceiptDetailModelTable(
@@ -462,8 +509,8 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     FormatMoney.format(currentTotalPrice),
                     product.getCode()
             ));
-            changeQuantityByProductMap.put(product.getId(), actualQuantity);
-            changeTotalPriceByProductMap.put(product.getId(), currentTotalPrice);
+            changeQuantityByProductMap.put(product.getId(), changeQuantityByProduct + actualQuantity);
+            changeTotalPriceByProductMap.put(product.getId(), changeTotalPriceByProduct + currentTotalPrice);
         }
         productTable.refresh();
     }

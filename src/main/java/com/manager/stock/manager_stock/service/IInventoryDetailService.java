@@ -14,4 +14,5 @@ public interface IInventoryDetailService {
     HashMap<Long, InventoryDetailModel> findAllByAcademicYearAndProductId(int academicYear, List<Long> productIds);
     void save(List<InventoryDetailModel> inventoryDetailModels);
     void update(List<InventoryDetailModel> inventoryDetailModels);
+    int findQuantityInStockByProductIdAndAcademicYear(long productId, int academicYear);
 }

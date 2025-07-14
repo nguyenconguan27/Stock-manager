@@ -15,7 +15,9 @@ import com.manager.stock.manager_stock.model.tableData.ExportReceiptDetailModelT
 import com.manager.stock.manager_stock.service.*;
 import com.manager.stock.manager_stock.service.impl.*;
 import com.manager.stock.manager_stock.utils.GenericConverterBetweenModelAndTableData;
+import javafx.animation.ScaleTransition;
 
+import javax.sound.midi.Soundbank;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -66,6 +68,7 @@ public class ExportReceiptPresenter {
 
     public List<ExportReceiptModel> findAllExportReceipt(Optional<Integer> academicYear) throws DaoException {
         int academicYearValue = academicYear.orElse(Calendar.getInstance().get(Calendar.YEAR));
+        System.out.println("Academic year: " + academicYearValue);
         return exportReceiptService.findAllByAcademicYear(academicYearValue);
     }
 
@@ -87,12 +90,14 @@ public class ExportReceiptPresenter {
                 exportReceiptDetailModelTables, ExportReceiptDetailModelTableMapper.INSTANCE::fromViewModelToModel
         );
         int academicYearValue = getYearOfExportReceipt(exportReceiptModel.getCreateAt());
+        System.out.println("Academic year(save): " + academicYearValue);
         List<Long> productIds = exportReceiptDetailModels.stream().map(ExportReceiptDetailModel::getProductId).collect(Collectors.toList());
         // thêm mới phiếu xuất
         List<Long> exportReceiptDetailIds = new ArrayList<>();
         long exportReceiptId = -1;
         try {
-             exportReceiptId = exportReceiptService.save(exportReceiptModel);
+            exportReceiptModel.setAcademicYear(academicYearValue);
+            exportReceiptId = exportReceiptService.save(exportReceiptModel);
             System.out.println("Export receipt id : " + exportReceiptId);
             // thêm mới danh sách phiếu xuất chi tiết
             exportReceiptDetailIds = exportReceiptDetailService.save(exportReceiptDetailModels, exportReceiptId);
@@ -173,5 +178,18 @@ public class ExportReceiptPresenter {
             e.printStackTrace();
         }
         return Calendar.getInstance().get(Calendar.YEAR);
+    }
+
+    public int findQuantityInStockByProductIdAndAcademicYear(long productId, int academicYear) throws DaoException{
+        int[] yearsToTry = { academicYear, academicYear - 1 };
+
+        for (int year : yearsToTry) {
+            try {
+                return inventoryDetailService.findQuantityInStockByProductIdAndAcademicYear(productId, year);
+            } catch (CanNotFoundException e) {
+                System.out.println(String.format("Quantity not found for productId={%d} in academicYear={%d}: {%s}", productId, year, e.getMessage()));
+            }
+        }
+        return 0;
     }
 }

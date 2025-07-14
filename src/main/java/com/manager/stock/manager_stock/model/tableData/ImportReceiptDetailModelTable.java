@@ -49,7 +49,7 @@ public class ImportReceiptDetailModelTable {
 
 
     // Getter methods
-    public long getId() { return id.get(); }
+    public Long getId() { return id.get(); }
     public long getImportReceiptId() { return importReceiptId.get(); }
     public Long getProductId() { return productId.get(); }
     public int getPlannedQuantity() { return plannedQuantity.get(); }
@@ -63,4 +63,5 @@ public class ImportReceiptDetailModelTable {
     public void setTotalPrice(double totalPrice) { this.totalPrice.set(totalPrice); }
     public void setUnitPriceFormat(String unitPriceFormat) { this.unitPriceFormat.set(unitPriceFormat); }
     public void setTotalPriceFormat(String totalPriceFormat) { this.totalPriceFormat.set(totalPriceFormat); }
+    public void setPlannedQuantity(int plannedQuantity) { this.plannedQuantity.set(plannedQuantity); }
 }

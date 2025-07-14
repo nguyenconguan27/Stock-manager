@@ -51,4 +51,9 @@ public class InventoryDetailServiceImpl implements IInventoryDetailService {
     public void update(List<InventoryDetailModel> inventoryDetailModels) throws DaoException{
         inventoryDetailDao.update(inventoryDetailModels);
     }
+
+    @Override
+    public int findQuantityInStockByProductIdAndAcademicYear(long productId, int academicYear) throws DaoException{
+        return inventoryDetailDao.findQuantityInStockByProductIdAndAcademicYear(productId, academicYear);
+    }
 }

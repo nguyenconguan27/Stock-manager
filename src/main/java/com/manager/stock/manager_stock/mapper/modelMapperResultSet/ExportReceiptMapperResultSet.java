@@ -24,7 +24,7 @@ public class ExportReceiptMapperResultSet implements RowMapper<ExportReceiptMode
                 case "invoice_number":
                     exportReceiptModel.setInvoiceNumber(resultSet.getString(columnName));
                     break;
-                case "created_at":
+                case "create_at":
                     exportReceiptModel.setCreateAt(resultSet.getString(columnName));
                     break;
                 case "receiver":
@@ -39,7 +39,7 @@ public class ExportReceiptMapperResultSet implements RowMapper<ExportReceiptMode
                 case "warehouse":
                     exportReceiptModel.setWareHouse(resultSet.getString(columnName));
                     break;
-                case "total_price":
+                case "total_price_receipt":
                     exportReceiptModel.setTotalPrice(resultSet.getDouble(columnName));
                     break;
                 case "total_price_in_word":

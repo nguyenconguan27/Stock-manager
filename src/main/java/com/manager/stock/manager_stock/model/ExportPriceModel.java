@@ -1,22 +1,25 @@
 package com.manager.stock.manager_stock.model;
 
+import java.time.LocalDateTime;
+
 /**
  * @author Trọng Hướng
  */
 public class ExportPriceModel {
     private long id;
     private long productId;
-    private long exportTime;
+    private LocalDateTime exportTime;
     private double exportPrice;
     private int quantityInStock;
     private double totalPriceInStock;
     private int quantityImported;
     private double totalImportPrice;
+    private long importReceiptId;
 
     public ExportPriceModel() {
     }
 
-    public ExportPriceModel(long id, long productId, long exportTime, double exportPrice, int quantityInStock, int quantityImported, double totalImportPrice, double totalPriceInStock) {
+    public ExportPriceModel(long id, long productId, LocalDateTime exportTime, double exportPrice, int quantityInStock, int quantityImported, double totalImportPrice, double totalPriceInStock) {
         this.id = id;
         this.productId = productId;
         this.exportTime = exportTime;
@@ -43,11 +46,11 @@ public class ExportPriceModel {
         this.productId = productId;
     }
 
-    public long getExportTime() {
+    public LocalDateTime getExportTime() {
         return exportTime;
     }
 
-    public void setExportTime(long exportTime) {
+    public void setExportTime(LocalDateTime exportTime) {
         this.exportTime = exportTime;
     }
 
@@ -89,5 +92,13 @@ public class ExportPriceModel {
 
     public void setTotalPriceInStock(double totalPriceInStock) {
         this.totalPriceInStock = totalPriceInStock;
+    }
+
+    public long getImportReceiptId() {
+        return importReceiptId;
+    }
+
+    public void setImportReceiptId(long importReceiptId) {
+        this.importReceiptId = importReceiptId;
     }
 }

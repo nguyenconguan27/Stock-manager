@@ -53,7 +53,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         leftForm.setPadding(new Insets(15));
 
         leftForm.add(new Label("Ngày tạo *"), 0, 0);
-        dateTimePicker = new DateTimePicker(LocalDateTime.now());
+        dateTimePicker = new DateTimePicker(LocalDateTime.now(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
         leftForm.add(dateTimePicker, 1, 0);
 
         leftForm.add(new Label("Số hóa đơn *"), 0, 1);
@@ -85,7 +85,8 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         if (model != null) {
             if (model.getCreateAt() != null && !model.getCreateAt().isEmpty()) {
                 try {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+//                    dateTimePicker.setValue(LocalDate.parse(model.getCreateAt(), formatter));
                     dateTimePicker.setTime(LocalDateTime.parse(model.getCreateAt(), formatter));
                 } catch (Exception e) {
                     System.err.println("Lỗi định dạng ngày: " + model.getCreateAt());
@@ -99,8 +100,10 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
 
             // Lấy danh sách receiptDetail
             totalPriceOfReceipt = model.getTotalPrice();
+            System.out.println("Total: " + totalPriceOfReceipt);
             totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
-            List<ExportReceiptDetailModel> exportReceiptDetailModels = presenter.findAllExportReceiptDetailByExportReceipt(model.getId());
+            ExportReceiptPresenter exportReceiptPresenter = ExportReceiptPresenter.getInstance();
+            List<ExportReceiptDetailModel> exportReceiptDetailModels = exportReceiptPresenter.findAllExportReceiptDetailByExportReceipt(model.getId());
             List<ExportReceiptDetailModelTable> importReceiptDetailModelTablesByReceipt = GenericConverterBetweenModelAndTableData.convertToList(exportReceiptDetailModels
                     , ExportReceiptDetailModelTableMapper.INSTANCE::toViewModel);
             productDetails.setAll(importReceiptDetailModelTablesByReceipt);
@@ -134,6 +137,12 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         tfUnitPrice.setEditable(false);
         VBox unitPriceCol = new VBox(5, lbUnitPrice, tfUnitPrice);
 
+        Label lbInventory = new Label("Tồn kho");
+        TextField tfInventory = new TextField();
+        tfInventory.setPrefWidth(100);
+        tfInventory.setEditable(false);
+        VBox inventoryCol = new VBox(5, lbInventory, tfInventory);
+
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
@@ -145,10 +154,10 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         VBox buttonBox = new VBox(btnAddProduct);
         buttonBox.setAlignment(Pos.BOTTOM_RIGHT);
 
-        HBox productInputs = new HBox(20, productCol, plannedQtyCol, actualQtyCol, unitPriceCol);
+        HBox productInputs = new HBox(20, productCol, plannedQtyCol, actualQtyCol, unitPriceCol, inventoryCol);
         productInputs.setAlignment(Pos.CENTER_LEFT);
 
-        HBox productBox = new HBox(20, productInputs, spacer, buttonBox);
+        HBox productBox = new HBox(35, productInputs, spacer, buttonBox);
         productBox.setPadding(new javafx.geometry.Insets(0, 15, 0, 15));
         productBox.setAlignment(Pos.CENTER_LEFT);
 
@@ -215,9 +224,13 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
 
                 tfUnitPrice.setText(String.valueOf(ep.price()));
                 tfUnitPrice.setUserData(ep.exportPriceId());
+
+                LocalDateTime createAtStr = dateTimePicker.dateTimeProperty().get();
+                int academicYear = createAtStr.getYear();
+                int quantityInStock = presenter.findQuantityInStockByProductIdAndAcademicYear(newProduct.getId(), academicYear);
+                tfInventory.setText(String.valueOf(quantityInStock));
             }
         });
-
 
         // === Giao diện tổng thể ===
         VBox root = new VBox(20, formColumns, productBox);
@@ -425,9 +438,9 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         Button cancelBtn = new Button("Cancel");
         AddCssStyleForBtnUtil.addCssStyleForBtn(cancelBtn);
         cancelBtn.setOnMouseClicked(e -> {
-            ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
-            importReceiptScreen.showTable();
-            ScreenNavigator.navigateTo(importReceiptScreen);
+            ExportReceiptScreen exportReceiptScreen = new ExportReceiptScreen();
+            exportReceiptScreen.showTable();
+            ScreenNavigator.navigateTo(exportReceiptScreen);
         });
 
         actionRow.getChildren().addAll(saveBtn, cancelBtn);
@@ -437,6 +450,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         HBox totalPriceRow = new HBox(10);
         totalPriceRow.setStyle("-fx-padding: 5; -fx-background-color: #e1f0f7; -fx-border-color: #c1dfee; -fx-border-width: 1px; ");
         Label totalPriceLabelTitle = new Label("Tổng cộng: ");
+//        totalPriceLabel.setText(FormatMoney.format(receiptModelTable.getTotalPrice()));
         totalPriceRow.getChildren().addAll(totalPriceLabelTitle, totalPriceLabel);
         styleLabel(totalPriceLabelTitle);
         styleLabel(totalPriceLabel);

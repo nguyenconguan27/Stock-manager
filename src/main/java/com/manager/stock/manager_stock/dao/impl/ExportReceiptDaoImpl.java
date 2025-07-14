@@ -82,7 +82,13 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
 
     @Override
     public List<ExportReceiptModel> findAllByAcademicYear(int academicYear) {
-        String sql = "SELECT * from export_receipt where academic_year = ?";
+        String sql = "SELECT er.*, sum(ep.export_price * erd.actual_quantity) as total_price_receipt from export_receipt er \n" +
+                "join export_receipt_detail erd on\n" +
+                "er.id = erd.export_receipt_id \n" +
+                "join export_price ep on\n" +
+                "ep.id = erd.export_price_id \n" +
+                "where academic_year = ?\n" +
+                "group by er.id;";
         return query(sql, new ExportReceiptMapperResultSet(), academicYear);
     }
 

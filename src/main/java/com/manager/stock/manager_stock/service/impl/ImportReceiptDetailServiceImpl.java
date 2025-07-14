@@ -8,6 +8,7 @@ import com.manager.stock.manager_stock.model.dto.ProductIdAndActualQuantityAndTo
 import com.manager.stock.manager_stock.service.IImportReceiptDetailService;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Trọng Hướng
@@ -50,5 +51,10 @@ public class ImportReceiptDetailServiceImpl implements IImportReceiptDetailServi
     @Override
     public void deleteImportReceiptByImportReceipt(long importReceiptId) throws DaoException {
         importReceiptDetailDao.deleteByImportReceipt(importReceiptId);
+    }
+
+    @Override
+    public void deleteByIds(Set<Long> ids) throws DaoException {
+        importReceiptDetailDao.deleteByIds(ids);
     }
 }
