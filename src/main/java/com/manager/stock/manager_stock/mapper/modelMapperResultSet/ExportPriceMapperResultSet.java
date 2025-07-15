@@ -43,6 +43,9 @@ public class ExportPriceMapperResultSet implements RowMapper<ExportPriceModel>{
                     case "total_price_in_stock":
                         exportPriceModel.setTotalPriceInStock(resultSet.getDouble(columnName));
                         break;
+                    case "import_receipt_id" :
+                        exportPriceModel.setImportReceiptId(resultSet.getLong(columnName));
+                        break;
                 }
             }
             return exportPriceModel;

@@ -76,7 +76,7 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
     @Override
     public void update(List<ExportPriceModel> exportPriceModels) {
         String sql = "UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ?" +
-                    " WHERE product_id = ?";
+                    " WHERE id = ?";
         List<Object[]> parameters = new ArrayList<>();
         for(ExportPriceModel exportPriceModel : exportPriceModels){
             parameters.add(new Object[] {
@@ -85,7 +85,7 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
                exportPriceModel.getTotalImportPrice(),
                exportPriceModel.getExportPrice(),
                exportPriceModel.getTotalPriceInStock(),
-               exportPriceModel.getProductId()
+               exportPriceModel.getId()
             });
         }
         save(sql, parameters);

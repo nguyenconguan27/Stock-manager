@@ -1,6 +1,7 @@
 package com.manager.stock.manager_stock.screen.transaction;
 
 import com.manager.stock.manager_stock.exception.DaoException;
+import com.manager.stock.manager_stock.exception.StockUnderFlowException;
 import com.manager.stock.manager_stock.interfaceActionHandler.TopBarActionHandler;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptDetailModelMapper;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptModelMapper;
@@ -192,10 +193,18 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
                     boolean isConfirmDelete = AlertUtils.confirm("Bạn có chắc muốn xóa phiếu số: " + selected.getInvoice());
                     if(isConfirmDelete) {
                         ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
-                        boolean isDeleteSuccess = presenter.deleteImportReceipt(selected);
-                        if(isDeleteSuccess) {
-                            AlertUtils.alert("Xóa phiếu nhập thành công.", "INFORMATION", "Thành công", "Xóa thành công");
-                            showTable();
+                        try {
+                            boolean isDeleteSuccess = presenter.deleteImportReceipt(selected);
+                            if(isDeleteSuccess) {
+                                AlertUtils.alert("Xóa phiếu nhập thành công.", "INFORMATION", "Thành công", "Xóa thành công");
+                                showTable();
+                            }
+                        }
+                        catch (DaoException | StockUnderFlowException e) {
+                            AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi", "Lỗi xóa phiếu nhập.");
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
                 }
