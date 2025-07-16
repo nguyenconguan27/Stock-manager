@@ -61,4 +61,9 @@ public class ExportReceiptServiceImpl implements IExportReceiptService {
     public long save(ExportReceiptModel exportReceiptModel) {
         return exportReceiptDao.save(exportReceiptModel);
     }
+
+    @Override
+    public void update(ExportReceiptModel exportReceiptModel) throws DaoException {
+        exportReceiptDao.update(exportReceiptModel);
+    }
 }

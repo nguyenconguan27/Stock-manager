@@ -115,4 +115,14 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
         });
         save(sql, parameters);
     }
+
+    @Override
+    public List<ExportPriceIdAndPrice> findAllById(List<Long> ids) {
+        String idsStr = ids.stream().map(Object::toString).collect(Collectors.joining(","));
+        String sql = "select export_price, id from export_price where id in (" + idsStr + ") order by id asc";
+        return query(sql, rs -> new ExportPriceIdAndPrice(
+                rs.getLong("id"),
+                rs.getDouble("export_price")
+        ));
+    }
 }

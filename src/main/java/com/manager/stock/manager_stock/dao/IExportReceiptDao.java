@@ -20,4 +20,5 @@ public interface IExportReceiptDao {
     void deleteByIdsWithTransaction(List<Long> ids, Connection connection);
     List<ExportReceiptModel> findAllByAcademicYear(int academicYear);
     long save(ExportReceiptModel exportReceiptModel);
+    void update(ExportReceiptModel exportReceiptModel);
 }

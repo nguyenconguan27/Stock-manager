@@ -57,4 +57,16 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     public ExportPriceIdAndPrice findExportPriceByProductAndLastTime(long productId) throws DaoException{
         return exportPriceDao.findExportPriceIdAndPriceByProductAndLastTime(productId);
     }
+
+    @Override
+    public HashMap<Long, Double> findPriceById(List<Long> ids) {
+        List<ExportPriceIdAndPrice> exportPriceIdAndPrices = exportPriceDao.findAllById(ids);
+        return exportPriceIdAndPrices.stream()
+                .collect(Collectors.toMap(
+                        ExportPriceIdAndPrice::exportPriceId,
+                        ExportPriceIdAndPrice::price,
+                        (existing, replacement) -> replacement,
+                        HashMap::new
+                ));
+    }
 }

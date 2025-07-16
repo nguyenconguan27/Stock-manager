@@ -16,4 +16,5 @@ public interface IExportPriceService {
     HashMap<Long, List<ExportPriceModel>> findAllByProductAndMinTime(List<Long> productIds, LocalDateTime minTime);
     void update(List<ExportPriceModel> exportPriceModels);
     ExportPriceIdAndPrice findExportPriceByProductAndLastTime(long productId);
+    HashMap<Long, Double> findPriceById(List<Long> ids);
 }

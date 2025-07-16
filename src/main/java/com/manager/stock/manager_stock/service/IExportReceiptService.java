@@ -16,4 +16,5 @@ public interface IExportReceiptService {
     void deleteByIds(List<Long> ids);
     List<ExportReceiptModel> findAllByAcademicYear(int academicYear);
     long save(ExportReceiptModel exportReceiptModel);
+    void update(ExportReceiptModel exportReceiptModel);
 }
