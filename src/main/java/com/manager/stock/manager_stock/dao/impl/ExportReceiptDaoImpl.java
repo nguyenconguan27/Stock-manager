@@ -125,4 +125,14 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
         });
         save(sql, parameters);
     }
+
+    @Override
+    public void commit() {
+        super.commit();
+    }
+
+    @Override
+    public void rollback() {
+        super.rollback();
+    }
 }

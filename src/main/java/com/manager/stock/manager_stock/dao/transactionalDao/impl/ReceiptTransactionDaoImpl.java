@@ -3,10 +3,7 @@ package com.manager.stock.manager_stock.dao.transactionalDao.impl;
 import com.manager.stock.manager_stock.dao.IExportReceiptDao;
 import com.manager.stock.manager_stock.dao.IImportReceiptDao;
 import com.manager.stock.manager_stock.dao.IInventoryDetailDao;
-import com.manager.stock.manager_stock.dao.impl.AbstractDao;
-import com.manager.stock.manager_stock.dao.impl.ExportReceiptDaoImpl;
-import com.manager.stock.manager_stock.dao.impl.ImportReceiptDaoImpl;
-import com.manager.stock.manager_stock.dao.impl.InventoryDetailDaoImpl;
+import com.manager.stock.manager_stock.dao.impl.*;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.dao.transactionalDao.IReceiptTransactionDao;
 import com.manager.stock.manager_stock.model.InventoryDetailModel;
@@ -43,7 +40,7 @@ public class ReceiptTransactionDaoImpl extends AbstractDao<Void> implements IRec
     public void deleteImportReceiptWithExportsAndUpdateInventory(long importReceiptId, List<Long> exportReceiptIds, List<InventoryDetailModel> inventoryDetailModels) {
         Connection connection = null;
         try {
-            connection = getConnection();
+            connection = DatasourceInitialize.getInstance();
             connection.setAutoCommit(false);
 
             logger.info("Start deleting import receipt (ID: {}) in transaction", importReceiptId);

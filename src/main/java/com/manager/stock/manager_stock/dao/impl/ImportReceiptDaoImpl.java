@@ -97,4 +97,14 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
         String sql = "DELETE FROM import_receipt where id = ?";
         deleteWithinTransaction(sql, connection, id);
     }
+
+    @Override
+    public void commit() {
+        super.commit();
+    }
+
+    @Override
+    public void rollback() {
+        super.rollback();
+    }
 }

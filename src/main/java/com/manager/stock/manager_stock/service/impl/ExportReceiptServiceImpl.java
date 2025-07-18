@@ -66,4 +66,14 @@ public class ExportReceiptServiceImpl implements IExportReceiptService {
     public void update(ExportReceiptModel exportReceiptModel) throws DaoException {
         exportReceiptDao.update(exportReceiptModel);
     }
+
+    @Override
+    public void commit() {
+        exportReceiptDao.commit();
+    }
+
+    @Override
+    public void rollback() {
+        exportReceiptDao.rollback();
+    }
 }

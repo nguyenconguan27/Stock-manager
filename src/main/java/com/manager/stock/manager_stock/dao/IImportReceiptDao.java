@@ -14,4 +14,6 @@ public interface IImportReceiptDao {
     void update(ImportReceiptModel importReceiptModel);
     void delete(List<Long> ids);
     void deleteByIdWithTransaction(long id, Connection connection);
+    void commit();
+    void rollback();
 }

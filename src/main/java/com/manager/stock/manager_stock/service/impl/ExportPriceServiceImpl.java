@@ -69,4 +69,14 @@ public class ExportPriceServiceImpl implements IExportPriceService {
                         HashMap::new
                 ));
     }
+
+    @Override
+    public void commit() {
+        exportPriceDao.commit();
+    }
+
+    @Override
+    public void rollback() {
+        exportPriceDao.rollback();
+    }
 }

@@ -21,4 +21,6 @@ public interface IExportReceiptDao {
     List<ExportReceiptModel> findAllByAcademicYear(int academicYear);
     long save(ExportReceiptModel exportReceiptModel);
     void update(ExportReceiptModel exportReceiptModel);
+    void commit();
+    void rollback();
 }

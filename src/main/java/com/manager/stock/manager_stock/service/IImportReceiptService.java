@@ -13,4 +13,6 @@ public interface IImportReceiptService {
     long save(ImportReceiptModel importReceiptModel);
     void update(ImportReceiptModel importReceiptModel);
     void delete(long id);
+    void commit();
+    void rollback();
 }

@@ -18,4 +18,6 @@ public interface IExportPriceDao {
     ExportPriceIdAndPrice findExportPriceIdAndPriceByProductAndLastTime(long productId);
     void updateExportTimeByImportReceiptId(long importReceiptId, LocalDateTime importDate);
     List<ExportPriceIdAndPrice> findAllById(List<Long> ids);
+    void commit();
+    void rollback();
 }

@@ -59,4 +59,14 @@ public class ImportReceiptServiceImpl implements IImportReceiptService {
         ids.add(id);
         importReceiptDao.delete(ids);
     }
+
+    @Override
+    public void commit() {
+        importReceiptDao.commit();
+    }
+
+    @Override
+    public void rollback() {
+        importReceiptDao.rollback();
+    }
 }

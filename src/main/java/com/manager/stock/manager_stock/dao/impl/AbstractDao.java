@@ -4,6 +4,7 @@ import com.manager.stock.manager_stock.config.AppConfig;
 import com.manager.stock.manager_stock.dao.GenericDao;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.mapper.modelMapperResultSet.RowMapper;
+import javafx.scene.chart.PieChart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,20 +23,20 @@ public class AbstractDao<T> implements GenericDao<T> {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected Connection getConnection() throws SQLException {
-        try {
-            final String url = AppConfig.getString("db.url");
-            final Properties props = new Properties();
-            props.setProperty("user", AppConfig.getString("db.user"));
-            props.setProperty("password", AppConfig.getString("db.password"));
-            logger.debug("Start connect to database..., user = {}, password = {}", AppConfig.getString("db.user"), AppConfig.getString("db.password") );
-//            System.out.println(String.format("Start connect to database..., user = {%s}, password = {%s}", AppConfig.getString("db.user"), AppConfig.getString("db.password") ));
-            return DriverManager.getConnection(url, props);
-        }
-        catch (Exception e) {
-            return null;
-        }
-    }
+//    protected Connection getConnection() throws SQLException {
+//        try {
+//            final String url = AppConfig.getString("db.url");
+//            final Properties props = new Properties();
+//            props.setProperty("user", AppConfig.getString("db.user"));
+//            props.setProperty("password", AppConfig.getString("db.password"));
+//            logger.debug("Start connect to database..., user = {}, password = {}", AppConfig.getString("db.user"), AppConfig.getString("db.password") );
+////            System.out.println(String.format("Start connect to database..., user = {%s}, password = {%s}", AppConfig.getString("db.user"), AppConfig.getString("db.password") ));
+//            return DriverManager.getConnection(url, props);
+//        }
+//        catch (Exception e) {
+//            return null;
+//        }
+//    }
 
     private void setParams(PreparedStatement stmt, Object...params) {
         try {
@@ -88,7 +89,7 @@ public class AbstractDao<T> implements GenericDao<T> {
         PreparedStatement stmt = null;
         List<T> resultsList = new ArrayList<>();
         try {
-            connection = getConnection();
+            connection = DatasourceInitialize.getInstance();
             stmt = connection.prepareStatement(sql);
             setParams(stmt, parameters);
             rs = stmt.executeQuery();
@@ -110,9 +111,9 @@ public class AbstractDao<T> implements GenericDao<T> {
                 if(stmt != null) {
                     stmt.close();
                 }
-                if(connection != null) {
-                    connection.close();
-                }
+//                if(connection != null) {
+//                    connection.close();
+//                }
             }
             catch (SQLException e) {
                 logger.error("SQL Exception while closing ResultSet or Statement or Connection: {}", e.getMessage(), e);
@@ -127,7 +128,8 @@ public class AbstractDao<T> implements GenericDao<T> {
         PreparedStatement stmt = null;
         Connection connection = null;
         try {
-            connection = getConnection();
+            connection = DatasourceInitialize.getInstance();
+            connection.setAutoCommit(false);
             if (parameters.size() == 1) {
                 stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 setParams(stmt, parameters.get(0));
@@ -163,9 +165,9 @@ public class AbstractDao<T> implements GenericDao<T> {
                 if (stmt != null) {
                     stmt.close();
                 }
-                if (connection != null) {
-                    connection.close();
-                }
+//                if (connection != null) {
+//                    connection.close();
+//                }
             } catch (SQLException e) {
                 logger.error("SQL Exception while closing Statement or Connection: {}", e.getMessage(), e);
             }
@@ -184,7 +186,7 @@ public class AbstractDao<T> implements GenericDao<T> {
         PreparedStatement stmt = null;
         Connection connection = null;
         try {
-            connection = getConnection();
+            connection = DatasourceInitialize.getInstance();
             connection.setAutoCommit(false);
             stmt = connection.prepareStatement(sql);
             for(Object id : params) {
@@ -208,9 +210,9 @@ public class AbstractDao<T> implements GenericDao<T> {
                 if(stmt != null) {
                     stmt.close();
                 }
-                if(connection != null) {
-                    connection.close();
-                }
+//                if(connection != null) {
+//                    connection.close();
+//                }
             }
             catch (SQLException e) {
                 logger.error("SQL Exception while closing ResultSet or Statement or Connection: {}", e.getMessage(), e);
@@ -293,6 +295,26 @@ public class AbstractDao<T> implements GenericDao<T> {
             } catch (SQLException e) {
                 logger.error("SQL Exception while closing Statement: {}", e.getMessage(), e);
             }
+        }
+    }
+
+    protected void commit() {
+        try {
+            Connection connection = DatasourceInitialize.getInstance();
+            connection.commit();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void rollback() {
+        try {
+            Connection connection = DatasourceInitialize.getInstance();
+            connection.rollback();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

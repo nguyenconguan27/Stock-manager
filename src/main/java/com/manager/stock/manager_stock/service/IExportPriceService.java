@@ -17,4 +17,6 @@ public interface IExportPriceService {
     void update(List<ExportPriceModel> exportPriceModels);
     ExportPriceIdAndPrice findExportPriceByProductAndLastTime(long productId);
     HashMap<Long, Double> findPriceById(List<Long> ids);
+    void commit();
+    void rollback();
 }

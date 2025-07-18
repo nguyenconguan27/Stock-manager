@@ -125,4 +125,14 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
                 rs.getDouble("export_price")
         ));
     }
+
+    @Override
+    public void commit() {
+        super.commit();
+    }
+
+    @Override
+    public void rollback() {
+        super.rollback();
+    }
 }
