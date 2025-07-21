@@ -1,15 +1,19 @@
 package com.manager.stock.manager_stock.model;
 
 public class ProductGroup {
-    private String id;
+    private long id;
     private String name;
 
-    public ProductGroup(String id, String name) {
+    public ProductGroup(long id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public void setId(String id) {
+    public ProductGroup() {
+
+    }
+
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -17,7 +21,7 @@ public class ProductGroup {
         this.name = name;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 

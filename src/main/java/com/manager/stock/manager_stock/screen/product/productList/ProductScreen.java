@@ -2,6 +2,7 @@ package com.manager.stock.manager_stock.screen.product.productList;
 
 import com.manager.stock.manager_stock.model.ProductGroup;
 import com.manager.stock.manager_stock.model.ProductModel;
+import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.product.productDetail.ProductDetailScreen;
 import com.manager.stock.manager_stock.screen.productGroup.ProductGroupPresenter;
 import com.manager.stock.manager_stock.utils.Utils;
@@ -29,6 +30,29 @@ public class ProductScreen extends VBox {
     ObservableList<ProductGroup> productGroupData = FXCollections.observableArrayList();
     private final ProductPresenter productPresenter;
     private final ProductGroupPresenter productGroupPresenter;
+    private TextField tfGroupName;
+    private ProductGroup currentProductGroup;
+
+    private VBox initAddGroupForm() {
+        VBox groupForm = new VBox();
+        tfGroupName = new TextField();
+        Button saveButton = new Button("Save");
+        saveButton.setOnAction(event -> {
+            currentProductGroup.setName(tfGroupName.getText());
+            currentProductGroup.setId(System.currentTimeMillis());
+            productGroupPresenter.saveGroupProduct(currentProductGroup);
+            productGroupData.add(currentProductGroup);
+            currentProductGroup = new ProductGroup();
+            tfGroupName.setText("");
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Thông báo");
+            alert.setHeaderText(null);
+            alert.setContentText("Thêm nhóm vật tư thành công!");
+            alert.showAndWait();
+        });
+        groupForm.getChildren().addAll(tfGroupName, saveButton);
+        return groupForm;
+    }
 
     private VBox initHeader() {
         VBox header = new VBox();
@@ -37,11 +61,11 @@ public class ProductScreen extends VBox {
         label.setId("product-list-label");
 
         // add button
-        Button addButton = new Button("Thêm sản phẩm");
+        Button addButton = new Button("Thêm vật tư");
         addButton.setOnAction(e -> {
-            Stage currentStage = (Stage) addButton.getScene().getWindow();
             ProductDetailScreen productDetailScreen = new ProductDetailScreen();
-            productDetailScreen.showPopup(currentStage);
+            productDetailScreen.showProduct(-1);
+            ScreenNavigator.navigateTo(productDetailScreen);
         });
 
         // text search
@@ -87,7 +111,7 @@ public class ProductScreen extends VBox {
             logger.info("Search product group: {} - {}", selected.getId(), selected.getName());
             if (selected != null) {
                 productData.clear();
-                if("N".equals(selected.getId())) {
+                if(selected.getId() == -1) {
                     productData.addAll(productPresenter.loadProductListData());
                 }
                 else {
@@ -111,7 +135,7 @@ public class ProductScreen extends VBox {
     private void initTableView() {
         table = new TableView<>();
         table.setId("inventory-product-table");
-        TableColumn<ProductModel, String> idCol = Utils.createColumn("Mã", "id");
+        TableColumn<ProductModel, String> idCol = Utils.createColumn("Mã", "code");
         TableColumn<ProductModel, String> nameCol = Utils.createColumn("Tên", "name");
         TableColumn<ProductModel, Integer> qtyCol = Utils.createColumn("Số lượng", "quantity");
         TableColumn<ProductModel, Integer> unitPriceCol = Utils.createColumn("Đơn giá", "unitPrice");
@@ -130,7 +154,9 @@ public class ProductScreen extends VBox {
             {
                 editButton.setOnAction(event -> {
                     ProductModel product = getTableView().getItems().get(getIndex());
-
+                    ProductDetailScreen productDetailScreen = new ProductDetailScreen();
+                    productDetailScreen.showProduct(product.getId());
+                    ScreenNavigator.navigateTo(productDetailScreen);
                 });
                 deleteButton.setOnAction(event -> {
                     ProductModel product = getTableView().getItems().get(getIndex());
@@ -156,16 +182,18 @@ public class ProductScreen extends VBox {
         initTableView();
         table.setItems(productData);
         comboBox.setItems(productGroupData);
-        this.getChildren().addAll(header, table);
+        VBox groupForm = initAddGroupForm();
+        this.getChildren().addAll(header, table, groupForm);
         productPresenter = ProductPresenter.getInstance();
         productGroupPresenter = ProductGroupPresenter.getInstance();
+        currentProductGroup = new ProductGroup();
     }
 
     public void showProducts() {
         List<ProductModel> productModels = productPresenter.loadProductListData();
         List<ProductGroup> productGroups = productGroupPresenter.loadProductGroupData();
         productData.addAll(productModels);
-        productGroupData.add(0, new ProductGroup("N", "Tất cả"));
+        productGroupData.add(0, new ProductGroup(-1, "Tất cả"));
         productGroupData.addAll(productGroups);
     }
 }

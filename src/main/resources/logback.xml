@@ -58,18 +58,22 @@
 
     <logger name="com.manager.stock.manager_stock.service" level="DEBUG" additivity="false">
         <appender-ref ref="SERVICE_FILE"/>
+        <appender-ref ref="CONSOLE"/>
     </logger>
 
     <logger name="com.manager.stock.manager_stock.dao" level="DEBUG" additivity="false">
         <appender-ref ref="DAO_FILE"/>
+        <appender-ref ref="CONSOLE"/>
     </logger>
 
     <logger name="com.manager.stock.manager_stock.utils" level="DEBUG" additivity="false">
         <appender-ref ref="UTILS_FILE"/>
+        <appender-ref ref="CONSOLE"/>
     </logger>
 
     <logger name="com.manager.stock.manager_stock.config" level="DEBUG" additivity="false">
         <appender-ref ref="CONFIG_FILE"/>
+        <appender-ref ref="CONSOLE"/>
     </logger>
 
     <!-- Logger mặc định -->

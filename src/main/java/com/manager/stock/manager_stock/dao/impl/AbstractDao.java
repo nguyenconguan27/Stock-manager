@@ -95,9 +95,9 @@ public class AbstractDao<T> implements GenericDao<T> {
                 if(stmt != null) {
                     stmt.close();
                 }
-                if(connection != null) {
-                    connection.close();
-                }
+//                if(connection != null) {
+//                    connection.close();
+//                }
             }
             catch (SQLException e) {
                 logger.error("SQL Exception while closing ResultSet or Statement or Connection: {}", e.getMessage(), e);
@@ -148,9 +148,9 @@ public class AbstractDao<T> implements GenericDao<T> {
                 if (stmt != null) {
                     stmt.close();
                 }
-                if (connection != null) {
-                    connection.close();
-                }
+//                if (connection != null) {
+//                    connection.close();
+//                }
             } catch (SQLException e) {
                 logger.error("SQL Exception while closing Statement or Connection: {}", e.getMessage(), e);
             }
@@ -192,9 +192,9 @@ public class AbstractDao<T> implements GenericDao<T> {
                 if(stmt != null) {
                     stmt.close();
                 }
-                if(connection != null) {
-                    connection.close();
-                }
+//                if(connection != null) {
+//                    connection.close();
+//                }
             }
             catch (SQLException e) {
                 logger.error("SQL Exception while closing ResultSet or Statement or Connection: {}", e.getMessage(), e);

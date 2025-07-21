@@ -31,8 +31,7 @@ public class ProductPresenter {
         return productModels;
     }
 
-
-    public List<ProductModel> loadProductByGroup(String groupId) {
+    public List<ProductModel> loadProductByGroup(long groupId) {
         List<ProductModel> productModels = productService.getByGroup(groupId);
         return productModels;
     }

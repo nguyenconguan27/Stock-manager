@@ -30,4 +30,12 @@ public class ProductGroupPresenter {
         List<ProductGroup> productGroups = productGroupService.getAll();
         return productGroups;
     }
+
+    public void saveGroupProduct(ProductGroup productGroup) {
+        productGroupService.save(productGroup);
+    }
+
+    public ProductGroup getById(long id) {
+        return productGroupService.getById(id);
+    }
 }

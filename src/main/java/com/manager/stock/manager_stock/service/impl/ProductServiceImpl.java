@@ -31,7 +31,35 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductModel> getByGroup(String groupId) {
+    public ProductModel getByCode(String text) {
+        List<ProductModel> productModels = productDao.findByCode(text);
+        if(productModels.isEmpty()) {
+            return null;
+        }
+        return productModels.get(0);
+    }
+
+    @Override
+    public List<ProductModel> getByGroup(long groupId) {
         return productDao.findByGroup(groupId);
+    }
+
+    @Override
+    public ProductModel getById(long id) {
+        List<ProductModel> productModels = productDao.findById(id);
+        if(productModels.isEmpty()) {
+            return new ProductModel();
+        }
+        return productModels.get(0);
+    }
+
+    @Override
+    public void add(ProductModel productModel, long groupId) {
+        productDao.add(productModel, groupId);
+    }
+
+    @Override
+    public void update(ProductModel productModel, long groupId, boolean isUpdateCode) {
+        productDao.update(productModel, groupId, isUpdateCode);
     }
 }

@@ -1,11 +1,12 @@
 package com.manager.stock.manager_stock.dao.impl;
 
+import com.manager.stock.manager_stock.mapper.modelMapperResultSet.ProductGroupMapperResultSet;
 import com.manager.stock.manager_stock.model.ProductGroup;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductGroupDao {
+public class ProductGroupDao extends AbstractDao<ProductGroup>{
 
     private static ProductGroupDao INSTANCE;
 
@@ -20,10 +21,30 @@ public class ProductGroupDao {
     }
 
     public List<ProductGroup> getAll() {
-        List<ProductGroup> productGroups = new ArrayList<>();
-        productGroups.add(new ProductGroup("1", "điên"));
-        productGroups.add(new ProductGroup("2", "nước"));
-        productGroups.add(new ProductGroup("3", "lửa"));
-        return productGroups;
+        String sql = "SELECT * FROM product_group";
+        return query(sql, new ProductGroupMapperResultSet());
+    }
+
+    public ProductGroup add(ProductGroup productGroup) {
+        String sql = "INSERT INTO product_group(id, name) OVERRIDING SYSTEM VALUE VALUES(?, ?);";
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[] {
+                productGroup.getId(), productGroup.getName()
+        });
+        save(sql, parameters);
+        return productGroup;
+    }
+
+    public List<ProductGroup> findById(long id) {
+        String sql = "SELECT * FROM product_group WHERE id = ?";
+        return query(sql, new ProductGroupMapperResultSet(), id);
+    }
+
+    public ProductGroup update(ProductGroup productGroup) {
+        String sql = "UPDATE product_group SET name = ?";
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[]{productGroup.getName()});
+        save(sql, parameters);
+        return productGroup;
     }
 }

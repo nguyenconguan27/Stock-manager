@@ -4,19 +4,43 @@ package com.manager.stock.manager_stock.model;
  * @author Trọng Hướng
  */
 public class ProductModel {
-    private String id;
+    private long id;
     private String name;
-    private int quantity;
+    private String code;
+    private Integer quantity;
     private String unit;
     private int unitPrice;
     private String createdAt;
+    private long groupId;
 
-    public ProductModel(String id, String name, int quantity, String unit, int unitPrice) {
+    public ProductModel(long id, String name, Integer quantity, String unit, int unitPrice, String code, long groupId) {
         this.id = id;
         this.name = name;
         this.quantity = quantity;
         this.unit = unit;
         this.unitPrice = unitPrice;
+        this.code = code;
+        this.groupId = groupId;
+    }
+
+    public void setGroupId(long groupId) {
+        this.groupId = groupId;
+    }
+
+    public long getGroupId() {
+        return groupId;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public ProductModel() {
+
     }
 
     public void setUnit(String unit) {
@@ -43,11 +67,11 @@ public class ProductModel {
         return createdAt;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -63,7 +87,7 @@ public class ProductModel {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 }

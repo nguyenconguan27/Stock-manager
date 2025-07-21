@@ -27,4 +27,18 @@ public class ProductGroupServiceImpl implements ProductGroupService {
     public List<ProductGroup> getAll() {
         return productGroupDao.getAll();
     }
+
+    @Override
+    public void save(ProductGroup productGroup) {
+        productGroupDao.add(productGroup);
+    }
+
+    @Override
+    public ProductGroup getById(long id) {
+        List<ProductGroup> productGroups = productGroupDao.findById(id);
+        if(productGroups.isEmpty()) {
+            return null;
+        }
+        return productGroups.get(0);
+    }
 }
