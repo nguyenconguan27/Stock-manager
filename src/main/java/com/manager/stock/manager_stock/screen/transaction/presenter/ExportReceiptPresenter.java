@@ -10,6 +10,7 @@ import com.manager.stock.manager_stock.model.*;
 import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
 import com.manager.stock.manager_stock.model.dto.ProductIdAndActualQuantityAndTotalPriceOfReceipt;
 import com.manager.stock.manager_stock.model.tableData.ExportReceiptDetailModelTable;
+import com.manager.stock.manager_stock.model.tableData.ExportReceiptModelTable;
 import com.manager.stock.manager_stock.service.*;
 import com.manager.stock.manager_stock.service.impl.*;
 import com.manager.stock.manager_stock.utils.GenericConverterBetweenModelAndTableData;
@@ -242,12 +243,11 @@ public class ExportReceiptPresenter {
 //                exportReceiptService.update(oldExportReceipt);
 //            }
             exportReceiptService.rollback();
-            // ??????? có thể cần rollback tồn kho nếu đơn giá update lỗi
             throw e;
         }
     }
 
-    public void deleteExportReceipt(ExportReceiptModel exportReceiptModel) throws DaoException {
+    public boolean deleteExportReceipt(ExportReceiptModelTable exportReceiptModel) throws DaoException {
         try {
             // lấy danh sách chi tiết phiếu xuất
             List<ExportReceiptDetailModel> exportReceiptDetailModels = exportReceiptDetailService.findAllByExportReceipt(exportReceiptModel.getId());
@@ -256,7 +256,7 @@ public class ExportReceiptPresenter {
             List<Long> productIds = new ArrayList<>();
             exportReceiptDetailModels.forEach(exportReceiptDetailModel -> {
                 changeQuantityByProductMap.put(exportReceiptDetailModel.getProductId(), (-1) * exportReceiptDetailModel.getActualQuantity());
-                changeTotalPriceByProductMap.put(exportReceiptDetailModel.getProductId(), (-1) * exportReceiptDetailModel.getTotalPrice());
+                changeTotalPriceByProductMap.put(exportReceiptDetailModel.getProductId(), (-1) * exportReceiptDetailModel.getActualQuantity() * exportReceiptDetailModel.getUnitPrice());
                 productIds.add(exportReceiptDetailModel.getProductId());
             });
             // cập nhật tồn kho
@@ -269,6 +269,8 @@ public class ExportReceiptPresenter {
             List<Long> exportReceiptIds = new ArrayList<>();
             exportReceiptIds.add(exportReceiptModel.getId());
             exportReceiptService.deleteByIds(exportReceiptIds);
+
+            return true;
         }
         catch (Exception e) {
             exportReceiptService.rollback();

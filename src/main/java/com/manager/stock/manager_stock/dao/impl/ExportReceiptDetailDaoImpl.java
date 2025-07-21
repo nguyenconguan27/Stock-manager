@@ -32,7 +32,7 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
                 "\terd.*,\n" +
                 "\tp.code as product_code,\n" +
                 "\tp.\"name\" as product_name,\n" +
-                "\tep.export_price \n" +
+                "\tep.export_price as export_price \n" +
                 "from\n" +
                 "\texport_receipt_detail erd\n" +
                 "join export_receipt er on\n" +
@@ -59,9 +59,9 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
 
     @Override
     public List<Long> save(List<ExportReceiptDetailModel> exportReceiptDetailModels, long exportReceiptId) {
-        String sql = "INSERT INTO export_receipt_detail(id, export_receipt_id, product_id, planned_quantity, actual_quantity, export_price_id) " +
+        String sql = "INSERT INTO export_receipt_detail(id, export_receipt_id, product_id, planned_quantity, actual_quantity, export_price_id, unit_price) " +
                     " OVERRIDING SYSTEM VALUE" +
-                    " values(?, ?, ?, ?, ?, ?)" +
+                    " values(?, ?, ?, ?, ?, ?, ?)" +
                     " RETURNING *;";
         List<Long> ids = new ArrayList<>();
         List<Object[]> parameters = new ArrayList<>();
@@ -73,7 +73,8 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
                     exportReceiptDetailModel.getProductId(),
                     exportReceiptDetailModel.getPlannedQuantity(),
                     exportReceiptDetailModel.getActualQuantity(),
-                    exportReceiptDetailModel.getExportPriceId()
+                    exportReceiptDetailModel.getExportPriceId(),
+                    exportReceiptDetailModel.getUnitPrice()
             });
             ids.add(id);
         }
@@ -91,7 +92,7 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
     @Override
     public void update(List<ExportReceiptDetailModel> exportReceiptDetailModels) {
         String sql = "UPDATE export_receipt_detail set actual_quantity = ?, message = ?, status = ?" +
-                    "WHERE id = ?";
+                     " WHERE id = ?";
         List<Object[]> parameters = new ArrayList<>();
         for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
             parameters.add(new Object[]{

@@ -111,7 +111,7 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
 
     @Override
     public void update(ExportReceiptModel exportReceiptModel) {
-        String sql = "UPDATE export_receipt invoice_number = ?, create_at = ?, receiver = ?, receive_address = ?, " +
+        String sql = "UPDATE export_receipt set invoice_number = ?, create_at = ?, receiver = ?, receive_address = ?, " +
                         "reason = ?, warehouse = ? where id = ?";
         List<Object[]> parameters = new ArrayList<>();
         parameters.add(new Object[] {

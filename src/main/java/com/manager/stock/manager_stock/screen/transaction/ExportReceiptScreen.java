@@ -1,6 +1,8 @@
 package com.manager.stock.manager_stock.screen.transaction;
 
+import com.manager.stock.manager_stock.exception.CanNotFoundException;
 import com.manager.stock.manager_stock.exception.DaoException;
+import com.manager.stock.manager_stock.exception.StockUnderFlowException;
 import com.manager.stock.manager_stock.interfaceActionHandler.TopBarActionHandler;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ExportReceiptDetailModelTableMapper;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ExportReceiptModelTableMapper;
@@ -11,6 +13,7 @@ import com.manager.stock.manager_stock.model.tableData.ExportReceiptModelTable;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptModelTable;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.transaction.presenter.ExportReceiptPresenter;
+import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter;
 import com.manager.stock.manager_stock.utils.AlertUtils;
 import com.manager.stock.manager_stock.utils.CreateColumnTableUtil;
 import com.manager.stock.manager_stock.utils.GenericConverterBetweenModelAndTableData;
@@ -229,12 +232,40 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
 
             @Override
             public void onDelete() {
-
+                try {
+                    if(selected != null) {
+                        System.out.println("Xóa hóa đơn:  " + selected);
+                        boolean isConfirmDelete = AlertUtils.confirm("Bạn có chắc muốn xóa hóa đơn số: " + selected.getInvoiceNumber());
+                        if(isConfirmDelete) {
+                            ExportReceiptPresenter presenter = ExportReceiptPresenter.getInstance();
+                            try {
+                                boolean isDeleteSuccess = presenter.deleteExportReceipt(selected);
+                                if(isDeleteSuccess) {
+                                    AlertUtils.alert("Xóa phiếu xuất thành công.", "INFORMATION", "Thành công", "Xóa thành công");
+                                    showTable();
+                                }
+                            }
+                            catch (DaoException | CanNotFoundException | StockUnderFlowException e) {
+                                AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi", "Lỗi xóa phiếu xuất.");
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    else {
+                        AlertUtils.alert("Vui lòng chọn hóa đơn muốn xóa.", "WARNING", "Cảnh báo", "Chưa chọn hóa đơn nào");
+                    }
+                }
+                catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
 
             @Override
             public void onReload() {
-
+                showTable();
+                showItemDetails(0);
             }
 
             @Override
@@ -300,9 +331,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
             for(ExportReceiptModelTable table : tableModels) {
                 System.out.println("Create at: " + table.getCreateAt());
             }
-            allReceiptData.setAll(tableModels);
-            receiptData.setAll(tableModels);
-            updatePagination();
+            setReceiptData(tableModels);
         }
         catch (DaoException e) {
             AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi", "Lỗi khi load dữ liệu.");

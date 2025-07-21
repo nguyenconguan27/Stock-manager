@@ -272,6 +272,14 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         colPlannedQty.setOnEditCommit(event -> {
             ExportReceiptDetailModelTable row = event.getRowValue();
             row.plannedQuantityProperty().set(event.getNewValue().intValue());
+
+            int oldValue = row.getPlannedQuantity();
+            int newValue = event.getNewValue().intValue();
+
+            row.setPlannedQuantity(newValue);
+
+            System.out.println("Giá trị cũ: " + oldValue);
+            System.out.println("Giá trị mới: " + newValue);
         });
 
         TableColumn<ExportReceiptDetailModelTable, Number> colActualQty = new TableColumn<>("SL thực tế");
@@ -279,10 +287,34 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         colActualQty.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
         colActualQty.setOnEditCommit(event -> {
             ExportReceiptDetailModelTable row = event.getRowValue();
-            row.actualQuantityProperty().set(event.getNewValue().intValue());
+//            row.actualQuantityProperty().set(event.getNewValue().intValue());
 
-            double newTotal = row.actualQuantityProperty().get() * row.unitPriceProperty().get();
-            row.totalPriceProperty().set(newTotal);
+//            double newTotal = row.actualQuantityProperty().get() * row.unitPriceProperty().get();
+//            row.totalPriceProperty().set(newTotal);
+//            productTable.refresh();
+//
+            int newValue = event.getNewValue().intValue();
+            int oldValue = row.getActualQuantity();
+            int changeQuantity = newValue - oldValue;
+            System.out.println("Số lượng thực tế mới: " + newValue);
+            System.out.println("Số lượng thực tế cũ: " + oldValue);
+            double changeTotalPrice = changeQuantity * row.getExportPrice();
+
+            if(row.getId() != null) {
+                int changeQuantityByProduct = changeQuantityByProductMap.getOrDefault(row.getProductId(), 0);
+                changeQuantityByProductMap.put(row.getProductId(), changeQuantity + changeQuantityByProduct);
+                double changeTotalPriceByProduct = changeTotalPriceByProductMap.getOrDefault(row.getProductId(), 0.0);
+                changeTotalPriceByProductMap.put(row.getProductId(), changeTotalPriceByProduct + changeTotalPrice);
+                changeIdsOfReceiptDetails.add(row.getId());
+            }
+            double newTotal = newValue * row.getExportPrice();
+            System.out.println("New total: " + newTotal);
+            row.setTotalPrice(newTotal);
+            row.setTotalPriceFormat(FormatMoney.format(newTotal));
+            row.actualQuantityProperty().set(event.getNewValue().intValue());
+            System.out.println("Change total price: " + changeTotalPrice);
+            totalPriceOfReceipt += changeTotalPrice;
+            totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
             productTable.refresh();
         });
 
@@ -482,6 +514,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             double changeTotalPriceByProduct = changeTotalPriceByProductMap.getOrDefault(productExists.getProductId(), 0.0);
             changeTotalPriceByProductMap.put(productExists.getProductId(), changeTotalPriceByProduct + currentTotalPrice);
         }
+        // thêm mới
         else {
             productDetails.add(new ExportReceiptDetailModelTable(
                     -1,
@@ -495,7 +528,8 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     FormatMoney.format(unitPrice),
                     FormatMoney.format(currentTotalPrice),
                     product.getCode(),
-                    exportPriceId
+                    exportPriceId,
+                    unitPrice
             ));
             changeQuantityByProductMap.put(product.getId(), actualQuantity);
             changeTotalPriceByProductMap.put(product.getId(), currentTotalPrice);

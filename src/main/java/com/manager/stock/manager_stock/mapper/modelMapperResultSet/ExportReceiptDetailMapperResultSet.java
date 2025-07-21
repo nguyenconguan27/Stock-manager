@@ -42,6 +42,9 @@ public class ExportReceiptDetailMapperResultSet implements RowMapper<ExportRecei
                 case "product_code":
                     exportReceiptDetailModel.setProductCode(resultSet.getString(columnName));
                     break;
+                case "export_price":
+                    exportReceiptDetailModel.setExportPrice(resultSet.getDouble(columnName));
+                    break;
             }
         }
         exportReceiptDetailModel.setTotalPrice(exportReceiptDetailModel.getUnitPrice() * exportReceiptDetailModel.getActualQuantity());

@@ -14,6 +14,7 @@ public class ExportReceiptDetailModel {
     private String productName;
     private String productCode;
     private long exportPriceId;
+    private double exportPrice;
 
     // thêm trường đánh dấu nếu sau khi sửa hoặc xóa phiếu nhập mà số lượng tồn kho tại thời điểm
     // đó không còn đáp ứng được số lượng của phiếu xuất ==> lại lại actualQuantity = 0 và thêm status + message
@@ -22,7 +23,7 @@ public class ExportReceiptDetailModel {
 
     public ExportReceiptDetailModel() {}
 
-    public ExportReceiptDetailModel(long id, long exportReceiptId, long productId, int plannedQuantity, int actualQuantity, double unitPrice, double totalPrice, String productName, String productCode, long exportPriceId, int status, String message) {
+    public ExportReceiptDetailModel(long id, long exportReceiptId, long productId, int plannedQuantity, int actualQuantity, double unitPrice, double totalPrice, String productName, String productCode, long exportPriceId, int status, String message, double exportPrice) {
         this.id = id;
         this.exportReceiptId = exportReceiptId;
         this.productId = productId;
@@ -35,6 +36,7 @@ public class ExportReceiptDetailModel {
         this.exportPriceId = exportPriceId;
         this.status = status;
         this.message = message;
+        this.exportPrice = exportPrice;
     }
 
     public long getId() {
@@ -131,5 +133,13 @@ public class ExportReceiptDetailModel {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public double getExportPrice() {
+        return exportPrice;
+    }
+
+    public void setExportPrice(double exportPrice) {
+        this.exportPrice = exportPrice;
     }
 }

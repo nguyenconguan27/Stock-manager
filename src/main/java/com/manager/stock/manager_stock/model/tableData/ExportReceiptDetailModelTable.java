@@ -18,9 +18,10 @@ public class ExportReceiptDetailModelTable {
     private final StringProperty unitPriceFormat = new SimpleStringProperty();
     private final StringProperty totalPriceFormat = new SimpleStringProperty();
     private final LongProperty exportPriceId = new SimpleLongProperty();
+    private final DoubleProperty exportPrice = new SimpleDoubleProperty();
 
     public ExportReceiptDetailModelTable(long id, long exportReceiptId, long productId, int plannedQuantity, int actualQuantity, double totalPrice, double unitPrice,
-                                         String productName, String unitPriceFormat, String totalPriceFormat, String productCoe, long exportPriceId) {
+                                         String productName, String unitPriceFormat, String totalPriceFormat, String productCoe, long exportPriceId, double exportPrice) {
         this.id.set(id);
         this.exportReceiptId.set(exportReceiptId);
         this.productId.set(productId);
@@ -33,6 +34,7 @@ public class ExportReceiptDetailModelTable {
         this.totalPriceFormat.set(totalPriceFormat);
         this.productCode.set(productCoe);
         this.exportPriceId.set(exportPriceId);
+        this.exportPrice.set(exportPrice);
     }
 
     public LongProperty idProperty() {return this.id;}
@@ -48,7 +50,7 @@ public class ExportReceiptDetailModelTable {
     public StringProperty totalPriceFormatProperty() {return this.totalPriceFormat;}
     public StringProperty productCoeProperty() {return this.productCode;}
 
-    public long getId() {return this.id.get();}
+    public Long getId() {return this.id.get();}
     public long getExportReceiptId() {return this.exportReceiptId.get();}
     public Long getProductId() {return this.productId.get();}
     public int getPlannedQuantity() {return this.plannedQuantity.get();}
@@ -58,8 +60,10 @@ public class ExportReceiptDetailModelTable {
     public String getProductName() {return this.productName.get();}
     public String getProductCode() {return this.productCode.get();}
     public long getExportPriceId() {return this.exportPriceId.get();}
+    public double getExportPrice() {return this.exportPrice.get();}
 
     public void setActualQuantity(int actualQuantity) {this.actualQuantity.set(actualQuantity);}
     public void setTotalPrice(double totalPrice) {this.totalPrice.set(totalPrice);}
     public void setTotalPriceFormat(String totalPriceFormat) {this.totalPriceFormat.set(totalPriceFormat);}
+    public void setPlannedQuantity(int plannedQuantity) {this.plannedQuantity.set(plannedQuantity);}
 }
