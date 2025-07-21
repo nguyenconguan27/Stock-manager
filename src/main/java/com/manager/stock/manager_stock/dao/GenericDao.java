@@ -13,6 +13,6 @@ public interface GenericDao<T> {
     long save(String sql, List<Object[]> parameters);
     int update(String sql, Object... parameters);
     void delete(String sql, Object... parameters);
-    void deleteWithinTransaction(String sql, Object...params);
-    long saveWithinTransaction(String sql,  List<Object[]> parameters);
+    void deleteWithinTransaction(String sql, Connection connection, Object...params);
+    long saveWithinTransaction(String sql, Connection connection, List<Object[]> parameters);
 }

@@ -16,10 +16,23 @@ public class ExportReceiptModel {
     private String wareHouse;
     private Double totalPrice;
     private String totalPriceInWord;
+    private int academicYear;
     private List<ExportReceiptDetailModel> exportReceiptDetailModels;
 
     public ExportReceiptModel() {
         this.exportReceiptDetailModels = new ArrayList<>();
+    }
+
+    public ExportReceiptModel(Long id, String invoiceNumber, String createAt, String receiver, String receiveAddress, String reason, String wareHouse, Double totalPrice, String totalPriceInWord) {
+        this.id = id;
+        this.invoiceNumber = invoiceNumber;
+        this.createAt = createAt;
+        this.receiver = receiver;
+        this.receiveAddress = receiveAddress;
+        this.reason = reason;
+        this.wareHouse = wareHouse;
+        this.totalPrice = totalPrice;
+        this.totalPriceInWord = totalPriceInWord;
     }
 
     public long getId() {
@@ -101,4 +114,29 @@ public class ExportReceiptModel {
     public void setExportReceiptDetailModels(List<ExportReceiptDetailModel> exportReceiptDetailModels) {
         this.exportReceiptDetailModels = exportReceiptDetailModels;
     }
+
+    public int getAcademicYear() {
+        return academicYear;
+    }
+
+    public void setAcademicYear(int academicYear) {
+        this.academicYear = academicYear;
+    }
+
+    @Override
+    public String toString() {
+        return "ReceiptModel{" +
+                "id=" + id +
+                ", invoiceNumber='" + invoiceNumber + '\'' +
+                ", createAt='" + createAt + '\'' +
+                ", receiver='" + receiver + '\'' +
+                ", receiveAddress='" + receiveAddress + '\'' +
+                ", reason='" + reason + '\'' +
+                ", wareHouse='" + wareHouse + '\'' +
+                ", totalPrice=" + totalPrice +
+                ", totalPriceInWord='" + totalPriceInWord + '\'' +
+                ", academicYear=" + academicYear +
+                '}';
+    }
+
 }

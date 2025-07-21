@@ -1,7 +1,7 @@
 <configuration debug="false">
     <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
 <!--    <property name="LOG_DIR" value="logs" />-->
-        <property name="LOG_DIR" value="logs" />
+        <property name="LOG_DIR" value="D:\stock-management\logs" />
 
     <!-- Appender cho service -->
     <appender name="SERVICE_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">

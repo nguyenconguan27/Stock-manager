@@ -13,6 +13,8 @@ module com.manager.stock.manager_stock {
     requires java.sql;
     requires jdk.incubator.vector;
     requires java.desktop;
+    requires jdk.compiler;
+    requires datetime.picker.javafx;
 
     opens com.manager.stock.manager_stock to javafx.fxml;
     exports com.manager.stock.manager_stock;

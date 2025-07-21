@@ -1,19 +1,21 @@
 package com.manager.stock.manager_stock.dao.impl;
 
 import com.manager.stock.manager_stock.dao.IImportReceiptDao;
+import com.manager.stock.manager_stock.exception.DaoException;
+import com.manager.stock.manager_stock.mapper.modelMapperResultSet.ImportReceiptMapperResultSet;
 import com.manager.stock.manager_stock.model.ImportReceiptModel;
-import com.manager.stock.manager_stock.model.ProductModel;
-import com.manager.stock.manager_stock.screen.transaction.ImportReceiptPresenter;
+import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
+import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Trọng Hướng
  */
-public class ImportReceiptDaoImpl implements IImportReceiptDao {
+public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implements IImportReceiptDao {
     private final Logger logger = LoggerFactory.getLogger(ImportReceiptPresenter.class);
     private static ImportReceiptDaoImpl instance;
 
@@ -29,48 +31,80 @@ public class ImportReceiptDaoImpl implements IImportReceiptDao {
     }
 
     @Override
-    public List<ImportReceiptModel> findAll() {
-        try {
-            logger.debug("Start find all import receipt.");
-            return Arrays.asList(
-                    new ImportReceiptModel(
-                            1L,
-                            "PN001",
-                            "2024-06-01",
-                            "Nguyễn Văn A",
-                            "HD001",
-                            "Công ty TNHH Xây Dựng An Phát",
-                            "Kho Hà Nội",
-                            12500000,
-                            "Mười hai triệu năm trăm nghìn đồng"
-                    ),
-                    new ImportReceiptModel(
-                            2L,
-                            "PN002",
-                            "2024-06-05",
-                            "Trần Thị B",
-                            "HD002",
-                            "Công ty TNHH Thép Việt",
-                            "Kho Hải Phòng",
-                            8500000,
-                            "Tám triệu năm trăm nghìn đồng"
-                    ),
-                    new ImportReceiptModel(
-                            3L,
-                            "PN003",
-                            "2024-06-10",
-                            "Lê Văn C",
-                            "HD003",
-                            "Công ty Cổ phần Gạch Ngói",
-                            "Kho Đà Nẵng",
-                            15800000,
-                            "Mười lăm triệu tám trăm nghìn đồng"
-                    )
-            );
-        }
-        catch (Exception e) {
+    public List<ImportReceiptModel> findAllByAcademicYear(int academicYear) throws DaoException {
+        String sql = "select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir \n" +
+                "join import_receipt_detail ird on\n" +
+                "ir.id = ird.import_receipt_id\n" +
+                "where ir.academic_year = ? \n" +
+                "group by ir.id ;";
+        return query(sql, new ImportReceiptMapperResultSet(), academicYear);
+    }
 
+    @Override
+    public long save(ImportReceiptModel importReceiptModel) throws DaoException {
+        String sql = "INSERT INTO import_receipt (invoice_number, create_at, delivered_by, invoice, company_name, warehouse_name, total_price, total_price_in_word, academic_year) " +
+                    " values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[]{
+                importReceiptModel.getInvoiceNumber(),
+                importReceiptModel.getCreateAt(),
+                importReceiptModel.getDeliveredBy(),
+                importReceiptModel.getInvoice(),
+                importReceiptModel.getCompanyName(),
+                importReceiptModel.getWarehouseName(),
+                importReceiptModel.getTotalPrice(),
+                importReceiptModel.getTotalPriceInWord(),
+                importReceiptModel.getAcademicYear()
+        });
+        return save(sql, parameters);
+    }
+
+    @Override
+    public void update(ImportReceiptModel importReceiptModel) throws DaoException {
+        String sql = "UPDATE import_receipt set invoice_number = ?, create_at = ?, delivered_by = ?, " +
+                    "invoice = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ? " +
+                    " where id = ?";
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[]{
+                importReceiptModel.getInvoiceNumber(),
+                importReceiptModel.getCreateAt(),
+                importReceiptModel.getDeliveredBy(),
+                importReceiptModel.getInvoice(),
+                importReceiptModel.getCompanyName(),
+                importReceiptModel.getWarehouseName(),
+                importReceiptModel.getTotalPrice(),
+                importReceiptModel.getTotalPriceInWord(),
+                importReceiptModel.getId()
+        });
+        save(sql, parameters);
+    }
+
+    @Override
+    public void delete(List<Long> ids) {
+        String sql = "DELETE from import_receipt where id in (";
+        for(int i = 0; i < ids.size(); i++) {
+            sql += ids.get(i);
+            if(i != ids.size() - 1) {
+                sql += ",";
+            }
         }
-        return List.of();
+        sql += ")";
+        delete(sql);
+    }
+
+    @Override
+    public void deleteByIdWithTransaction(long id, Connection connection) throws DaoException{
+        String sql = "DELETE FROM import_receipt where id = ?";
+        deleteWithinTransaction(sql, connection, id);
+    }
+
+    @Override
+    public void commit() {
+        super.commit();
+    }
+
+    @Override
+    public void rollback() {
+        super.rollback();
     }
 }

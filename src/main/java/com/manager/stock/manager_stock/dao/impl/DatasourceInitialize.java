@@ -9,6 +9,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+/**
+ * @author Trọng Hướng
+ */
 public class DatasourceInitialize {
     static Logger logger = LoggerFactory.getLogger(DatasourceInitialize.class);
     public static Connection INSTANCE;

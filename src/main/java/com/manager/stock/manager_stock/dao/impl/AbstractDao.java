@@ -4,6 +4,7 @@ import com.manager.stock.manager_stock.config.AppConfig;
 import com.manager.stock.manager_stock.dao.GenericDao;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.mapper.modelMapperResultSet.RowMapper;
+import javafx.scene.chart.PieChart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,21 @@ import java.util.Properties;
 public class AbstractDao<T> implements GenericDao<T> {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+//    protected Connection getConnection() throws SQLException {
+//        try {
+//            final String url = AppConfig.getString("db.url");
+//            final Properties props = new Properties();
+//            props.setProperty("user", AppConfig.getString("db.user"));
+//            props.setProperty("password", AppConfig.getString("db.password"));
+//            logger.debug("Start connect to database..., user = {}, password = {}", AppConfig.getString("db.user"), AppConfig.getString("db.password") );
+////            System.out.println(String.format("Start connect to database..., user = {%s}, password = {%s}", AppConfig.getString("db.user"), AppConfig.getString("db.password") ));
+//            return DriverManager.getConnection(url, props);
+//        }
+//        catch (Exception e) {
+//            return null;
+//        }
+//    }
 
     private void setParams(PreparedStatement stmt, Object...params) {
         try {
@@ -69,11 +85,11 @@ public class AbstractDao<T> implements GenericDao<T> {
         logger.debug("Start query of database with sql: {}", sql);
         logger.debug("Start query of database with params: {}", parameters);
         ResultSet rs = null;
-        Connection connection = DatasourceInitialize.getInstance();
+        Connection connection = null;
         PreparedStatement stmt = null;
         List<T> resultsList = new ArrayList<>();
         try {
-            
+            connection = DatasourceInitialize.getInstance();
             stmt = connection.prepareStatement(sql);
             setParams(stmt, parameters);
             rs = stmt.executeQuery();
@@ -110,9 +126,10 @@ public class AbstractDao<T> implements GenericDao<T> {
         logger.debug("Start insert of database with sql: {}", sql);
         parameters.forEach(p -> logger.debug("Params: {}", Arrays.toString(p)));
         PreparedStatement stmt = null;
-        Connection connection = DatasourceInitialize.getInstance();
+        Connection connection = null;
         try {
-            
+            connection = DatasourceInitialize.getInstance();
+            connection.setAutoCommit(false);
             if (parameters.size() == 1) {
                 stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 setParams(stmt, parameters.get(0));
@@ -167,15 +184,16 @@ public class AbstractDao<T> implements GenericDao<T> {
         logger.debug("Start delete of database with sql: {}", sql);
         logger.debug("Start delete of database with ids: {}", params);
         PreparedStatement stmt = null;
-        Connection connection = DatasourceInitialize.getInstance();
+        Connection connection = null;
         try {
-            
+            connection = DatasourceInitialize.getInstance();
             connection.setAutoCommit(false);
             stmt = connection.prepareStatement(sql);
             for(Object id : params) {
                 setParams(stmt, id);
             }
             stmt.executeUpdate();
+            connection.commit();
         }
         catch (SQLException e) {
             logger.error("SQL Exception while deleting database with sql: {}", sql, e);
@@ -203,11 +221,10 @@ public class AbstractDao<T> implements GenericDao<T> {
     }
 
     @Override
-    public void deleteWithinTransaction(String sql, Object...params) {
+    public void deleteWithinTransaction(String sql, Connection connection, Object...params) {
         logger.debug("Start delete with transaction of database with sql: {}", sql);
         logger.debug("Start delete with transaction of database with ids: {}", params);
         PreparedStatement stmt = null;
-        Connection connection = DatasourceInitialize.getInstance();
         try {
             stmt = connection.prepareStatement(sql);
             for(Object id : params) {
@@ -233,11 +250,10 @@ public class AbstractDao<T> implements GenericDao<T> {
     }
 
     @Override
-    public long saveWithinTransaction(String sql, List<Object[]> parameters) {
+    public long saveWithinTransaction(String sql, Connection connection, List<Object[]> parameters) {
         logger.debug("Start insert within transaction with SQL: {}", sql);
         parameters.forEach(p -> logger.debug("Params: {}", Arrays.toString(p)));
         PreparedStatement stmt = null;
-        Connection connection = DatasourceInitialize.getInstance();
         try {
             if (parameters.size() == 1) {
                 stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -279,6 +295,26 @@ public class AbstractDao<T> implements GenericDao<T> {
             } catch (SQLException e) {
                 logger.error("SQL Exception while closing Statement: {}", e.getMessage(), e);
             }
+        }
+    }
+
+    protected void commit() {
+        try {
+            Connection connection = DatasourceInitialize.getInstance();
+            connection.commit();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void rollback() {
+        try {
+            Connection connection = DatasourceInitialize.getInstance();
+            connection.rollback();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

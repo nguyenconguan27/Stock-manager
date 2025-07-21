@@ -1,0 +1,48 @@
+.pagination {
+    -fx-background-color: #e1f0f7;
+    -fx-padding: 10 20 10 20;
+    -fx-spacing: 10px;
+}
+
+.pagination .control-box {
+    -fx-alignment: center;
+}
+
+.pagination .left-arrow-button,
+.pagination .right-arrow-button,
+.pagination .first-button,
+.pagination .last-button,
+.pagination .number-button {
+    -fx-border-width: 1;
+    -fx-border-color: #c0dfec;
+    -fx-background-color: #e1f0f7;
+    -fx-text-fill: #6992a6;
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+    -fx-pref-width: 30px;
+    -fx-pref-height: 50px;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-content-display: center;
+    -fx-padding: 0;
+}
+
+.pagination .number-button:selected {
+    -fx-background-color: #083f52;
+    -fx-text-fill: white;
+    -fx-border-width: 0;
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+    -fx-pref-width: 30px;
+    -fx-pref-height: 50px;
+}
+
+.pagination .page-information {
+    -fx-opacity: 0;
+    -fx-padding: 0;
+    -fx-max-height: 0;
+}

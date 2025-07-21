@@ -1,22 +1,20 @@
 package com.manager.stock.manager_stock.screen;
 
-import com.manager.stock.manager_stock.screen.product.productList.ProductScreen;
+import com.manager.stock.manager_stock.screen.product.ProductPresenter;
+import com.manager.stock.manager_stock.screen.product.ProductScreen;
 import com.manager.stock.manager_stock.screen.productGroup.ProductGroupScreen;
 import com.manager.stock.manager_stock.screen.transaction.ExportReceiptScreen;
-import com.manager.stock.manager_stock.screen.transaction.ImportReceiptPresenter;
 import com.manager.stock.manager_stock.screen.transaction.ImportReceiptScreen;
+import com.manager.stock.manager_stock.utils.CreateLoadingUtil;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
-import java.util.Objects;
 import java.util.Stack;
 
 /**
@@ -41,6 +39,10 @@ public class ScreenNavigator {
         setScreenInternal(newScreen);
     }
 
+    public static void showLoadingTemporary() {
+        setScreenInternal(CreateLoadingUtil.createLoading());
+    }
+
     public static void goBack() {
         if(!backStack.isEmpty()) {
             forwardStack.push(currentScreen);
@@ -63,20 +65,6 @@ public class ScreenNavigator {
     }
 
     private static void setLeftScreen() {
-//        Button btnProduct = new Button("Quản lý nhóm sản phẩm");
-//        btnProduct.setOnAction(e -> {
-//            ProductScreen productScreen = new ProductScreen();
-//            ProductPresenter productPresenter = new ProductPresenter();
-//
-//            productPresenter.loadProductData();
-//            ScreenNavigator.navigateTo(productScreen);
-//        });
-//
-//        Button btnProductGroup = new Button("Quản lý sản phẩm");
-//        btnProductGroup.setOnAction(e -> {
-//            ScreenNavigator.navigateTo(new ProductGroupScreen());
-//        });
-
         VBox leftScreen = new VBox(10);
         leftScreen.setStyle("-fx-padding: 10 0 0 0;");
 
@@ -85,16 +73,16 @@ public class ScreenNavigator {
         rootItem.setExpanded(true);
 
         rootItem.getChildren().addAll(
-                createItem("Quản lý nhóm sản phẩm", "/com/manager/stock/manager_stock/icon/receipt.png", 16, 16),
-                createItem("Quản lý sản phẩm", "/com/manager/stock/manager_stock/icon/receipt.png", 16, 16)
+                createItem("Quản lý nhóm sản phẩm", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16),
+                createItem("Quản lý sản phẩm", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16)
         );
 
-        TreeItem<String> transactionManagerItem = createItem("Quản lý phiếu nhập/xuất", "/com/manager/stock/manager_stock/icon/receipt.png", 16,16);
+        TreeItem<String> transactionManagerItem = createItem("Quản lý phiếu nhập/xuất", "/com/manager/stock/manager_stock/icons/receipt.png", 16,16);
         // tạo các item con bao gồm phiếu nhập và phiếu xuất
         transactionManagerItem.setExpanded(true);
         transactionManagerItem.getChildren().addAll(
-                createItem("Phiếu nhập", "/com/manager/stock/manager_stock/icon/receipt.png", 16, 16),
-                createItem("Phiếu xuất",  "/com/manager/stock/manager_stock/icon/receipt.png", 16, 16)
+                createItem("Phiếu nhập", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16),
+                createItem("Phiếu xuất",  "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16)
         );
         rootItem.getChildren().add(transactionManagerItem);
         TreeView<String> treeView = new TreeView<>(rootItem);
@@ -115,17 +103,31 @@ public class ScreenNavigator {
                     break;
                 case "Quản lý sản phẩm":
                     ProductScreen productScreen = new ProductScreen();
-                    productScreen.showProducts();
+                    ProductPresenter productPresenter = new ProductPresenter();
+                    productPresenter.loadProductListData();
                     ScreenNavigator.navigateTo(productScreen);
                     break;
                 case "Phiếu nhập":
-                    ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
-                    ImportReceiptPresenter importReceiptPresenter = new ImportReceiptPresenter();
-                    importReceiptPresenter.loadImportReceiptList();
-                    ScreenNavigator.navigateTo(importReceiptScreen);
-                    break;
+                    ScreenNavigator.showLoadingTemporary();
+                    new Thread(() -> {
+                        ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
+
+                        Platform.runLater(() -> {
+                            importReceiptScreen.showTable();
+                            ScreenNavigator.navigateTo(importReceiptScreen);
+                        });
+                    }).start();
+                   break;
                 case "Phiếu xuất":
-                    ScreenNavigator.navigateTo(new ExportReceiptScreen());
+                    ScreenNavigator.showLoadingTemporary();
+                    new Thread(() -> {
+                        ExportReceiptScreen exportReceiptScreen = new ExportReceiptScreen();
+
+                        Platform.runLater(() -> {
+                            exportReceiptScreen.showTable();
+                            ScreenNavigator.navigateTo(exportReceiptScreen);
+                        });
+                    }).start();
                     break;
             }
         });
@@ -133,7 +135,13 @@ public class ScreenNavigator {
 
     private static TreeItem<String> createItem(String name, String iconPath, int height, int width) {
         Label label = new Label();
-        Image image = new Image(Objects.requireNonNull(ScreenNavigator.class.getResourceAsStream(iconPath)));
+        Image image = null;
+        try {
+            image = new Image(ScreenNavigator.class.getResource(iconPath).toExternalForm());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(height);
         imageView.setFitWidth(width);

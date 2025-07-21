@@ -16,7 +16,11 @@ public class ImportReceiptModel {
     private String warehouseName;
     private double totalPrice;
     private String totalPriceInWord;
+    private int academicYear;
+//    private String totalPriceFormat;
     private List<ImportReceiptDetailModel> importReceiptDetails;
+
+    public ImportReceiptModel() {}
 
     public ImportReceiptModel(Long id, String invoiceNumber, String createAt, String deliveredBy, String invoice, String companyName, String warehouseName, double totalPrice, String totalPriceInWord) {
         this.id = id;
@@ -110,6 +114,21 @@ public class ImportReceiptModel {
     public void setImportReceiptDetails(List<ImportReceiptDetailModel> importReceiptDetails) {
         this.importReceiptDetails = importReceiptDetails;
     }
+
+    public int getAcademicYear() {
+        return academicYear;
+    }
+
+    public void setAcademicYear(int academicYear) {
+        this.academicYear = academicYear;
+    }
+//    public String getTotalPriceFormat() {
+//        return totalPriceFormat;
+//    }
+//
+//    public void setTotalPriceFormat(String totalPriceFormat) {
+//        this.totalPriceFormat = totalPriceFormat;
+//    }
 
     @Override
     public String toString() {
