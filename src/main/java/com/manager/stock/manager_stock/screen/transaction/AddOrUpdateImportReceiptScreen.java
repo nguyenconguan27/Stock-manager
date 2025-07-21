@@ -431,6 +431,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                             .collect(Collectors.toList());
                     ImportReceiptModel oldImportReceiptModel = ImportReceiptModelMapper.INSTANCE.fromViewModelToModel(oldImportReceiptModelTable);
                     presenter.updateImportReceipt(importReceiptModel, oldImportReceiptModel, newProductDetails, changeQuantityByProductMap, changeTotalPriceByProductMap, receiptDetailIdsDeleted);
+//                    System.out.println("Số lượng thay đổi: " + changeQuantityByProductMap);
                     AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
                 }
                 ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();

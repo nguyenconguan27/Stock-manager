@@ -5,6 +5,7 @@ import com.manager.stock.manager_stock.exception.CanNotFoundException;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.exception.StockUnderFlowException;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ExportReceiptDetailModelTableMapper;
+import com.manager.stock.manager_stock.mapper.viewModelMapper.ExportReceiptModelTableMapper;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptDetailModelMapper;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptModelMapper;
 import com.manager.stock.manager_stock.model.*;
@@ -292,12 +293,12 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         colTotalPrice.setCellValueFactory(data -> data.getValue().totalPriceFormatProperty());
         TableColumn<ExportReceiptDetailModelTable, Void> colAction = new TableColumn<>("Thao tác");
         colAction.setCellFactory(param -> new TableCell<>() {
-            private final Button btnEdit = new Button("✎");
+//            private final Button btnEdit = new Button("✎");
             private final Button btnDelete = new Button("🗑");
-            private final HBox pane = new HBox(5, btnEdit, btnDelete);
+            private final HBox pane = new HBox(5, btnDelete);
 
             {
-                btnEdit.setStyle("-fx-background-color: #ffd966; -fx-cursor: hand;");
+//                btnEdit.setStyle("-fx-background-color: #ffd966; -fx-cursor: hand;");
                 btnDelete.setStyle("-fx-background-color: #f08080; -fx-cursor: hand;");
                 pane.setAlignment(Pos.CENTER);
 
@@ -308,9 +309,9 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     getTableView().getItems().remove(item);
                 });
 
-                btnEdit.setOnAction(event -> {
-                    getTableView().edit(getIndex(), colActualQty); // focus edit thực tế
-                });
+//                btnEdit.setOnAction(event -> {
+//                    getTableView().edit(getIndex(), colActualQty); // focus edit thực tế
+//                });
             }
 
             @Override
@@ -404,31 +405,26 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     AlertUtils.alert("Phiếu nhập này chưa có sản phẩm nào, vui lòng chọn ít nhất 1 sản phẩm.", "WARNING", "Cảnh báo", "Thiếu thông tin");
                     return;
                 }
-                try {
+                // thêm mới hóa đơn nhập
+                if(receiptModelTable == null) {
+                    // changeQuantityByProductMap: số lượng sản phẩm thay đổi
+                    // changeTotalPriceByProductMap: tổng tiền thay đổi
                     System.out.println("Save import receipt: " + exportReceiptModel);
-                    // thêm mới hóa đơn nhập
-                    if(receiptModelTable == null) {
-                        // changeQuantityByProductMap: số lượng sản phẩm thay đổi
-                        // changeTotalPriceByProductMap: tổng tiền thay đổi
-                        presenter.save(exportReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
-                        AlertUtils.alert("Thêm mới phiếu xuất thành công.", "INFORMATION", "Thành công", "Thành công");
-                    }
-                    // Cập nhật hóa đơn nhập
-//                else {
-//                    List<ImportReceiptDetailModelTable> newProductDetails = productDetails.stream()
-//                            .filter(importReceiptDetailModelTable -> changeIdsOfReceiptDetails.contains(importReceiptDetailModelTable.getId()) || importReceiptDetailModelTable.getId() == -1)
-//                            .collect(Collectors.toList());
-//                    ImportReceiptModel oldImportReceiptModel = ImportReceiptModelMapper.INSTANCE.fromViewModelToModel(oldImportReceiptModelTable);
-//                    presenter.updateImportReceipt(importReceiptModel, oldImportReceiptModel, newProductDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
-//                    AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
-//                }
-                    ExportReceiptScreen exportReceiptScreen = new ExportReceiptScreen();
-                    exportReceiptScreen.showTable();
-                    ScreenNavigator.navigateTo(exportReceiptScreen);
+                    presenter.save(exportReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
+                    AlertUtils.alert("Thêm mới phiếu xuất thành công.", "INFORMATION", "Thành công", "Thành công");
                 }
-                catch (DaoException | StockUnderFlowException | CanNotFoundException exception) {
-                    AlertUtils.alert(exception.getMessage(), "ERROR", "Lỗi khi thực hiện thao tác với phiếu nhập.", "Lỗi khi thực hiện lưu phiếu nhập.");
+                // Cập nhật hóa đơn xuất
+                else {
+                    ExportReceiptModel oldExportReceiptModel = ExportReceiptModelTableMapper.INSTANCE.fromViewModelToModel(receiptModelTable);
+                    presenter.updateExportReceipt(exportReceiptModel, oldExportReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
+                    AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
                 }
+                ExportReceiptScreen exportReceiptScreen = new ExportReceiptScreen();
+                exportReceiptScreen.showTable();
+                ScreenNavigator.navigateTo(exportReceiptScreen);
+            }
+            catch (DaoException | StockUnderFlowException | CanNotFoundException exception) {
+                AlertUtils.alert(exception.getMessage(), "ERROR", "Lỗi khi thực hiện thao tác với phiếu nhập.", "Lỗi khi thực hiện lưu phiếu nhập.");
             }
             catch (Exception ex) {
                 ex.printStackTrace();
