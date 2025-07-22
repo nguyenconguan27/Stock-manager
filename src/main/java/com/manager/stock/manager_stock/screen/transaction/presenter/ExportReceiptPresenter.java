@@ -134,7 +134,7 @@ public class ExportReceiptPresenter {
             // số lượng sản phẩm thay đổi
             int changeQuantity = changeQuantityByProductMap.getOrDefault(productId, 0);
             // tổng giá thay đổi
-            double changeTotalPrice = changeQuantity * exportReceiptDetailModel.getUnitPrice();
+            double changeTotalPrice = changeQuantity * exportReceiptDetailModel.getOriginalUnitPrice();
 
             System.out.println("Tổng tiền thay đổi: " + changeTotalPrice);
             InventoryDetailModel inventoryDetailModel = inventoryDetailByProductAndAcademicYear.getOrDefault(productId, null);
@@ -256,7 +256,7 @@ public class ExportReceiptPresenter {
             List<Long> productIds = new ArrayList<>();
             exportReceiptDetailModels.forEach(exportReceiptDetailModel -> {
                 changeQuantityByProductMap.put(exportReceiptDetailModel.getProductId(), (-1) * exportReceiptDetailModel.getActualQuantity());
-                changeTotalPriceByProductMap.put(exportReceiptDetailModel.getProductId(), (-1) * exportReceiptDetailModel.getActualQuantity() * exportReceiptDetailModel.getUnitPrice());
+                changeTotalPriceByProductMap.put(exportReceiptDetailModel.getProductId(), (-1) * exportReceiptDetailModel.getActualQuantity() * exportReceiptDetailModel.getOriginalUnitPrice());
                 productIds.add(exportReceiptDetailModel.getProductId());
             });
             // cập nhật tồn kho

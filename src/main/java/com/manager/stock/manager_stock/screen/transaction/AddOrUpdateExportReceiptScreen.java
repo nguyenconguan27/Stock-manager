@@ -298,7 +298,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             int changeQuantity = newValue - oldValue;
             System.out.println("Số lượng thực tế mới: " + newValue);
             System.out.println("Số lượng thực tế cũ: " + oldValue);
-            double changeTotalPrice = changeQuantity * row.getExportPrice();
+            double changeTotalPrice = changeQuantity * row.getOriginalUnitPrice();
 
             if(row.getId() != null) {
                 int changeQuantityByProduct = changeQuantityByProductMap.getOrDefault(row.getProductId(), 0);
@@ -307,22 +307,22 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 changeTotalPriceByProductMap.put(row.getProductId(), changeTotalPriceByProduct + changeTotalPrice);
                 changeIdsOfReceiptDetails.add(row.getId());
             }
-            double newTotal = newValue * row.getExportPrice();
+            double newTotal = newValue * row.getOriginalUnitPrice();
             System.out.println("New total: " + newTotal);
             row.setTotalPrice(newTotal);
-            row.setTotalPriceFormat(FormatMoney.format(newTotal));
+            row.setDisplayTotalPriceFormat(FormatMoney.format(newTotal));
             row.actualQuantityProperty().set(event.getNewValue().intValue());
             System.out.println("Change total price: " + changeTotalPrice);
-            totalPriceOfReceipt += changeTotalPrice;
+            totalPriceOfReceipt += changeQuantity * row.getDisplayUnitPrice();
             totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
             productTable.refresh();
         });
 
         TableColumn<ExportReceiptDetailModelTable, String> colUnitPrice = new TableColumn<>("Đơn giá");
-        colUnitPrice.setCellValueFactory(data -> data.getValue().unitPriceFormatProperty());
+        colUnitPrice.setCellValueFactory(data -> data.getValue().displayUnitPriceFormatProperty());
 
         TableColumn<ExportReceiptDetailModelTable, String> colTotalPrice = new TableColumn<>("Thành tiền");
-        colTotalPrice.setCellValueFactory(data -> data.getValue().totalPriceFormatProperty());
+        colTotalPrice.setCellValueFactory(data -> data.getValue().displayTotalPriceFormatProperty());
         TableColumn<ExportReceiptDetailModelTable, Void> colAction = new TableColumn<>("Thao tác");
         colAction.setCellFactory(param -> new TableCell<>() {
 //            private final Button btnEdit = new Button("✎");
@@ -431,7 +431,8 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                         reason,
                         wareHouseName,
                         totalPriceOfReceipt,
-                        FormatMoney.formatMoneyToWord((long)totalPriceOfReceipt)
+//                        FormatMoney.formatMoneyToWord((long)totalPriceOfReceipt)
+                        ""
                 );
                 if(productDetails.isEmpty()) {
                     AlertUtils.alert("Phiếu nhập này chưa có sản phẩm nào, vui lòng chọn ít nhất 1 sản phẩm.", "WARNING", "Cảnh báo", "Thiếu thông tin");
@@ -505,7 +506,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             double totalPriceCurrent = productExists.getTotalPrice() + currentTotalPrice;
             productExists.setActualQuantity(actualQuantityCurrent);
             productExists.setTotalPrice(totalPriceCurrent);
-            productExists.setTotalPriceFormat(FormatMoney.format(totalPriceCurrent));
+            productExists.setDisplayTotalPriceFormat(FormatMoney.format(totalPriceCurrent));
             changeIdsOfReceiptDetails.add(productExists.getId());
             //
             int changeQuantityByProduct = changeQuantityByProductMap.getOrDefault(productExists.getProductId(), 0);

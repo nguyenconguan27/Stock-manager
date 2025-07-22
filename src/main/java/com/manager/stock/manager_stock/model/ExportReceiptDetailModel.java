@@ -9,12 +9,12 @@ public class ExportReceiptDetailModel {
     private long productId;
     private int plannedQuantity;
     private int actualQuantity;
-    private double unitPrice;
     private double totalPrice;
     private String productName;
     private String productCode;
     private long exportPriceId;
-    private double exportPrice;
+    private double originalUnitPrice;
+    private double displayUnitPrice;
 
     // thêm trường đánh dấu nếu sau khi sửa hoặc xóa phiếu nhập mà số lượng tồn kho tại thời điểm
     // đó không còn đáp ứng được số lượng của phiếu xuất ==> lại lại actualQuantity = 0 và thêm status + message
@@ -23,20 +23,20 @@ public class ExportReceiptDetailModel {
 
     public ExportReceiptDetailModel() {}
 
-    public ExportReceiptDetailModel(long id, long exportReceiptId, long productId, int plannedQuantity, int actualQuantity, double unitPrice, double totalPrice, String productName, String productCode, long exportPriceId, int status, String message, double exportPrice) {
+    public ExportReceiptDetailModel(long id, long exportReceiptId, long productId, int plannedQuantity, int actualQuantity, double displayUnitPrice, double totalPrice, String productName, String productCode, long exportPriceId, int status, String message, double originalUnitPrice) {
         this.id = id;
         this.exportReceiptId = exportReceiptId;
         this.productId = productId;
         this.plannedQuantity = plannedQuantity;
         this.actualQuantity = actualQuantity;
-        this.unitPrice = unitPrice;
+        this.displayUnitPrice = displayUnitPrice;
         this.totalPrice = totalPrice;
         this.productName = productName;
         this.productCode = productCode;
         this.exportPriceId = exportPriceId;
         this.status = status;
         this.message = message;
-        this.exportPrice = exportPrice;
+        this.originalUnitPrice = originalUnitPrice;
     }
 
     public long getId() {
@@ -77,14 +77,6 @@ public class ExportReceiptDetailModel {
 
     public void setActualQuantity(int actualQuantity) {
         this.actualQuantity = actualQuantity;
-    }
-
-    public double getUnitPrice() {
-        return unitPrice;
-    }
-
-    public void setUnitPrice(double unitPrice) {
-        this.unitPrice = unitPrice;
     }
 
     public double getTotalPrice() {
@@ -135,11 +127,19 @@ public class ExportReceiptDetailModel {
         this.message = message;
     }
 
-    public double getExportPrice() {
-        return exportPrice;
+    public double getOriginalUnitPrice() {
+        return originalUnitPrice;
     }
 
-    public void setExportPrice(double exportPrice) {
-        this.exportPrice = exportPrice;
+    public void setOriginalUnitPrice(double originalUnitPrice) {
+        this.originalUnitPrice = originalUnitPrice;
+    }
+
+    public double getDisplayUnitPrice() {
+        return displayUnitPrice;
+    }
+
+    public void setDisplayUnitPrice(double displayUnitPrice) {
+        this.displayUnitPrice = displayUnitPrice;
     }
 }

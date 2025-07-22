@@ -33,8 +33,8 @@ public class ExportReceiptDetailMapperResultSet implements RowMapper<ExportRecei
                 case "actual_quantity":
                     exportReceiptDetailModel.setActualQuantity(resultSet.getInt(columnName));
                     break;
-                case "unit_price":
-                    exportReceiptDetailModel.setUnitPrice(resultSet.getDouble(columnName));
+                case "original_unit_price":
+                    exportReceiptDetailModel.setOriginalUnitPrice(resultSet.getDouble(columnName));
                     break;
                 case "product_name":
                     exportReceiptDetailModel.setProductName(resultSet.getString(columnName));
@@ -43,11 +43,11 @@ public class ExportReceiptDetailMapperResultSet implements RowMapper<ExportRecei
                     exportReceiptDetailModel.setProductCode(resultSet.getString(columnName));
                     break;
                 case "export_price":
-                    exportReceiptDetailModel.setExportPrice(resultSet.getDouble(columnName));
+                    exportReceiptDetailModel.setDisplayUnitPrice(resultSet.getDouble(columnName));
                     break;
             }
         }
-        exportReceiptDetailModel.setTotalPrice(exportReceiptDetailModel.getUnitPrice() * exportReceiptDetailModel.getActualQuantity());
+        exportReceiptDetailModel.setTotalPrice(exportReceiptDetailModel.getDisplayUnitPrice() * exportReceiptDetailModel.getActualQuantity());
         return exportReceiptDetailModel;
     }
 }

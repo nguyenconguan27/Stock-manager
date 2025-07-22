@@ -147,8 +147,8 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
         TableColumn<ExportReceiptDetailModelTable, String> colProductName = CreateColumnTableUtil.createColumn("Tên SP", ExportReceiptDetailModelTable::productNameProperty);
         TableColumn<ExportReceiptDetailModelTable, Number> colPlannedQty = CreateColumnTableUtil.createColumn("SL theo CT", ExportReceiptDetailModelTable::plannedQuantityProperty);
         TableColumn<ExportReceiptDetailModelTable, Number> colActualQty = CreateColumnTableUtil.createColumn("SL thực tế", ExportReceiptDetailModelTable::actualQuantityProperty);
-        TableColumn<ExportReceiptDetailModelTable, String> colUnitPrice = CreateColumnTableUtil.createColumn("Đơn giá", ExportReceiptDetailModelTable::unitPriceFormatProperty);
-        TableColumn<ExportReceiptDetailModelTable, String> colTotalPrice = CreateColumnTableUtil.createColumn("Thành tiền", ExportReceiptDetailModelTable::totalPriceFormatProperty);
+        TableColumn<ExportReceiptDetailModelTable, String> colUnitPrice = CreateColumnTableUtil.createColumn("Đơn giá", ExportReceiptDetailModelTable::displayUnitPriceFormatProperty);
+        TableColumn<ExportReceiptDetailModelTable, String> colTotalPrice = CreateColumnTableUtil.createColumn("Thành tiền", ExportReceiptDetailModelTable::displayTotalPriceFormatProperty);
 
         setColumnPercentWidth(colProductId,           15);
         setColumnPercentWidth(colProductName,15);

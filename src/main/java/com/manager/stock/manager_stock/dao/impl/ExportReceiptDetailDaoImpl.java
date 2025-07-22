@@ -59,7 +59,7 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
 
     @Override
     public List<Long> save(List<ExportReceiptDetailModel> exportReceiptDetailModels, long exportReceiptId) {
-        String sql = "INSERT INTO export_receipt_detail(id, export_receipt_id, product_id, planned_quantity, actual_quantity, export_price_id, unit_price) " +
+        String sql = "INSERT INTO export_receipt_detail(id, export_receipt_id, product_id, planned_quantity, actual_quantity, export_price_id, original_unit_price) " +
                     " OVERRIDING SYSTEM VALUE" +
                     " values(?, ?, ?, ?, ?, ?, ?)" +
                     " RETURNING *;";
@@ -74,7 +74,7 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
                     exportReceiptDetailModel.getPlannedQuantity(),
                     exportReceiptDetailModel.getActualQuantity(),
                     exportReceiptDetailModel.getExportPriceId(),
-                    exportReceiptDetailModel.getUnitPrice()
+                    exportReceiptDetailModel.getOriginalUnitPrice()
             });
             ids.add(id);
         }
