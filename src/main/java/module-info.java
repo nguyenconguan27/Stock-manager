@@ -10,6 +10,9 @@ module com.manager.stock.manager_stock {
     requires org.kordamp.bootstrapfx.core;
     requires com.almasb.fxgl.all;
     requires org.slf4j;
+    requires org.apache.poi.poi;
+    requires org.apache.poi.ooxml.schemas;
+    requires org.apache.poi.ooxml;
     requires java.sql;
     requires jdk.incubator.vector;
     requires java.desktop;

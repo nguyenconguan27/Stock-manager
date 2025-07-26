@@ -7,7 +7,7 @@ public class ProductModel {
     private long id;
     private String name;
     private String code;
-    private Integer quantity;
+    private int quantity;
     private String unit;
     private int unitPrice;
     private String createdAt;

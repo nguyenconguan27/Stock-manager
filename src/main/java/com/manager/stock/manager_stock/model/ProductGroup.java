@@ -1,12 +1,23 @@
 package com.manager.stock.manager_stock.model;
 
+import java.util.List;
+
 public class ProductGroup {
     private long id;
     private String name;
+    private List<ProductModel> productList;
 
     public ProductGroup(long id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public void setProductList(List<ProductModel> productList) {
+        this.productList = productList;
+    }
+
+    public List<ProductModel> getProductList() {
+        return productList;
     }
 
     public ProductGroup() {

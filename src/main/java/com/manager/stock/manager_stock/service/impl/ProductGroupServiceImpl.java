@@ -41,4 +41,9 @@ public class ProductGroupServiceImpl implements ProductGroupService {
         }
         return productGroups.get(0);
     }
+
+    @Override
+    public ProductGroup getGroupAndProduct() {
+        return null;
+    }
 }

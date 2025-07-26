@@ -47,4 +47,9 @@ public class ProductGroupDao extends AbstractDao<ProductGroup>{
         save(sql, parameters);
         return productGroup;
     }
+
+    public ProductGroup getGroupAndProducts() {
+//        String sql = "SELECT pg.id, pg.name, p.id, p.name, inv.quantity, ep.exportPrice";
+        String sql = "selct pg.id, pg.name, p.id, p.name"
+    }
 }

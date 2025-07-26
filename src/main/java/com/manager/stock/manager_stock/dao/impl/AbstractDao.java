@@ -134,7 +134,7 @@ public class AbstractDao<T> implements GenericDao<T> {
                 stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 setParams(stmt, parameters.get(0));
                 int affectedRows = stmt.executeUpdate();
-
+                connection.commit();
                 if (affectedRows == 0) {
                     throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
                 }

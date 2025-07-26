@@ -8,4 +8,6 @@ public interface ProductGroupService {
     List<ProductGroup> getAll();
     void save(ProductGroup productGroup);
     ProductGroup getById(long id);
+
+    ProductGroup getGroupAndProduct();
 }
