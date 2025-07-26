@@ -105,6 +105,7 @@ public class ImportReceiptPresenter {
 //            e.printStackTrace();
 //        }
 //        return importReceiptModel;
+            importReceiptService.commit();
         }
         catch (Exception e) {
             importReceiptService.rollback();
