@@ -21,7 +21,7 @@ public class ProductGroupDao extends AbstractDao<ProductGroup>{
     }
 
     public List<ProductGroup> getAll() {
-        String sql = "SELECT * FROM product_group";
+        String sql = "SELECT * FROM test.product_group";
         return query(sql, new ProductGroupMapperResultSet());
     }
 

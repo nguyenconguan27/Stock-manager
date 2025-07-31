@@ -43,9 +43,9 @@ public class ProductDao extends AbstractDao<ProductModel>{
 
 
     public List<ProductModel> getAll() {
-        String sql = "select p.id, p.code, p.name, p.group_id, (select inv.quantity from inventory_detail as inv\n" +
-                "inner join product p on p.id = inv.product_id order by inv.academic_year desc limit 1) as quantity, (select ep.export_price from export_price as ep\n" +
-                "inner join product p on p.id = ep.product_id order by ep.export_time desc limit 1) as export_price from product as p";
+        String sql = "select p.id, p.code, p.name, p.group_id, (select inv.quantity from test.inventory_detail as inv\n" +
+                "inner join test.product p on p.id = inv.product_id order by inv.academic_year desc limit 1) as quantity, (select ep.export_price from test.export_price as ep\n" +
+                "inner join test.product p on p.id = ep.product_id order by ep.export_time desc limit 1) as export_price from test.product as p";
         return query(sql, new ProductMapperResultSet());
     }
 

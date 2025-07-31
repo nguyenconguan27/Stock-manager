@@ -157,9 +157,9 @@ public class Main {
                 unitCell.setCellValue(reportProduct.getUnit());
                 setBorder(r, r, 0, c - 1, style);
                 ReportModel.ReportDetail startSem = reportProduct.getStartSem();
-                ReportModel.ReportDetail totalImport = reportProduct.getStartSem();
-                ReportModel.ReportDetail totalExport = reportProduct.getStartSem();
-                ReportModel.ReportDetail endSem = reportProduct.getStartSem();
+                ReportModel.ReportDetail totalImport = reportProduct.getTotalImport();
+                ReportModel.ReportDetail totalExport = reportProduct.getTotalExport();
+                ReportModel.ReportDetail endSem = reportProduct.getEndSem();
                 List<ReportModel.ReportDetail> importList = reportProduct.getImportDetail();
                 List<ReportModel.ReportDetail> exportList = reportProduct.getExportDetail();
                 fillDetailData(r, c, startSem);
