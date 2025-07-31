@@ -24,30 +24,47 @@ public class ProductDao extends AbstractDao<ProductModel>{
     }
 
     public List<ProductModel> findById(long id) {
-        String sql = "SELECT * FROM product WHERE id = ?";
+        String sql = "select p.id, p.code, p.unit, p.name, p.group_id, inv.quantity, ep.export_price, max(ep.export_time) from product as p" +
+                " inner join inventory_detail as inv on inv.product_id = p.id" +
+                " inner join export_price as ep on ep.product_id = p.id" +
+                " where id = ?" +
+                " group by p.id, p.id, p.name, inv.quantity, ep.export_price";
         return query(sql, new ProductMapperResultSet(), id);
     }
 
     public List<ProductModel> findByCode(String text) {
-        String sql = "SELECT * FROM product WHERE code = ?";
+        String sql = "select p.id, p.code, p.unit, p.name, p.group_id, inv.quantity, ep.export_price, max(ep.export_time) from product as p" +
+                " inner join inventory_detail as inv on inv.product_id = p.id" +
+                " inner join export_price as ep on ep.product_id = p.id" +
+                " where code like ?" +
+                " group by p.id, p.id, p.name, inv.quantity, ep.export_price";
         return query(sql, new ProductMapperResultSet(), "%" + text.toLowerCase() + "%");
     }
 
 
     public List<ProductModel> getAll() {
-        String sql = "SELECT * FROM product";
+        String sql = "select p.id, p.code, p.name, p.group_id, (select inv.quantity from inventory_detail as inv\n" +
+                "inner join product p on p.id = inv.product_id order by inv.academic_year desc limit 1) as quantity, (select ep.export_price from export_price as ep\n" +
+                "inner join product p on p.id = ep.product_id order by ep.export_time desc limit 1) as export_price from product as p";
         return query(sql, new ProductMapperResultSet());
     }
 
     public List<ProductModel> findByName(String text) {
-        String sql = "SELECT * FROM product WHERE LOWER(name) like ?";
+        String sql = "select p.id, p.code, p.unit, p.name, p.group_id, inv.quantity, ep.export_price, max(ep.export_time) from product as p" +
+                " inner join inventory_detail as inv on inv.product_id = p.id" +
+                " inner join export_price as ep on ep.product_id = p.id" +
+                " where lower(name) like ?" +
+                " group by p.id, p.id, p.name, inv.quantity, ep.export_price";
         return query(sql, new ProductMapperResultSet(), "%" + text.toLowerCase() + "%");
     }
 
     public List<ProductModel> findByGroup(long groupId) {
-        String sql = "SELECT p.id, p.name, p.unit_price, p.unit, p.quantity FROM product AS p" +
-                " INNER JOIN product_group as pg ON p.group_id = pg.id " +
-                " WHERE pg.id = ?";
+        String sql = "select p.id, p.code, p.unit, p.name, p.group_id, inv.quantity, ep.export_price, max(ep.export_time) from product as p" +
+                " inner join inventory_detail as inv on inv.product_id = p.id" +
+                " inner join export_price as ep on ep.product_id = p.id" +
+                " inner join product_group as pg on pg.id = p.group_id" +
+                " where pg.id = ?" +
+                " group by p.id, p.id, p.name, inv.quantity, ep.export_price";
         return  query(sql, new ProductMapperResultSet(), groupId);
     }
 

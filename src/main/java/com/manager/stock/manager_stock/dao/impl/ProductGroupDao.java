@@ -48,8 +48,12 @@ public class ProductGroupDao extends AbstractDao<ProductGroup>{
         return productGroup;
     }
 
-    public ProductGroup getGroupAndProducts() {
-//        String sql = "SELECT pg.id, pg.name, p.id, p.name, inv.quantity, ep.exportPrice";
-        String sql = "selct pg.id, pg.name, p.id, p.name"
+    public List<ProductGroup> getGroupAndProducts() {
+        String sql = "select pg.id, pg.name, p.id as product_id, p.code, p.unit, p.name as product_name, inv.quantity, ep.export_price, max(ep.export_time) from product as p" +
+                " inner join inventory_detail as inv on inv.product_id = p.id" +
+                " inner join export_price as ep on ep.product_id = p.id" +
+                " inner join product_group as pg on pg.id = p.group_id" +
+                " group by p.id, p.id, p.name, inv.quantity, ep.export_price";
+        return query(sql, new ProductGroupMapperResultSet());
     }
 }

@@ -30,7 +30,7 @@ public class ProductMapperResultSet implements RowMapper<ProductModel>{
                 case "unit":
                     productModel.setUnit(resultSet.getString(columnName));
                     break;
-                case "unit_price":
+                case "export_price":
                     productModel.setUnitPrice(resultSet.getInt(columnName));
                     break;
                 case "group_id":
