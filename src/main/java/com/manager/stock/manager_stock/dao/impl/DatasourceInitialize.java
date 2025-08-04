@@ -29,7 +29,6 @@ public class DatasourceInitialize {
         try {
             if (webServer == null || !webServer.isRunning(false)) {
                 webServer = Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8082").start();
-                System.out.println("H2 Console started at: http://localhost:8082");
             }
         } catch (SQLException e) {
             e.printStackTrace();

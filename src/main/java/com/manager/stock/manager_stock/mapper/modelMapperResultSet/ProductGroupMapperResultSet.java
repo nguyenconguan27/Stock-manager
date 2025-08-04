@@ -13,7 +13,7 @@ public class ProductGroupMapperResultSet implements RowMapper<ProductGroup> {
             int columnCount = metaData.getColumnCount();
             ProductGroup pg = new ProductGroup();
             for(int i = 1; i <= columnCount; i++) {
-                String columnName = metaData.getColumnName(i);
+                String columnName = metaData.getColumnName(i).toLowerCase();
                 switch (columnName) {
                     case "id":
                         pg.setId(resultSet.getLong(columnName));

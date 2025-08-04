@@ -9,9 +9,7 @@ CREATE TABLE IF NOT EXISTS product (
                                        id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
                                        code VARCHAR(50) UNIQUE NOT NULL,
     name VARCHAR(100) NOT NULL,
-    quantity INTEGER NOT NULL,
     unit VARCHAR(20),
-    unit_price INTEGER,
     created_at VARCHAR(20),
     group_id BIGINT,
     CONSTRAINT fk_product_group FOREIGN KEY (group_id) REFERENCES product_group(id) ON DELETE SET NULL

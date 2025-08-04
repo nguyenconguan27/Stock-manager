@@ -17,7 +17,7 @@ public class InventoryDetailMapperResultSet implements RowMapper<InventoryDetail
             int columnCount = metaData.getColumnCount();
             InventoryDetailModel inventoryDetailModel = new InventoryDetailModel();
             for (int i = 1; i <= columnCount; i++) {
-                String columnName = metaData.getColumnName(i);
+                String columnName = metaData.getColumnName(i).toLowerCase();
                 switch (columnName) {
                     case "id":
                         inventoryDetailModel.setId(resultSet.getLong(columnName));

@@ -13,7 +13,7 @@ public class ProductMapperResultSet implements RowMapper<ProductModel>{
         int columnCount = metaData.getColumnCount();
         ProductModel productModel = new ProductModel();
         for(int i = 1; i <= columnCount; i++) {
-            String columnName = metaData.getColumnName(i);
+            String columnName = metaData.getColumnName(i).toLowerCase();
             switch (columnName) {
                 case "id":
                     productModel.setId(resultSet.getLong(columnName));
