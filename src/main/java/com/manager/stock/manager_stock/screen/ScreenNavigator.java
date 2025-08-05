@@ -102,9 +102,15 @@ public class ScreenNavigator {
                     ScreenNavigator.navigateTo(new ProductGroupScreen());
                     break;
                 case "Quản lý sản phẩm":
-                    ProductScreen productScreen = new ProductScreen();
-                    productScreen.showProducts();
-                    ScreenNavigator.navigateTo(productScreen);
+                    ScreenNavigator.showLoadingTemporary();
+                    new Thread(() -> {
+                        ProductScreen productScreen = new ProductScreen();
+
+                        Platform.runLater(() -> {
+                            productScreen.showProducts();
+                            ScreenNavigator.navigateTo(productScreen);
+                        });
+                    }).start();
                     break;
                 case "Phiếu nhập":
                     ScreenNavigator.showLoadingTemporary();
