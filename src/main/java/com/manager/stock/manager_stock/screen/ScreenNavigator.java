@@ -1,7 +1,7 @@
 package com.manager.stock.manager_stock.screen;
 
-import com.manager.stock.manager_stock.screen.product.ProductPresenter;
-import com.manager.stock.manager_stock.screen.product.ProductScreen;
+import com.manager.stock.manager_stock.screen.product.productList.ProductPresenter;
+import com.manager.stock.manager_stock.screen.product.productList.ProductScreen;
 import com.manager.stock.manager_stock.screen.productGroup.ProductGroupScreen;
 import com.manager.stock.manager_stock.screen.transaction.ExportReceiptScreen;
 import com.manager.stock.manager_stock.screen.transaction.ImportReceiptScreen;
@@ -103,8 +103,7 @@ public class ScreenNavigator {
                     break;
                 case "Quản lý sản phẩm":
                     ProductScreen productScreen = new ProductScreen();
-                    ProductPresenter productPresenter = new ProductPresenter();
-                    productPresenter.loadProductListData();
+                    productScreen.showProducts();
                     ScreenNavigator.navigateTo(productScreen);
                     break;
                 case "Phiếu nhập":

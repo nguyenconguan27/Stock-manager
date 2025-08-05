@@ -16,7 +16,7 @@ public class ExportReceiptMapperResultSet implements RowMapper<ExportReceiptMode
         int columnCount = resultSetMetaData.getColumnCount();
         ExportReceiptModel exportReceiptModel = new ExportReceiptModel();
         for(int i = 1; i <= columnCount; i++){
-            String columnName = resultSetMetaData.getColumnName(i);
+            String columnName = resultSetMetaData.getColumnName(i).toLowerCase();
             switch (columnName){
                 case "id":
                     exportReceiptModel.setId(resultSet.getInt(columnName));

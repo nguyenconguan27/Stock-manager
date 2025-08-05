@@ -17,7 +17,7 @@ public class ExportPriceMapperResultSet implements RowMapper<ExportPriceModel>{
             int columnCount = metaData.getColumnCount();
             ExportPriceModel exportPriceModel = new ExportPriceModel();
             for (int i = 1; i <= columnCount; i++) {
-                String columnName = metaData.getColumnName(i);
+                String columnName = metaData.getColumnName(i).toLowerCase();
                 switch (columnName) {
                     case "id":
                         exportPriceModel.setId(resultSet.getLong(i));

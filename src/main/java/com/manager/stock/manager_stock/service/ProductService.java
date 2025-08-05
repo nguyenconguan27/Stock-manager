@@ -8,6 +8,12 @@ public interface ProductService {
     List<ProductModel> getAllProducts();
 
     List<ProductModel> getByName(String text);
+    ProductModel getByCode(String text);
 
-    List<ProductModel> getByGroup(String groupId);
+    List<ProductModel> getByGroup(long groupId);
+
+    ProductModel getById(long id);
+    void add(ProductModel productModel, long groupId);
+
+    void update(ProductModel productModel, long groupId, boolean isUpdateCode);
 }

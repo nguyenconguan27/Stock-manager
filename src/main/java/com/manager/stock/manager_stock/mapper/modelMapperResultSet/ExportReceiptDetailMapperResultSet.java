@@ -16,7 +16,7 @@ public class ExportReceiptDetailMapperResultSet implements RowMapper<ExportRecei
         int columnCount = metaData.getColumnCount();
         ExportReceiptDetailModel exportReceiptDetailModel = new ExportReceiptDetailModel();
         for(int i = 1; i <= columnCount; i++){
-            String columnName = metaData.getColumnName(i);
+            String columnName = metaData.getColumnName(i).toLowerCase();
             switch (columnName){
                 case "id":
                     exportReceiptDetailModel.setId(resultSet.getLong(columnName));

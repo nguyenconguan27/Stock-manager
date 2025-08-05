@@ -1,13 +1,11 @@
-package com.manager.stock.manager_stock.screen.product;
+package com.manager.stock.manager_stock.screen.product.productList;
 
-import com.manager.stock.manager_stock.model.ProductGroup;
 import com.manager.stock.manager_stock.model.ProductModel;
 import com.manager.stock.manager_stock.service.ProductGroupService;
 import com.manager.stock.manager_stock.service.ProductService;
 import com.manager.stock.manager_stock.service.impl.ProductGroupServiceImpl;
 import com.manager.stock.manager_stock.service.impl.ProductServiceImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,8 +31,7 @@ public class ProductPresenter {
         return productModels;
     }
 
-
-    public List<ProductModel> loadProductByGroup(String groupId) {
+    public List<ProductModel> loadProductByGroup(long groupId) {
         List<ProductModel> productModels = productService.getByGroup(groupId);
         return productModels;
     }
