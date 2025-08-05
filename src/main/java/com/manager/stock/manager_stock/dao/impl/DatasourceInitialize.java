@@ -22,6 +22,7 @@ public class DatasourceInitialize {
         props.setProperty("user", AppConfig.getString("db.user"));
         props.setProperty("password", AppConfig.getString("db.password"));
         logger.debug("Start connect to database..., user = {}, password = {}", AppConfig.getString("db.user"), AppConfig.getString("db.password") );
+        logger.info("Start connect to database...");
         return DriverManager.getConnection(url, props);
     }
 
