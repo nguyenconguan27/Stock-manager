@@ -36,7 +36,7 @@ public class DatasourceInitialize {
     }
 
     public static Connection init() {
-        String jdbcUrl = "jdbc:h2:file:D:/data/test;INIT=RUNSCRIPT FROM 'database/create_table.sql'";
+        String jdbcUrl = "jdbc:h2:file:D:/data/db;INIT=RUNSCRIPT FROM 'database/create_table.sql'";
         String user = "sa";
         String pass = "1234";
         try {

@@ -16,7 +16,7 @@ public class ExportReceiptDetailMapperResultSet implements RowMapper<ExportRecei
         int columnCount = metaData.getColumnCount();
         ExportReceiptDetailModel exportReceiptDetailModel = new ExportReceiptDetailModel();
         for(int i = 1; i <= columnCount; i++){
-            String columnName = metaData.getColumnName(i).toLowerCase();
+            String columnName = metaData.getColumnLabel(i).toLowerCase();
             switch (columnName){
                 case "id":
                     exportReceiptDetailModel.setId(resultSet.getLong(columnName));
@@ -45,6 +45,8 @@ public class ExportReceiptDetailMapperResultSet implements RowMapper<ExportRecei
                 case "export_price":
                     exportReceiptDetailModel.setDisplayUnitPrice(resultSet.getDouble(columnName));
                     break;
+                case "unit":
+                    exportReceiptDetailModel.setUnit(resultSet.getString(columnName));
             }
         }
         exportReceiptDetailModel.setTotalPrice(exportReceiptDetailModel.getDisplayUnitPrice() * exportReceiptDetailModel.getActualQuantity());

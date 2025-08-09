@@ -28,7 +28,7 @@ public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailM
 
     @Override
     public List<ImportReceiptDetailModel> findAllByImportReceiptId(long importReceiptId) {
-        String sql = "SELECT ird.*, p.code as product_code, p.\"name\" as product_name FROM import_receipt_detail ird\n" +
+        String sql = "SELECT ird.*, p.code as product_code, p.unit, p.name as product_name FROM import_receipt_detail ird\n" +
                 "join import_receipt ir on ird.import_receipt_id = ir.id \n" +
                 "join product p on p.id = ird.product_id \n" +
                 "WHERE import_receipt_id = ?";

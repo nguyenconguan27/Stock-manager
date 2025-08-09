@@ -18,7 +18,7 @@ public class ImportReceiptModel {
     private String totalPriceInWord;
     private int academicYear;
 //    private String totalPriceFormat;
-    private List<ImportReceiptDetailModel> importReceiptDetails;
+    private List<ImportReceiptDetailModel> importReceiptDetails = new ArrayList<>();
 
     public ImportReceiptModel() {}
 

@@ -11,6 +11,7 @@ public class ExportReceiptDetailModel {
     private int actualQuantity;
     private double totalPrice;
     private String productName;
+    private String unit;
     private String productCode;
     private long exportPriceId;
     private double originalUnitPrice;
@@ -73,6 +74,14 @@ public class ExportReceiptDetailModel {
 
     public int getActualQuantity() {
         return actualQuantity;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public String getUnit() {
+        return unit;
     }
 
     public void setActualQuantity(int actualQuantity) {

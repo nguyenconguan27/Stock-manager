@@ -79,7 +79,7 @@ public class FormatMoney {
                 .trim();
 
         if (groups.length > 0 && Integer.parseInt(groups[0]) == 0) {
-            return resultStr + " đồng chẵn";
+            return resultStr + " đồng";
         }
 
         return resultStr + " đồng";
