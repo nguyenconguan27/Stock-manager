@@ -4,3 +4,97 @@ ir.id = ird.import_receipt_id
 where ir.academic_year = ? 
 group by ir.id ;
 2025-08-06 00:49:34.268 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-09 17:28:04.638 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-09 17:28:04.640 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-09 17:28:04.839 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:28:04.839 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:28:09.979 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with sql: select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir 
+join import_receipt_detail ird on
+ir.id = ird.import_receipt_id
+where ir.academic_year = ? 
+group by ir.id ;
+2025-08-09 17:28:09.979 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-09 17:28:11.873 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-09 17:28:11.873 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-09 17:28:11.874 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:28:11.874 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:28:30.992 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-09 17:28:30.992 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-09 17:28:30.993 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:28:30.993 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:28:48.831 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:28:48.831 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:28:58.564 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-09 17:28:58.564 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-09 17:28:58.565 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:28:58.565 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:29:12.081 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start insert of database with sql: INSERT INTO product_group(id, name) OVERRIDING SYSTEM VALUE VALUES(?, ?);
+2025-08-09 17:29:12.081 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Params: [1754735352081, nhóm sản phẩm test 1]
+2025-08-09 17:29:14.151 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:29:14.151 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:33:54.817 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with sql: select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir 
+join import_receipt_detail ird on
+ir.id = ird.import_receipt_id
+where ir.academic_year = ? 
+group by ir.id ;
+2025-08-09 17:33:54.817 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-09 17:36:53.589 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-09 17:36:53.590 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-09 17:36:53.590 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:36:53.590 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:36:54.587 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:36:54.587 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:39:05.401 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-09 17:39:05.404 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-09 17:39:05.586 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:39:05.586 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:39:10.827 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:39:10.828 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:41:36.306 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-09 17:41:36.308 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-09 17:41:36.514 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:41:36.514 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:41:37.672 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:41:37.673 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:42:58.931 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-09 17:42:58.934 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-09 17:42:59.126 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:42:59.126 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:43:01.257 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:43:01.257 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:45:55.636 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-09 17:45:55.637 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-09 17:45:55.823 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:45:55.823 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:45:56.789 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:45:56.789 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:48:30.444 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-09 17:48:30.446 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-09 17:48:30.660 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:48:30.660 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:48:31.698 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:48:31.699 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:49:51.154 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-09 17:49:51.156 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-09 17:49:51.370 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:49:51.370 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:49:52.547 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:49:52.547 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:51:00.404 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-09 17:51:00.407 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-09 17:51:00.599 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:51:00.599 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:51:01.608 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:51:01.608 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:53:24.002 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-09 17:53:24.004 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-09 17:53:24.189 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:53:24.189 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:53:25.282 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:53:25.282 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:55:35.288 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-09 17:55:35.290 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-09 17:55:35.487 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:55:35.487 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-09 17:55:37.586 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-09 17:55:37.586 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
