@@ -5,6 +5,7 @@ import com.manager.stock.manager_stock.model.ProductModel;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.product.productDetail.ProductDetailScreen;
 import com.manager.stock.manager_stock.screen.productGroup.ProductGroupPresenter;
+import com.manager.stock.manager_stock.screen.transaction.ImportReceiptScreen;
 import com.manager.stock.manager_stock.utils.Utils;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -28,10 +29,47 @@ public class ProductScreen extends VBox {
     private ComboBox<ProductGroup> comboBox;
     ObservableList<ProductModel> productData = FXCollections.observableArrayList();
     ObservableList<ProductGroup> productGroupData = FXCollections.observableArrayList();
+    TextField tfCode, tfName;
+    Pagination pagination;
+    int itemsPerPage = 10;
+    protected static final double HEADER_HEIGHT = 30.0;
+    protected static final double MAX_TABLE_HEIGHT = 400.0;
     private final ProductPresenter productPresenter;
     private final ProductGroupPresenter productGroupPresenter;
     private TextField tfGroupName;
     private ProductGroup currentProductGroup;
+
+    private void createPagination() {
+        System.out.println(productData.size());
+        pagination = new Pagination();
+        pagination.setPageFactory(pageIndex -> {
+            int fromIndex = pageIndex * itemsPerPage;
+            int toIndex = Math.min(fromIndex + itemsPerPage, productData.size());
+            table.setItems(FXCollections.observableArrayList(productData.subList(fromIndex, toIndex)));
+            updateTableHeight(table, Math.min(itemsPerPage, productData.size()));
+            return new VBox(table);
+        });
+
+        pagination.getStylesheets().add(
+                ProductScreen.class.getResource("/com/manager/stock/manager_stock/css/importReceipt/pagination.css").toExternalForm()
+        );
+    }
+
+    protected void updateTableHeight(TableView<?> table, int itemCount) {
+        table.setMaxHeight(MAX_TABLE_HEIGHT);
+        table.setMinHeight(HEADER_HEIGHT);
+    }
+
+    protected void updatePagination() {
+        int pageCount = (int) Math.ceil((double) productData.size() / itemsPerPage);
+        pagination.setPageCount(pageCount > 0 ? pageCount : 1);
+        pagination.setCurrentPageIndex(0);
+        int fromIndex = 0;
+        int toIndex = Math.min(itemsPerPage, productData.size());
+        table.setItems(FXCollections.observableArrayList(productData.subList(fromIndex, toIndex)));
+        updateTableHeight(table, Math.min(itemsPerPage, productData.size()));
+    }
+
 
     private VBox initAddGroupForm() {
         VBox groupForm = new VBox();
@@ -52,6 +90,10 @@ public class ProductScreen extends VBox {
         });
         groupForm.getChildren().addAll(tfGroupName, saveButton);
         return groupForm;
+    }
+
+    private void initTextFied() {
+
     }
 
     private VBox initHeader() {
@@ -134,7 +176,6 @@ public class ProductScreen extends VBox {
 
     private void initTableView() {
         table = new TableView<>();
-        table.setId("inventory-product-table");
         TableColumn<ProductModel, String> idCol = Utils.createColumn("Mã", "code");
         TableColumn<ProductModel, String> nameCol = Utils.createColumn("Tên", "name");
         TableColumn<ProductModel, Integer> qtyCol = Utils.createColumn("Số lượng", "quantity");
@@ -142,6 +183,8 @@ public class ProductScreen extends VBox {
         TableColumn<ProductModel, Void> actionCol = createActionColumn("Thao tác");
         table.getColumns().addAll(idCol, nameCol, qtyCol, unitPriceCol, actionCol);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        table.setPrefHeight(600);
+        table.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #c1dfee; -fx-border-width: 1px;");
     }
 
     private TableColumn createActionColumn(String title) {
@@ -180,10 +223,15 @@ public class ProductScreen extends VBox {
     public ProductScreen() {
         VBox header = initHeader();
         initTableView();
-        table.setItems(productData);
+        createPagination();
+        VBox tableSection = new VBox(table, pagination);
+        tableSection.setSpacing(0);
+        VBox.setMargin(table, new Insets(0, 0, 10, 0));
+        tableSection.setPadding(Insets.EMPTY);
+        tableSection.setStyle("-fx-padding: 0; -fx-background-insets: 0;");
         comboBox.setItems(productGroupData);
         VBox groupForm = initAddGroupForm();
-        this.getChildren().addAll(header, table, groupForm);
+        this.getChildren().addAll(header, tableSection, groupForm);
         productPresenter = ProductPresenter.getInstance();
         productGroupPresenter = ProductGroupPresenter.getInstance();
         currentProductGroup = new ProductGroup();
@@ -195,5 +243,7 @@ public class ProductScreen extends VBox {
         productData.addAll(productModels);
         productGroupData.add(0, new ProductGroup(-1, "Tất cả"));
         productGroupData.addAll(productGroups);
+        updatePagination();
+        this.getStylesheets().add(this.getClass().getResource("/com/manager/stock/manager_stock/css/importReceipt/importReceipt.css").toExternalForm());
     }
 }
