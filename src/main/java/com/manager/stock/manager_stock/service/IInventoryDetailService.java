@@ -1,8 +1,7 @@
 package com.manager.stock.manager_stock.service;
 
-import com.manager.stock.manager_stock.dao.impl.InventoryDetailDaoImpl;
-import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.model.InventoryDetailModel;
+import com.manager.stock.manager_stock.model.dto.ProductIdAndCodeAndNameAndQuantityInStock;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,4 +14,6 @@ public interface IInventoryDetailService {
     void save(List<InventoryDetailModel> inventoryDetailModels);
     void update(List<InventoryDetailModel> inventoryDetailModels);
     int findQuantityInStockByProductIdAndAcademicYear(long productId, int academicYear);
+    List<ProductIdAndCodeAndNameAndQuantityInStock> findProductHaveMaxQuantityByProductGroup(long productGroupId);
+    List<ProductIdAndCodeAndNameAndQuantityInStock> findProductHaveMinQuantityByProductGroup(long productGroupId);
 }

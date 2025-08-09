@@ -70,7 +70,6 @@ public class ProductScreen extends VBox {
         updateTableHeight(table, Math.min(itemsPerPage, productData.size()));
     }
 
-
     private VBox initAddGroupForm() {
         VBox groupForm = new VBox();
         tfGroupName = new TextField();
@@ -105,7 +104,7 @@ public class ProductScreen extends VBox {
         // add button
         Button addButton = new Button("Thêm vật tư");
         addButton.setOnAction(e -> {
-            ProductDetailScreen productDetailScreen = new ProductDetailScreen();
+            ProductDetailScreen productDetailScreen = new ProductDetailScreen(productData);
             productDetailScreen.showProduct(-1);
             ScreenNavigator.navigateTo(productDetailScreen);
         });
@@ -193,11 +192,10 @@ public class ProductScreen extends VBox {
             private final Button editButton = new Button("Sửa");
             private final Button deleteButton = new Button("Xóa");
             private final HBox buttons = new HBox(5, editButton, deleteButton);
-
             {
                 editButton.setOnAction(event -> {
                     ProductModel product = getTableView().getItems().get(getIndex());
-                    ProductDetailScreen productDetailScreen = new ProductDetailScreen();
+                    ProductDetailScreen productDetailScreen = new ProductDetailScreen(productData);
                     productDetailScreen.showProduct(product.getId());
                     ScreenNavigator.navigateTo(productDetailScreen);
                 });

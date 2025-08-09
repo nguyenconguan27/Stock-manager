@@ -5,10 +5,15 @@ import com.manager.stock.manager_stock.exception.CanNotFoundException;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.mapper.modelMapperResultSet.InventoryDetailMapperResultSet;
 import com.manager.stock.manager_stock.model.InventoryDetailModel;
+import com.manager.stock.manager_stock.model.dto.ProductIdAndCodeAndNameAndQuantityInStock;
 
 import java.sql.Connection;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Trọng Hướng
@@ -87,5 +92,85 @@ public class InventoryDetailDaoImpl extends AbstractDao<InventoryDetailModel> im
             return quantityInStocks.get(0);
         }
         throw new CanNotFoundException("Sản phẩm chưa được nhập trong năm " + academicYear);
+    }
+
+    @Override
+    public List<ProductIdAndCodeAndNameAndQuantityInStock> findProductHaveMaxQuantityByProductGroup(long productGroupId) throws DaoException{
+        LocalDate localDate = LocalDate.now();
+        int year = localDate.getYear();
+        String sql = "select id.product_id as pId, p.name as name, p.code as code, id.quantity as quantity from inventory_detail id \n" +
+                "left join product p \n" +
+                "on p.id = id.product_id \n" +
+                "left join product_group pg \n" +
+                "on pg.id = p.group_id \n" +
+                "where pg.id = ? and id.academic_year = ?\n" +
+                "order by id.quantity desc \n" +
+                "limit 5;";
+        List<ProductIdAndCodeAndNameAndQuantityInStock> fiveProductHaveMaxQuantity = query(sql,
+                rs -> new ProductIdAndCodeAndNameAndQuantityInStock(
+                                rs.getLong("pId"),
+                                rs.getString("code"),
+                                rs.getString("name"),
+                                rs.getInt("quantity")
+                        ), productGroupId, year);
+
+        if(fiveProductHaveMaxQuantity.size() < 5){
+            Set<Long> productExistsInCurrentYear = fiveProductHaveMaxQuantity
+                                                    .stream().map(ProductIdAndCodeAndNameAndQuantityInStock::productId)
+                                                    .collect(Collectors.toSet());
+            List<ProductIdAndCodeAndNameAndQuantityInStock> fiveProductHaveMaxQuantityPreviousYear = query(sql,
+                    rs -> new ProductIdAndCodeAndNameAndQuantityInStock(
+                            rs.getLong("pId"),
+                            rs.getString("code"),
+                            rs.getString("name"),
+                            rs.getInt("quantity")
+                    ), productGroupId, year-1);
+            fiveProductHaveMaxQuantity.addAll(fiveProductHaveMaxQuantityPreviousYear
+                    .stream()
+                    .filter(product -> !productExistsInCurrentYear.contains(product.productId()))
+                    .toList()
+            );
+        }
+        return fiveProductHaveMaxQuantity;
+    }
+
+    @Override
+    public List<ProductIdAndCodeAndNameAndQuantityInStock> findProductHaveMinQuantityByProductGroup(long productGroupId) throws DaoException{
+        LocalDate localDate = LocalDate.now();
+        int year = localDate.getYear();
+        String sql = "select id.product_id, p.name as name, p.code as code, id.quantity as quantity from inventory_detail id \n" +
+                "left join product p \n" +
+                "on p.id = id.product_id \n" +
+                "left join product_group pg \n" +
+                "on pg.id = p.group_id \n" +
+                "where pg.id = ? and id.academic_year = ?\n" +
+                "order by id.quantity \n" +
+                "limit 5;";
+        List<ProductIdAndCodeAndNameAndQuantityInStock> fiveProductHaveMinQuantity = query(sql,
+                rs -> new ProductIdAndCodeAndNameAndQuantityInStock(
+                        rs.getLong("pId"),
+                        rs.getString("code"),
+                        rs.getString("name"),
+                        rs.getInt("quantity")
+                ), productGroupId, year);
+
+        if(fiveProductHaveMinQuantity.size() < 5){
+            Set<Long> productExistsInCurrentYear = fiveProductHaveMinQuantity
+                    .stream().map(ProductIdAndCodeAndNameAndQuantityInStock::productId)
+                    .collect(Collectors.toSet());
+            List<ProductIdAndCodeAndNameAndQuantityInStock> fiveProductHaveMaxQuantityPreviousYear = query(sql,
+                    rs -> new ProductIdAndCodeAndNameAndQuantityInStock(
+                            rs.getLong("pId"),
+                            rs.getString("code"),
+                            rs.getString("name"),
+                            rs.getInt("quantity")
+                    ), productGroupId, year-1);
+            fiveProductHaveMinQuantity.addAll(fiveProductHaveMaxQuantityPreviousYear
+                    .stream()
+                    .filter(product -> !productExistsInCurrentYear.contains(product.productId()))
+                    .toList()
+            );
+        }
+        return fiveProductHaveMinQuantity;
     }
 }

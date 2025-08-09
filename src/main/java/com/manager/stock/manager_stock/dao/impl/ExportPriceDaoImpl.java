@@ -4,6 +4,7 @@ import com.manager.stock.manager_stock.dao.IExportPriceDao;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.mapper.modelMapperResultSet.ExportPriceMapperResultSet;
 import com.manager.stock.manager_stock.model.ExportPriceModel;
+import com.manager.stock.manager_stock.model.dto.ExportPriceAndProductCodeAndProductName;
 import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
 import com.manager.stock.manager_stock.service.impl.ExportPriceServiceImpl;
 
@@ -124,6 +125,64 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
                 rs.getLong("id"),
                 rs.getDouble("export_price")
         ));
+    }
+
+    @Override
+    public ExportPriceAndProductCodeAndProductName findProductHaveMaxPriceByGroup(long productGroupId) throws DaoException{
+        String sql = "WITH latest_export AS (\n" +
+                "    SELECT ep.*\n" +
+                "    FROM export_price ep\n" +
+                "    INNER JOIN (\n" +
+                "        SELECT product_id, MAX(export_time) AS latest_time\n" +
+                "        FROM export_price\n" +
+                "        WHERE quantity_imported != 0\n" +
+                "        GROUP BY product_id\n" +
+                "    ) latest ON ep.product_id = latest.product_id AND ep.export_time = latest.latest_time\n" +
+                ")\n" +
+                "SELECT ep.export_time, p.code AS code, p.name as name, ep.export_price\n" +
+                "FROM latest_export ep\n" +
+                "LEFT JOIN product p ON p.id = ep.product_id\n" +
+                "LEFT JOIN product_group pg ON p.group_id = pg.id\n" +
+                "WHERE pg.id = ?\n" +
+                "ORDER BY ep.export_price DESC\n" +
+                "LIMIT 1;";
+        List<ExportPriceAndProductCodeAndProductName> maxPrice = query(sql,
+                rs -> new ExportPriceAndProductCodeAndProductName(rs.getDouble("export_price"),
+                                                                            rs.getString("code"),
+                                                                            rs.getString("name")), productGroupId);
+        if(maxPrice.isEmpty()){
+           return new ExportPriceAndProductCodeAndProductName(0, "UNKNOWN", "UNKNOWN");
+        }
+        return maxPrice.get(0);
+    }
+
+    @Override
+    public ExportPriceAndProductCodeAndProductName findProductHaveMinPriceByGroup(long productGroupId) throws DaoException{
+        String sql = "WITH latest_export AS (\n" +
+                "    SELECT ep.*\n" +
+                "    FROM export_price ep\n" +
+                "    INNER JOIN (\n" +
+                "        SELECT product_id, max(export_time) AS latest_time\n" +
+                "        FROM export_price\n" +
+                "        WHERE quantity_imported != 0\n" +
+                "        GROUP BY product_id\n" +
+                "    ) latest ON ep.product_id = latest.product_id AND ep.export_time = latest.latest_time\n" +
+                ")\n" +
+                "SELECT ep.export_time, p.code AS code, p.name as name, ep.export_price\n" +
+                "FROM latest_export ep\n" +
+                "LEFT JOIN product p ON p.id = ep.product_id\n" +
+                "LEFT JOIN product_group pg ON p.group_id = pg.id\n" +
+                "WHERE pg.id = 1\n" +
+                "ORDER BY ep.export_price\n" +
+                "LIMIT 1;";
+        List<ExportPriceAndProductCodeAndProductName> maxPrice = query(sql,
+                rs -> new ExportPriceAndProductCodeAndProductName(rs.getDouble("export_price"),
+                        rs.getString("code"),
+                        rs.getString("name")), productGroupId);
+        if(maxPrice.isEmpty()){
+            return new ExportPriceAndProductCodeAndProductName(0, "UNKNOWN", "UNKNOWN");
+        }
+        return maxPrice.get(0);
     }
 
     @Override

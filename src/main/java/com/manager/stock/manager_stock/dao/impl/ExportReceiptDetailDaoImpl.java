@@ -31,7 +31,7 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
         String sql = "select\n" +
                 "\terd.*,\n" +
                 "\tp.code as product_code,\n" +
-                "\tp.\"name\" as product_name,\n" +
+                "\tp.name as product_name,\n" +
                 "\tep.export_price as export_price \n" +
                 "from\n" +
                 "\texport_receipt_detail erd\n" +

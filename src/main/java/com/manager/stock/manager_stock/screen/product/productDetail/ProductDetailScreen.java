@@ -1,10 +1,15 @@
 package com.manager.stock.manager_stock.screen.product.productDetail;
 
+import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.interfaceActionHandler.TopBarActionHandler;
 import com.manager.stock.manager_stock.model.ProductGroup;
 import com.manager.stock.manager_stock.model.ProductModel;
+import com.manager.stock.manager_stock.model.dto.ExportPriceAndProductCodeAndProductName;
+import com.manager.stock.manager_stock.model.dto.ProductIdAndCodeAndNameAndQuantityInStock;
 import com.manager.stock.manager_stock.screen.productGroup.ProductGroupPresenter;
+import com.manager.stock.manager_stock.utils.AlertUtils;
 import com.manager.stock.manager_stock.utils.CreateTopBarOfReceiptUtil;
+import com.manager.stock.manager_stock.utils.FormatMoney;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -19,8 +24,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.NumberFormat;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ProductDetailScreen extends VBox{
 
@@ -31,6 +39,9 @@ public class ProductDetailScreen extends VBox{
     ObservableList<ProductGroup> productGroupData = FXCollections.observableArrayList();
     ProductModel productData;
     private ComboBox<ProductGroup> comboBox;
+    private ProductGroup productGroupSelected;
+    private ObservableList<ProductModel> productDatas;
+    private VBox statisticNode = new VBox();
 
     TextField tfId, tfQuantity, tfName, tfUnit, tfUniPrice, tfTotal;
     Button btnSave;
@@ -83,13 +94,32 @@ public class ProductDetailScreen extends VBox{
         // === Nhóm sản phẩm ===
         comboBox = new ComboBox<>();
         comboBox.setPrefWidth(300);
+        comboBox.setPrefHeight(20);
+        comboBox.setMaxHeight(100);
         comboBox.setStyle(inputStyle);
 
         productGroupData.addListener((ListChangeListener<? super ProductGroup>) change -> {
-            if (!productGroupData.isEmpty() && comboBox.getSelectionModel().isEmpty()) {
+            if (!productGroupData.isEmpty()) {
                 comboBox.getSelectionModel().selectFirst();
+                productGroupSelected = comboBox.getSelectionModel().getSelectedItem();
+
+                // Tạo thống kê ban đầu khi có group
+                VBox newStatisticNode = createStatisticProductByGroup();
+                if (statisticNode == null) {
+                    // Nếu chưa add statisticNode trước đó, thì add luôn
+                    this.getChildren().add(newStatisticNode);
+                } else {
+                    int index = this.getChildren().indexOf(statisticNode);
+                    if (index != -1) {
+                        this.getChildren().set(index, newStatisticNode);
+                    } else {
+                        this.getChildren().add(newStatisticNode);
+                    }
+                }
+                statisticNode = newStatisticNode;
             }
         });
+
         comboBox.setItems(productGroupData);
 
         comboBox.setCellFactory(cb -> new ListCell<>() {
@@ -109,11 +139,16 @@ public class ProductDetailScreen extends VBox{
         });
 
         comboBox.setOnAction(event -> {
-            ProductGroup selected = comboBox.getSelectionModel().getSelectedItem();
-            // TODO: xử lý khi chọn nhóm
+            productGroupSelected = comboBox.getSelectionModel().getSelectedItem();
+            VBox newStatisticNode = createStatisticProductByGroup();
+            int indexOldNode = this.getChildren().indexOf(statisticNode);
+            if(indexOldNode != -1){
+                this.getChildren().add(indexOldNode, newStatisticNode);
+                statisticNode = newStatisticNode;
+            }
         });
 
-        Label groupLabel = new Label("Nhóm sản phẩm *");
+        Label groupLabel = new Label("Chọn nhóm sản phẩm *");
         groupLabel.setStyle(labelStyle);
         VBox comboBoxGroup = new VBox(5, groupLabel, comboBox);
         comboBoxGroup.setPadding(new Insets(10, 15, 0, 15));
@@ -122,7 +157,7 @@ public class ProductDetailScreen extends VBox{
         GridPane leftForm = new GridPane();
         leftForm.setHgap(10);
         leftForm.setVgap(10);
-        leftForm.setPadding(new Insets(15));
+//        leftForm.setPadding(new Insets(15));
 
         Label labelId = new Label("Mã vật tư *");
         labelId.setStyle(labelStyle);
@@ -172,11 +207,31 @@ public class ProductDetailScreen extends VBox{
         tfTotal.setEditable(false);
 
         tfQuantity.textProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("textfield changed from " + oldValue + " to " + newValue);
+            try {
+                int newQuantity = newValue.isEmpty() ? 0 : Integer.parseInt(newValue.trim());
+                double unitPrice = tfUniPrice.getText().isEmpty() ? 0 : Double.parseDouble(tfUniPrice.getText().trim());
+
+                double totalPrice = newQuantity * unitPrice;
+                tfTotal.setText(FormatMoney.format(totalPrice));
+            }
+            catch (NumberFormatException e) {
+                AlertUtils.alert("Vui lòng nhập số lượng là số nguyên dương", "WARNING",
+                        "Cảnh báo", "Cảnh báo");
+            }
         });
 
         tfUniPrice.textProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("textfield changed from " + oldValue + " to " + newValue);
+            try {
+                double newUnitPrice = newValue.isEmpty() ? 0 : Double.parseDouble(newValue.trim());
+                int quantity = tfQuantity.getText().isEmpty() ? 0 : Integer.parseInt(tfQuantity.getText().trim());
+
+                double totalPrice = quantity * newUnitPrice;
+                tfTotal.setText(FormatMoney.format(totalPrice));
+            }
+            catch (NumberFormatException e) {
+                AlertUtils.alert("Vui lòng nhập đơn giá là số", "WARNING",
+                        "Cảnh báo", "Cảnh báo");
+            }
         });
 
         rightForm.add(labelTotal, 0, 2);
@@ -236,12 +291,73 @@ public class ProductDetailScreen extends VBox{
         });
     }
 
-    public ProductDetailScreen() {
+    private VBox createStatisticProductByGroup() {
+        VBox root = new VBox(8);
+        root.setPadding(new Insets(10));
+        root.setStyle("-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-color: #f0f8ff;");
+
+        // Lọc sản phẩm theo nhóm
+        List<ProductModel> groupProducts = productDatas.stream()
+                .filter(p -> p.getGroupId() == productGroupSelected.getId())
+                .collect(Collectors.toList());
+
+        int totalProducts = groupProducts.size();
+        ExportPriceAndProductCodeAndProductName productHaveMaxExportPrice, productHaveMinExportPrice;
+        List<ProductIdAndCodeAndNameAndQuantityInStock> lowStockProducts, maxQuantityInStock;
+        try {
+            // tìm sản phẩm có giá xuất lớn nhất
+            productHaveMaxExportPrice = productDetailPresenter.findMaxExportPriceByGroup(productGroupSelected.getId());
+            // tìm sản phẩm có giá xuất nhỏ nhất
+            productHaveMinExportPrice = productDetailPresenter.findMinExportPriceByGroup(productGroupSelected.getId());
+            // liệt kê danh sách 5 sản phẩm tồn kho lớn nhất
+            maxQuantityInStock = productDetailPresenter.findListProductHaveMaxQuantityInStockByGroup(productGroupSelected.getId());
+            // liệt kê danh sách 5 sản phẩm sắp hết hàng
+            lowStockProducts = productDetailPresenter.findListProductHaveMinQuantityInStockByGroup(productGroupSelected.getId());
+        }
+        catch (DaoException e) {
+            AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi", "Lỗi");
+            return root;
+        }
+
+        root.getChildren().add(new Label("📊 Thống kê nhanh"));
+        root.getChildren().add(new Label("• Nhóm sản phẩm hiện tại: " + productGroupSelected.getName()));
+        root.getChildren().add(new Label("• Tổng số sản phẩm: " + totalProducts + " sản phẩm"));
+
+        root.getChildren().add(new Label(String.format("• Giá cao nhất: %s - %s - %f",
+                                            productHaveMaxExportPrice.productCode(),
+                                            productHaveMaxExportPrice.productName(),
+                                            productHaveMaxExportPrice.exportPrice())));
+
+        root.getChildren().add(new Label(String.format("• Giá thấp nhất: %s - %s - %f",
+                                            productHaveMinExportPrice.productCode(),
+                                            productHaveMinExportPrice.productName(),
+                                            productHaveMinExportPrice.exportPrice())));
+
+        root.getChildren().add(new Label("• Danh sách 5 sản phẩm sắp hết hàng:"));
+        if (lowStockProducts.isEmpty()) {
+            root.getChildren().add(new Label("   - Không có sản phẩm nào sắp hết hàng."));
+        } else {
+            for (ProductIdAndCodeAndNameAndQuantityInStock p : lowStockProducts) {
+                root.getChildren().add(new Label("   - " + p.productCode() + ": " + p.quantityInStock() + " cái (tồn kho < 5)"));
+            }
+        }
+
+        root.getChildren().add(new Label("• Danh sách 5 sản phẩm tồn kho nhiều nhất: "));
+        for (ProductIdAndCodeAndNameAndQuantityInStock p : maxQuantityInStock) {
+            root.getChildren().add(new Label("   - " + p.productCode() + ": " + p.quantityInStock() + " cái (tồn kho < 5)"));
+        }
+
+        return root;
+    }
+
+    public ProductDetailScreen(ObservableList<ProductModel> datas) {
         productDetailPresenter = ProductDetailPresenter.getInstance();
         productGroupPresenter = ProductGroupPresenter.getInstance();
         currencyFormat.setMinimumFractionDigits(0);
+        productDatas = datas;
 //        initProductGroup();
         initButton();
+        VBox formDetail = detailForm();
         HBox topBar = CreateTopBarOfReceiptUtil.createTopBar(new TopBarActionHandler() {
             @Override
             public void onAdd() {
@@ -273,8 +389,9 @@ public class ProductDetailScreen extends VBox{
 
             }
         });
-
-        this.getChildren().addAll(topBar, detailForm(), btnSave);
+        System.out.println("Product group selected: " + productGroupSelected);
+//        statisticNode = createStatisticProductByGroup();
+        this.getChildren().addAll(topBar, formDetail, statisticNode, btnSave);
     }
 
     public void showProduct(long pid) {
