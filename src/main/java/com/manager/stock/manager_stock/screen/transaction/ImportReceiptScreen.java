@@ -56,7 +56,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
                 colId, colInvoiceNumber, colCreateAt, colDeliveredBy,
                 colInvoice, colCompany, colWarehouse, colTotalPrice
         );
-        receiptTable.getColumns().forEach(col -> col.setResizable(false));
+//        receiptTable.getColumns().forEach(col -> col.setResizable(false));
 
         receiptTable.setItems(receiptData);
         receiptTable.setPrefHeight(600);
@@ -118,9 +118,9 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
         productTable.setPrefHeight(600);
         productTable.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #c1dfee; -fx-border-width: 1px;");
 
-        productTable.getColumns().forEach(col -> {
-            col.setResizable(false);
-        });
+//        productTable.getColumns().forEach(col -> {
+//            col.setResizable(false);
+//        });
 
         VBox box = new VBox(productTable);
         box.setSpacing(0);

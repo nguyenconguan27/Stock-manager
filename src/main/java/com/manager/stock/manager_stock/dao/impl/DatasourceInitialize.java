@@ -3,7 +3,7 @@ import org.h2.tools.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
+import java.io.*;
 import java.sql.*;
 import java.util.Properties;
 
@@ -36,15 +36,23 @@ public class DatasourceInitialize {
     }
 
     public static Connection init() {
-        String jdbcUrl = "jdbc:h2:file:D:/data/test;INIT=RUNSCRIPT FROM 'database/create_table.sql'";
+//        String jdbcUrl = "jdbc:h2:file:D:/data/test;INIT=RUNSCRIPT FROM 'database/create_table.sql'";
         String user = "sa";
         String pass = "1234";
         try {
+            File scriptFile = extractSqlToTempFile("/com/manager/stock/manager_stock/database/create_table.sql");
+
+            String jdbcUrl = "jdbc:h2:file:D:/data/test;INIT=RUNSCRIPT FROM '" + scriptFile.getAbsolutePath().replace("\\", "/") + "'";
+            Class.forName("org.h2.Driver");
             Connection conn = DriverManager.getConnection(jdbcUrl, user, pass);
             startConsole();
             return conn;
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return null;
     }
@@ -59,4 +67,25 @@ public class DatasourceInitialize {
         }
         return INSTANCE;
     }
+
+    private static File extractSqlToTempFile(String resourcePath) throws IOException {
+        InputStream input = DatasourceInitialize.class.getResourceAsStream(resourcePath);
+        if (input == null) {
+            throw new FileNotFoundException("SQL file not found: " + resourcePath);
+        }
+
+        File tempFile = File.createTempFile("init-script-", ".sql");
+        tempFile.deleteOnExit();
+
+        try (OutputStream out = new FileOutputStream(tempFile)) {
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = input.read(buffer)) > 0) {
+                out.write(buffer, 0, length);
+            }
+        }
+
+        return tempFile;
+    }
+
 }

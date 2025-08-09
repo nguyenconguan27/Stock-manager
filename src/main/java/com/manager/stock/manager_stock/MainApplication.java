@@ -1,5 +1,6 @@
 package com.manager.stock.manager_stock;
 
+import com.manager.stock.manager_stock.dao.impl.DatasourceInitialize;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.dashBroad.DashBoardScreen;
 import javafx.application.Application;
@@ -41,6 +42,12 @@ public class MainApplication extends Application {
         stage.setTitle("Ứng dụng quản lý kho");
         stage.setScene(scene);
         stage.show();
+
+
+        stage.setOnCloseRequest(e -> {
+            System.out.println("Closing application");
+            System.exit(0);
+        });
     }
 
     public static void main(String[] args) {
