@@ -7,6 +7,7 @@ import com.manager.stock.manager_stock.model.ProductModel;
 import com.manager.stock.manager_stock.model.dto.ExportPriceAndProductCodeAndProductName;
 import com.manager.stock.manager_stock.model.dto.ProductIdAndCodeAndNameAndQuantityInStock;
 import com.manager.stock.manager_stock.screen.productGroup.ProductGroupPresenter;
+import com.manager.stock.manager_stock.utils.AddCssStyleForBtnUtil;
 import com.manager.stock.manager_stock.utils.AlertUtils;
 import com.manager.stock.manager_stock.utils.CreateTopBarOfReceiptUtil;
 import com.manager.stock.manager_stock.utils.FormatMoney;
@@ -16,10 +17,13 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.*;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,10 +45,10 @@ public class ProductDetailScreen extends VBox{
     private ComboBox<ProductGroup> comboBox;
     private ProductGroup productGroupSelected;
     private ObservableList<ProductModel> productDatas;
-    private VBox statisticNode = new VBox();
+    private VBox statisticWrapper = new VBox();
 
     TextField tfId, tfQuantity, tfName, tfUnit, tfUniPrice, tfTotal;
-    Button btnSave;
+    Button btnSave, btnCancel;
 
     private void initProductGroup() {
         comboBox = new ComboBox<>();
@@ -104,19 +108,22 @@ public class ProductDetailScreen extends VBox{
                 productGroupSelected = comboBox.getSelectionModel().getSelectedItem();
 
                 // Tạo thống kê ban đầu khi có group
-                VBox newStatisticNode = createStatisticProductByGroup();
-                if (statisticNode == null) {
+                ScrollPane newStatisticNode = createStatisticProductByGroup();
+                VBox newStatisticWrapper = new VBox(newStatisticNode);
+                newStatisticWrapper.setStyle("-fx-background-color: #e6f4fb;");
+                VBox.setVgrow(newStatisticWrapper, Priority.ALWAYS);
+                if (statisticWrapper == null) {
                     // Nếu chưa add statisticNode trước đó, thì add luôn
-                    this.getChildren().add(newStatisticNode);
+                    this.getChildren().add(statisticWrapper);
                 } else {
-                    int index = this.getChildren().indexOf(statisticNode);
+                    int index = this.getChildren().indexOf(statisticWrapper);
                     if (index != -1) {
-                        this.getChildren().set(index, newStatisticNode);
+                        this.getChildren().set(index, newStatisticWrapper);
                     } else {
-                        this.getChildren().add(newStatisticNode);
+                        this.getChildren().add(newStatisticWrapper);
                     }
                 }
-                statisticNode = newStatisticNode;
+                statisticWrapper = newStatisticWrapper;
             }
         });
 
@@ -140,11 +147,14 @@ public class ProductDetailScreen extends VBox{
 
         comboBox.setOnAction(event -> {
             productGroupSelected = comboBox.getSelectionModel().getSelectedItem();
-            VBox newStatisticNode = createStatisticProductByGroup();
-            int indexOldNode = this.getChildren().indexOf(statisticNode);
+            ScrollPane newStatisticNode = createStatisticProductByGroup();
+            VBox newStatisticWrapper = new VBox(newStatisticNode);
+            newStatisticWrapper.setStyle("-fx-background-color: #e6f4fb;");
+            VBox.setVgrow(newStatisticWrapper, Priority.ALWAYS);
+            int indexOldNode = this.getChildren().indexOf(statisticWrapper);
             if(indexOldNode != -1){
-                this.getChildren().add(indexOldNode, newStatisticNode);
-                statisticNode = newStatisticNode;
+                this.getChildren().add(indexOldNode, newStatisticWrapper);
+                statisticWrapper = newStatisticWrapper;
             }
         });
 
@@ -245,14 +255,14 @@ public class ProductDetailScreen extends VBox{
 
         // === Giao diện tổng thể ===
         VBox root = new VBox(20, comboBoxGroup, formColumns);
-        root.setStyle("-fx-background-color: #e1f0f7;");
+        root.setStyle("-fx-background-color: #e1f0f7; -fx-border-width: 0");
         root.setPadding(new Insets(10));
-
         return root;
     }
 
     public void initButton() {
         btnSave = new Button("Save");
+        AddCssStyleForBtnUtil.addCssStyleForBtn(btnSave);
         btnSave.setOnAction(event -> {
             long groupId = comboBox.getSelectionModel().getSelectedItem().getId();
             ProductModel newProduct = new ProductModel();
@@ -289,65 +299,152 @@ public class ProductDetailScreen extends VBox{
             updateData(newProduct);
             alert.showAndWait();
         });
+
+        btnCancel = new Button("Cancel");
+        AddCssStyleForBtnUtil.addCssStyleForBtn(btnCancel);
+        btnCancel.setOnAction(event -> {});
     }
 
-    private VBox createStatisticProductByGroup() {
-        VBox root = new VBox(8);
-        root.setPadding(new Insets(10));
-        root.setStyle("-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-color: #f0f8ff;");
+    private ScrollPane createStatisticProductByGroup() {
+        VBox root = new VBox();
+        root.setPadding(new Insets(20));
+        root.setSpacing(20);
 
-        // Lọc sản phẩm theo nhóm
+        Label title = new Label("📊 Thống kê nhanh theo nhóm sản phẩm");
+        title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #003366;");
+        title.setAlignment(Pos.CENTER);
+        title.setMaxWidth(Double.MAX_VALUE);
+
         List<ProductModel> groupProducts = productDatas.stream()
                 .filter(p -> p.getGroupId() == productGroupSelected.getId())
                 .collect(Collectors.toList());
-
         int totalProducts = groupProducts.size();
-        ExportPriceAndProductCodeAndProductName productHaveMaxExportPrice, productHaveMinExportPrice;
-        List<ProductIdAndCodeAndNameAndQuantityInStock> lowStockProducts, maxQuantityInStock;
+
+        ExportPriceAndProductCodeAndProductName productHaveMaxExportPrice;
+        ExportPriceAndProductCodeAndProductName productHaveMinExportPrice;
+        List<ProductIdAndCodeAndNameAndQuantityInStock> lowStockProducts;
+        List<ProductIdAndCodeAndNameAndQuantityInStock> maxQuantityInStock;
+
         try {
-            // tìm sản phẩm có giá xuất lớn nhất
             productHaveMaxExportPrice = productDetailPresenter.findMaxExportPriceByGroup(productGroupSelected.getId());
-            // tìm sản phẩm có giá xuất nhỏ nhất
             productHaveMinExportPrice = productDetailPresenter.findMinExportPriceByGroup(productGroupSelected.getId());
-            // liệt kê danh sách 5 sản phẩm tồn kho lớn nhất
-            maxQuantityInStock = productDetailPresenter.findListProductHaveMaxQuantityInStockByGroup(productGroupSelected.getId());
-            // liệt kê danh sách 5 sản phẩm sắp hết hàng
             lowStockProducts = productDetailPresenter.findListProductHaveMinQuantityInStockByGroup(productGroupSelected.getId());
+            maxQuantityInStock = productDetailPresenter.findListProductHaveMaxQuantityInStockByGroup(productGroupSelected.getId());
+        } catch (DaoException e) {
+            AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi", "Lỗi khi thống kê");
+            return new ScrollPane(); // tránh lỗi NullPointerException
         }
-        catch (DaoException e) {
-            AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi", "Lỗi");
-            return root;
-        }
 
-        root.getChildren().add(new Label("📊 Thống kê nhanh"));
-        root.getChildren().add(new Label("• Nhóm sản phẩm hiện tại: " + productGroupSelected.getName()));
-        root.getChildren().add(new Label("• Tổng số sản phẩm: " + totalProducts + " sản phẩm"));
+        VBox leftColumn = new VBox(15);
+        leftColumn.getChildren().addAll(
+                createStyledInfo("• Nhóm sản phẩm hiện tại: ", productGroupSelected.getName()),
+                createStyledInfo("• Tổng số sản phẩm: ", totalProducts + " sản phẩm"),
+                createStyledInfo(
+                        "• Giá cao nhất: ",
+                        (productHaveMaxExportPrice != null)
+                                ? String.format("%s - %s - %.2f",
+                                productHaveMaxExportPrice.productCode(),
+                                productHaveMaxExportPrice.productName(),
+                                productHaveMaxExportPrice.exportPrice())
+                                : "UNKNOWN - UNKNOWN - 0.00"
+                ),
+                createStyledInfo(
+                        "• Giá thấp nhất: ",
+                        (productHaveMinExportPrice != null)
+                                ? String.format("%s - %s - %.2f",
+                                productHaveMinExportPrice.productCode(),
+                                productHaveMinExportPrice.productName(),
+                                productHaveMinExportPrice.exportPrice())
+                                : "UNKNOWN - UNKNOWN - 0.00"
+                )
+        );
 
-        root.getChildren().add(new Label(String.format("• Giá cao nhất: %s - %s - %f",
-                                            productHaveMaxExportPrice.productCode(),
-                                            productHaveMaxExportPrice.productName(),
-                                            productHaveMaxExportPrice.exportPrice())));
-
-        root.getChildren().add(new Label(String.format("• Giá thấp nhất: %s - %s - %f",
-                                            productHaveMinExportPrice.productCode(),
-                                            productHaveMinExportPrice.productName(),
-                                            productHaveMinExportPrice.exportPrice())));
-
-        root.getChildren().add(new Label("• Danh sách 5 sản phẩm sắp hết hàng:"));
-        if (lowStockProducts.isEmpty()) {
-            root.getChildren().add(new Label("   - Không có sản phẩm nào sắp hết hàng."));
+        VBox rightColumn = new VBox(15);
+        Label lowStockTitle = createSubTitle("• Danh sách 5 sản phẩm sắp hết hàng:");
+        VBox lowStockBox = new VBox(5);
+        if (lowStockProducts == null || lowStockProducts.isEmpty()) {
+            lowStockBox.getChildren().add(createStyledLabel("   - Không có sản phẩm nào sắp hết hàng."));
         } else {
-            for (ProductIdAndCodeAndNameAndQuantityInStock p : lowStockProducts) {
-                root.getChildren().add(new Label("   - " + p.productCode() + ": " + p.quantityInStock() + " cái (tồn kho < 5)"));
+            for (var p : lowStockProducts) {
+                String line = String.format("   - %s: %d cái (tồn kho < 5)", p.productCode(), p.quantityInStock());
+                lowStockBox.getChildren().add(createStyledLabel(line));
             }
         }
 
-        root.getChildren().add(new Label("• Danh sách 5 sản phẩm tồn kho nhiều nhất: "));
-        for (ProductIdAndCodeAndNameAndQuantityInStock p : maxQuantityInStock) {
-            root.getChildren().add(new Label("   - " + p.productCode() + ": " + p.quantityInStock() + " cái (tồn kho < 5)"));
+        Label maxStockTitle = createSubTitle("• Danh sách 5 sản phẩm tồn kho nhiều nhất:");
+        VBox maxStockBox = new VBox(5);
+        if (maxQuantityInStock == null || maxQuantityInStock.isEmpty()) {
+            maxStockBox.getChildren().add(createStyledLabel("   - Không có sản phẩm nào tồn kho nhiều."));
+        } else {
+            for (var p : maxQuantityInStock) {
+                String line = String.format("   - %s: %d cái", p.productCode(), p.quantityInStock());
+                maxStockBox.getChildren().add(createStyledLabel(line));
+            }
         }
 
-        return root;
+        rightColumn.getChildren().addAll(lowStockTitle, lowStockBox, maxStockTitle, maxStockBox);
+
+        // Cột trái và phải
+        HBox columns = new HBox();
+        columns.setSpacing(0);
+        columns.setAlignment(Pos.TOP_LEFT);
+
+        StackPane leftWrapper = new StackPane(leftColumn);
+        leftWrapper.setPadding(new Insets(0, 20, 0, 0));
+        leftWrapper.setStyle("-fx-border-color: transparent #c0e0eb transparent transparent; -fx-border-width: 0 1 0 0;");
+        HBox.setHgrow(leftWrapper, Priority.ALWAYS);
+
+        StackPane rightWrapper = new StackPane(rightColumn);
+        rightWrapper.setPadding(new Insets(0, 0, 0, 20));
+        HBox.setHgrow(rightWrapper, Priority.ALWAYS);
+
+        columns.getChildren().addAll(leftWrapper, rightWrapper);
+
+        VBox content = new VBox(25, title, columns);
+        content.setPadding(new Insets(25));
+        content.setStyle(
+                "-fx-background-color: #e0f2f7;" +
+                        "-fx-border-color: #c0e0eb;" +
+//                        "-fx-border-width: 1;" +
+//                        "-fx-border-radius: 10;" +
+                        "-fx-background-radius: 10;"
+//                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.03), 4, 0, 1, 1);"
+        );
+        VBox.setVgrow(columns, Priority.ALWAYS);      // Cho phần columns co giãn
+        VBox.setVgrow(content, Priority.ALWAYS);      // Cho VBox chính co giãn
+
+        ScrollPane scrollPane = new ScrollPane(content);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent; -fx-border-width: 1px 0px 0px 0px; -fx-border-color: #c0e0eb;");
+        return scrollPane;
+    }
+
+    private TextFlow createStyledInfo(String title, String value) {
+        Text titleText = new Text(title);
+        titleText.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-fill: #0a4c8a;");
+
+        Text valueText = new Text(value);
+        valueText.setStyle("-fx-font-size: 16px; -fx-fill: black;"); // hoặc màu khác nếu muốn
+
+        return new TextFlow(titleText, valueText);
+    }
+
+
+    private Label createStyledLabel(String text) {
+        Label label = new Label(text);
+        label.setStyle("-fx-font-size: 15px; -fx-text-fill: #333333;");
+        label.setWrapText(true);
+        return label;
+    }
+
+    private Label createSubTitle(String text) {
+        Label label = new Label(text);
+        label.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #0a4c8a;");
+        label.setWrapText(true);
+        return label;
     }
 
     public ProductDetailScreen(ObservableList<ProductModel> datas) {
@@ -389,9 +486,12 @@ public class ProductDetailScreen extends VBox{
 
             }
         });
-        System.out.println("Product group selected: " + productGroupSelected);
-//        statisticNode = createStatisticProductByGroup();
-        this.getChildren().addAll(topBar, formDetail, statisticNode, btnSave);
+        VBox.setVgrow(this, Priority.ALWAYS);
+        this.setStyle("-fx-background-color: #e0f2f7;");
+        HBox actionRow = new HBox(10);
+        actionRow.getChildren().addAll(btnSave, btnCancel);
+        actionRow.setStyle("-fx-padding: 10; -fx-background-color: #e1f0f7;");
+        this.getChildren().addAll(topBar, formDetail, actionRow, statisticWrapper);
     }
 
     public void showProduct(long pid) {
