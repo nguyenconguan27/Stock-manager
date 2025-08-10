@@ -7,14 +7,21 @@ import com.manager.stock.manager_stock.screen.transaction.ExportReceiptScreen;
 import com.manager.stock.manager_stock.screen.transaction.ImportReceiptScreen;
 import com.manager.stock.manager_stock.utils.CreateLoadingUtil;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
+import java.util.Objects;
 import java.util.Stack;
 
 /**
@@ -61,6 +68,7 @@ public class ScreenNavigator {
 
     private static void setScreenInternal(Node screen) {
         currentScreen = screen;
+        screen.setStyle("-fx-padding: 5");
         rootPane.setCenter(screen);
     }
 
@@ -73,70 +81,101 @@ public class ScreenNavigator {
         rootItem.setExpanded(true);
 
         rootItem.getChildren().addAll(
-                createItem("Quản lý nhóm sản phẩm", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16),
                 createItem("Quản lý sản phẩm", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16)
         );
 
-        TreeItem<String> transactionManagerItem = createItem("Quản lý phiếu nhập/xuất", "/com/manager/stock/manager_stock/icons/receipt.png", 16,16);
-        // tạo các item con bao gồm phiếu nhập và phiếu xuất
+        TreeItem<String> transactionManagerItem = createItem("Quản lý phiếu nhập/xuất", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16);
         transactionManagerItem.setExpanded(true);
         transactionManagerItem.getChildren().addAll(
                 createItem("Phiếu nhập", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16),
-                createItem("Phiếu xuất",  "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16)
+                createItem("Phiếu xuất", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16)
         );
         rootItem.getChildren().add(transactionManagerItem);
+
         TreeView<String> treeView = new TreeView<>(rootItem);
         treeView.setShowRoot(false);
         VBox.setVgrow(treeView, Priority.ALWAYS);
+
         leftScreen.getChildren().add(createTitleHeader());
         leftScreen.getChildren().add(treeView);
         rootPane.setLeft(leftScreen);
 
-        // add sự kiện click
+        // --- sự kiện click giữ nguyên ---
         treeView.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
             if (newItem == null) return;
-
             String selected = newItem.getValue();
             switch (selected) {
-                case "Quản lý nhóm sản phẩm":
-                    ScreenNavigator.navigateTo(new ProductGroupScreen());
-                    break;
-                case "Quản lý sản phẩm":
+                case "Quản lý sản phẩm" -> {
                     ScreenNavigator.showLoadingTemporary();
                     new Thread(() -> {
                         ProductScreen productScreen = new ProductScreen();
-
                         Platform.runLater(() -> {
                             productScreen.showProducts();
                             ScreenNavigator.navigateTo(productScreen);
                         });
                     }).start();
-                    break;
-                case "Phiếu nhập":
+                }
+                case "Phiếu nhập" -> {
                     ScreenNavigator.showLoadingTemporary();
                     new Thread(() -> {
                         ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
-
                         Platform.runLater(() -> {
                             importReceiptScreen.showTable();
                             ScreenNavigator.navigateTo(importReceiptScreen);
                         });
                     }).start();
-                   break;
-                case "Phiếu xuất":
+                }
+                case "Phiếu xuất" -> {
                     ScreenNavigator.showLoadingTemporary();
                     new Thread(() -> {
                         ExportReceiptScreen exportReceiptScreen = new ExportReceiptScreen();
-
                         Platform.runLater(() -> {
                             exportReceiptScreen.showTable();
                             ScreenNavigator.navigateTo(exportReceiptScreen);
                         });
                     }).start();
-                    break;
+                }
             }
         });
+
+        leftScreen.setStyle("-fx-padding: 10 0 0 0; -fx-background-color: #e1f0f7; -fx-border-width: 1px; -fx-border-color: #c0e0eb");
+
+        // nền TreeView trong suốt để thấy màu cell
+        treeView.setStyle("""
+        -fx-background-color: transparent;
+        -fx-control-inner-background: transparent;
+        -fx-border-color: transparent;
+    """);
+
+        // ⬇️ Quan trọng: import CSS + gắn class để selector cụ thể
+        treeView.getStyleClass().add("sidebar-tree");
+        treeView.getStylesheets().add(
+                Objects.requireNonNull(
+                        ScreenNavigator.class.getResource(
+                                "/com/manager/stock/manager_stock/css/sidebar.css"
+                        )
+                ).toExternalForm()
+        );
+
+        // CellFactory *đơn giản* — để CSS điều khiển hoàn toàn màu sắc
+        treeView.setCellFactory(tv -> new TreeCell<>() {
+            @Override protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setText(item);
+                    setGraphic(getTreeItem() == null ? null : getTreeItem().getGraphic());
+                }
+            }
+        });
+
+        // chọn sẵn item đầu tiên
+        treeView.getSelectionModel().select(rootItem.getChildren().get(0));
+        treeView.refresh();
     }
+
 
     private static TreeItem<String> createItem(String name, String iconPath, int height, int width) {
         Label label = new Label();

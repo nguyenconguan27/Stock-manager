@@ -4,6 +4,7 @@ import com.manager.stock.manager_stock.dao.IExportPriceDao;
 import com.manager.stock.manager_stock.dao.impl.ExportPriceDaoImpl;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.model.ExportPriceModel;
+import com.manager.stock.manager_stock.model.dto.ExportPriceAndProductCodeAndProductName;
 import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
 import com.manager.stock.manager_stock.service.IExportPriceService;
 
@@ -68,6 +69,16 @@ public class ExportPriceServiceImpl implements IExportPriceService {
                         (existing, replacement) -> replacement,
                         HashMap::new
                 ));
+    }
+
+    @Override
+    public ExportPriceAndProductCodeAndProductName findProductHaveMaxPriceByGroup(long productGroupId) throws DaoException{
+        return exportPriceDao.findProductHaveMaxPriceByGroup(productGroupId);
+    }
+
+    @Override
+    public ExportPriceAndProductCodeAndProductName findProductHaveMinPriceByGroup(long productGroupId) throws DaoException{
+        return exportPriceDao.findProductHaveMinPriceByGroup(productGroupId);
     }
 
     @Override

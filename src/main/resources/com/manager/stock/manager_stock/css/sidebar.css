@@ -1,0 +1,38 @@
+/* Áp dụng cho TreeView có class sidebar-tree */
+.sidebar-tree {
+    -fx-background-color: transparent;
+}
+
+/* Cell mặc định */
+.sidebar-tree .tree-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #33536d;
+}
+
+/* Hover + Selected */
+.sidebar-tree .tree-cell:filled:hover,
+.sidebar-tree .tree-cell:filled:selected {
+    -fx-background-color: #0096c9;
+    -fx-text-fill: white;
+}
+
+/* Mũi tên mặc định */
+.sidebar-tree .tree-cell .tree-disclosure-node {
+    -fx-background-color: transparent;
+    -fx-padding: 4; /* giúp mũi tên không bị mất */
+}
+
+.sidebar-tree .tree-cell .tree-disclosure-node > .arrow {
+    -fx-background-color: transparent;
+    -fx-border-color: #33536d;
+    -fx-border-width: 2;
+    -fx-border-insets: 0;
+    -fx-padding: 4;
+    -fx-shape: "M 0 0 L 4 4 L 0 8 z"; /* tạo tam giác hướng phải */
+}
+
+/* Mũi tên hover/selected */
+.sidebar-tree .tree-cell:filled:hover .tree-disclosure-node > .arrow,
+.sidebar-tree .tree-cell:filled:selected .tree-disclosure-node > .arrow {
+    -fx-border-color: white;
+}

@@ -28,6 +28,7 @@ public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailM
 
     @Override
     public List<ImportReceiptDetailModel> findAllByImportReceiptId(long importReceiptId) {
+
         String sql = "SELECT ird.*, p.code as product_code, p.unit, p.name as product_name FROM import_receipt_detail ird\n" +
                 "join import_receipt ir on ird.import_receipt_id = ir.id \n" +
                 "join product p on p.id = ird.product_id \n" +
@@ -78,9 +79,9 @@ public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailM
     public List<ProductIdAndActualQuantityAndTotalPriceOfReceipt> findAllProductIdByImportReceipt(long importReceiptId) throws DaoException{
         String sql = "select product_id, actual_quantity, total_price from import_receipt_detail ird  where ird.import_receipt_id = ?;";
         return query(sql, rs -> new ProductIdAndActualQuantityAndTotalPriceOfReceipt(
-                rs.getLong("product_id"),
-                rs.getInt("actual_quantity"),
-                rs.getDouble("total_price")
+                rs.getLong("PRODUCT_ID"),
+                rs.getInt("ACTUAL_QUANTITY"),
+                rs.getDouble("TOTAL_PRICE")
         ), importReceiptId);
     }
 

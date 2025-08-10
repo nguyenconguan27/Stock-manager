@@ -25,6 +25,7 @@ public class FormatMoney {
     };
 
     public static String format(double money) {
+        System.out.println(money);
         Locale locale = new Locale("vi", "VN");
         Currency currency = Currency.getInstance("VND");
 

@@ -41,9 +41,9 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
                     "and to_date(er.create_at, '%d/%m/%Y') >= ?";
         System.out.println(minCreateAt);
         return query(sql, rs -> new ExportReceiptIdAndCreateDate(
-                rs.getLong("id"),
-                rs.getString("create_at"),
-                rs.getDouble("total_quantity")
+                rs.getLong("ID"),
+                rs.getString("CREATE_AT"),
+                rs.getDouble("TOTAL_QUANTITY")
         ), academicYear, minCreateAt);
     }
 
@@ -57,9 +57,9 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
                 "group by product_id ;";
         List<Object> parameters = new ArrayList<>(exportReceiptIds);
         return query(sql, rs -> new ProductIdAndActualQuantityAndTotalPriceOfReceipt(
-                rs.getLong("product_id"),
-                rs.getInt("actual_quantity_by_product"),
-                rs.getDouble("total_price_by_product")
+                rs.getLong("PRODUCT_ID"),
+                rs.getInt("ACTUAL_QUANTITY_BY_PRODUCT"),
+                rs.getDouble("TOTAL_PRICE_BY_PRODUCT")
 
         ), parameters.toArray());
     }

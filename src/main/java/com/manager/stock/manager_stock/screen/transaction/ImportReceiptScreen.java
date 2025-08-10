@@ -9,6 +9,7 @@ import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
 import com.manager.stock.manager_stock.model.ImportReceiptModel;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptDetailModelTable;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptModelTable;
+import com.manager.stock.manager_stock.reportservice.ReceiptReportService;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter;
 import com.manager.stock.manager_stock.utils.AlertUtils;
@@ -20,7 +21,9 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +59,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
                 colId, colInvoiceNumber, colCreateAt, colDeliveredBy,
                 colInvoice, colCompany, colWarehouse, colTotalPrice
         );
-        receiptTable.getColumns().forEach(col -> col.setResizable(false));
+//        receiptTable.getColumns().forEach(col -> col.setResizable(false));
 
         receiptTable.setItems(receiptData);
         receiptTable.setPrefHeight(600);
@@ -118,9 +121,9 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
         productTable.setPrefHeight(600);
         productTable.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #c1dfee; -fx-border-width: 1px;");
 
-        productTable.getColumns().forEach(col -> {
-            col.setResizable(false);
-        });
+//        productTable.getColumns().forEach(col -> {
+//            col.setResizable(false);
+//        });
 
         VBox box = new VBox(productTable);
         box.setSpacing(0);
@@ -226,7 +229,48 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
 
             @Override
             public void onExport() {
+                try {
+                    // 1) Mở hộp thoại chọn nơi lưu + tên file
+                    FileChooser fc = new FileChooser();
+                    fc.setTitle("Chọn nơi lưu file xuất");
+                    fc.getExtensionFilters().add(
+                            new FileChooser.ExtensionFilter("Excel Workbook (*.xlsx)", "*.xlsx")
+                    );
+                    fc.setInitialFileName("phieu_nhap_" + java.time.LocalDate.now() + ".xlsx");
 
+                    // Lấy cửa sổ hiện hành làm owner an toàn
+                    javafx.stage.Window owner = null;
+                    for (javafx.stage.Window w : javafx.stage.Window.getWindows()) {
+                        if (w.isShowing()) { owner = w; break; }
+                    }
+
+                    File file = fc.showSaveDialog(owner);
+                    if (file == null) {
+                        return;
+                    }
+
+                    // Đảm bảo có phần mở rộng .xlsx nếu người dùng không gõ
+                    String path = file.getAbsolutePath();
+                    if (!path.toLowerCase().endsWith(".xlsx")) {
+                        file = new File(path + ".xlsx");
+                    }
+
+                    // 2) Hỏi ghi đè nếu file đã tồn tại
+                    if (file.exists()) {
+                        boolean ok = AlertUtils.confirm("File đã tồn tại. Bạn có muốn ghi đè?");
+                        if (!ok) return;
+                    }
+
+                    String outputPath = file.getAbsolutePath();
+                    ReceiptReportService.printAllImportReceipt(outputPath, 2025);
+                    // gọi hàm tạo file xlsx
+                    AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
+                            "INFORMATION", "Thành công", "Xuất dữ liệu");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    AlertUtils.alert("Có lỗi khi xuất file: " + e.getMessage(),
+                            "ERROR", "Lỗi", "Xuất dữ liệu thất bại");
+                }
             }
         };
     }

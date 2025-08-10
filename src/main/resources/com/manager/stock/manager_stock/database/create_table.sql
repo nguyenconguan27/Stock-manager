@@ -88,7 +88,10 @@ CREATE TABLE IF NOT EXISTS inventory_detail (
                                                 CONSTRAINT fk_inventory_product FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE SET NULL
     );
 
-
+CREATE TABLE IF NOT EXISTS UpfileStatus (
+                                            id date PRIMARY KEY ,
+                                            status int
+);
 
 
 

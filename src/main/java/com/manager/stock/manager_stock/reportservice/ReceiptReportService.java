@@ -8,39 +8,33 @@ import com.manager.stock.manager_stock.utils.FormatMoney;
 import com.manager.stock.manager_stock.utils.Utils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.slf4j.helpers.Util;
 
 import java.io.FileOutputStream;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
-public class ImportReport {
+public class ReceiptReportService {
 
     public static ReportService reportService = new ReportService();
 
     static List<ImportReceiptModel> importReceiptModelList;
     static List<ExportReceiptModel> exportReceiptModelList;
+    static Workbook workbook;
 
-    static Workbook workbook = new XSSFWorkbook();
     static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd_MM_yyyy_HH_mm_ss");
 
-    public ImportReport() {
+    public ReceiptReportService() {
         reportService = ReportService.getInstance();
     }
-    public static void main(String[] args) {
-        printAllImportReceipt(2025);
-    }
 
-    public static void printAllExportReceipt(int year) {
+    public static void printAllExportReceipt(String fileName, int year) {
+        workbook = new XSSFWorkbook();
         exportReceiptModelList = reportService.getExportDetail(year);
         for(int i = 0; i < exportReceiptModelList.size(); i++) {
             ExportReceiptModel exportReceiptModel = exportReceiptModelList.get(i);
             Sheet sheet = workbook.createSheet(exportReceiptModel.getInvoiceNumber());
             printExportDetailReceipt(sheet, exportReceiptModel);
         }
-        String fileName = "Export_" + formatter.format(LocalDateTime.now());
         try(FileOutputStream fos = new FileOutputStream(fileName)) {
             workbook.write(fos);
             workbook.close();
@@ -49,14 +43,14 @@ public class ImportReport {
         }
     }
 
-    public static void printAllImportReceipt(int year) {
+    public static void printAllImportReceipt(String fileName, int year) {
+        workbook = new XSSFWorkbook();
         importReceiptModelList = reportService.getImportDetail(year);
         for(int i = 0; i < importReceiptModelList.size(); i++) {
             ImportReceiptModel importReceipt = importReceiptModelList.get(i);
             Sheet sheet = workbook.createSheet(importReceipt.getInvoice());
             printImportDetailReceipt(sheet, importReceipt);
         }
-        String fileName = "Import_" + formatter.format(LocalDateTime.now());
         try(FileOutputStream fos = new FileOutputStream(fileName)) {
             workbook.write(fos);
             workbook.close();

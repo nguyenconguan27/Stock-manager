@@ -277,9 +277,6 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             int newValue = event.getNewValue().intValue();
 
             row.setPlannedQuantity(newValue);
-
-            System.out.println("Giá trị cũ: " + oldValue);
-            System.out.println("Giá trị mới: " + newValue);
         });
 
         TableColumn<ExportReceiptDetailModelTable, Number> colActualQty = new TableColumn<>("SL thực tế");
@@ -287,12 +284,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         colActualQty.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
         colActualQty.setOnEditCommit(event -> {
             ExportReceiptDetailModelTable row = event.getRowValue();
-//            row.actualQuantityProperty().set(event.getNewValue().intValue());
 
-//            double newTotal = row.actualQuantityProperty().get() * row.unitPriceProperty().get();
-//            row.totalPriceProperty().set(newTotal);
-//            productTable.refresh();
-//
             int newValue = event.getNewValue().intValue();
             int oldValue = row.getActualQuantity();
             int changeQuantity = newValue - oldValue;
@@ -417,10 +409,10 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     AlertUtils.alert("Vui lòng nhập số hóa đơn.", "WARNING", "Cảnh báo", "Thiếu thông tin");
                     return;
                 }
-                if(receiver.isEmpty()) {AlertUtils.alert("Vui lòng nhập người nhận hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
-                if(receiveAddress.isEmpty()) {AlertUtils.alert("Vui lòng nhập địa chỉ nhận hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
-                if(reason.isEmpty()) {AlertUtils.alert("Vui lòng nhập lý do xuất kho.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
-                if(wareHouseName.isEmpty()) {AlertUtils.alert("Vui lòng nhập kho xuất hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
+//                if(receiver.isEmpty()) {AlertUtils.alert("Vui lòng nhập người nhận hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
+//                if(receiveAddress.isEmpty()) {AlertUtils.alert("Vui lòng nhập địa chỉ nhận hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
+//                if(reason.isEmpty()) {AlertUtils.alert("Vui lòng nhập lý do xuất kho.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
+//                if(wareHouseName.isEmpty()) {AlertUtils.alert("Vui lòng nhập kho xuất hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
                 System.out.println("Total: " + totalPriceOfReceipt);
                 ExportReceiptModel exportReceiptModel = new ExportReceiptModel(
                         receiptModelTable != null ? receiptModelTable.getId() : -1,
