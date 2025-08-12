@@ -409,10 +409,10 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     AlertUtils.alert("Vui lòng nhập số hóa đơn.", "WARNING", "Cảnh báo", "Thiếu thông tin");
                     return;
                 }
-                if(receiver.isEmpty()) {AlertUtils.alert("Vui lòng nhập người nhận hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
-                if(receiveAddress.isEmpty()) {AlertUtils.alert("Vui lòng nhập địa chỉ nhận hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
-                if(reason.isEmpty()) {AlertUtils.alert("Vui lòng nhập lý do xuất kho.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
-                if(wareHouseName.isEmpty()) {AlertUtils.alert("Vui lòng nhập kho xuất hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
+//                if(receiver.isEmpty()) {AlertUtils.alert("Vui lòng nhập người nhận hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
+//                if(receiveAddress.isEmpty()) {AlertUtils.alert("Vui lòng nhập địa chỉ nhận hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
+//                if(reason.isEmpty()) {AlertUtils.alert("Vui lòng nhập lý do xuất kho.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
+//                if(wareHouseName.isEmpty()) {AlertUtils.alert("Vui lòng nhập kho xuất hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
                 System.out.println("Total: " + totalPriceOfReceipt);
                 ExportReceiptModel exportReceiptModel = new ExportReceiptModel(
                         receiptModelTable != null ? receiptModelTable.getId() : -1,

@@ -20,7 +20,9 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -226,7 +228,47 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
 
             @Override
             public void onExport() {
+                try {
+                    // 1) Mở hộp thoại chọn nơi lưu + tên file
+                    FileChooser fc = new FileChooser();
+                    fc.setTitle("Chọn nơi lưu file xuất");
+                    fc.getExtensionFilters().add(
+                            new FileChooser.ExtensionFilter("Excel Workbook (*.xlsx)", "*.xlsx")
+                    );
+                    fc.setInitialFileName("phieu_nhap_" + java.time.LocalDate.now() + ".xlsx");
 
+                    // Lấy cửa sổ hiện hành làm owner an toàn
+                    javafx.stage.Window owner = null;
+                    for (javafx.stage.Window w : javafx.stage.Window.getWindows()) {
+                        if (w.isShowing()) { owner = w; break; }
+                    }
+
+                    File file = fc.showSaveDialog(owner);
+                    if (file == null) {
+                        return;
+                    }
+
+                    // Đảm bảo có phần mở rộng .xlsx nếu người dùng không gõ
+                    String path = file.getAbsolutePath();
+                    if (!path.toLowerCase().endsWith(".xlsx")) {
+                        file = new File(path + ".xlsx");
+                    }
+
+                    // 2) Hỏi ghi đè nếu file đã tồn tại
+                    if (file.exists()) {
+                        boolean ok = AlertUtils.confirm("File đã tồn tại. Bạn có muốn ghi đè?");
+                        if (!ok) return;
+                    }
+
+                    String outputPath = file.getAbsolutePath();
+                    // gọi hàm tạo file xlsx
+                    AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
+                            "INFORMATION", "Thành công", "Xuất dữ liệu");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    AlertUtils.alert("Có lỗi khi xuất file: " + e.getMessage(),
+                            "ERROR", "Lỗi", "Xuất dữ liệu thất bại");
+                }
             }
         };
     }

@@ -440,7 +440,6 @@ public class ProductDetailScreen extends VBox{
         return new TextFlow(titleText, valueText);
     }
 
-
     private Label createStyledLabel(String text) {
         Label label = new Label(text);
         label.setStyle("-fx-font-size: 15px; -fx-text-fill: #333333;");

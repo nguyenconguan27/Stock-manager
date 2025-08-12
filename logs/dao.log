@@ -1276,3 +1276,338 @@ limit 5;
 2025-08-12 13:21:34.093 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
 2025-08-12 13:21:34.093 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
 2025-08-12 13:21:34.093 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-12 13:22:57.261 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-12 13:22:57.263 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-12 13:22:57.567 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-12 13:22:57.567 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-12 13:22:58.317 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-12 13:22:58.317 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-12 13:22:58.318 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-12 13:22:58.318 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-12 13:23:05.952 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-12 13:23:05.952 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-12 13:23:05.954 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ExportPriceDaoImpl - Start query of database with sql: WITH latest_export AS (
+    SELECT ep.*
+    FROM export_price ep
+    INNER JOIN (
+        SELECT product_id, MAX(export_time) AS latest_time
+        FROM export_price
+        WHERE quantity_imported != 0
+        GROUP BY product_id
+    ) latest ON ep.product_id = latest.product_id AND ep.export_time = latest.latest_time
+)
+SELECT ep.export_time, p.code AS code, p.name as name, ep.export_price
+FROM latest_export ep
+LEFT JOIN product p ON p.id = ep.product_id
+LEFT JOIN product_group pg ON p.group_id = pg.id
+WHERE pg.id = ?
+ORDER BY ep.export_price DESC
+LIMIT 1;
+2025-08-12 13:23:05.954 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ExportPriceDaoImpl - Start query of database with params: 1754735352081
+2025-08-12 13:23:05.964 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ExportPriceDaoImpl - Start query of database with sql: WITH latest_export AS (
+    SELECT ep.*
+    FROM export_price ep
+    INNER JOIN (
+        SELECT product_id, max(export_time) AS latest_time
+        FROM export_price
+        WHERE quantity_imported != 0
+        GROUP BY product_id
+    ) latest ON ep.product_id = latest.product_id AND ep.export_time = latest.latest_time
+)
+SELECT ep.export_time, p.code AS code, p.name as name, ep.export_price
+FROM latest_export ep
+LEFT JOIN product p ON p.id = ep.product_id
+LEFT JOIN product_group pg ON p.group_id = pg.id
+WHERE pg.id = 1
+ORDER BY ep.export_price
+LIMIT 1;
+2025-08-12 13:23:05.965 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ExportPriceDaoImpl - Start query of database with params: 1754735352081
+2025-08-12 13:23:05.985 [JavaFX Application Thread] ERROR c.m.s.m.dao.impl.ExportPriceDaoImpl - Error while setting parameters: Invalid value "1" for parameter "parameterIndex" [90008-222]
+org.h2.jdbc.JdbcSQLDataException: Invalid value "1" for parameter "parameterIndex" [90008-222]
+	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:658)
+	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at com.h2database@2.2.222/org.h2.message.DbException.get(DbException.java:223)
+	at com.h2database@2.2.222/org.h2.message.DbException.getInvalidValueException(DbException.java:298)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcPreparedStatement.setParameter(JdbcPreparedStatement.java:1408)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcPreparedStatement.setLong(JdbcPreparedStatement.java:691)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.dao.impl.AbstractDao.setParams(AbstractDao.java:53)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.dao.impl.AbstractDao.query(AbstractDao.java:94)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.dao.impl.ExportPriceDaoImpl.findProductHaveMinPriceByGroup(ExportPriceDaoImpl.java:178)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.service.impl.ExportPriceServiceImpl.findProductHaveMinPriceByGroup(ExportPriceServiceImpl.java:81)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.product.productDetail.ProductDetailPresenter.findMinExportPriceByGroup(ProductDetailPresenter.java:60)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.product.productDetail.ProductDetailScreen.createStatisticProductByGroup(ProductDetailScreen.java:338)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.product.productDetail.ProductDetailScreen.lambda$detailForm$3(ProductDetailScreen.java:113)
+	at javafx.base/com.sun.javafx.collections.ListListenerHelper$Generic.fireValueChangedEvent(ListListenerHelper.java:329)
+	at javafx.base/com.sun.javafx.collections.ListListenerHelper.fireValueChangedEvent(ListListenerHelper.java:73)
+	at javafx.base/javafx.collections.ObservableListBase.fireChange(ObservableListBase.java:239)
+	at javafx.base/javafx.collections.ListChangeBuilder.commit(ListChangeBuilder.java:482)
+	at javafx.base/javafx.collections.ListChangeBuilder.endChange(ListChangeBuilder.java:541)
+	at javafx.base/javafx.collections.ObservableListBase.endChange(ObservableListBase.java:211)
+	at javafx.base/javafx.collections.ModifiableObservableListBase.addAll(ModifiableObservableListBase.java:109)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.product.productDetail.ProductDetailScreen.showProduct(ProductDetailScreen.java:507)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.product.productList.ProductScreen.lambda$initHeader$2(ProductScreen.java:108)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:234)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:191)
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:49)
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198)
+	at javafx.graphics/javafx.scene.Node.fireEvent(Node.java:8792)
+	at javafx.controls/javafx.scene.control.Button.fire(Button.java:203)
+	at javafx.controls/com.sun.javafx.scene.control.behavior.ButtonBehavior.mouseReleased(ButtonBehavior.java:208)
+	at javafx.controls/com.sun.javafx.scene.control.inputmap.InputMap.handle(InputMap.java:274)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler$NormalEventHandlerRecord.handleBubblingEvent(CompositeEventHandler.java:247)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:80)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:234)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:191)
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54)
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Scene.java:3897)
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Scene.java:1878)
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Scene.java:2623)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:411)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:301)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(GlassViewEventHandler.java:450)
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:424)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(GlassViewEventHandler.java:449)
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(View.java:557)
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(View.java:943)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:184)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+2025-08-12 13:23:05.988 [JavaFX Application Thread] DEBUG c.m.s.m.d.i.InventoryDetailDaoImpl - Start query of database with sql: select id.product_id, p.name as name, p.code as code, id.quantity as quantity from inventory_detail id 
+left join product p 
+on p.id = id.product_id 
+left join product_group pg 
+on pg.id = p.group_id 
+where pg.id = ? and id.academic_year = ?
+order by id.quantity 
+limit 5;
+2025-08-12 13:23:05.988 [JavaFX Application Thread] DEBUG c.m.s.m.d.i.InventoryDetailDaoImpl - Start query of database with params: 1754735352081
+2025-08-12 13:23:05.990 [JavaFX Application Thread] DEBUG c.m.s.m.d.i.InventoryDetailDaoImpl - Start query of database with sql: select id.product_id, p.name as name, p.code as code, id.quantity as quantity from inventory_detail id 
+left join product p 
+on p.id = id.product_id 
+left join product_group pg 
+on pg.id = p.group_id 
+where pg.id = ? and id.academic_year = ?
+order by id.quantity 
+limit 5;
+2025-08-12 13:23:05.990 [JavaFX Application Thread] DEBUG c.m.s.m.d.i.InventoryDetailDaoImpl - Start query of database with params: 1754735352081
+2025-08-12 13:23:05.993 [JavaFX Application Thread] DEBUG c.m.s.m.d.i.InventoryDetailDaoImpl - Start query of database with sql: select id.product_id as pId, p.name as name, p.code as code, id.quantity as quantity from inventory_detail id 
+left join product p 
+on p.id = id.product_id 
+left join product_group pg 
+on pg.id = p.group_id 
+where pg.id = ? and id.academic_year = ?
+order by id.quantity desc 
+limit 5;
+2025-08-12 13:23:05.993 [JavaFX Application Thread] DEBUG c.m.s.m.d.i.InventoryDetailDaoImpl - Start query of database with params: 1754735352081
+2025-08-12 13:23:05.995 [JavaFX Application Thread] DEBUG c.m.s.m.d.i.InventoryDetailDaoImpl - Start query of database with sql: select id.product_id as pId, p.name as name, p.code as code, id.quantity as quantity from inventory_detail id 
+left join product p 
+on p.id = id.product_id 
+left join product_group pg 
+on pg.id = p.group_id 
+where pg.id = ? and id.academic_year = ?
+order by id.quantity desc 
+limit 5;
+2025-08-12 13:23:05.995 [JavaFX Application Thread] DEBUG c.m.s.m.d.i.InventoryDetailDaoImpl - Start query of database with params: 1754735352081
+2025-08-12 13:23:07.431 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-12 13:23:07.431 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-12 13:23:07.431 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-12 13:23:07.431 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-12 13:24:02.998 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with sql: select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir 
+join import_receipt_detail ird on
+ir.id = ird.import_receipt_id
+where ir.academic_year = ? 
+group by ir.id ;
+2025-08-12 13:24:02.998 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 13:24:04.155 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ExportReceiptDaoImpl - Start query of database with sql: SELECT er.*, sum(ep.export_price * erd.actual_quantity) as total_price_receipt from export_receipt er 
+join export_receipt_detail erd on
+er.id = erd.export_receipt_id 
+join export_price ep on
+ep.id = erd.export_price_id 
+where er.academic_year = ?
+group by er.id;
+2025-08-12 13:24:04.155 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ExportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 13:24:04.955 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with sql: select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir 
+join import_receipt_detail ird on
+ir.id = ird.import_receipt_id
+where ir.academic_year = ? 
+group by ir.id ;
+2025-08-12 13:24:04.955 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 13:24:06.328 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-12 13:24:06.328 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-12 13:24:06.329 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-12 13:24:06.329 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-12 13:24:07.866 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with sql: select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir 
+join import_receipt_detail ird on
+ir.id = ird.import_receipt_id
+where ir.academic_year = ? 
+group by ir.id ;
+2025-08-12 13:24:07.866 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 13:24:08.562 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-12 13:24:08.562 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-12 13:24:08.562 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-12 13:24:08.562 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-12 13:24:09.247 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ExportReceiptDaoImpl - Start query of database with sql: SELECT er.*, sum(ep.export_price * erd.actual_quantity) as total_price_receipt from export_receipt er 
+join export_receipt_detail erd on
+er.id = erd.export_receipt_id 
+join export_price ep on
+ep.id = erd.export_price_id 
+where er.academic_year = ?
+group by er.id;
+2025-08-12 13:24:09.247 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ExportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 13:24:09.831 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with sql: select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir 
+join import_receipt_detail ird on
+ir.id = ird.import_receipt_id
+where ir.academic_year = ? 
+group by ir.id ;
+2025-08-12 13:24:09.831 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 13:24:10.313 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ExportReceiptDaoImpl - Start query of database with sql: SELECT er.*, sum(ep.export_price * erd.actual_quantity) as total_price_receipt from export_receipt er 
+join export_receipt_detail erd on
+er.id = erd.export_receipt_id 
+join export_price ep on
+ep.id = erd.export_price_id 
+where er.academic_year = ?
+group by er.id;
+2025-08-12 13:24:10.314 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ExportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 13:24:10.746 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with sql: select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir 
+join import_receipt_detail ird on
+ir.id = ird.import_receipt_id
+where ir.academic_year = ? 
+group by ir.id ;
+2025-08-12 13:24:10.746 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 13:24:11.587 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-12 13:24:11.587 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-12 13:24:11.587 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-12 13:24:11.587 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-12 13:24:12.537 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with sql: select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir 
+join import_receipt_detail ird on
+ir.id = ird.import_receipt_id
+where ir.academic_year = ? 
+group by ir.id ;
+2025-08-12 13:24:12.537 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 13:24:12.841 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ExportReceiptDaoImpl - Start query of database with sql: SELECT er.*, sum(ep.export_price * erd.actual_quantity) as total_price_receipt from export_receipt er 
+join export_receipt_detail erd on
+er.id = erd.export_receipt_id 
+join export_price ep on
+ep.id = erd.export_price_id 
+where er.academic_year = ?
+group by er.id;
+2025-08-12 13:24:12.841 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ExportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 13:24:13.313 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with sql: select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir 
+join import_receipt_detail ird on
+ir.id = ird.import_receipt_id
+where ir.academic_year = ? 
+group by ir.id ;
+2025-08-12 13:24:13.313 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 13:24:13.860 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-12 13:24:13.860 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-12 13:24:13.861 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-12 13:24:13.861 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-12 13:24:14.561 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with sql: select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir 
+join import_receipt_detail ird on
+ir.id = ird.import_receipt_id
+where ir.academic_year = ? 
+group by ir.id ;
+2025-08-12 13:24:14.561 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 13:24:14.840 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ExportReceiptDaoImpl - Start query of database with sql: SELECT er.*, sum(ep.export_price * erd.actual_quantity) as total_price_receipt from export_receipt er 
+join export_receipt_detail erd on
+er.id = erd.export_receipt_id 
+join export_price ep on
+ep.id = erd.export_price_id 
+where er.academic_year = ?
+group by er.id;
+2025-08-12 13:24:14.840 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ExportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 13:24:15.126 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with sql: select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir 
+join import_receipt_detail ird on
+ir.id = ird.import_receipt_id
+where ir.academic_year = ? 
+group by ir.id ;
+2025-08-12 13:24:15.127 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 13:24:15.618 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-12 13:24:15.619 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-12 13:24:15.619 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-12 13:24:15.619 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-12 13:24:16.184 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with sql: select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir 
+join import_receipt_detail ird on
+ir.id = ird.import_receipt_id
+where ir.academic_year = ? 
+group by ir.id ;
+2025-08-12 13:24:16.185 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 13:24:16.442 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ExportReceiptDaoImpl - Start query of database with sql: SELECT er.*, sum(ep.export_price * erd.actual_quantity) as total_price_receipt from export_receipt er 
+join export_receipt_detail erd on
+er.id = erd.export_receipt_id 
+join export_price ep on
+ep.id = erd.export_price_id 
+where er.academic_year = ?
+group by er.id;
+2025-08-12 13:24:16.442 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ExportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 13:24:16.741 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with sql: select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir 
+join import_receipt_detail ird on
+ir.id = ird.import_receipt_id
+where ir.academic_year = ? 
+group by ir.id ;
+2025-08-12 13:24:16.741 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 13:24:17.228 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-12 13:24:17.228 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-12 13:24:17.229 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-12 13:24:17.229 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-12 13:24:17.798 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with sql: select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir 
+join import_receipt_detail ird on
+ir.id = ird.import_receipt_id
+where ir.academic_year = ? 
+group by ir.id ;
+2025-08-12 13:24:17.799 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 13:24:18.057 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ExportReceiptDaoImpl - Start query of database with sql: SELECT er.*, sum(ep.export_price * erd.actual_quantity) as total_price_receipt from export_receipt er 
+join export_receipt_detail erd on
+er.id = erd.export_receipt_id 
+join export_price ep on
+ep.id = erd.export_price_id 
+where er.academic_year = ?
+group by er.id;
+2025-08-12 13:24:18.057 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ExportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 14:54:06.056 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-12 14:54:06.058 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-12 14:54:06.309 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-12 14:54:06.310 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-12 14:54:06.856 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-12 14:54:06.856 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-12 14:54:06.856 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-12 14:54:06.856 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-12 14:54:10.938 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with sql: select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir 
+join import_receipt_detail ird on
+ir.id = ird.import_receipt_id
+where ir.academic_year = ? 
+group by ir.id ;
+2025-08-12 14:54:10.938 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with params: 2025
+2025-08-12 14:55:14.190 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-12 14:55:14.191 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-12 14:55:14.426 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-12 14:55:14.426 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-12 14:55:15.059 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with sql: select p.id, p.code, p.name, p.group_id from product as p
+2025-08-12 14:55:15.059 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductDao - Start query of database with params: {}
+2025-08-12 14:55:15.060 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with sql: SELECT * FROM product_group
+2025-08-12 14:55:15.060 [JavaFX Application Thread] DEBUG c.m.s.m.dao.impl.ProductGroupDao - Start query of database with params: {}
+2025-08-12 14:55:16.979 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with sql: select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir 
+join import_receipt_detail ird on
+ir.id = ird.import_receipt_id
+where ir.academic_year = ? 
+group by ir.id ;
+2025-08-12 14:55:16.979 [JavaFX Application Thread] DEBUG c.m.s.m.d.impl.ImportReceiptDaoImpl - Start query of database with params: 2025

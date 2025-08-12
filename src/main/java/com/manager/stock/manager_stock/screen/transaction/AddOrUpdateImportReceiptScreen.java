@@ -397,10 +397,10 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 AlertUtils.alert("Vui lòng nhập số hóa đơn.", "WARNING", "Cảnh báo", "Thiếu thông tin");
                 return;
             }
-            if(deliveredBy.isEmpty()) {AlertUtils.alert("Vui lòng nhập người giao hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
+//            if(deliveredBy.isEmpty()) {AlertUtils.alert("Vui lòng nhập người giao hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
             if(invoice.isEmpty()) {AlertUtils.alert("Vui lòng nhập mã hóa đơn.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
-            if(companyName.isEmpty()) {AlertUtils.alert("Vui lòng nhập tên công ty.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
-            if(wareHouseName.isEmpty()) {AlertUtils.alert("Vui lòng nhập kho.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
+//            if(companyName.isEmpty()) {AlertUtils.alert("Vui lòng nhập tên công ty.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
+//            if(wareHouseName.isEmpty()) {AlertUtils.alert("Vui lòng nhập kho.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
             ImportReceiptModel importReceiptModel = new ImportReceiptModel(
                     oldImportReceiptModelTable != null ? oldImportReceiptModelTable.getId() : null,
                     invoiceNumber,
