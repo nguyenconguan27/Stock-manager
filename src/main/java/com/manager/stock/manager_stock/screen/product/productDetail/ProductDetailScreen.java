@@ -6,6 +6,8 @@ import com.manager.stock.manager_stock.model.ProductGroup;
 import com.manager.stock.manager_stock.model.ProductModel;
 import com.manager.stock.manager_stock.model.dto.ExportPriceAndProductCodeAndProductName;
 import com.manager.stock.manager_stock.model.dto.ProductIdAndCodeAndNameAndQuantityInStock;
+import com.manager.stock.manager_stock.screen.ScreenNavigator;
+import com.manager.stock.manager_stock.screen.product.productList.ProductScreen;
 import com.manager.stock.manager_stock.screen.productGroup.ProductGroupPresenter;
 import com.manager.stock.manager_stock.utils.AddCssStyleForBtnUtil;
 import com.manager.stock.manager_stock.utils.AlertUtils;
@@ -47,7 +49,7 @@ public class ProductDetailScreen extends VBox{
     private ObservableList<ProductModel> productDatas;
     private VBox statisticWrapper = new VBox();
 
-    TextField tfId, tfQuantity, tfName, tfUnit, tfUniPrice, tfTotal;
+    TextField tfId, tfQuantity, tfName, tfUnit, tfUnitPrice, tfTotal;
     Button btnSave, btnCancel;
 
     private void initProductGroup() {
@@ -205,10 +207,10 @@ public class ProductDetailScreen extends VBox{
 
         Label labelUnitPrice = new Label("Đơn giá xuất *");
         labelUnitPrice.setStyle(labelStyle);
-        tfUniPrice = new TextField();
-        tfUniPrice.setStyle(inputStyle);
+        tfUnitPrice = new TextField();
+        tfUnitPrice.setStyle(inputStyle);
         rightForm.add(labelUnitPrice, 0, 1);
-        rightForm.add(tfUniPrice, 1, 1);
+        rightForm.add(tfUnitPrice, 1, 1);
 
         Label labelTotal = new Label("Thành tiền *");
         labelTotal.setStyle(labelStyle);
@@ -219,7 +221,7 @@ public class ProductDetailScreen extends VBox{
         tfQuantity.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
                 int newQuantity = newValue.isEmpty() ? 0 : Integer.parseInt(newValue.trim());
-                double unitPrice = tfUniPrice.getText().isEmpty() ? 0 : Double.parseDouble(tfUniPrice.getText().trim());
+                double unitPrice = tfUnitPrice.getText().isEmpty() ? 0 : Double.parseDouble(tfUnitPrice.getText().trim());
 
                 double totalPrice = newQuantity * unitPrice;
                 tfTotal.setText(FormatMoney.format(totalPrice));
@@ -227,10 +229,11 @@ public class ProductDetailScreen extends VBox{
             catch (NumberFormatException e) {
                 AlertUtils.alert("Vui lòng nhập số lượng là số nguyên dương", "WARNING",
                         "Cảnh báo", "Cảnh báo");
+                tfQuantity.setText("0");
             }
         });
 
-        tfUniPrice.textProperty().addListener((observable, oldValue, newValue) -> {
+        tfUnitPrice.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
                 double newUnitPrice = newValue.isEmpty() ? 0 : Double.parseDouble(newValue.trim());
                 int quantity = tfQuantity.getText().isEmpty() ? 0 : Integer.parseInt(tfQuantity.getText().trim());
@@ -241,6 +244,7 @@ public class ProductDetailScreen extends VBox{
             catch (NumberFormatException e) {
                 AlertUtils.alert("Vui lòng nhập đơn giá là số", "WARNING",
                         "Cảnh báo", "Cảnh báo");
+                tfUnitPrice.setText("0");
             }
         });
 
@@ -270,7 +274,7 @@ public class ProductDetailScreen extends VBox{
             newProduct.setName(tfName.getText());
             newProduct.setQuantity(Integer.parseInt(tfQuantity.getText()));
             newProduct.setUnit(tfUnit.getText());
-            newProduct.setUnitPrice(Integer.parseInt(tfUniPrice.getText()));
+            newProduct.setUnitPrice(Integer.parseInt(tfUnitPrice.getText()));
             newProduct.setQuantity(Integer.parseInt(tfQuantity.getText()));
             newProduct.setGroupId(comboBox.getSelectionModel().getSelectedItem().getId());
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -302,7 +306,11 @@ public class ProductDetailScreen extends VBox{
 
         btnCancel = new Button("Cancel");
         AddCssStyleForBtnUtil.addCssStyleForBtn(btnCancel);
-        btnCancel.setOnAction(event -> {});
+        btnCancel.setOnAction(event -> {
+            ProductScreen productScreen = new ProductScreen();
+            productScreen.showProducts();
+            ScreenNavigator.navigateTo(productScreen);
+        });
     }
 
     private ScrollPane createStatisticProductByGroup() {
@@ -516,7 +524,7 @@ public class ProductDetailScreen extends VBox{
         tfName.setText(productData.getName());
         tfQuantity.setText(productData.getQuantity() + "");
         tfUnit.setText(productData.getUnit());
-        tfUniPrice.setText(currencyFormat.format(productData.getUnitPrice()) + "");
+        tfUnitPrice.setText(currencyFormat.format(productData.getUnitPrice()) + "");
         tfTotal.setText(currencyFormat.format(productData.getUnitPrice() * productData.getQuantity())+ "");
     }
 }
