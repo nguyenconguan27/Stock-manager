@@ -9,10 +9,12 @@ import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
 import com.manager.stock.manager_stock.model.ImportReceiptModel;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptDetailModelTable;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptModelTable;
+import com.manager.stock.manager_stock.reportservice.ExportAll;
 import com.manager.stock.manager_stock.reportservice.ReceiptReportService;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter;
 import com.manager.stock.manager_stock.utils.AlertUtils;
+import com.manager.stock.manager_stock.utils.ChoosesFolderOutput;
 import com.manager.stock.manager_stock.utils.CreateColumnTableUtil;
 import com.manager.stock.manager_stock.utils.GenericConverterBetweenModelAndTableData;
 import javafx.collections.FXCollections;
@@ -230,39 +232,25 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
             @Override
             public void onExport() {
                 try {
-                    // 1) Mở hộp thoại chọn nơi lưu + tên file
-                    FileChooser fc = new FileChooser();
-                    fc.setTitle("Chọn nơi lưu file xuất");
-                    fc.getExtensionFilters().add(
-                            new FileChooser.ExtensionFilter("Excel Workbook (*.xlsx)", "*.xlsx")
-                    );
-                    fc.setInitialFileName("phieu_nhap_" + java.time.LocalDate.now() + ".xlsx");
-
-                    // Lấy cửa sổ hiện hành làm owner an toàn
-                    javafx.stage.Window owner = null;
-                    for (javafx.stage.Window w : javafx.stage.Window.getWindows()) {
-                        if (w.isShowing()) { owner = w; break; }
-                    }
-
-                    File file = fc.showSaveDialog(owner);
-                    if (file == null) {
-                        return;
-                    }
-
-                    // Đảm bảo có phần mở rộng .xlsx nếu người dùng không gõ
-                    String path = file.getAbsolutePath();
-                    if (!path.toLowerCase().endsWith(".xlsx")) {
-                        file = new File(path + ".xlsx");
-                    }
-
-                    // 2) Hỏi ghi đè nếu file đã tồn tại
-                    if (file.exists()) {
-                        boolean ok = AlertUtils.confirm("File đã tồn tại. Bạn có muốn ghi đè?");
-                        if (!ok) return;
-                    }
-
+                    File file = ChoosesFolderOutput.choosesFolderFile("Phieu_nhap");
                     String outputPath = file.getAbsolutePath();
                     ReceiptReportService.printAllImportReceipt(outputPath, 2025);
+                    // gọi hàm tạo file xlsx
+                    AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
+                            "INFORMATION", "Thành công", "Xuất dữ liệu");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    AlertUtils.alert("Có lỗi khi xuất file: " + e.getMessage(),
+                            "ERROR", "Lỗi", "Xuất dữ liệu thất bại");
+                }
+            }
+
+            @Override
+            public void onExportAll() {
+                try {
+                    File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
+                    String outputPath = file.getAbsolutePath();
+                    ExportAll.exportTotal(outputPath);
                     // gọi hàm tạo file xlsx
                     AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
                             "INFORMATION", "Thành công", "Xuất dữ liệu");

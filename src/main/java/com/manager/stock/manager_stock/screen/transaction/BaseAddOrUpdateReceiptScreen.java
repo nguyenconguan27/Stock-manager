@@ -3,6 +3,10 @@ package com.manager.stock.manager_stock.screen.transaction;
 import com.browniebytes.javafx.control.DateTimePicker;
 import com.manager.stock.manager_stock.interfaceActionHandler.TopBarActionHandler;
 import com.manager.stock.manager_stock.model.ProductModel;
+import com.manager.stock.manager_stock.reportservice.ExportAll;
+import com.manager.stock.manager_stock.reportservice.ReceiptReportService;
+import com.manager.stock.manager_stock.utils.AlertUtils;
+import com.manager.stock.manager_stock.utils.ChoosesFolderOutput;
 import com.manager.stock.manager_stock.utils.CreateTopBarOfReceiptUtil;
 import com.manager.stock.manager_stock.utils.FormatMoney;
 import javafx.collections.FXCollections;
@@ -14,6 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.io.File;
 import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -68,6 +73,22 @@ public abstract class BaseAddOrUpdateReceiptScreen<T, D> extends VBox {
             @Override
             public void onExport() {
 
+            }
+
+            @Override
+            public void onExportAll() {
+                try {
+                    File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
+                    String outputPath = file.getAbsolutePath();
+                    ExportAll.exportTotal(outputPath);
+                    // gọi hàm tạo file xlsx
+                    AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
+                            "INFORMATION", "Thành công", "Xuất dữ liệu");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    AlertUtils.alert("Có lỗi khi xuất file: " + e.getMessage(),
+                            "ERROR", "Lỗi", "Xuất dữ liệu thất bại");
+                }
             }
         });
 

@@ -6,35 +6,29 @@ import com.manager.stock.manager_stock.model.ProductGroup;
 import com.manager.stock.manager_stock.model.ProductModel;
 import com.manager.stock.manager_stock.model.dto.ExportPriceAndProductCodeAndProductName;
 import com.manager.stock.manager_stock.model.dto.ProductIdAndCodeAndNameAndQuantityInStock;
+import com.manager.stock.manager_stock.reportservice.ExportAll;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.product.productList.ProductScreen;
 import com.manager.stock.manager_stock.screen.productGroup.ProductGroupPresenter;
-import com.manager.stock.manager_stock.utils.AddCssStyleForBtnUtil;
-import com.manager.stock.manager_stock.utils.AlertUtils;
-import com.manager.stock.manager_stock.utils.CreateTopBarOfReceiptUtil;
-import com.manager.stock.manager_stock.utils.FormatMoney;
+import com.manager.stock.manager_stock.utils.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
+import javafx.scene.text.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ProductDetailScreen extends VBox{
+public class ProductDetailScreen extends VBox {
 
     private final Logger logger = LoggerFactory.getLogger(ProductDetailScreen.class);
     final ProductDetailPresenter productDetailPresenter;
@@ -342,18 +336,18 @@ public class ProductDetailScreen extends VBox{
         List<ProductIdAndCodeAndNameAndQuantityInStock> maxQuantityInStock;
 
         try {
-            productHaveMaxExportPrice = productDetailPresenter.findMaxExportPriceByGroup(productGroupSelected.getId());
-            productHaveMinExportPrice = productDetailPresenter.findMinExportPriceByGroup(productGroupSelected.getId());
-            lowStockProducts = productDetailPresenter.findListProductHaveMinQuantityInStockByGroup(productGroupSelected.getId());
-            maxQuantityInStock = productDetailPresenter.findListProductHaveMaxQuantityInStockByGroup(productGroupSelected.getId());
+            productHaveMaxExportPrice = productGroupSelected == null ? new ExportPriceAndProductCodeAndProductName(0.0, "UNKNOWN", "UNKNOWN") : productDetailPresenter.findMaxExportPriceByGroup(productGroupSelected.getId());
+            productHaveMinExportPrice = productGroupSelected == null ? new ExportPriceAndProductCodeAndProductName(0.0, "UNKNOWN", "UNKNOWN") : productDetailPresenter.findMinExportPriceByGroup(productGroupSelected.getId());
+            lowStockProducts = productGroupSelected == null ? new ArrayList<>() : productDetailPresenter.findListProductHaveMinQuantityInStockByGroup(productGroupSelected.getId());
+            maxQuantityInStock = productGroupSelected == null ? new ArrayList<>() : productDetailPresenter.findListProductHaveMaxQuantityInStockByGroup(productGroupSelected.getId());
         } catch (DaoException e) {
             AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi", "Lỗi khi thống kê");
-            return new ScrollPane(); // tránh lỗi NullPointerException
+            return new ScrollPane();
         }
 
         VBox leftColumn = new VBox(15);
         leftColumn.getChildren().addAll(
-                createStyledInfo("• Nhóm sản phẩm hiện tại: ", productGroupSelected.getName()),
+                createStyledInfo("• Nhóm sản phẩm hiện tại: ", productGroupSelected == null ? "UNKNOWN" : productGroupSelected.getName()),
                 createStyledInfo("• Tổng số sản phẩm: ", totalProducts + " sản phẩm"),
                 createStyledInfo(
                         "• Giá cao nhất: ",
@@ -421,13 +415,10 @@ public class ProductDetailScreen extends VBox{
         content.setStyle(
                 "-fx-background-color: #e0f2f7;" +
                         "-fx-border-color: #c0e0eb;" +
-//                        "-fx-border-width: 1;" +
-//                        "-fx-border-radius: 10;" +
                         "-fx-background-radius: 10;"
-//                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.03), 4, 0, 1, 1);"
         );
-        VBox.setVgrow(columns, Priority.ALWAYS);      // Cho phần columns co giãn
-        VBox.setVgrow(content, Priority.ALWAYS);      // Cho VBox chính co giãn
+        VBox.setVgrow(columns, Priority.ALWAYS);
+        VBox.setVgrow(content, Priority.ALWAYS);
 
         ScrollPane scrollPane = new ScrollPane(content);
         scrollPane.setFitToWidth(true);
@@ -500,12 +491,33 @@ public class ProductDetailScreen extends VBox{
             public void onExport() {
 
             }
+
+            @Override
+            public void onExportAll() {
+                try {
+                    File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
+                    String outputPath = file.getAbsolutePath();
+                    ExportAll.exportTotal(outputPath);
+                    // gọi hàm tạo file xlsx
+                    AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
+                            "INFORMATION", "Thành công", "Xuất dữ liệu");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    AlertUtils.alert("Có lỗi khi xuất file: " + e.getMessage(),
+                            "ERROR", "Lỗi", "Xuất dữ liệu thất bại");
+                }
+            }
         });
         VBox.setVgrow(this, Priority.ALWAYS);
         this.setStyle("-fx-background-color: #e0f2f7;");
         HBox actionRow = new HBox(10);
         actionRow.getChildren().addAll(btnSave, btnCancel);
         actionRow.setStyle("-fx-padding: 10; -fx-background-color: #e1f0f7;");
+        ScrollPane newStatisticNodeInit = createStatisticProductByGroup();
+        VBox newStatisticWrapperInit = new VBox(newStatisticNodeInit);
+        newStatisticWrapperInit.setStyle("-fx-background-color: #e6f4fb;");
+        VBox.setVgrow(newStatisticWrapperInit, Priority.ALWAYS);
+        statisticWrapper = newStatisticWrapperInit;
         this.getChildren().addAll(topBar, formDetail, actionRow, statisticWrapper);
     }
 

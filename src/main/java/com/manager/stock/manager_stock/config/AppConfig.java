@@ -14,7 +14,7 @@ public class AppConfig {
      private static final Logger logger = LoggerFactory.getLogger(AppConfig.class);
 
      static {
-         try(InputStream in = AppConfig.class.getResourceAsStream("/com/manager/stock/manager_stock/config.properties");) {
+         try(InputStream in = AppConfig.class.getResourceAsStream("/app/config/file/application.properties")) {
              if(in == null) {
                  System.err.println("config.properties resource not found!");
                  logger.warn("config.properties resource not found!");

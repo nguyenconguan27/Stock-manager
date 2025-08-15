@@ -15,48 +15,24 @@ public class DatasourceInitialize {
     public static Connection INSTANCE;
     private static final ThreadLocal<Connection> threadConnection = new ThreadLocal<>();
 
-//    public static Connection init() throws SQLException {
-//        final String url = AppConfig.getString("db.url");
-//        final Properties props = new Properties();
-//        props.setProperty("user", AppConfig.getString("db.user"));
-//        props.setProperty("password", AppConfig.getString("db.password"));
-//        logger.debug("Start connect to database..., user = {}, password = {}", AppConfig.getString("db.user"), AppConfig.getString("db.password") );
-//        return DriverManager.getConnection(url, props);
-//    }
-
     private static Server webServer = null;
 
     static {
         try {
-            if (webServer == null || !webServer.isRunning(false)) {
-                webServer = Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8083").start();
-            }
+            webServer = Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8083").start();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-//    public static void startConsole() {
-//        try {
-//            if (webServer == null || !webServer.isRunning(false)) {
-//                webServer = Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8083").start();
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     public static Connection init() {
-//        String jdbcUrl = "jdbc:h2:file:D:/data/test;INIT=RUNSCRIPT FROM 'database/create_table.sql'";
         String user = "sa";
         String pass = "1234";
         try {
             File scriptFile = extractSqlToTempFile("/com/manager/stock/manager_stock/database/create_table.sql");
-
             String jdbcUrl = "jdbc:h2:file:D:/data/db;INIT=RUNSCRIPT FROM '" + scriptFile.getAbsolutePath().replace("\\", "/") + "'";
             Class.forName("org.h2.Driver");
             Connection conn = DriverManager.getConnection(jdbcUrl, user, pass);
-//            startConsole();
             return conn;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -70,13 +46,6 @@ public class DatasourceInitialize {
 
     public static Connection getInstance() {
         Connection connection = threadConnection.get();
-//        if(INSTANCE == null) {
-//            try {
-//                INSTANCE = init();
-//            } catch (Exception e) {
-//                logger.error("Faile when connect to db e: {}", e);
-//            }
-//        }
         try {
             if(connection == null || connection.isClosed()) {
                 connection = init();

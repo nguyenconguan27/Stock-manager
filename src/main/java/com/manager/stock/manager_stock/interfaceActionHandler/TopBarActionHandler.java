@@ -10,4 +10,5 @@ public interface TopBarActionHandler {
     void onReload();
     void onPrint();
     void onExport();
+    void onExportAll();
 }

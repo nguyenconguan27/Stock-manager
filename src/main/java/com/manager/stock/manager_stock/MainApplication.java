@@ -39,9 +39,7 @@ public class MainApplication extends Application {
 
     public static void main(String[] args) {
         System.out.println("Starting app .....");
-        CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(() -> {
-            UpfileService.upFile();
-        });
+        CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(UpfileService::upFile);
         completableFuture.thenAccept((Void v) -> {
             System.out.println("Upload file success.");
         });

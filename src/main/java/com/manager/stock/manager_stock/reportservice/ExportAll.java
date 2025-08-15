@@ -1,6 +1,5 @@
 package com.manager.stock.manager_stock.reportservice;
 
-import com.manager.stock.manager_stock.config.AppConfig;
 import com.manager.stock.manager_stock.model.ExportReceiptModel;
 import com.manager.stock.manager_stock.model.ImportReceiptModel;
 import org.apache.poi.ss.usermodel.*;
@@ -8,35 +7,30 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileOutputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-public class Main {
+public class ExportAll {
     static ReportService reportService = new ReportService();
     static int curCol;
-    static List<ExportReceiptModel> exports = reportService.getExport(2025);
-    static List<ImportReceiptModel> imports = reportService.getImport(2025);
-    static List<ReportModel> reportModels = reportService.getData(2025);
+    static List<ExportReceiptModel> exports = reportService.getExport(LocalDate.now().getYear());
+    static List<ImportReceiptModel> imports = reportService.getImport(LocalDate.now().getYear());
+    static List<ReportModel> reportModels = reportService.getData(LocalDate.now().getYear());
     static Workbook workbook = new XSSFWorkbook();
     static Sheet sheet = workbook.createSheet("Export");
     static Map<String, Integer> receiptPosMap = new HashMap<>();
 
 
-    public static void main(String[] args) {
-        long s = System.currentTimeMillis();
+    public static void exportTotal(String pathFile) {
         createTitleRow();
         fillData();
-        try(FileOutputStream fos = new FileOutputStream("export.xlsx")) {
+        try(FileOutputStream fos = new FileOutputStream(pathFile)) {
             workbook.write(fos);
             workbook.close();
         } catch (Exception e) {
         }
-        long e = System.currentTimeMillis();
     }
 
     static void setBorder(int sr, int er, int sc, int ec, CellStyle style) {
