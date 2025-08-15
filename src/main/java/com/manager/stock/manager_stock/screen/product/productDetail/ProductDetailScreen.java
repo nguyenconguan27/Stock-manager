@@ -185,7 +185,7 @@ public class ProductDetailScreen extends VBox{
 
         Label labelQuantity = new Label("Số lượng *");
         labelQuantity.setStyle(labelStyle);
-        tfQuantity = new TextField();
+        tfQuantity = new TextField("0");
         tfQuantity.setStyle(inputStyle);
         leftForm.add(labelQuantity, 0, 2);
         leftForm.add(tfQuantity, 1, 2);
@@ -205,7 +205,7 @@ public class ProductDetailScreen extends VBox{
 
         Label labelUnitPrice = new Label("Đơn giá xuất *");
         labelUnitPrice.setStyle(labelStyle);
-        tfUnitPrice = new TextField();
+        tfUnitPrice = new TextField("0");
         tfUnitPrice.setStyle(inputStyle);
         rightForm.add(labelUnitPrice, 0, 1);
         rightForm.add(tfUnitPrice, 1, 1);
@@ -233,11 +233,14 @@ public class ProductDetailScreen extends VBox{
 
         tfUnitPrice.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
-                double newUnitPrice = newValue.isEmpty() ? 0 : Double.parseDouble(newValue.trim());
+                double newUnitPrice = newValue.isEmpty() ? 0 : Double.parseDouble(newValue
+                        .replaceAll("[^\\d,.-]", "").replace(".", "").replace(",", "."));
                 int quantity = tfQuantity.getText().isEmpty() ? 0 : Integer.parseInt(tfQuantity.getText().trim());
+                System.out.println(newUnitPrice + "==============" + quantity);
 
                 double totalPrice = quantity * newUnitPrice;
                 tfTotal.setText(FormatMoney.format(totalPrice));
+                tfUnitPrice.setText(FormatMoney.format(newUnitPrice));
             }
             catch (NumberFormatException e) {
                 AlertUtils.alert("Vui lòng nhập đơn giá là số", "WARNING",
@@ -528,8 +531,8 @@ public class ProductDetailScreen extends VBox{
         tfName.setText(productData.getName());
         tfQuantity.setText(productData.getQuantity() + "");
         tfUnit.setText(productData.getUnit());
-        tfUnitPrice.setText(currencyFormat.format(productData.getUnitPrice()) + "");
-        tfTotal.setText(currencyFormat.format(productData.getUnitPrice() * productData.getQuantity())+ "");
+        tfUnitPrice.setText(productData.getUnitPrice() + "");
+        tfTotal.setText(FormatMoney.format(productData.getUnitPrice() * productData.getQuantity())+ "");
     }
 
     public static double parseViCurrency(String s) {

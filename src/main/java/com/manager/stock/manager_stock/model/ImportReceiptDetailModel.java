@@ -7,6 +7,7 @@ public class ImportReceiptDetailModel {
     private long id;
     private long importReceiptId;
     private long productId;
+    private String unit;
     private int plannedQuantity;
     private int actualQuantity;
     private double unitPrice;
@@ -84,6 +85,14 @@ public class ImportReceiptDetailModel {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public String getUnit() {
+        return unit;
     }
 
     public String getProductName() {

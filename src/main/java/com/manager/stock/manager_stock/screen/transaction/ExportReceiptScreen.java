@@ -11,6 +11,7 @@ import com.manager.stock.manager_stock.model.ExportReceiptModel;
 import com.manager.stock.manager_stock.model.tableData.ExportReceiptDetailModelTable;
 import com.manager.stock.manager_stock.model.tableData.ExportReceiptModelTable;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptModelTable;
+import com.manager.stock.manager_stock.reportservice.ReceiptReportService;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.transaction.presenter.ExportReceiptPresenter;
 import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter;
@@ -306,6 +307,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
                     }
 
                     String outputPath = file.getAbsolutePath();
+                    ReceiptReportService.printAllExportReceipt(outputPath, 2025);
                     // gọi hàm tạo file xlsx
                     AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
                             "INFORMATION", "Thành công", "Xuất dữ liệu");

@@ -141,7 +141,12 @@ public class AbstractDao<T> implements GenericDao<T> {
 
                 try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
-                        return generatedKeys.getLong(1);
+                        try {
+                            return generatedKeys.getLong(1);
+                        }
+                        catch(Exception e) {
+                            return 1;
+                        }
                     } else {
                         throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
                     }

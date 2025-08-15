@@ -16,6 +16,8 @@ public class ReportService {
     final IImportReceiptDetailService importReceiptDetailService;
     final IInventoryDetailService inventoryDetailService;
 
+    public static ReportService INSTANCE;
+
     public ReportService() {
         this.productGroupService = ProductGroupServiceImpl.getInstance();
         this.importReceiptService = ImportReceiptServiceImpl.getInstance();
@@ -24,6 +26,13 @@ public class ReportService {
         this.exportReceiptDetailService = ExportReceiptDetailServiceImpl.getInstance();
         this.importReceiptDetailService = ImportReceiptDetailServiceImpl.getInstance();
         this.inventoryDetailService = InventoryDetailServiceImpl.getInstance();
+    }
+
+    public static  ReportService getInstance() {
+        if(INSTANCE == null) {
+            INSTANCE = new ReportService();
+        }
+        return INSTANCE;
     }
 
     public List<ImportReceiptModel> getImport(int year) {
@@ -110,5 +119,21 @@ public class ReportService {
             reportModelList.add(reportModel);
         }
         return reportModelList;
+    }
+
+    public List<ImportReceiptModel> getImportDetail(int year) {
+        List<ImportReceiptModel> importList = importReceiptService.findAllByAcademicYear(Optional.of(year));
+        for(ImportReceiptModel importReceipt: importList) {
+            importReceipt.getImportReceiptDetails().addAll(importReceiptDetailService.findAllByImportReceiptId(importReceipt.getId()));
+        }
+        return importList;
+    }
+
+    public List<ExportReceiptModel> getExportDetail(int year) {
+        List<ExportReceiptModel> exportList = exportReceiptService.findAllByAcademicYear(year);
+        for(ExportReceiptModel exportReceipt: exportList) {
+            exportReceipt.getExportReceiptDetailModels().addAll(exportReceiptDetailService.findAllByExportReceipt(exportReceipt.getId()));
+        }
+        return exportList;
     }
 }

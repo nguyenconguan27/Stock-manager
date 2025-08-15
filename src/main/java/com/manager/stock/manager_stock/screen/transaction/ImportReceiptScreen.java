@@ -9,6 +9,7 @@ import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
 import com.manager.stock.manager_stock.model.ImportReceiptModel;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptDetailModelTable;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptModelTable;
+import com.manager.stock.manager_stock.reportservice.ReceiptReportService;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter;
 import com.manager.stock.manager_stock.utils.AlertUtils;
@@ -261,6 +262,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
                     }
 
                     String outputPath = file.getAbsolutePath();
+                    ReceiptReportService.printAllImportReceipt(outputPath, 2025);
                     // gọi hàm tạo file xlsx
                     AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
                             "INFORMATION", "Thành công", "Xuất dữ liệu");

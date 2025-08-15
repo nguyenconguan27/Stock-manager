@@ -31,7 +31,7 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
         String sql = "select\n" +
                 "\terd.*,\n" +
                 "\tp.code as product_code,\n" +
-                "\tp.name as product_name,\n" +
+                "\tp.name as product_name, p.unit,\n" +
                 "\tep.export_price as export_price \n" +
                 "from\n" +
                 "\texport_receipt_detail erd\n" +
@@ -59,10 +59,9 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
 
     @Override
     public List<Long> save(List<ExportReceiptDetailModel> exportReceiptDetailModels, long exportReceiptId) {
-        String sql = "INSERT INTO export_receipt_detail(id, export_receipt_id, product_id, planned_quantity, actual_quantity, export_price_id, original_unit_price) " +
-                    " OVERRIDING SYSTEM VALUE" +
-                    " values(?, ?, ?, ?, ?, ?, ?)" +
-                    " RETURNING *;";
+        String sql = "INSERT INTO export_receipt_detail(id, export_receipt_id, product_id, planned_quantity, actual_quantity, export_price_id) " +
+                " OVERRIDING SYSTEM VALUE" +
+                " values(?, ?, ?, ?, ?, ?);";
         List<Long> ids = new ArrayList<>();
         List<Object[]> parameters = new ArrayList<>();
         for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
@@ -92,14 +91,14 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
     @Override
     public void update(List<ExportReceiptDetailModel> exportReceiptDetailModels) {
         String sql = "UPDATE export_receipt_detail set actual_quantity = ?, message = ?, status = ?" +
-                     " WHERE id = ?";
+                " WHERE id = ?";
         List<Object[]> parameters = new ArrayList<>();
         for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
             parameters.add(new Object[]{
-               exportReceiptDetailModel.getActualQuantity(),
-               exportReceiptDetailModel.getMessage(),
-               exportReceiptDetailModel.getStatus(),
-               exportReceiptDetailModel.getId()
+                    exportReceiptDetailModel.getActualQuantity(),
+                    exportReceiptDetailModel.getMessage(),
+                    exportReceiptDetailModel.getStatus(),
+                    exportReceiptDetailModel.getId()
             });
         }
         save(sql, parameters);

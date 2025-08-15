@@ -1,5 +1,5 @@
-CREATE SCHEMA IF NOT EXISTS stock_manager;
-use stock_manager;
+CREATE SCHEMA IF NOT EXISTS db;
+use db;
 CREATE TABLE IF NOT EXISTS product_group (
                                              id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
                                              name VARCHAR(100) NOT NULL
@@ -62,7 +62,9 @@ CREATE TABLE IF NOT EXISTS export_price (
                                             quantity_imported INT,
                                             total_price_in_stock DOUBLE precision,
                                             total_price_import DOUBLE PRECISION,
-                                            CONSTRAINT fk_export_price_product FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE SET NULL
+                                            import_receipt_id BIGINT,
+                                            CONSTRAINT fk_export_price_product FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE SET NULL,
+    CONSTRAINT fk_import_export_price FOREIGN KEY (import_receipt_id) REFERENCES import_receipt(id) ON DELETE SET null
     );
 
 CREATE TABLE IF NOT EXISTS export_receipt_detail (
@@ -77,7 +79,6 @@ CREATE TABLE IF NOT EXISTS export_receipt_detail (
     CONSTRAINT fk_export_price FOREIGN KEY (export_price_id) REFERENCES export_price(id) ON DELETE SET NULL
     );
 
-
 CREATE TABLE IF NOT EXISTS inventory_detail (
                                                 id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
                                                 product_id BIGINT NOT NULL,
@@ -86,4 +87,12 @@ CREATE TABLE IF NOT EXISTS inventory_detail (
                                                 academic_year INT,
                                                 CONSTRAINT fk_inventory_product FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE SET NULL
     );
+
+CREATE TABLE IF NOT EXISTS UpfileStatus (
+                                            id date PRIMARY KEY ,
+                                            status int
+);
+
+
+
 

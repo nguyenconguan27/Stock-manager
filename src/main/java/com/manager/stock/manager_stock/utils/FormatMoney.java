@@ -25,6 +25,7 @@ public class FormatMoney {
     };
 
     public static String format(double money) {
+        System.out.println(money);
         Locale locale = new Locale("vi", "VN");
         Currency currency = Currency.getInstance("VND");
 
@@ -79,7 +80,7 @@ public class FormatMoney {
                 .trim();
 
         if (groups.length > 0 && Integer.parseInt(groups[0]) == 0) {
-            return resultStr + " đồng chẵn";
+            return resultStr + " đồng";
         }
 
         return resultStr + " đồng";

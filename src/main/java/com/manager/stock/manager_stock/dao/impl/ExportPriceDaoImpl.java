@@ -98,7 +98,7 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
                 "where product_id = ?\n" +
                 "order by export_time desc limit 1;";
         List<ExportPriceIdAndPrice> exportPriceIdAndPrices = query(sql, rs -> new ExportPriceIdAndPrice(
-                rs.getLong("id"), rs.getDouble("export_price")
+                rs.getLong("ID"), rs.getDouble("EXPORT_PRICE")
         ), productId);
         if(!exportPriceIdAndPrices.isEmpty()){
             return exportPriceIdAndPrices.get(0);
@@ -122,8 +122,7 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
         String idsStr = ids.stream().map(Object::toString).collect(Collectors.joining(","));
         String sql = "select export_price, id from export_price where id in (" + idsStr + ") order by id asc";
         return query(sql, rs -> new ExportPriceIdAndPrice(
-                rs.getLong("id"),
-                rs.getDouble("export_price")
+                rs.getLong("ID"), rs.getDouble("EXPORT_PRICE")
         ));
     }
 
@@ -147,9 +146,9 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
                 "ORDER BY ep.export_price DESC\n" +
                 "LIMIT 1;";
         List<ExportPriceAndProductCodeAndProductName> maxPrice = query(sql,
-                rs -> new ExportPriceAndProductCodeAndProductName(rs.getDouble("export_price"),
-                                                                            rs.getString("code"),
-                                                                            rs.getString("name")), productGroupId);
+                rs -> new ExportPriceAndProductCodeAndProductName(rs.getDouble("EXPORT_PRICE"),
+                                                                            rs.getString("CODE"),
+                                                                            rs.getString("NAME")), productGroupId);
         if(maxPrice.isEmpty()){
            return new ExportPriceAndProductCodeAndProductName(0, "UNKNOWN", "UNKNOWN");
         }
@@ -176,9 +175,9 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
                 "ORDER BY ep.export_price\n" +
                 "LIMIT 1;";
         List<ExportPriceAndProductCodeAndProductName> maxPrice = query(sql,
-                rs -> new ExportPriceAndProductCodeAndProductName(rs.getDouble("export_price"),
-                        rs.getString("code"),
-                        rs.getString("name")), productGroupId);
+                rs -> new ExportPriceAndProductCodeAndProductName(rs.getDouble("EXPORT_PRICE"),
+                        rs.getString("CODE"),
+                        rs.getString("NAME")), productGroupId);
         if(maxPrice.isEmpty()){
             return new ExportPriceAndProductCodeAndProductName(0, "UNKNOWN", "UNKNOWN");
         }

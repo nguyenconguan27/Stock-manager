@@ -108,10 +108,10 @@ public class InventoryDetailDaoImpl extends AbstractDao<InventoryDetailModel> im
                 "limit 5;";
         List<ProductIdAndCodeAndNameAndQuantityInStock> fiveProductHaveMaxQuantity = query(sql,
                 rs -> new ProductIdAndCodeAndNameAndQuantityInStock(
-                                rs.getLong("pId"),
-                                rs.getString("code"),
-                                rs.getString("name"),
-                                rs.getInt("quantity")
+                        rs.getLong("PRODUCT_ID"),
+                        rs.getString("CODE"),
+                        rs.getString("NAME"),
+                        rs.getInt("QUANTITY")
                         ), productGroupId, year);
 
         if(fiveProductHaveMaxQuantity.size() < 5){
@@ -120,10 +120,10 @@ public class InventoryDetailDaoImpl extends AbstractDao<InventoryDetailModel> im
                                                     .collect(Collectors.toSet());
             List<ProductIdAndCodeAndNameAndQuantityInStock> fiveProductHaveMaxQuantityPreviousYear = query(sql,
                     rs -> new ProductIdAndCodeAndNameAndQuantityInStock(
-                            rs.getLong("pId"),
-                            rs.getString("code"),
-                            rs.getString("name"),
-                            rs.getInt("quantity")
+                            rs.getLong("PRODUCT_ID"),
+                            rs.getString("CODE"),
+                            rs.getString("NAME"),
+                            rs.getInt("QUANTITY")
                     ), productGroupId, year-1);
             fiveProductHaveMaxQuantity.addAll(fiveProductHaveMaxQuantityPreviousYear
                     .stream()
@@ -148,10 +148,10 @@ public class InventoryDetailDaoImpl extends AbstractDao<InventoryDetailModel> im
                 "limit 5;";
         List<ProductIdAndCodeAndNameAndQuantityInStock> fiveProductHaveMinQuantity = query(sql,
                 rs -> new ProductIdAndCodeAndNameAndQuantityInStock(
-                        rs.getLong("pId"),
-                        rs.getString("code"),
-                        rs.getString("name"),
-                        rs.getInt("quantity")
+                        rs.getLong("PRODUCT_ID"),
+                        rs.getString("CODE"),
+                        rs.getString("NAME"),
+                        rs.getInt("QUANTITY")
                 ), productGroupId, year);
 
         if(fiveProductHaveMinQuantity.size() < 5){
@@ -160,10 +160,10 @@ public class InventoryDetailDaoImpl extends AbstractDao<InventoryDetailModel> im
                     .collect(Collectors.toSet());
             List<ProductIdAndCodeAndNameAndQuantityInStock> fiveProductHaveMaxQuantityPreviousYear = query(sql,
                     rs -> new ProductIdAndCodeAndNameAndQuantityInStock(
-                            rs.getLong("pId"),
-                            rs.getString("code"),
-                            rs.getString("name"),
-                            rs.getInt("quantity")
+                            rs.getLong("PRODUCT_ID"),
+                            rs.getString("CODE"),
+                            rs.getString("NAME"),
+                            rs.getInt("QUANTITY")
                     ), productGroupId, year-1);
             fiveProductHaveMinQuantity.addAll(fiveProductHaveMaxQuantityPreviousYear
                     .stream()
