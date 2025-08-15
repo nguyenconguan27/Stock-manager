@@ -165,10 +165,6 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
         productTable.setPrefHeight(600);
         productTable.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #c1dfee; -fx-border-width: 1px;");
 
-//        productTable.getColumns().forEach(col -> {
-//            col.setResizable(false);
-//        });
-
         VBox box = new VBox(productTable);
         box.setSpacing(0);
         box.setPadding(Insets.EMPTY);

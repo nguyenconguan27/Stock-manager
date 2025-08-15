@@ -30,10 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.NumberFormat;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.text.ParseException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ProductDetailScreen extends VBox{
@@ -245,6 +243,13 @@ public class ProductDetailScreen extends VBox{
                 AlertUtils.alert("Vui lòng nhập đơn giá là số", "WARNING",
                         "Cảnh báo", "Cảnh báo");
                 tfUnitPrice.setText("0");
+            }
+        });
+
+        tfUnitPrice.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
+            if (!isFocused) {
+                double unit = parseViCurrency(tfUnitPrice.getText());
+                tfUnitPrice.setText(FormatMoney.format(unit));
             }
         });
 
@@ -526,4 +531,25 @@ public class ProductDetailScreen extends VBox{
         tfUnitPrice.setText(currencyFormat.format(productData.getUnitPrice()) + "");
         tfTotal.setText(currencyFormat.format(productData.getUnitPrice() * productData.getQuantity())+ "");
     }
+
+    public static double parseViCurrency(String s) {
+        if (s == null || s.isBlank()) return 0;
+        Locale viVN = new Locale("vi", "VN");
+        NumberFormat nf = NumberFormat.getCurrencyInstance(viVN);
+        nf.setCurrency(Currency.getInstance("VND")); // VND không có phần thập phân
+
+        // Nhiều hệ thống chèn NBSP trước ký hiệu tiền tệ: "12.345 ₫"
+        s = s.replace('\u00A0', ' ').trim();
+
+        try {
+            Number n = nf.parse(s);
+            return n.doubleValue();
+        } catch (ParseException e) {
+            // Fallback: loại bỏ mọi ký tự không phải số/dấu âm
+            String digits = s.replaceAll("[^\\d-]", "");
+            if (digits.isEmpty() || "-".equals(digits)) return 0;
+            return Double.parseDouble(digits);
+        }
+    }
+
 }

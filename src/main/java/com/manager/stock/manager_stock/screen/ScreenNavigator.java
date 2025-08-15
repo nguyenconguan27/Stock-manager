@@ -142,10 +142,10 @@ public class ScreenNavigator {
 
         // nền TreeView trong suốt để thấy màu cell
         treeView.setStyle("""
-        -fx-background-color: transparent;
-        -fx-control-inner-background: transparent;
-        -fx-border-color: transparent;
-    """);
+            -fx-background-color: transparent;
+            -fx-control-inner-background: transparent;
+            -fx-border-color: transparent;
+        """);
 
         // ⬇️ Quan trọng: import CSS + gắn class để selector cụ thể
         treeView.getStyleClass().add("sidebar-tree");
