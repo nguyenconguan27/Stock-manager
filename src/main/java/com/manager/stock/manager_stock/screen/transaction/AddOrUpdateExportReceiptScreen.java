@@ -101,7 +101,6 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
 
             // Lấy danh sách receiptDetail
             totalPriceOfReceipt = model.getTotalPrice();
-            System.out.println("Total: " + totalPriceOfReceipt);
             totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
             ExportReceiptPresenter exportReceiptPresenter = ExportReceiptPresenter.getInstance();
             List<ExportReceiptDetailModel> exportReceiptDetailModels = exportReceiptPresenter.findAllExportReceiptDetailByExportReceipt(model.getId());
@@ -288,8 +287,6 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             int newValue = event.getNewValue().intValue();
             int oldValue = row.getActualQuantity();
             int changeQuantity = newValue - oldValue;
-            System.out.println("Số lượng thực tế mới: " + newValue);
-            System.out.println("Số lượng thực tế cũ: " + oldValue);
             double changeTotalPrice = changeQuantity * row.getOriginalUnitPrice();
 
             if(row.getId() != null) {
@@ -300,11 +297,9 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 changeIdsOfReceiptDetails.add(row.getId());
             }
             double newTotal = newValue * row.getOriginalUnitPrice();
-            System.out.println("New total: " + newTotal);
             row.setTotalPrice(newTotal);
             row.setDisplayTotalPriceFormat(FormatMoney.format(newTotal));
             row.actualQuantityProperty().set(event.getNewValue().intValue());
-            System.out.println("Change total price: " + changeTotalPrice);
             totalPriceOfReceipt += changeQuantity * row.getDisplayUnitPrice();
             totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
             productTable.refresh();
@@ -413,7 +408,6 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
 //                if(receiveAddress.isEmpty()) {AlertUtils.alert("Vui lòng nhập địa chỉ nhận hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
 //                if(reason.isEmpty()) {AlertUtils.alert("Vui lòng nhập lý do xuất kho.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
 //                if(wareHouseName.isEmpty()) {AlertUtils.alert("Vui lòng nhập kho xuất hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
-                System.out.println("Total: " + totalPriceOfReceipt);
                 ExportReceiptModel exportReceiptModel = new ExportReceiptModel(
                         receiptModelTable != null ? receiptModelTable.getId() : -1,
                         invoiceNumber,
@@ -434,7 +428,6 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 if(receiptModelTable == null) {
                     // changeQuantityByProductMap: số lượng sản phẩm thay đổi
                     // changeTotalPriceByProductMap: tổng tiền thay đổi
-                    System.out.println("Save import receipt: " + exportReceiptModel);
                     presenter.save(exportReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
                     AlertUtils.alert("Thêm mới phiếu xuất thành công.", "INFORMATION", "Thành công", "Thành công");
                 }
@@ -492,7 +485,6 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         double currentTotalPrice = actualQuantity * unitPrice;
         totalPriceOfReceipt += currentTotalPrice;
         totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
-        System.out.println("Export price id: " + exportPriceId);
         if(productExists != null) {
             int actualQuantityCurrent = productExists.getActualQuantity() + actualQuantity;
             double totalPriceCurrent = productExists.getTotalPrice() + currentTotalPrice;

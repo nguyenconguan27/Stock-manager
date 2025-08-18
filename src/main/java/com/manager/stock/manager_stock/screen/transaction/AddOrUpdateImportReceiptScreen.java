@@ -258,8 +258,6 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
 
             row.setPlannedQuantity(newValue);
 
-            System.out.println("Giá trị cũ: " + oldValue);
-            System.out.println("Giá trị mới: " + newValue);
         });
 
         TableColumn<ImportReceiptDetailModelTable, Number> colActualQty = new TableColumn<>("SL thực tế");
@@ -270,8 +268,6 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             int newValue = event.getNewValue().intValue();
             int oldValue = row.getActualQuantity();
             int changeQuantity = newValue - oldValue;
-            System.out.println("Số lượng thực tế mới: " + newValue);
-            System.out.println("Số lượng thực tế cũ: " + oldValue);
             double changeTotalPrice = changeQuantity * row.getUnitPrice();
 
             if(row.getId() != null) {
@@ -282,11 +278,9 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 changeIdsOfReceiptDetails.add(row.getId());
             }
             double newTotal = newValue * row.getUnitPrice();
-            System.out.println("New total: " + newTotal);
             row.setTotalPrice(newTotal);
             row.setTotalPriceFormat(FormatMoney.format(newTotal));
             row.actualQuantityProperty().set(event.getNewValue().intValue());
-            System.out.println("Change total price: " + changeTotalPrice);
             totalPriceOfReceipt += changeTotalPrice;
             totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
             productTable.refresh();
@@ -315,7 +309,6 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     if(item.getId() != null){
                         int changeQuantityByProduct = changeQuantityByProductMap.getOrDefault(item.getProductId(), 0);
                         changeQuantityByProduct -= item.getActualQuantity();
-                        System.out.println("Remove: " + item.getProductId() + ", quantity: " + changeQuantityByProduct);
                         changeQuantityByProductMap.put(item.getProductId(), changeQuantityByProduct);
                     }
                     getTableView().getItems().remove(item);
@@ -387,7 +380,6 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 return;
             }
             String createAtStr = dateTimePicker.dateTimeProperty().get().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-            System.out.println("Time: " + dateTimePicker.dateTimeProperty().get());
             String invoiceNumber = tfInvoiceNumber.getText().trim();
             String deliveredBy = tfDeliveredBy.getText().trim();
             String invoice = tfInvoice.getText().trim();
@@ -418,7 +410,6 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 return;
             }
             try {
-                System.out.println("Save import receipt: " + importReceiptModel);
                 // thêm mới hóa đơn nhập
                 if(oldImportReceiptModelTable == null) {
                     presenter.saveImportReceipt(importReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);

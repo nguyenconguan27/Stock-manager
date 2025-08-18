@@ -19,6 +19,7 @@ public class DatasourceInitialize {
 
     static {
         try {
+            init();
             webServer = Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8083").start();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -30,7 +31,7 @@ public class DatasourceInitialize {
         String pass = "1234";
         try {
             File scriptFile = extractSqlToTempFile("/com/manager/stock/manager_stock/database/create_table.sql");
-            String jdbcUrl = "jdbc:h2:file:D:/data/db;INIT=RUNSCRIPT FROM '" + scriptFile.getAbsolutePath().replace("\\", "/") + "'";
+            String jdbcUrl = "jdbc:h2:file:C:/data/db;INIT=RUNSCRIPT FROM '" + scriptFile.getAbsolutePath().replace("\\", "/") + "'";
             Class.forName("org.h2.Driver");
             Connection conn = DriverManager.getConnection(jdbcUrl, user, pass);
             return conn;

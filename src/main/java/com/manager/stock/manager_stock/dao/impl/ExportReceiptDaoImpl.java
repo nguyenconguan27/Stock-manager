@@ -39,7 +39,6 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
                     "where erd.product_id in (" + idsStr + ") \n" +
                     "and er.academic_year = ? \n" +
                     "and to_date(er.create_at, '%d/%m/%Y') >= ?";
-        System.out.println(minCreateAt);
         return query(sql, rs -> new ExportReceiptIdAndCreateDate(
                 rs.getLong("ID"),
                 rs.getString("CREATE_AT"),

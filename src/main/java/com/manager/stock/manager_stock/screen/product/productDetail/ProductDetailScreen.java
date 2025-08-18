@@ -230,7 +230,6 @@ public class ProductDetailScreen extends VBox {
                 double newUnitPrice = newValue.isEmpty() ? 0 : Double.parseDouble(newValue
                         .replaceAll("[^\\d,.-]", "").replace(".", "").replace(",", "."));
                 int quantity = tfQuantity.getText().isEmpty() ? 0 : Integer.parseInt(tfQuantity.getText().trim());
-                System.out.println(newUnitPrice + "==============" + quantity);
 
                 double totalPrice = quantity * newUnitPrice;
                 tfTotal.setText(FormatMoney.format(totalPrice));
@@ -326,7 +325,7 @@ public class ProductDetailScreen extends VBox {
         title.setMaxWidth(Double.MAX_VALUE);
 
         List<ProductModel> groupProducts = productDatas.stream()
-                .filter(p -> p.getGroupId() == productGroupSelected.getId())
+                .filter(p -> p.getGroupId() == (productGroupSelected != null ? productGroupSelected.getId() : -1))
                 .collect(Collectors.toList());
         int totalProducts = groupProducts.size();
 
@@ -538,6 +537,7 @@ public class ProductDetailScreen extends VBox {
                 break;
             }
         }
+        productGroupSelected = productGroupPresenter.getById(productData.getGroupId());
         comboBox.getSelectionModel().select(productGroup);
         tfId.setText(productData.getCode());
         tfName.setText(productData.getName());

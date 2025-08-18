@@ -67,7 +67,6 @@ public class ExportReceiptPresenter {
 
     public List<ExportReceiptModel> findAllExportReceipt(Optional<Integer> academicYear) throws DaoException {
         int academicYearValue = academicYear.orElse(Calendar.getInstance().get(Calendar.YEAR));
-        System.out.println("Academic year: " + academicYearValue);
         return exportReceiptService.findAllByAcademicYear(academicYearValue);
     }
 
@@ -89,7 +88,6 @@ public class ExportReceiptPresenter {
                 exportReceiptDetailModelTables, ExportReceiptDetailModelTableMapper.INSTANCE::fromViewModelToModel
         );
         int academicYearValue = getYearOfExportReceipt(exportReceiptModel.getCreateAt());
-        System.out.println("Academic year(save): " + academicYearValue);
         List<Long> productIds = exportReceiptDetailModels.stream().map(ExportReceiptDetailModel::getProductId).collect(Collectors.toList());
         // thêm mới phiếu xuất
         List<Long> exportReceiptDetailIds = new ArrayList<>();
@@ -97,7 +95,6 @@ public class ExportReceiptPresenter {
         try {
             exportReceiptModel.setAcademicYear(academicYearValue);
             exportReceiptId = exportReceiptService.save(exportReceiptModel);
-            System.out.println("Export receipt id : " + exportReceiptId);
             // thêm mới danh sách phiếu xuất chi tiết
             exportReceiptDetailIds = exportReceiptDetailService.save(exportReceiptDetailModels, exportReceiptId);
 
@@ -136,10 +133,8 @@ public class ExportReceiptPresenter {
             // tổng giá thay đổi
             double changeTotalPrice = changeQuantity * exportReceiptDetailModel.getOriginalUnitPrice();
 
-            System.out.println("Tổng tiền thay đổi: " + changeTotalPrice);
             InventoryDetailModel inventoryDetailModel = inventoryDetailByProductAndAcademicYear.getOrDefault(productId, null);
             // trường hợp năm của phiếu xuất chưa từng nhập
-            System.out.println(inventoryDetailModel);
             if(inventoryDetailModel == null) {
                 inventoryDetailModel = inventoryDetailByProductAndPreviousAcademicYear.getOrDefault(productId, null);
                 // trường hợp trong năm trước cũng chưa nhập ==> tạo mới
@@ -298,7 +293,6 @@ public class ExportReceiptPresenter {
             try {
                 return inventoryDetailService.findQuantityInStockByProductIdAndAcademicYear(productId, year);
             } catch (CanNotFoundException e) {
-                System.out.println(String.format("Quantity not found for productId={%d} in academicYear={%d}: {%s}", productId, year, e.getMessage()));
             }
         }
         return 0;
@@ -315,8 +309,7 @@ public class ExportReceiptPresenter {
 //            }
             exportPriceModel.setQuantityInStock(quantityInStock);
             // tính giá xuất mới cho sản phẩm
-            System.out.println(String.format("Giá xuất mới dựa trên tham số: Số lượng trong kho = %d, số lượng nhập = %d, Thành tien trong kho = %f, Thành tiền nhập = %f",
-                    quantityInStock, quantityImported, totalPriceInStock, totalPriceImported));
+
 
             double newUnitPrice = Math.round((totalPriceInStock + totalPriceImported) / (quantityImported + quantityInStock));
             exportPriceModel.setExportPrice(newUnitPrice);

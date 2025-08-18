@@ -1,22 +1,28 @@
 package com.manager.stock.manager_stock.screen.product.productList;
 
+import com.manager.stock.manager_stock.interfaceActionHandler.TopBarActionHandler;
 import com.manager.stock.manager_stock.model.ProductGroup;
 import com.manager.stock.manager_stock.model.ProductModel;
+import com.manager.stock.manager_stock.model.tableData.ExportReceiptModelTable;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.product.productDetail.ProductDetailScreen;
 import com.manager.stock.manager_stock.screen.productGroup.ProductGroupPresenter;
 import com.manager.stock.manager_stock.screen.transaction.ImportReceiptScreen;
+import com.manager.stock.manager_stock.utils.AddCssStyleForBtnUtil;
+import com.manager.stock.manager_stock.utils.CreateTopBarOfReceiptUtil;
 import com.manager.stock.manager_stock.utils.Utils;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.Normalizer;
 import java.util.List;
 
 /**
@@ -28,6 +34,7 @@ public class ProductScreen extends VBox {
     private TableView<ProductModel> table;
     private ComboBox<ProductGroup> comboBox;
     ObservableList<ProductModel> productData = FXCollections.observableArrayList();
+    ObservableList<ProductModel> allData = FXCollections.observableArrayList();
     ObservableList<ProductGroup> productGroupData = FXCollections.observableArrayList();
     TextField tfCode, tfName;
     Pagination pagination;
@@ -40,7 +47,6 @@ public class ProductScreen extends VBox {
     private ProductGroup currentProductGroup;
 
     private void createPagination() {
-        System.out.println(productData.size());
         pagination = new Pagination();
         pagination.setPageFactory(pageIndex -> {
             int fromIndex = pageIndex * itemsPerPage;
@@ -53,6 +59,8 @@ public class ProductScreen extends VBox {
         pagination.getStylesheets().add(
                 ProductScreen.class.getResource("/com/manager/stock/manager_stock/css/importReceipt/pagination.css").toExternalForm()
         );
+
+        pagination.setStyle("-fx-padding: 0");
     }
 
     protected void updateTableHeight(TableView<?> table, int itemCount) {
@@ -71,8 +79,13 @@ public class ProductScreen extends VBox {
     }
 
     private VBox initAddGroupForm() {
-        VBox groupForm = new VBox();
+        VBox groupForm = new VBox(15);
+        Label lbGroup = new Label("Thêm mới nhóm vật tư");
+        lbGroup.setStyle("-fx-font-size: 14px");
         tfGroupName = new TextField();
+        tfGroupName.setStyle("-fx-max-height: 50px; -fx-pref-height: 30px; -fx-font-size: 14px;");
+        VBox groupSection = new VBox(10, lbGroup, tfGroupName);
+
         Button saveButton = new Button("Save");
         saveButton.setOnAction(event -> {
             currentProductGroup.setName(tfGroupName.getText());
@@ -87,40 +100,68 @@ public class ProductScreen extends VBox {
             alert.setContentText("Thêm nhóm vật tư thành công!");
             alert.showAndWait();
         });
-        groupForm.getChildren().addAll(tfGroupName, saveButton);
+        VBox btnSection = new VBox(saveButton);
+        btnSection.setAlignment(Pos.CENTER_RIGHT);
+        AddCssStyleForBtnUtil.addCssStyleForBtn(saveButton);
+        groupForm.getChildren().addAll(groupSection, btnSection);
+        groupForm.setPadding(new Insets(10));
         return groupForm;
     }
 
-    private void initTextFied() {
-
-    }
-
     private VBox initHeader() {
+        HBox topBar = CreateTopBarOfReceiptUtil.createTopBar(new TopBarActionHandler() {
+            @Override
+            public void onAdd() {
+                ProductDetailScreen productDetailScreen = new ProductDetailScreen(productData);
+                productDetailScreen.showProduct(-1);
+                ScreenNavigator.navigateTo(productDetailScreen);
+            }
+
+            @Override
+            public void onEdit() {
+
+            }
+
+            @Override
+            public void onDelete() {
+
+            }
+
+            @Override
+            public void onReload() {
+
+            }
+
+            @Override
+            public void onPrint() {
+
+            }
+
+            @Override
+            public void onExport() {
+
+            }
+
+            @Override
+            public void onExportAll() {
+
+            }
+        });
+
+
         VBox header = new VBox();
         HBox feature = new HBox();
-        Label label = new Label("Danh sách sản phẩm");
-        label.setId("product-list-label");
-
-        // add button
-        Button addButton = new Button("Thêm vật tư");
-        addButton.setOnAction(e -> {
-            ProductDetailScreen productDetailScreen = new ProductDetailScreen(productData);
-            productDetailScreen.showProduct(-1);
-            ScreenNavigator.navigateTo(productDetailScreen);
-        });
 
         // text search
-        TextField searchText = new TextField();
-        searchText.setPromptText("Nhập từ khóa...");
-        Button searchButton = new Button("🔍");
-        searchButton.setOnAction(e -> {
-            String keyword = searchText.getText();
-            logger.info("Search product name: {}", keyword);
-            productData.clear();
-            productData.addAll(productPresenter.loadProductByName(keyword));
-        });
+        tfName = new TextField();
+        tfName.setPromptText("Tìm tên");
+        tfName.textProperty().addListener((obs, oldVal, newVal) -> filter());
 
-        HBox searchBox = new HBox(5, searchText, searchButton);
+        tfCode = new TextField();
+        tfCode.setPromptText("Tìm mã");
+        tfCode.textProperty().addListener((obs, oldVal, newVal) -> filter());
+
+        HBox searchBox = new HBox(20, tfCode, tfName);
         // list product group
         comboBox = new ComboBox<>();
         //init data lần đầu hiển thị
@@ -167,9 +208,10 @@ public class ProductScreen extends VBox {
         Region spacer2 = new Region();
         HBox.setHgrow(spacer1, Priority.ALWAYS);
         HBox.setHgrow(spacer2, Priority.ALWAYS);
-        feature.getChildren().addAll(addButton, spacer1, searchBox, spacer2, comboBox);
-
-        header.getChildren().addAll(label, feature);
+        feature.getChildren().addAll(searchBox, spacer2, comboBox);
+        feature.setStyle("-fx-background-color: #e1f0f7");
+        header.getChildren().addAll(topBar, feature);
+        header.setStyle("");
         return header;
     }
 
@@ -180,7 +222,10 @@ public class ProductScreen extends VBox {
         TableColumn<ProductModel, Integer> qtyCol = Utils.createColumn("Số lượng", "quantity");
         TableColumn<ProductModel, Integer> unitPriceCol = Utils.createColumn("Đơn giá", "unitPrice");
         TableColumn<ProductModel, Void> actionCol = createActionColumn("Thao tác");
-        table.getColumns().addAll(idCol, nameCol, qtyCol, unitPriceCol, actionCol);
+        TableColumn<ProductModel, Integer> startSemQCol = Utils.createColumn("Số lượng đầu kỳ", "startSemQ");
+        TableColumn<ProductModel, Integer> startSemTCol = Utils.createColumn("Tổng tiền đầu kỳ", "startSemT");
+        TableColumn<ProductModel, Integer> total = Utils.createColumn("Tổng tiền", "total");
+        table.getColumns().addAll(idCol, nameCol, qtyCol, unitPriceCol, total, startSemQCol, startSemTCol, actionCol);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         table.setPrefHeight(600);
         table.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #c1dfee; -fx-border-width: 1px;");
@@ -190,18 +235,14 @@ public class ProductScreen extends VBox {
         TableColumn<ProductModel, Void> actionCol = new TableColumn<>(title);
         actionCol.setCellFactory(col -> new TableCell<>() {
             private final Button editButton = new Button("Sửa");
-            private final Button deleteButton = new Button("Xóa");
-            private final HBox buttons = new HBox(5, editButton, deleteButton);
+
+            private final HBox buttons = new HBox(5, editButton);
             {
                 editButton.setOnAction(event -> {
                     ProductModel product = getTableView().getItems().get(getIndex());
                     ProductDetailScreen productDetailScreen = new ProductDetailScreen(productData);
                     productDetailScreen.showProduct(product.getId());
                     ScreenNavigator.navigateTo(productDetailScreen);
-                });
-                deleteButton.setOnAction(event -> {
-                    ProductModel product = getTableView().getItems().get(getIndex());
-                    getTableView().getItems().remove(product);
                 });
             }
 
@@ -229,6 +270,8 @@ public class ProductScreen extends VBox {
         tableSection.setStyle("-fx-padding: 0; -fx-background-insets: 0;");
         comboBox.setItems(productGroupData);
         VBox groupForm = initAddGroupForm();
+        groupForm.setStyle("-fx-background-color: #e1f0f7");
+        VBox.setVgrow(groupForm, Priority.ALWAYS);
         this.getChildren().addAll(header, tableSection, groupForm);
         productPresenter = ProductPresenter.getInstance();
         productGroupPresenter = ProductGroupPresenter.getInstance();
@@ -239,9 +282,40 @@ public class ProductScreen extends VBox {
         List<ProductModel> productModels = productPresenter.loadProductListData();
         List<ProductGroup> productGroups = productGroupPresenter.loadProductGroupData();
         productData.addAll(productModels);
+        allData.addAll(productModels);
         productGroupData.add(0, new ProductGroup(-1, "Tất cả"));
         productGroupData.addAll(productGroups);
         updatePagination();
         this.getStylesheets().add(this.getClass().getResource("/com/manager/stock/manager_stock/css/importReceipt/importReceipt.css").toExternalForm());
     }
+
+    public void filter() {
+        String code = normalizeString(tfCode.getText() == null ? "" : tfCode.getText().trim().toLowerCase());
+        String name = normalizeString(tfName.getText() == null ? "" : tfName.getText().trim().toLowerCase());
+        ObservableList<ProductModel> filterData  = FXCollections.observableArrayList();
+        for(ProductModel productModel: allData) {
+            boolean isMatch = true;
+            String pcode = normalizeString(productModel.getCode() == null ? "" : productModel.getCode().trim().toLowerCase());
+            String pname = normalizeString(productModel.getName() == null ? "" : productModel.getName().trim().toLowerCase());
+            if(!code.isEmpty() && !pcode.contains(code)) {
+                isMatch = false;
+            }
+            if(!pname.isEmpty() && !pname.contains(name)) {
+                isMatch = false;
+            }
+            if(isMatch) {
+                filterData.add(productModel);
+            }
+        }
+        productData.setAll(filterData);
+        updatePagination();
+    }
+
+    private String normalizeString(String input) {
+        if (input == null) return "";
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        return normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                .toLowerCase();
+    }
 }
+

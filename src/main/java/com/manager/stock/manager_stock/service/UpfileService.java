@@ -1,21 +1,19 @@
 package com.manager.stock.manager_stock.service;
 
-import com.manager.stock.manager_stock.dao.impl.DatasourceInitialize;
 import com.manager.stock.manager_stock.dao.impl.UpFileDao;
-import com.manager.stock.manager_stock.mapper.modelMapperResultSet.ProductGroupMapperResultSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class UpfileService {
     static Logger logger = LoggerFactory.getLogger(UpfileService.class);
     public static void upFile() {
-        com.upfileservice.UpfileService upFileService = new com.upfileservice.UpfileService();
         try {
+            com.upfileservice.UpfileService upFileService = new com.upfileservice.UpfileService();
             UpFileDao upFileDao = new UpFileDao();
             int status = upFileDao.getStatus();
-            System.out.println("Upfile status:" + status);
             if(status != 1) {
-                upFileService.upfile();
+                upFileDao.backup();
+                upFileService.upFile();
                 upFileDao.insert();
             }
         } catch (Exception e) {

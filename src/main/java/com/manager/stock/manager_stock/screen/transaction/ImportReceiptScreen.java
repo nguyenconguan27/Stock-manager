@@ -175,9 +175,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
             @Override
             public void onEdit() {
                 try {
-                    System.out.println("Chỉnh sửa hóa đơn");
                     if(selected != null) {
-                        System.out.println(selected);
                         AddOrUpdateImportReceiptScreen updateReceiptScreen = new AddOrUpdateImportReceiptScreen(selected);
                         ScreenNavigator.navigateTo(updateReceiptScreen);
                     }
@@ -192,9 +190,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
 
             @Override
             public void onDelete() {
-                System.out.println("Xóa hóa đơn");
                 if(selected != null) {
-                    System.out.println("Xóa hóa đơn:  " + selected);
                     boolean isConfirmDelete = AlertUtils.confirm("Bạn có chắc muốn xóa phiếu số: " + selected.getInvoice());
                     if(isConfirmDelete) {
                         ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();

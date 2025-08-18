@@ -2,6 +2,8 @@ package com.manager.stock.manager_stock.dao.impl;
 
 import org.h2.util.json.JSONObject;
 
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -24,5 +26,14 @@ public class UpFileDao extends AbstractDao<Integer>{
         List<Object[]> params = new ArrayList<>();
         params.add(new Object[] {fomart.format(LocalDate.now()), 1});
         save(sql, params);
+    }
+
+    public void backup() {
+        try {
+            Statement stmt = DatasourceInitialize.getInstance().createStatement();
+            stmt.execute("BACKUP TO 'C:/data/backup.zip'");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

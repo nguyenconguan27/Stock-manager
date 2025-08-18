@@ -86,7 +86,6 @@ public class ImportReceiptPresenter {
             List<ImportReceiptDetailModel> importReceiptDetailModels = GenericConverterBetweenModelAndTableData.convertToListModel(
                     importReceiptDetailModelsTable, ImportReceiptDetailModelMapper.INSTANCE::fromViewModelToModel);
 //        try {
-            System.out.println("Id of import receipt: " + importReceiptId);
             importReceiptDetailService.save(importReceiptDetailModels, importReceiptId);
 //        }
             // rollback receipt(Xóa receipt khi lưu thành công) khi thêm mới chi tiết bị lỗi
@@ -109,7 +108,6 @@ public class ImportReceiptPresenter {
         }
         catch (Exception e) {
             importReceiptService.rollback();
-            System.out.println("Rollback khi thêm mới phiếu nhập thất bại.");
             e.printStackTrace();
         }
     }
@@ -159,7 +157,6 @@ public class ImportReceiptPresenter {
         }
         catch (Exception e) {
             importReceiptService.rollback();
-            System.out.println("Rollback khi cập nhật phiếu nhập thất bại.");
             e.printStackTrace();
         }
     }
@@ -201,7 +198,6 @@ public class ImportReceiptPresenter {
                     exportPriceModelsToInsert.add(calculateUnitPriceOfProduct(
                             productId, 0, 0, totalPrice, actualQuantity, null, importReceiptId, importDate
                     ));
-                    System.out.println("Cập nhật giá xuất mới: " + productId + " chưa từng được nhập(không có tồn kho).");
                     inventoryDetailModel.setAcademicYear(academicYear);
                     inventoryDetailModel.setQuantity(actualQuantity);
                     inventoryDetailModel.setTotalPrice(totalPrice);
@@ -210,7 +206,6 @@ public class ImportReceiptPresenter {
                 else {
                     // tồn kho đầu năm của sản phẩm đang xét(product id)
                     // đây là lần đầu tiên nhập hàng trong năm
-                    System.out.println("Cập nhật giá xuất mới: " + productId + " đã tồn tại trong tồn kho của năm ngoái (tồn kho đầu năm của năm nhập hàng).");
                     exportPriceModelsToInsert.add(calculateUnitPriceOfProduct(
                             productId, inventoryDetailModel.getQuantity(), inventoryDetailModel.getTotalPrice(), totalPrice, actualQuantity, null, importReceiptId, importDate
                     ));
@@ -237,7 +232,6 @@ public class ImportReceiptPresenter {
                     throw new StockUnderFlowException("Số lượng tồn kho không đủ cho các phiếu xuất sau này, không thể chỉnh suwarrr với số lượng như hiện tại.");
                 }
                 // cập nhật lại giá xuất theo đúng số lượng nhập thêm vào
-                System.out.println("Cập nhật giá xuất mới: " + productId + " đã tồn tại trong tồn kho của năm nay.");
                 // thêm phiếu nhâập ==> tạo mới đơn giá xuất
                 if(isInsert) {
                     // trường hợp thêm mới phiếu nhập ==> thêm mới đơn giá
@@ -387,8 +381,7 @@ public class ImportReceiptPresenter {
             exportPriceModel.setQuantityImported(quantityImported);
             exportPriceModel.setTotalImportPrice(totalPriceImported);
             // tính giá xuất mới cho sản phẩm
-            System.out.println(String.format("Giá xuất mới dựa trên tham số: Số lượng trong kho = %d, số lượng nhập = %d, Thành tien trong kho = %f, Thành tiền nhập = %f",
-                                    quantityInStock, quantityImported, totalPriceInStock, totalPriceImported));
+
 
             double newUnitPrice = Math.round((totalPriceInStock + totalPriceImported) / (quantityImported + quantityInStock));
             exportPriceModel.setExportPrice(newUnitPrice);
@@ -452,10 +445,8 @@ public class ImportReceiptPresenter {
         int[] yearsToTry = { academicYear, academicYear - 1 };
         for (int year : yearsToTry) {
             try {
-                System.out.println(year);
                 return inventoryDetailService.findQuantityInStockByProductIdAndAcademicYear(productId, year);
             } catch (CanNotFoundException e) {
-                System.out.println(String.format("Quantity not found for productId={%d} in academicYear={%d}: {%s}", productId, year, e.getMessage()));
             }
         }
         return 0;

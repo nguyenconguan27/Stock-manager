@@ -177,8 +177,6 @@
             <groupId>com.upfileservice</groupId>
             <artifactId>upfileservice</artifactId>
             <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/upfileservice-0.0.1-SNAPSHOT.jar</systemPath>
         </dependency>
     </dependencies>
 
@@ -238,6 +236,28 @@
                         <goals>
                             <goal>single</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com/manager/stock/manager_stock/MainApplication.java</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

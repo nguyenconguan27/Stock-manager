@@ -216,9 +216,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
             @Override
             public void onEdit() {
                 try {
-                    System.out.println("Chỉnh sửa hóa đơn");
                     if(selected != null) {
-                        System.out.println(selected);
                         AddOrUpdateExportReceiptScreen updateReceiptScreen = new AddOrUpdateExportReceiptScreen(selected);
                         ScreenNavigator.navigateTo(updateReceiptScreen);
                     }
@@ -235,7 +233,6 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
             public void onDelete() {
                 try {
                     if(selected != null) {
-                        System.out.println("Xóa hóa đơn:  " + selected);
                         boolean isConfirmDelete = AlertUtils.confirm("Bạn có chắc muốn xóa hóa đơn số: " + selected.getInvoiceNumber());
                         if(isConfirmDelete) {
                             ExportReceiptPresenter presenter = ExportReceiptPresenter.getInstance();
@@ -358,7 +355,6 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
                     exportReceiptModels, ExportReceiptModelTableMapper.INSTANCE::toViewModel
             );
             for(ExportReceiptModelTable table : tableModels) {
-                System.out.println("Create at: " + table.getCreateAt());
             }
             setReceiptData(tableModels);
         }

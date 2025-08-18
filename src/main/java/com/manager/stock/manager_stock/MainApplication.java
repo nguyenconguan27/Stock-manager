@@ -32,18 +32,15 @@ public class MainApplication extends Application {
         stage.show();
 
         stage.setOnCloseRequest(e -> {
-            System.out.println("Closing application");
             System.exit(0);
         });
     }
 
-    public static void main(String[] args) {
-        System.out.println("Starting app .....");
+    public static void main(String[] args) throws InterruptedException {
         CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(UpfileService::upFile);
         completableFuture.thenAccept((Void v) -> {
             System.out.println("Upload file success.");
         });
-
         launch();
     }
 }
