@@ -1,7 +1,12 @@
 <configuration debug="false">
     <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
-<!--    <property name="LOG_DIR" value="logs" />-->
-        <property name="LOG_DIR" value="logs" />
+
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+
+<!--    <property file="app/config/config.properties"/>-->
+        <property name="LOG_DIR" value="D:\stock-management\install_app_21_08_2025\ManagerStock"/>
+<!--    <property name="LOG_DIR" value="${LOG_DIR:-./logs}"/>-->
+
 
     <!-- Appender cho service -->
     <appender name="SERVICE_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -15,7 +20,6 @@
         </encoder>
     </appender>
 
-    <!-- Appender cho DAO -->
     <appender name="DAO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/dao.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">

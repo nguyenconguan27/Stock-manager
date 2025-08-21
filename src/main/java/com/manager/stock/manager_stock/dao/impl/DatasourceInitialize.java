@@ -1,4 +1,5 @@
 package com.manager.stock.manager_stock.dao.impl;
+import com.manager.stock.manager_stock.config.AppConfig;
 import org.h2.tools.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,15 +32,17 @@ public class DatasourceInitialize {
         String pass = "1234";
         try {
             File scriptFile = extractSqlToTempFile("/com/manager/stock/manager_stock/database/create_table.sql");
-            String jdbcUrl = "jdbc:h2:file:C:/data/db;INIT=RUNSCRIPT FROM '" + scriptFile.getAbsolutePath().replace("\\", "/") + "'";
+            String dbPath = AppConfig.getString("db.path").replace("\\", "/");
+            if(dbPath.isBlank()) {
+                dbPath = "./db";
+            }
+            String jdbcUrl = "jdbc:h2:file:"+ dbPath +";INIT=RUNSCRIPT FROM '" + scriptFile.getAbsolutePath().replace("\\", "/") + "'";
             Class.forName("org.h2.Driver");
             Connection conn = DriverManager.getConnection(jdbcUrl, user, pass);
             return conn;
         } catch (SQLException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (ClassNotFoundException | IOException e) {
             throw new RuntimeException(e);
         }
         return null;

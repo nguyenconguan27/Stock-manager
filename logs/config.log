@@ -1,12 +1,6 @@
-2025-07-03 00:06:05.337 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load config file successfully!
-2025-07-03 00:08:05.770 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load config file successfully!
-2025-07-03 00:10:11.338 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load config file successfully!
-2025-07-03 00:12:05.565 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load config file successfully!
-2025-07-03 00:12:54.392 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load config file successfully!
-2025-07-03 00:16:34.457 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load config file successfully!
-2025-07-03 00:19:30.358 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load config file successfully!
-2025-07-03 00:21:49.286 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load config file successfully!
-2025-08-05 21:37:29.321 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load config file successfully!
-2025-08-05 21:58:19.844 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load config file successfully!
-2025-08-05 21:58:47.800 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load config file successfully!
-2025-08-05 22:00:23.808 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load config file successfully!
+2025-08-19 23:18:27.821 [JavaFX Application Thread] WARN  c.m.s.manager_stock.config.AppConfig - ⚠️ config.properties not found!
+2025-08-19 23:19:10.692 [JavaFX Application Thread] WARN  c.m.s.manager_stock.config.AppConfig - ⚠️ config.properties not found!
+2025-08-19 23:23:22.018 [JavaFX Application Thread] WARN  c.m.s.manager_stock.config.AppConfig - ⚠️ config.properties not found!
+2025-08-19 23:25:11.098 [JavaFX Application Thread] WARN  c.m.s.manager_stock.config.AppConfig - ⚠️ config.properties not found!
+2025-08-19 23:25:23.433 [JavaFX Application Thread] WARN  c.m.s.manager_stock.config.AppConfig - ⚠️ config.properties not found!
+2025-08-19 23:25:54.905 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
