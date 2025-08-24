@@ -495,6 +495,7 @@ public class ProductDetailScreen extends VBox {
             public void onExportAll() {
                 try {
                     File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
+                    if(file == null) return;
                     String outputPath = file.getAbsolutePath();
                     ExportAll.exportTotal(outputPath);
                     // gọi hàm tạo file xlsx
