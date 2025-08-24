@@ -21,6 +21,7 @@ module com.manager.stock.manager_stock {
     requires datetime.picker.javafx;
     requires com.h2database;
     requires upfileservice;
+    requires commons.math3;
     opens com.manager.stock.manager_stock to javafx.fxml;
     exports com.manager.stock.manager_stock;
 

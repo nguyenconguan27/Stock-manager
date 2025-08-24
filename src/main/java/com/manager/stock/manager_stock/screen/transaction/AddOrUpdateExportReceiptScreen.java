@@ -31,18 +31,17 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
  * @author Trọng Hướng
  */
 public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen<ExportReceiptModelTable, ExportReceiptDetailModelTable> {
-    private final ExportReceiptPresenter presenter;
     private TextField tfReceiver, tfReceiveAddress, tfReason;
 
     public AddOrUpdateExportReceiptScreen(ExportReceiptModelTable exportReceiptModelTable) {
         super(exportReceiptModelTable);
-        presenter = ExportReceiptPresenter.getInstance();
     }
 
     @Override
@@ -115,11 +114,10 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         HBox.setHgrow(rightForm, Priority.ALWAYS);
 
         // === Form chọn sản phẩm ===
-        Label lbProduct = new Label("Chọn sản phẩm *");
-        ComboBox<ProductModel> cbProduct = new ComboBox<>();
-        cbProduct.setPromptText("Tìm theo mã hoặc tên sản phẩm");
-        cbProduct.setEditable(true);
-        VBox productCol = new VBox(5, lbProduct, cbProduct);
+        TextField tfProduct = new TextField();
+        tfProduct.setPrefWidth(250);
+        tfProduct.setPromptText("Tìm theo mã hoặc tên sản phẩm");
+        VBox productCol = new VBox(5, new Label("Chọn sản phẩm *"), tfProduct);
 
         Label lbPlannedQty = new Label("Số lượng CT *");
         TextField tfPlannedQty = new TextField();
@@ -161,60 +159,14 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         productBox.setPadding(new javafx.geometry.Insets(0, 15, 0, 15));
         productBox.setAlignment(Pos.CENTER_LEFT);
 
-        // === Logic xử lý ComboBox sản phẩm ===
-        cbProduct.setOnMouseClicked(e -> {
-            if (!productLoaded) {
-                List<ProductModel> products = presenter.loadAllProduct();
-                allProducts.setAll(products);
-                cbProduct.setItems(allProducts);
-                productLoaded = true;
-            }
-        });
-
-        cbProduct.setItems(filteredProducts);
-        cbProduct.setEditable(true);
-
-        cbProduct.setConverter(new StringConverter<ProductModel>() {
-            @Override
-            public String toString(ProductModel product) {
-                if (product == null) return "";
-                return product.getId() + " - " + product.getName();
-            }
-
-            @Override
-            public ProductModel fromString(String string) {
-                return allProducts.stream()
-                        .filter(p -> (p.getId() + " - " + p.getName()).equals(string))
-                        .findFirst().orElse(null);
-            }
-        });
-
-        cbProduct.getEditor().textProperty().addListener((obs, oldText, newText) -> {
-            if (!productLoaded) {
-                List<ProductModel> products = presenter.loadAllProduct();
-                allProducts.setAll(products);
-                filteredProducts = new FilteredList<>(allProducts, p -> true);
-                cbProduct.setItems(filteredProducts);
-                productLoaded = true;
-            }
-
-            ProductModel selected = cbProduct.getSelectionModel().getSelectedItem();
-            if (selected != null && (selected.getId() + " - " + selected.getName()).equals(newText)) {
-                return;
-            }
-            String normalizedInput = normalizeString(newText);
-            filteredProducts.setPredicate(product -> {
-                String idStr = (product.getId() + "").toLowerCase();
-                String name = normalizeString(product.getName());
-                return idStr.contains(normalizedInput) || name.contains(normalizedInput);
-            });
-
-            if (!cbProduct.isShowing()) cbProduct.show();
-        });
-
-        cbProduct.getSelectionModel().selectedItemProperty().addListener((obs, oldProduct, newProduct) -> {
-            if (newProduct != null) {
-                ExportPriceIdAndPrice ep = presenter.findExportPriceIdAndPriceByProductAndLastTime(newProduct.getId());
+        ExportReceiptPresenter exportReceiptPresenter = ExportReceiptPresenter.getInstance();
+        List<ProductModel> products = exportReceiptPresenter.loadAllProduct();
+        allProducts.setAll(products);
+        ProductAutoComplete ac = new ProductAutoComplete(tfProduct, allProducts);
+        AtomicReference<ProductModel> selected = new AtomicReference<>();
+        ac.valueProperty().addListener((obs, oldP, newP) -> {
+            if(newP != null) {
+                ExportPriceIdAndPrice ep = exportReceiptPresenter.findExportPriceIdAndPriceByProductAndLastTime(newP.getId());
                 if (ep.exportPriceId() == -1) {
                     AlertUtils.alert("Sản phẩm này không có đơn giá, vui lòng nhập đơn giá cho sản phẩm.", "WARNING", "Cảnh báo", "Không có đơn giá.");
                     tfUnitPrice.clear();
@@ -227,7 +179,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
 
                 LocalDateTime createAtStr = dateTimePicker.dateTimeProperty().get();
                 int academicYear = createAtStr.getYear();
-                int quantityInStock = presenter.findQuantityInStockByProductIdAndAcademicYear(newProduct.getId(), academicYear);
+                int quantityInStock = exportReceiptPresenter.findQuantityInStockByProductIdAndAcademicYear(newP.getId(), academicYear);
                 tfInventory.setText(String.valueOf(quantityInStock));
             }
         });
@@ -241,7 +193,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         AddCssStyleForBtnUtil.addCssStyleForBtn(btnAddProduct);
         btnAddProduct.setOnMouseClicked((e) -> {
             try {
-                ProductModel selectedProduct = cbProduct.getSelectionModel().getSelectedItem();
+                ProductModel selectedProduct = selected.get();
                 int actualQuantity = Integer.parseInt(tfActualQty.getText());
                 int plannedQuantity = Integer.parseInt(tfPlannedQty.getText());
                 double unitPrice = Double.parseDouble(tfUnitPrice.getText());
@@ -315,9 +267,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
 //            private final Button btnEdit = new Button("✎");
             private final Button btnDelete = new Button("🗑");
             private final HBox pane = new HBox(5, btnDelete);
-
             {
-//                btnEdit.setStyle("-fx-background-color: #ffd966; -fx-cursor: hand;");
                 btnDelete.setStyle("-fx-background-color: #f08080; -fx-cursor: hand;");
                 pane.setAlignment(Pos.CENTER);
 
@@ -328,9 +278,6 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     getTableView().getItems().remove(item);
                 });
 
-//                btnEdit.setOnAction(event -> {
-//                    getTableView().edit(getIndex(), colActualQty); // focus edit thực tế
-//                });
             }
 
             @Override
@@ -390,6 +337,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         AddCssStyleForBtnUtil.addCssStyleForBtn(saveBtn);
         saveBtn.setOnMouseClicked(e -> {
             try {
+                ExportReceiptPresenter presenter = ExportReceiptPresenter.getInstance();
                 if(dateTimePicker.dateTimeProperty() == null || dateTimePicker.dateTimeProperty().get() == null) {
                     AlertUtils.alert("Vui lòng chọn ngày nhập hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin");
                     return;
@@ -404,10 +352,6 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     AlertUtils.alert("Vui lòng nhập số hóa đơn.", "WARNING", "Cảnh báo", "Thiếu thông tin");
                     return;
                 }
-//                if(receiver.isEmpty()) {AlertUtils.alert("Vui lòng nhập người nhận hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
-//                if(receiveAddress.isEmpty()) {AlertUtils.alert("Vui lòng nhập địa chỉ nhận hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
-//                if(reason.isEmpty()) {AlertUtils.alert("Vui lòng nhập lý do xuất kho.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
-//                if(wareHouseName.isEmpty()) {AlertUtils.alert("Vui lòng nhập kho xuất hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
                 ExportReceiptModel exportReceiptModel = new ExportReceiptModel(
                         receiptModelTable != null ? receiptModelTable.getId() : -1,
                         invoiceNumber,

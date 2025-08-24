@@ -162,7 +162,6 @@ public class ProductScreen extends VBox {
             }
         });
 
-
         VBox header = new VBox();
         HBox feature = new HBox();
 
@@ -249,7 +248,6 @@ public class ProductScreen extends VBox {
         TableColumn<ProductModel, Void> actionCol = new TableColumn<>(title);
         actionCol.setCellFactory(col -> new TableCell<>() {
             private final Button editButton = new Button("Sửa");
-
             private final HBox buttons = new HBox(5, editButton);
             {
                 editButton.setOnAction(event -> {

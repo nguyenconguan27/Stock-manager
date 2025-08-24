@@ -7,26 +7,23 @@ import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptModel
 import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
 import com.manager.stock.manager_stock.model.ImportReceiptModel;
 import com.manager.stock.manager_stock.model.ProductModel;
-import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptDetailModelTable;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptModelTable;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter;
 import com.manager.stock.manager_stock.utils.*;
 import javafx.application.Platform;
-import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.*;
-import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -34,12 +31,10 @@ import java.util.stream.Collectors;
  */
 public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen<ImportReceiptModelTable, ImportReceiptDetailModelTable> {
 
-    private final ImportReceiptPresenter importReceiptPresenter = ImportReceiptPresenter.getInstance();
+//    private final ImportReceiptPresenter importReceiptPresenter;
     protected TextField tfInvoice, tfDeliveredBy, tfCompanyName;
-
     public AddOrUpdateImportReceiptScreen(ImportReceiptModelTable importReceiptModelTable) {
         super(importReceiptModelTable);
-//        importReceiptPresenter = ImportReceiptPresenter.getInstance();
     }
 
     @Override
@@ -84,7 +79,6 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             if (model.getCreateAt() != null && !model.getCreateAt().isEmpty()) {
                 try {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-//                    dateTimePicker.setValue(LocalDate.parse(model.getCreateAt(), formatter));
                     dateTimePicker.setTime(LocalDateTime.parse(model.getCreateAt(), formatter));
                 } catch (Exception e) {
                     System.err.println("Lỗi định dạng ngày: " + model.getCreateAt());
@@ -111,11 +105,10 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         HBox.setHgrow(rightForm, Priority.ALWAYS);
 
         // === Form chọn sản phẩm ===
-        Label lbProduct = new Label("Chọn sản phẩm *");
-        ComboBox<ProductModel> cbProduct = new ComboBox<>();
-        cbProduct.setPromptText("Tìm theo mã hoặc tên sản phẩm");
-        cbProduct.setEditable(true);
-        VBox productCol = new VBox(5, lbProduct, cbProduct);
+        TextField tfProduct = new TextField();
+        tfProduct.setPrefWidth(250);
+        tfProduct.setPromptText("Tìm theo mã hoặc tên sản phẩm");
+        VBox productCol = new VBox(5, new Label("Chọn sản phẩm *"), tfProduct);
 
         Label lbPlannedQty = new Label("Số lượng CT *");
         TextField tfPlannedQty = new TextField();
@@ -156,63 +149,19 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         productBox.setPadding(new Insets(0, 15, 0, 15));
         productBox.setAlignment(Pos.CENTER_LEFT);
 
-        // === Logic xử lý ComboBox sản phẩm ===
-        cbProduct.setOnMouseClicked(e -> {
-            if (!productLoaded) {
-                List<ProductModel> products = importReceiptPresenter.loadAllProduct();
-                allProducts.setAll(products);
-                cbProduct.setItems(allProducts);
-                productLoaded = true;
-            }
-        });
+        ImportReceiptPresenter importReceiptPresenter = ImportReceiptPresenter.getInstance();
+        List<ProductModel> products = importReceiptPresenter.loadAllProduct();
+        allProducts.setAll(products);
 
-        cbProduct.setItems(filteredProducts);
-        cbProduct.setEditable(true);
-
-        cbProduct.setConverter(new StringConverter<ProductModel>() {
-            @Override
-            public String toString(ProductModel product) {
-                if (product == null) return "";
-                return product.getId() + " - " + product.getName();
-            }
-
-            @Override
-            public ProductModel fromString(String string) {
-                return allProducts.stream()
-                        .filter(p -> (p.getId() + " - " + p.getName()).equals(string))
-                        .findFirst().orElse(null);
-            }
-        });
-
-        cbProduct.getEditor().textProperty().addListener((obs, oldText, newText) -> {
-            if (!productLoaded) {
-                List<ProductModel> products = importReceiptPresenter.loadAllProduct();
-                allProducts.setAll(products);
-                filteredProducts = new FilteredList<>(allProducts, p -> true);
-                cbProduct.setItems(filteredProducts);
-                productLoaded = true;
-            }
-
-            ProductModel selected = cbProduct.getSelectionModel().getSelectedItem();
-            if (selected != null && (selected.getId() + " - " + selected.getName()).equals(newText)) {
-                return;
-            }
-            String normalizedInput = normalizeString(newText);
-            filteredProducts.setPredicate(product -> {
-                String idStr = (product.getId() + "").toLowerCase();
-                String name = normalizeString(product.getName());
-                return idStr.contains(normalizedInput) || name.contains(normalizedInput);
-            });
-
-            if (!cbProduct.isShowing()) cbProduct.show();
-        });
-
-        cbProduct.getSelectionModel().selectedItemProperty().addListener((obs, oldProduct, newProduct) -> {
+        ProductAutoComplete ac = new ProductAutoComplete(tfProduct, allProducts);
+        AtomicReference<ProductModel> selected = new AtomicReference<>();
+        ac.valueProperty().addListener((obs, oldP, newProduct) -> {
             if (newProduct != null) {
                 LocalDateTime createAtStr = dateTimePicker.dateTimeProperty().get();
                 int academicYear = createAtStr.getYear();
                 int quantityInStock = importReceiptPresenter.findQuantityInStockByProductIdAndAcademicYear(newProduct.getId(), academicYear);
                 tfInventory.setText(String.valueOf(quantityInStock));
+                selected.set(newProduct);
             }
         });
 
@@ -225,7 +174,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         AddCssStyleForBtnUtil.addCssStyleForBtn(btnAddProduct);
         btnAddProduct.setOnMouseClicked((e) -> {
             try {
-                ProductModel selectedProduct = cbProduct.getSelectionModel().getSelectedItem();
+                ProductModel selectedProduct = selected.get();
                 int actualQuantity = Integer.parseInt(tfActualQty.getText());
                 int plannedQuantity = Integer.parseInt(tfPlannedQty.getText());
                 long unitPrice = Long.parseLong(tfUnitPrice.getText());

@@ -13,7 +13,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.concurrent.CompletableFuture;
 
 public class MainApplication extends Application {
@@ -36,11 +38,27 @@ public class MainApplication extends Application {
         });
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, URISyntaxException {
         CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(UpfileService::upFile);
         completableFuture.thenAccept((Void v) -> {
             System.out.println("Upload file success.");
         });
+        System.out.println("LOG_DIR=" + System.getProperty("LOG_DIR"));
+
+//        File exeDir = new File(MainApplication.class
+//                .getProtectionDomain()
+//                .getCodeSource()
+//                .getLocation()
+//                .toURI())
+//                .getParentFile()
+//                .getParentFile();
+//
+//        String logDir = exeDir.getAbsolutePath() + File.separator + "logs";
+//        System.setProperty("LOG_DIR", logDir);
+
+        // Tạo thư mục logs nếu chưa có
+//        new File(logDir).mkdirs();
+
         launch();
     }
 }
