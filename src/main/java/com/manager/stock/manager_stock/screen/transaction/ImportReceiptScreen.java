@@ -229,6 +229,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
             public void onExport() {
                 try {
                     File file = ChoosesFolderOutput.choosesFolderFile("Phieu_nhap");
+                    if(file == null) return;
                     String outputPath = file.getAbsolutePath();
                     ReceiptReportService.printAllImportReceipt(outputPath, 2025);
                     // gọi hàm tạo file xlsx
@@ -245,6 +246,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
             public void onExportAll() {
                 try {
                     File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
+                    if(file == null) return;
                     String outputPath = file.getAbsolutePath();
                     ExportAll.exportTotal(outputPath);
                     // gọi hàm tạo file xlsx

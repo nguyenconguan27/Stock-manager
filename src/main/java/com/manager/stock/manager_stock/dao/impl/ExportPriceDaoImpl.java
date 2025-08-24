@@ -171,7 +171,7 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
                 "FROM latest_export ep\n" +
                 "LEFT JOIN product p ON p.id = ep.product_id\n" +
                 "LEFT JOIN product_group pg ON p.group_id = pg.id\n" +
-                "WHERE pg.id = 1\n" +
+                "WHERE pg.id = ?\n" +
                 "ORDER BY ep.export_price\n" +
                 "LIMIT 1;";
         List<ExportPriceAndProductCodeAndProductName> maxPrice = query(sql,

@@ -3,12 +3,15 @@ package com.manager.stock.manager_stock.service.impl;
 import com.manager.stock.manager_stock.dao.impl.ProductDao;
 import com.manager.stock.manager_stock.model.ProductModel;
 import com.manager.stock.manager_stock.service.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class ProductServiceImpl implements ProductService {
     public static ProductServiceImpl INSTANCE;
     public final ProductDao productDao;
+    private final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     public ProductServiceImpl() {
         productDao = ProductDao.getInstance();
@@ -22,6 +25,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductModel> getAllProducts() {
+        logger.info("This is logger.");
         return productDao.getAll();
     }
 

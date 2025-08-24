@@ -1,12 +1,9 @@
-<configuration debug="false">
+<configuration debug="true">
     <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
 
     <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
 
-<!--    <property file="app/config/config.properties"/>-->
-        <property name="LOG_DIR" value="D:\stock-management\install_app_21_08_2025\ManagerStock"/>
-<!--    <property name="LOG_DIR" value="${LOG_DIR:-./logs}"/>-->
-
+    <property name="LOG_DIR" value="${LOG_DIR:-${user.dir}/app/logs}" />
 
     <!-- Appender cho service -->
     <appender name="SERVICE_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
