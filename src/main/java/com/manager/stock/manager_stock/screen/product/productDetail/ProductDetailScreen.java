@@ -101,18 +101,23 @@ public class ProductDetailScreen extends VBox {
                 comboBox.getSelectionModel().selectFirst();
                 productGroupSelected = comboBox.getSelectionModel().getSelectedItem();
 
-                ScrollPane statisticNode = createStatisticProductByGroup();
-
+                // Tạo thống kê ban đầu khi có group
+                ScrollPane newStatisticNode = createStatisticProductByGroup();
+                VBox newStatisticWrapper = new VBox(newStatisticNode);
+                newStatisticWrapper.setStyle("-fx-background-color: #e6f4fb;");
+                VBox.setVgrow(newStatisticWrapper, Priority.ALWAYS);
                 if (statisticWrapper == null) {
-                    // Chỉ tạo statisticWrapper 1 lần
-                    statisticWrapper = new VBox(statisticNode);
-                    statisticWrapper.setStyle("-fx-background-color: #e6f4fb;");
-                    VBox.setVgrow(statisticWrapper, Priority.ALWAYS);
+                    // Nếu chưa add statisticNode trước đó, thì add luôn
                     this.getChildren().add(statisticWrapper);
                 } else {
-                    // Thay nội dung bên trong wrapper (không tạo wrapper mới)
-                    statisticWrapper.getChildren().setAll(statisticNode);
+                    int index = this.getChildren().indexOf(statisticWrapper);
+                    if (index != -1) {
+                        this.getChildren().set(index, newStatisticWrapper);
+                    } else {
+                        this.getChildren().add(newStatisticWrapper);
+                    }
                 }
+                statisticWrapper = newStatisticWrapper;
             }
         });
 
@@ -137,22 +142,15 @@ public class ProductDetailScreen extends VBox {
         comboBox.setOnAction(event -> {
             productGroupSelected = comboBox.getSelectionModel().getSelectedItem();
             ScrollPane newStatisticNode = createStatisticProductByGroup();
-
             VBox newStatisticWrapper = new VBox(newStatisticNode);
             newStatisticWrapper.setStyle("-fx-background-color: #e6f4fb;");
             VBox.setVgrow(newStatisticWrapper, Priority.ALWAYS);
-
             int indexOldNode = this.getChildren().indexOf(statisticWrapper);
-            if (indexOldNode != -1) {
-                // Thay node cũ bằng node mới
-                this.getChildren().set(indexOldNode, newStatisticWrapper);
-            } else {
-                // Nếu chưa có thì add vào
-                this.getChildren().add(newStatisticWrapper);
+            if(indexOldNode != -1){
+                this.getChildren().add(indexOldNode, newStatisticWrapper);
+                statisticWrapper = newStatisticWrapper;
             }
-            statisticWrapper = newStatisticWrapper;
         });
-
 
         Label groupLabel = new Label("Chọn nhóm sản phẩm *");
         groupLabel.setStyle(labelStyle);
@@ -497,7 +495,6 @@ public class ProductDetailScreen extends VBox {
             public void onExportAll() {
                 try {
                     File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
-                    if(file == null) return;
                     String outputPath = file.getAbsolutePath();
                     ExportAll.exportTotal(outputPath);
                     // gọi hàm tạo file xlsx
@@ -510,7 +507,6 @@ public class ProductDetailScreen extends VBox {
                 }
             }
         });
-
         VBox.setVgrow(this, Priority.ALWAYS);
         this.setStyle("-fx-background-color: #e0f2f7;");
         HBox actionRow = new HBox(10);
