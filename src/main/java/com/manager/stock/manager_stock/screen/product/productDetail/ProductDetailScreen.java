@@ -7,6 +7,7 @@ import com.manager.stock.manager_stock.model.ProductModel;
 import com.manager.stock.manager_stock.model.dto.ExportPriceAndProductCodeAndProductName;
 import com.manager.stock.manager_stock.model.dto.ProductIdAndCodeAndNameAndQuantityInStock;
 import com.manager.stock.manager_stock.reportservice.ExportAll;
+import com.manager.stock.manager_stock.reportservice.ReceiptReportService;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.product.productList.ProductScreen;
 import com.manager.stock.manager_stock.screen.productGroup.ProductGroupPresenter;
@@ -181,6 +182,7 @@ public class ProductDetailScreen extends VBox {
         labelQuantity.setStyle(labelStyle);
         tfQuantity = new TextField("0");
         tfQuantity.setStyle(inputStyle);
+        tfQuantity.setDisable(true);
         leftForm.add(labelQuantity, 0, 2);
         leftForm.add(tfQuantity, 1, 2);
 
@@ -201,12 +203,14 @@ public class ProductDetailScreen extends VBox {
         labelUnitPrice.setStyle(labelStyle);
         tfUnitPrice = new TextField("0");
         tfUnitPrice.setStyle(inputStyle);
+        tfUnitPrice.setDisable(true);
         rightForm.add(labelUnitPrice, 0, 1);
         rightForm.add(tfUnitPrice, 1, 1);
 
         Label labelTotal = new Label("Thành tiền *");
         labelTotal.setStyle(labelStyle);
         tfTotal = new TextField();
+        tfTotal.setDisable(true);
         tfTotal.setStyle(inputStyle);
         tfTotal.setEditable(false);
 
@@ -488,13 +492,15 @@ public class ProductDetailScreen extends VBox {
 
             @Override
             public void onExport() {
-
             }
 
             @Override
             public void onExportAll() {
                 try {
                     File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
+                    if(file == null) {
+                        return;
+                    }
                     String outputPath = file.getAbsolutePath();
                     ExportAll.exportTotal(outputPath);
                     // gọi hàm tạo file xlsx

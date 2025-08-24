@@ -4,13 +4,12 @@ import com.manager.stock.manager_stock.interfaceActionHandler.TopBarActionHandle
 import com.manager.stock.manager_stock.model.ProductGroup;
 import com.manager.stock.manager_stock.model.ProductModel;
 import com.manager.stock.manager_stock.model.tableData.ExportReceiptModelTable;
+import com.manager.stock.manager_stock.reportservice.ExportAll;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.product.productDetail.ProductDetailScreen;
 import com.manager.stock.manager_stock.screen.productGroup.ProductGroupPresenter;
 import com.manager.stock.manager_stock.screen.transaction.ImportReceiptScreen;
-import com.manager.stock.manager_stock.utils.AddCssStyleForBtnUtil;
-import com.manager.stock.manager_stock.utils.CreateTopBarOfReceiptUtil;
-import com.manager.stock.manager_stock.utils.Utils;
+import com.manager.stock.manager_stock.utils.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -22,6 +21,7 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.text.Normalizer;
 import java.util.List;
 
@@ -144,7 +144,21 @@ public class ProductScreen extends VBox {
 
             @Override
             public void onExportAll() {
-
+                try {
+                    File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
+                    if(file == null) {
+                        return;
+                    }
+                    String outputPath = file.getAbsolutePath();
+                    ExportAll.exportTotal(outputPath);
+                    // gọi hàm tạo file xlsx
+                    AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
+                            "INFORMATION", "Thành công", "Xuất dữ liệu");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    AlertUtils.alert("Có lỗi khi xuất file: " + e.getMessage(),
+                            "ERROR", "Lỗi", "Xuất dữ liệu thất bại");
+                }
             }
         });
 
