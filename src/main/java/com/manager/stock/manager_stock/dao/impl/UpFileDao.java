@@ -1,5 +1,6 @@
 package com.manager.stock.manager_stock.dao.impl;
 
+import com.manager.stock.manager_stock.config.AppConfig;
 import org.h2.util.json.JSONObject;
 
 import java.sql.SQLException;
@@ -31,7 +32,8 @@ public class UpFileDao extends AbstractDao<Integer>{
     public void backup() {
         try {
             Statement stmt = DatasourceInitialize.getInstance().createStatement();
-            stmt.execute("BACKUP TO 'C:/data/backup.zip'");
+            String file_path = AppConfig.getString("localfile.path");
+            stmt.execute("BACKUP TO " + "\'" + file_path + "\'");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
