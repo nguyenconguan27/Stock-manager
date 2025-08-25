@@ -263,9 +263,6 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     getTableView().getItems().remove(item);
                 });
 
-//                btnEdit.setOnAction(event -> {
-//                    getTableView().edit(getIndex(), colActualQty); // focus edit thực tế
-//                });
             }
 
             @Override

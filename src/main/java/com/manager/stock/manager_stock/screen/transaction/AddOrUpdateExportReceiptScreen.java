@@ -175,7 +175,6 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     return;
                 }
 
-
                 tfUnitPrice.setText(String.valueOf(ep.price()));
                 tfUnitPrice.setUserData(ep.exportPriceId());
 
@@ -183,6 +182,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 int academicYear = createAtStr.getYear();
                 int quantityInStock = exportReceiptPresenter.findQuantityInStockByProductIdAndAcademicYear(newP.getId(), academicYear);
                 tfInventory.setText(String.valueOf(quantityInStock));
+                selected.set(newP);
             }
         });
 
@@ -200,7 +200,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 int plannedQuantity = Integer.parseInt(tfPlannedQty.getText());
                 double unitPrice = Double.parseDouble(tfUnitPrice.getText());
                 long exportPriceId = Long.parseLong(tfUnitPrice.getUserData().toString());
-
+                System.out.println(selectedProduct);
                 addProductToTableProductOfReceipt(selectedProduct, actualQuantity, plannedQuantity, exportPriceId, unitPrice);
             } catch (NumberFormatException ex) {
                 ex.printStackTrace();
@@ -266,7 +266,6 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         colTotalPrice.setCellValueFactory(data -> data.getValue().displayTotalPriceFormatProperty());
         TableColumn<ExportReceiptDetailModelTable, Void> colAction = new TableColumn<>("Thao tác");
         colAction.setCellFactory(param -> new TableCell<>() {
-//            private final Button btnEdit = new Button("✎");
             private final Button btnDelete = new Button("🗑");
             private final HBox pane = new HBox(5, btnDelete);
             {
@@ -363,7 +362,6 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                         reason,
                         wareHouseName,
                         totalPriceOfReceipt,
-//                        FormatMoney.formatMoneyToWord((long)totalPriceOfReceipt)
                         ""
                 );
                 if(productDetails.isEmpty()) {
@@ -410,7 +408,6 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         HBox totalPriceRow = new HBox(10);
         totalPriceRow.setStyle("-fx-padding: 5; -fx-background-color: #e1f0f7; -fx-border-color: #c1dfee; -fx-border-width: 1px; ");
         Label totalPriceLabelTitle = new Label("Tổng cộng: ");
-//        totalPriceLabel.setText(FormatMoney.format(receiptModelTable.getTotalPrice()));
         totalPriceRow.getChildren().addAll(totalPriceLabelTitle, totalPriceLabel);
         styleLabel(totalPriceLabelTitle);
         styleLabel(totalPriceLabel);
@@ -447,23 +444,28 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         }
         // thêm mới
         else {
-            productDetails.add(new ExportReceiptDetailModelTable(
-                    -1,
-                    0,
-                    product.getId(),
-                    plannedQuantity,
-                    actualQuantity,
-                    currentTotalPrice,
-                    unitPrice,
-                    product.getName(),
-                    FormatMoney.format(unitPrice),
-                    FormatMoney.format(currentTotalPrice),
-                    product.getCode(),
-                    exportPriceId,
-                    unitPrice
-            ));
-            changeQuantityByProductMap.put(product.getId(), actualQuantity);
-            changeTotalPriceByProductMap.put(product.getId(), currentTotalPrice);
+            try {
+                productDetails.add(new ExportReceiptDetailModelTable(
+                        -1,
+                        0,
+                        product.getId(),
+                        plannedQuantity,
+                        actualQuantity,
+                        currentTotalPrice,
+                        unitPrice,
+                        product.getName(),
+                        FormatMoney.format(unitPrice),
+                        FormatMoney.format(currentTotalPrice),
+                        product.getCode(),
+                        exportPriceId,
+                        unitPrice
+                ));
+                changeQuantityByProductMap.put(product.getId(), actualQuantity);
+                changeTotalPriceByProductMap.put(product.getId(), currentTotalPrice);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         productTable.refresh();
     }

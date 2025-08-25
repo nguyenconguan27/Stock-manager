@@ -1,14 +1,39 @@
-2025-08-25 00:10:51.920 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 00:10:51.978 [ForkJoinPool.commonPool-worker-1] ERROR c.m.s.m.service.UpfileService - Up file faild: e
-java.io.FileNotFoundException: D:\data\tokens (The system cannot find the file specified)
-	at java.base/java.io.FileInputStream.open0(Native Method)
-	at java.base/java.io.FileInputStream.open(FileInputStream.java:216)
-	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
-	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:111)
-	at upfileservice@1.0/com.upfileservice.UpfileService.getDriveService(UpfileService.java:35)
-	at upfileservice@1.0/com.upfileservice.UpfileService.uploadOrUpdateFile(UpfileService.java:53)
-	at upfileservice@1.0/com.upfileservice.UpfileService.upFile(UpfileService.java:111)
-	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.service.UpfileService.upFile(UpfileService.java:23)
+2025-08-26 00:13:11.106 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 00:15:03.735 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 00:17:54.802 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2025-08-26 00:17:55.043 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 00:17:55.105 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2025-08-26 00:17:55.126 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2025-08-26 00:17:56.038 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 00:18:00.202 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 00:18:18.759 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 00:26:34.574 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2025-08-26 00:26:34.872 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 00:26:34.873 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2025-08-26 00:26:34.886 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2025-08-26 00:26:35.804 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 00:26:40.022 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 00:40:38.586 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2025-08-26 00:40:38.982 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2025-08-26 00:40:38.982 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 00:40:39.003 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2025-08-26 00:40:40.197 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 00:41:56.577 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 00:42:01.687 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 00:47:15.190 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2025-08-26 00:47:15.607 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2025-08-26 00:47:15.626 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2025-08-26 00:47:15.696 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 00:47:16.725 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 00:47:20.947 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 01:04:55.738 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2025-08-26 01:04:56.017 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 01:04:56.076 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2025-08-26 01:04:56.099 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 01:04:56.124 [ForkJoinPool.commonPool-worker-1] ERROR c.m.s.m.service.UpfileService - Up file fail: e
+java.lang.NullPointerException: Cannot invoke "java.sql.Connection.createStatement()" because the return value of "com.manager.stock.manager_stock.dao.impl.DatasourceInitialize.getInstance()" is null
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.dao.impl.UpFileDao.backup(UpFileDao.java:40)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.service.UpfileService.upFile(UpfileService.java:24)
 	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804)
 	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.exec(CompletableFuture.java:1796)
 	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
@@ -16,78 +41,17 @@ java.io.FileNotFoundException: D:\data\tokens (The system cannot find the file s
 	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
 	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
 	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-2025-08-25 00:10:52.761 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 00:11:31.239 [ForkJoinPool.commonPool-worker-1] ERROR c.m.s.m.service.UpfileService - Up file faild: e
-java.io.FileNotFoundException: D:\data\tokens (Access is denied)
-	at java.base/java.io.FileInputStream.open0(Native Method)
-	at java.base/java.io.FileInputStream.open(FileInputStream.java:216)
-	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
-	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:111)
-	at upfileservice@1.0/com.upfileservice.UpfileService.getDriveService(UpfileService.java:35)
-	at upfileservice@1.0/com.upfileservice.UpfileService.uploadOrUpdateFile(UpfileService.java:53)
-	at upfileservice@1.0/com.upfileservice.UpfileService.upFile(UpfileService.java:111)
-	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.service.UpfileService.upFile(UpfileService.java:23)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.exec(CompletableFuture.java:1796)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-2025-08-25 00:11:31.416 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 00:11:32.196 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 00:34:40.693 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 00:34:40.715 [ForkJoinPool.commonPool-worker-1] ERROR c.m.s.m.service.UpfileService - Up file faild: e
-java.io.FileNotFoundException: D:\data\credential.json (The system cannot find the file specified)
-	at java.base/java.io.FileInputStream.open0(Native Method)
-	at java.base/java.io.FileInputStream.open(FileInputStream.java:216)
-	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
-	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:111)
-	at upfileservice@1.0/com.upfileservice.UpfileService.getDriveService(UpfileService.java:35)
-	at upfileservice@1.0/com.upfileservice.UpfileService.uploadOrUpdateFile(UpfileService.java:53)
-	at upfileservice@1.0/com.upfileservice.UpfileService.upFile(UpfileService.java:119)
-	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.service.UpfileService.upFile(UpfileService.java:23)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.exec(CompletableFuture.java:1796)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-2025-08-25 00:34:41.419 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 00:35:33.895 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 00:35:34.760 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 22:46:49.547 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2025-08-25 22:46:49.802 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 22:46:49.874 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2025-08-25 22:46:49.896 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2025-08-25 22:46:50.827 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 22:50:20.367 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2025-08-25 22:50:20.569 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 22:50:20.892 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2025-08-25 22:50:20.908 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2025-08-25 22:50:21.994 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 22:50:26.141 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 22:53:49.651 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2025-08-25 22:53:49.851 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 22:53:49.944 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2025-08-25 22:53:49.963 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2025-08-25 22:53:50.871 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 22:53:54.179 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 22:54:45.304 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 22:56:00.402 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2025-08-25 22:56:00.519 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 22:56:00.798 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2025-08-25 22:56:00.818 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2025-08-25 22:56:01.883 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 22:56:04.537 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 22:57:52.198 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2025-08-25 22:57:52.368 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 22:57:52.605 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2025-08-25 22:57:52.622 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2025-08-25 22:57:55.275 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2025-08-25 22:57:55.582 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2025-08-25 22:57:55.603 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2025-08-25 22:57:55.764 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 22:57:57.061 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
-2025-08-25 22:58:00.978 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 01:05:42.155 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2025-08-26 01:05:42.459 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 01:05:42.464 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2025-08-26 01:05:42.479 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2025-08-26 01:05:43.365 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 01:06:57.644 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 01:09:45.050 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2025-08-26 01:09:45.343 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2025-08-26 01:09:45.359 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2025-08-26 01:09:45.397 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 01:09:46.452 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 01:09:52.667 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 01:10:04.968 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.
+2025-08-26 01:11:58.787 [JavaFX Application Thread] INFO  c.m.s.m.s.impl.ProductServiceImpl - This is logger.

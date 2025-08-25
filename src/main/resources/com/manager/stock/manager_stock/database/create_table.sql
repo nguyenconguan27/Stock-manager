@@ -74,6 +74,7 @@ CREATE TABLE IF NOT EXISTS export_receipt_detail (
                                                      planned_quantity INTEGER,
                                                      actual_quantity INTEGER,
                                                      export_price_id BIGINT not null,
+                                                     original_unit_price INTEGER,
                                                      CONSTRAINT fk_export_receipt FOREIGN KEY (export_receipt_id) REFERENCES export_receipt(id) ON DELETE CASCADE,
     CONSTRAINT fk_export_product FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE SET null,
     CONSTRAINT fk_export_price FOREIGN KEY (export_price_id) REFERENCES export_price(id) ON DELETE SET NULL

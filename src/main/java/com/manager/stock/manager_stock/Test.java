@@ -7,19 +7,20 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.sql.*;
+import java.time.LocalDateTime;
+
 /**
  * @author Trọng Hướng
  */
 public class Test {
     public static void main(String[] args) throws Exception {
         try {
-            String excelPath = "C:\\Users\\ADMIN\\Downloads\\NAM 2025.xlsx"; // đường dẫn file excel
+            String excelPath = "C:\\Users\\ADMIN\\Downloads\\NAM 2025_1.xlsx"; // đường dẫn file excel
             FileInputStream fis = new FileInputStream(excelPath);
             Workbook workbook = new XSSFWorkbook(fis);
             Sheet sheet = workbook.getSheetAt(0);
 
             Connection conn = init();
-//            conn.setAutoCommit(false);
 
             Long currentGroupId = null;
 
@@ -86,8 +87,15 @@ public class Test {
                     // Thêm export price:
                     PreparedStatement insertExportPrice = conn.prepareStatement("INSERT INTO export_price(product_id, export_time, " +
                             "export_price, quantity_in_stock, quantity_imported, total_price_in_stock, total_price_import) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                    Timestamp now = new Timestamp(System.currentTimeMillis());
+
+                    // Lấy LocalDateTime rồi trừ đi 3 năm
+                    LocalDateTime threeYearsAgo = now.toLocalDateTime().minusYears(3);
+
+                    // Chuyển ngược lại về Timestamp
+                    Timestamp result = Timestamp.valueOf(threeYearsAgo);
                     insertExportPrice.setLong(1, productId);
-                    insertExportPrice.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+                    insertExportPrice.setTimestamp(2, result);
                     insertExportPrice.setDouble(3, unitPrice);
                     insertExportPrice.setInt(4, quantity);
                     insertExportPrice.setInt(5, 0);
