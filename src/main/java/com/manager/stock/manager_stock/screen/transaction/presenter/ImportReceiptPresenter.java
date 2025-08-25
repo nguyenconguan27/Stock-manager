@@ -85,25 +85,9 @@ public class ImportReceiptPresenter {
             importReceiptModel.setId(importReceiptId);
             List<ImportReceiptDetailModel> importReceiptDetailModels = GenericConverterBetweenModelAndTableData.convertToListModel(
                     importReceiptDetailModelsTable, ImportReceiptDetailModelMapper.INSTANCE::fromViewModelToModel);
-//        try {
             importReceiptDetailService.save(importReceiptDetailModels, importReceiptId);
-//        }
-            // rollback receipt(Xóa receipt khi lưu thành công) khi thêm mới chi tiết bị lỗi
-//        catch (Exception e) {
-//            importReceiptService.delete(importReceiptId);
-//            throw e;
-//        }
-            // cập nhật tồn kho
-//        try {
-//            updateOrSaveInventoryDetail(academicYear, importReceiptDetailModels, changeQuantityByProductMap, changeTotalPriceByProductMap);
             LocalDateTime importDate = LocalDateTime.parse(importReceiptModel.getCreateAt(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
             updateInventory(academicYear, importReceiptDetailModels, changeQuantityByProductMap, changeTotalPriceByProductMap, true, importDate, importReceiptId);
-//        }
-//        catch (Exception e) {
-//            System.out.println("Cập nhật tồn kho lỗi rồi ==> rollback phiếu nhập và chi tiết phiếu nhập.");
-//            e.printStackTrace();
-//        }
-//        return importReceiptModel;
             importReceiptService.commit();
         }
         catch (Exception e) {

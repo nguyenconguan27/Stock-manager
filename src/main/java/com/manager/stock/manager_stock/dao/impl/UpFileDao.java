@@ -14,12 +14,18 @@ import java.util.List;
 public class UpFileDao extends AbstractDao<Integer>{
     DateTimeFormatter fomart = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     public int getStatus() {
-        String sql = "select * from upfilestatus where id = ?";
-        List<Integer> status = query(sql, rs -> rs.getInt("STATUS"), fomart.format(LocalDate.now()) + "");
-        if(status.isEmpty()) {
-            return -1;
+        try {
+            String sql = "select * from upfilestatus where id = ?";
+            List<Integer> status = query(sql, rs -> rs.getInt("STATUS"), fomart.format(LocalDate.now()) + "");
+            if(status.isEmpty()) {
+                return -1;
+            }
+            return status.get(0);
         }
-        return status.get(0);
+        catch(Exception e) {
+            logger.error(e.getMessage());
+        }
+        return -1;
     }
 
     public void insert() {

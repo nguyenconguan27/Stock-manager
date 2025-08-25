@@ -166,6 +166,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         AtomicReference<ProductModel> selected = new AtomicReference<>();
         ac.valueProperty().addListener((obs, oldP, newP) -> {
             if(newP != null) {
+                System.out.println("Chọn sản phẩm: " + newP.getCode());
                 ExportPriceIdAndPrice ep = exportReceiptPresenter.findExportPriceIdAndPriceByProductAndLastTime(newP.getId());
                 if (ep.exportPriceId() == -1) {
                     AlertUtils.alert("Sản phẩm này không có đơn giá, vui lòng nhập đơn giá cho sản phẩm.", "WARNING", "Cảnh báo", "Không có đơn giá.");
@@ -173,6 +174,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     tfUnitPrice.setUserData(null);
                     return;
                 }
+
 
                 tfUnitPrice.setText(String.valueOf(ep.price()));
                 tfUnitPrice.setUserData(ep.exportPriceId());

@@ -9,7 +9,8 @@ public class UpfileService {
     static Logger logger = LoggerFactory.getLogger(UpfileService.class);
     public static void upFile() {
         try {
-            com.upfileservice.UpfileService upFileService = new com.upfileservice.UpfileService();
+            logger.info("Upload file.");
+//            com.upfileservice.UpfileService upFileService = new com.upfileservice.UpfileService();
             String credential_path = AppConfig.getString("credential.path");
             String tokens_path = AppConfig.getString("tokens.path");
             String local_path = AppConfig.getString("localfile.path");
@@ -18,13 +19,17 @@ public class UpfileService {
             com.upfileservice.UpfileService.BACKUP_FILE_PATH = local_path;
             UpFileDao upFileDao = new UpFileDao();
             int status = upFileDao.getStatus();
+            logger.info("status: " + status);
             if(status != 1) {
                 upFileDao.backup();
+                logger.info("Backup file successfully.");
                 com.upfileservice.UpfileService.upFile();
+                logger.info("Starting up file.");
                 upFileDao.insert();
             }
+            logger.info("Upload file successfully!");
         } catch (Exception e) {
-            logger.error("Up file faild: e" , e);
+            logger.error("Up file fail: e" , e);
         }
     }
 }
