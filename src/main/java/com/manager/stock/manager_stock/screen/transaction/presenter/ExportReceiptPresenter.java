@@ -102,14 +102,6 @@ public class ExportReceiptPresenter {
             exportReceiptService.commit();
         }
         catch (DaoException | CanNotFoundException | StockUnderFlowException e) {
-//            if(exportReceiptId != -1) {
-//                List<Long> exportReceiptIds = new ArrayList<>();
-//                exportReceiptIds.add(exportReceiptId);
-//                exportReceiptService.deleteByIds(exportReceiptIds);
-//            }
-////            if(!exportReceiptDetailIds.isEmpty()) {
-////                exportReceiptDetailService.delete(exportReceiptDetailIds);
-////            }
             // gọi rollback
             exportReceiptService.rollback();
             e.printStackTrace();
@@ -132,23 +124,32 @@ public class ExportReceiptPresenter {
             double changeTotalPrice = changeQuantity * exportReceiptDetailModel.getOriginalUnitPrice();
 
             InventoryDetailModel inventoryDetailModel = inventoryDetailByProductAndAcademicYear.getOrDefault(productId, null);
-            // trường hợp năm của phiếu xuất chưa từng nhập
+            // TH sản phẩm này chưa có tồn kho của năm nay
             if(inventoryDetailModel == null) {
+                // lấy ra tồn kho đầu kì (tức tồn kho của năm ngoái)
                 inventoryDetailModel = inventoryDetailByProductAndPreviousAcademicYear.getOrDefault(productId, null);
                 // trường hợp trong năm trước cũng chưa nhập ==> tạo mới
                 if (inventoryDetailModel == null) {
                     // thông báo sản phẩm này chưa từng được nhập trong 2 năm trở lại đây
                     throw new CanNotFoundException("Sản phẩm: " + exportReceiptDetailModel.getProductName() + " chưa từng được nhập trong 2 năm gần đây, vui lòng kiểm tra lại.");
                 }
-                // trường hợp số lượng tồn kho không đủ cho lần xuất này
+                // TH tồn kho không đủ để xuất kho ==> alert
                 if (inventoryDetailModel.getQuantity() < changeQuantity) {
                     // thông báo sản productId trong kho không đủ
                     throw new StockUnderFlowException("Số lượng tồn kho của " + exportReceiptDetailModel.getProductName() + " không đủ để xuất kho, hiện chỉ còn " + inventoryDetailModel.getQuantity() + " sản phẩm, vui lòng nhập thêm.");
                 }
                 // tính lại tồn kho
-                inventoryDetailModel.setQuantity(changeQuantity);
-                inventoryDetailModel.setTotalPrice(changeTotalPrice);
-                inventoryDetailModelsToInsert.add(inventoryDetailModel);
+                int quantityInStock = inventoryDetailModel.getQuantity();
+                double totalPriceInStock = inventoryDetailModel.getTotalPrice() - changeTotalPrice;
+//                inventoryDetailModel.setQuantity(quantityInStock - changeQuantity);
+//                inventoryDetailModel.setTotalPrice(changeTotalPrice);
+                InventoryDetailModel newInventotyModel = new InventoryDetailModel();
+                newInventotyModel.setProductId(productId);
+                newInventotyModel.setTotalPrice(totalPriceInStock - changeTotalPrice);
+                newInventotyModel.setQuantity(quantityInStock - changeQuantity);
+                newInventotyModel.setAcademicYear(academicYear);
+
+                inventoryDetailModelsToInsert.add(newInventotyModel);
             }
             // trường hợp sản phẩm này đã từng được nhập ==> có tồn kho của năm nay
             else {

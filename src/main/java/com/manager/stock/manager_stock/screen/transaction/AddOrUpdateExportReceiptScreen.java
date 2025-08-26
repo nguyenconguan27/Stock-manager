@@ -202,6 +202,10 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 long exportPriceId = Long.parseLong(tfUnitPrice.getUserData().toString());
                 System.out.println(selectedProduct);
                 addProductToTableProductOfReceipt(selectedProduct, actualQuantity, plannedQuantity, exportPriceId, unitPrice);
+                tfActualQty.clear();
+                tfPlannedQty.clear();
+                tfUnitPrice.clear();
+                tfProduct.clear();
             } catch (NumberFormatException ex) {
                 ex.printStackTrace();
                 AlertUtils.alert("Vui lòng nhập đúng định dạng số cho số lượng và đơn giá.", "WARNING", "Cảnh báo", "Lỗi định dạng");
