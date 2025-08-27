@@ -25,7 +25,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductModel> getAllProducts() {
-        logger.info("This is logger.");
         return productDao.getAll();
     }
 

@@ -43,7 +43,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
         TableColumn<ImportReceiptModelTable, String> colInvoiceNumber = CreateColumnTableUtil.createColumn("Số hóa đơn", ImportReceiptModelTable::invoiceNumberProperty);
         TableColumn<ImportReceiptModelTable, String> colCreateAt = CreateColumnTableUtil.createColumn("Ngày tạo", ImportReceiptModelTable::createAtProperty);
         TableColumn<ImportReceiptModelTable, String> colDeliveredBy = CreateColumnTableUtil.createColumn("Người giao", ImportReceiptModelTable::deliveredByProperty);
-        TableColumn<ImportReceiptModelTable, String> colInvoice = CreateColumnTableUtil.createColumn("Số phiếu nhập", ImportReceiptModelTable::invoiceProperty);
+        TableColumn<ImportReceiptModelTable, String> colInvoice = CreateColumnTableUtil.createColumn("Mã phiếu", ImportReceiptModelTable::invoiceProperty);
         TableColumn<ImportReceiptModelTable, String> colCompany = CreateColumnTableUtil.createColumn("Công ty", ImportReceiptModelTable::companyNameProperty);
         TableColumn<ImportReceiptModelTable, String> colWarehouse = CreateColumnTableUtil.createColumn("Kho", ImportReceiptModelTable::warehouseNameProperty);
         TableColumn<ImportReceiptModelTable, String> colTotalPrice = CreateColumnTableUtil.createColumn("Thành tiền", ImportReceiptModelTable::totalPriceFormatProperty);
@@ -61,8 +61,6 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
                 colId, colInvoiceNumber, colCreateAt, colDeliveredBy,
                 colInvoice, colCompany, colWarehouse, colTotalPrice
         );
-//        receiptTable.getColumns().forEach(col -> col.setResizable(false));
-
         receiptTable.setItems(receiptData);
         receiptTable.setPrefHeight(600);
         receiptTable.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #c1dfee; -fx-border-width: 1px;");

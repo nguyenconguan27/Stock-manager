@@ -18,8 +18,10 @@ import com.manager.stock.manager_stock.screen.transaction.presenter.ExportReceip
 import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter;
 import com.manager.stock.manager_stock.utils.*;
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -106,6 +108,11 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             List<ExportReceiptDetailModelTable> importReceiptDetailModelTablesByReceipt = GenericConverterBetweenModelAndTableData.convertToList(exportReceiptDetailModels
                     , ExportReceiptDetailModelTableMapper.INSTANCE::toViewModel);
             productDetails.setAll(importReceiptDetailModelTablesByReceipt);
+
+            // tính tổng số lượng
+            int totalQuantity = exportReceiptDetailModels.stream().mapToInt(ExportReceiptDetailModel::getActualQuantity)
+                    .sum();
+            totalQuantityLabel.setText(totalQuantity + "");
         }
 
         // === Gộp 2 form vào 1 hàng ngang ===
@@ -219,7 +226,10 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
     protected VBox createTableItemDetailByReceipt(ExportReceiptModelTable receiptModelTable) {
         TableView<ExportReceiptDetailModelTable> productTable = new TableView<>();
         productTable.setEditable(true);
-
+        TableColumn<ExportReceiptDetailModelTable, Number> colIndex = new TableColumn<>("STT");
+        colIndex.setCellValueFactory(cellData ->
+                new ReadOnlyObjectWrapper<>(productTable.getItems().indexOf(cellData.getValue()) + 1)
+        );
         TableColumn<ExportReceiptDetailModelTable, String> colProductId = CreateColumnTableUtil.createColumn("Mã SP", ExportReceiptDetailModelTable::productCodeProperty);
         TableColumn<ExportReceiptDetailModelTable, String> colProductName = CreateColumnTableUtil.createColumn("Tên SP", ExportReceiptDetailModelTable::productNameProperty);
 
@@ -229,8 +239,6 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         colPlannedQty.setOnEditCommit(event -> {
             ExportReceiptDetailModelTable row = event.getRowValue();
             row.plannedQuantityProperty().set(event.getNewValue().intValue());
-
-            int oldValue = row.getPlannedQuantity();
             int newValue = event.getNewValue().intValue();
 
             row.setPlannedQuantity(newValue);
@@ -259,6 +267,9 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             row.setDisplayTotalPriceFormat(FormatMoney.format(newTotal));
             row.actualQuantityProperty().set(event.getNewValue().intValue());
             totalPriceOfReceipt += changeQuantity * row.getDisplayUnitPrice();
+            System.out.println("Số lượng thay đổi: " + changeQuantity);
+            int totalQuantity = Integer.parseInt(totalQuantityLabel.getText()) + changeQuantity;
+            totalQuantityLabel.setText(totalQuantity + "");
             totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
             productTable.refresh();
         });
@@ -280,6 +291,8 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     ExportReceiptDetailModelTable item = getTableView().getItems().get(getIndex());
                     totalPriceOfReceipt -= item.getTotalPrice();
                     totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
+                    int totalQuantity = Integer.parseInt(totalQuantityLabel.getText()) - item.getActualQuantity();
+                    totalQuantityLabel.setText(totalQuantity + "");
                     getTableView().getItems().remove(item);
                 });
 
@@ -293,7 +306,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         });
 
         productTable.getColumns().addAll(
-                colProductId, colProductName, colPlannedQty, colActualQty,
+                colIndex, colProductId, colProductName, colPlannedQty, colActualQty,
                 colUnitPrice, colTotalPrice, colAction
         );
 
@@ -412,9 +425,15 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         HBox totalPriceRow = new HBox(10);
         totalPriceRow.setStyle("-fx-padding: 5; -fx-background-color: #e1f0f7; -fx-border-color: #c1dfee; -fx-border-width: 1px; ");
         Label totalPriceLabelTitle = new Label("Tổng cộng: ");
-        totalPriceRow.getChildren().addAll(totalPriceLabelTitle, totalPriceLabel);
+        Label totalQuantityLabelTitle = new Label(" SL thực: ");
+        Separator separator = new Separator(Orientation.VERTICAL);
+        separator.setPrefHeight(20);
+//        separator.setStyle("-fx-background-color: #c1dfee;");
+        totalPriceRow.getChildren().addAll(totalPriceLabelTitle, totalPriceLabel, separator, totalQuantityLabelTitle, totalQuantityLabel);
         styleLabel(totalPriceLabelTitle);
+        styleLabel(totalQuantityLabelTitle);
         styleLabel(totalPriceLabel);
+        styleLabel(totalQuantityLabel);
 
         box.getChildren().addAll(totalPriceRow, actionRow);
         return box;
@@ -471,6 +490,8 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 e.printStackTrace();
             }
         }
+        int totalQuantity = Integer.parseInt(totalQuantityLabel.getText()) + actualQuantity;
+        totalQuantityLabel.setText(totalQuantity + "");
         productTable.refresh();
     }
 }

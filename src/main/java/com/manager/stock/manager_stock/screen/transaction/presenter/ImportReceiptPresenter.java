@@ -366,7 +366,6 @@ public class ImportReceiptPresenter {
             exportPriceModel.setTotalImportPrice(totalPriceImported);
             // tính giá xuất mới cho sản phẩm
 
-
             double newUnitPrice = Math.round((totalPriceInStock + totalPriceImported) / (quantityImported + quantityInStock));
             exportPriceModel.setExportPrice(newUnitPrice);
             exportPriceModel.setTotalPriceInStock(totalPriceInStock);
