@@ -14,6 +14,7 @@ import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceip
 import com.manager.stock.manager_stock.utils.*;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -97,6 +98,9 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             List<ImportReceiptDetailModel> importReceiptDetailModels = presenter.loadImportReceiptDetailList(model.getId());
             List<ImportReceiptDetailModelTable> importReceiptDetailModelTablesByReceipt = GenericConverterBetweenModelAndTableData.convertToList(importReceiptDetailModels, ImportReceiptDetailModelMapper.INSTANCE::toViewModel);
             productDetails.setAll(importReceiptDetailModelTablesByReceipt);
+
+            int totalQuantity = importReceiptDetailModels.stream().mapToInt(ImportReceiptDetailModel::getActualQuantity).sum();
+            totalQuantityLabel.setText(totalQuantity + "");
         }
 
         // === Gộp 2 form vào 1 hàng ngang ===
@@ -232,6 +236,8 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             row.actualQuantityProperty().set(event.getNewValue().intValue());
             totalPriceOfReceipt += changeTotalPrice;
             totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
+            int totalQuantity = Integer.parseInt(totalQuantityLabel.getText()) + changeQuantity;
+            totalQuantityLabel.setText(totalQuantity + "");
             productTable.refresh();
         });
 
@@ -254,6 +260,8 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     ImportReceiptDetailModelTable item = getTableView().getItems().get(getIndex());
                     totalPriceOfReceipt -= item.getTotalPrice();
                     totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
+                    int totalQuantity = Integer.parseInt(totalQuantityLabel.getText()) - item.getActualQuantity();
+                    totalQuantityLabel.setText(totalQuantity + "");
                     receiptDetailIdsDeleted.add(item.getId());
                     if(item.getId() != null){
                         int changeQuantityByProduct = changeQuantityByProductMap.getOrDefault(item.getProductId(), 0);
@@ -392,9 +400,14 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         HBox totalPriceRow = new HBox(10);
         totalPriceRow.setStyle("-fx-padding: 5; -fx-background-color: #e1f0f7; -fx-border-color: #c1dfee; -fx-border-width: 1px; ");
         Label totalPriceLabelTitle = new Label("Tổng cộng: ");
-        totalPriceRow.getChildren().addAll(totalPriceLabelTitle, totalPriceLabel);
+        Label totalQuantityLabelTitle = new Label("Số lượng thực: ");
+        Separator separator = new Separator(Orientation.VERTICAL);
+        separator.setPrefHeight(20);
+        totalPriceRow.getChildren().addAll(totalPriceLabelTitle, totalPriceLabel, separator, totalQuantityLabelTitle, totalQuantityLabel);
         styleLabel(totalPriceLabelTitle);
         styleLabel(totalPriceLabel);
+        styleLabel(totalQuantityLabelTitle);
+        styleLabel(totalQuantityLabel);
 
         box.getChildren().addAll(totalPriceRow, actionRow);
         return box;
@@ -447,6 +460,8 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             changeQuantityByProductMap.put(product.getId(), changeQuantityByProduct + actualQuantity);
             changeTotalPriceByProductMap.put(product.getId(), changeTotalPriceByProduct + currentTotalPrice);
         }
+        int totalQuantity = Integer.parseInt(totalQuantityLabel.getText()) + actualQuantity;
+        totalQuantityLabel.setText(totalQuantity + "");
         productTable.refresh();
     }
 

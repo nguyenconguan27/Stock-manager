@@ -37,6 +37,7 @@ public abstract class BaseAddOrUpdateReceiptScreen<T, D> extends VBox {
     protected final ObservableList<D> productDetails = FXCollections.observableArrayList();
     protected double totalPriceOfReceipt = 0;
     protected Label totalPriceLabel = new Label(FormatMoney.format(0));
+    protected Label totalQuantityLabel = new Label("0");
     protected Set<Long> changeIdsOfReceiptDetails = new HashSet<>();
     protected HashMap<Long, Integer> changeQuantityByProductMap = new HashMap<>();
     protected HashMap<Long, Double> changeTotalPriceByProductMap = new HashMap<>();

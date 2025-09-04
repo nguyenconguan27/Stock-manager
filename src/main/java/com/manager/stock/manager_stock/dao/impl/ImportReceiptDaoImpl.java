@@ -46,10 +46,10 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
                     " values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         List<Object[]> parameters = new ArrayList<>();
         parameters.add(new Object[]{
-                importReceiptModel.getInvoiceNumber(),
+                importReceiptModel.getInvoice(),
                 importReceiptModel.getCreateAt(),
                 importReceiptModel.getDeliveredBy(),
-                importReceiptModel.getInvoice(),
+                importReceiptModel.getInvoiceNumber(),
                 importReceiptModel.getCompanyName(),
                 importReceiptModel.getWarehouseName(),
                 importReceiptModel.getTotalPrice(),

@@ -141,15 +141,14 @@ public class ExportReceiptPresenter {
                 // tính lại tồn kho
                 int quantityInStock = inventoryDetailModel.getQuantity();
                 double totalPriceInStock = inventoryDetailModel.getTotalPrice() - changeTotalPrice;
-//                inventoryDetailModel.setQuantity(quantityInStock - changeQuantity);
-//                inventoryDetailModel.setTotalPrice(changeTotalPrice);
-                InventoryDetailModel newInventotyModel = new InventoryDetailModel();
-                newInventotyModel.setProductId(productId);
-                newInventotyModel.setTotalPrice(totalPriceInStock - changeTotalPrice);
-                newInventotyModel.setQuantity(quantityInStock - changeQuantity);
-                newInventotyModel.setAcademicYear(academicYear);
 
-                inventoryDetailModelsToInsert.add(newInventotyModel);
+                InventoryDetailModel newInventoryModel = new InventoryDetailModel();
+                newInventoryModel.setProductId(productId);
+                newInventoryModel.setTotalPrice(totalPriceInStock);
+                newInventoryModel.setQuantity(quantityInStock - changeQuantity);
+                newInventoryModel.setAcademicYear(academicYear);
+
+                inventoryDetailModelsToInsert.add(newInventoryModel);
             }
             // trường hợp sản phẩm này đã từng được nhập ==> có tồn kho của năm nay
             else {

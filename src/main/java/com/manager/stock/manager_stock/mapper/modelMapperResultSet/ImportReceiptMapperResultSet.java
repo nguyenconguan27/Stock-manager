@@ -22,7 +22,7 @@ public class ImportReceiptMapperResultSet implements RowMapper<ImportReceiptMode
                     case "id":
                         importReceiptModel.setId(resultSet.getLong(columnName));
                         break;
-                    case "invoice_number":
+                    case "invoice":
                         importReceiptModel.setInvoiceNumber(resultSet.getString(columnName));
                         break;
                     case "create_at":
@@ -31,7 +31,7 @@ public class ImportReceiptMapperResultSet implements RowMapper<ImportReceiptMode
                     case "delivered_by":
                         importReceiptModel.setDeliveredBy(resultSet.getString(columnName));
                         break;
-                    case "invoice":
+                    case "invoice_number":
                         importReceiptModel.setInvoice(resultSet.getString(columnName));
                         break;
                     case "company_name":
