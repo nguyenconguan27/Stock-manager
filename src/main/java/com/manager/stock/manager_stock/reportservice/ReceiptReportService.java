@@ -48,7 +48,7 @@ public class ReceiptReportService {
         importReceiptModelList = reportService.getImportDetail(year);
         for(int i = 0; i < importReceiptModelList.size(); i++) {
             ImportReceiptModel importReceipt = importReceiptModelList.get(i);
-            Sheet sheet = workbook.createSheet(importReceipt.getInvoice());
+            Sheet sheet = workbook.createSheet(importReceipt.getInvoiceNumber());
             printImportDetailReceipt(sheet, importReceipt);
         }
         try(FileOutputStream fos = new FileOutputStream(fileName)) {
@@ -72,6 +72,9 @@ public class ReceiptReportService {
             ImportReceiptDetailModel detail = importReceipt.getImportReceiptDetails().get(i);
             Utils.fillData(sheet, i, detail.getProductName(), detail.getProductCode(), detail.getUnit(),
                     detail.getPlannedQuantity(), detail.getActualQuantity(), (int) detail.getUnitPrice(), (int) detail.getTotalPrice(), workbook);
+            total += detail.getTotalPrice();
+            planTotal += detail.getPlannedQuantity();
+            actualTotal += detail.getActualQuantity();
         }
         Utils.fillFooter(sheet, planTotal, actualTotal, total, FormatMoney.formatMoneyToWord(total),
                 null, null, null, r, null, workbook);

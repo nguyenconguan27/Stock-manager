@@ -50,6 +50,7 @@ public class ImportReceiptDetailMapperResultSet implements RowMapper<ImportRecei
                     break;
             }
         }
+        importReceiptDetailModel.setTotalPrice(importReceiptDetailModel.getUnitPrice() * importReceiptDetailModel.getActualQuantity());
         return importReceiptDetailModel;
     }
 }

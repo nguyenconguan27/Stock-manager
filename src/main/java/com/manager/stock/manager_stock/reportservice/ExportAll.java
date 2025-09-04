@@ -26,7 +26,7 @@ public class ExportAll {
     public static void exportTotal(String pathFile) {
         createTitleRow();
         fillData();
-        try(FileOutputStream fos = new FileOutputStream(pathFile)) {
+        try (FileOutputStream fos = new FileOutputStream(pathFile)) {
             workbook.write(fos);
             workbook.close();
         } catch (Exception e) {
@@ -34,11 +34,11 @@ public class ExportAll {
     }
 
     static void setBorder(int sr, int er, int sc, int ec, CellStyle style) {
-        for(int i = sr; i <= er; i++) {
+        for (int i = sr; i <= er; i++) {
             Row row = sheet.getRow(i);
-            for(int j = sc; j <= ec; j++) {
+            for (int j = sc; j <= ec; j++) {
                 Cell cell = row.getCell(j);
-                if(cell == null) {
+                if (cell == null) {
                     cell = row.createCell(j);
                 }
                 cell.setCellStyle(style);
@@ -52,9 +52,10 @@ public class ExportAll {
         cellTT.setCellValue(title);
         sheet.addMergedRegion(new CellRangeAddress(r, r + 1, c, c));
     }
+
     static void detailCol(int r, int c, String title) {
         Row row = sheet.getRow(r);
-        Cell titleCell =  row.createCell(c);
+        Cell titleCell = row.createCell(c);
         titleCell.setCellValue(title);
         sheet.addMergedRegion(new CellRangeAddress(r, r, c, c + 2));
         Row infoRow = sheet.getRow(r + 1);
@@ -71,26 +72,37 @@ public class ExportAll {
         int cTemp = 0;
         sheet.createRow(4);
         sheet.createRow(5);
-        infoProductCol(rTemp, cTemp, "TT"); cTemp++;
-        infoProductCol(rTemp, cTemp, "TÊN VT/CC"); cTemp++;
-        infoProductCol(rTemp, cTemp, "MÃ VT/CC"); cTemp++;
-        infoProductCol(rTemp, cTemp, "ĐVT"); cTemp++;
+        infoProductCol(rTemp, cTemp, "TT");
+        cTemp++;
+        infoProductCol(rTemp, cTemp, "TÊN VT/CC");
+        cTemp++;
+        infoProductCol(rTemp, cTemp, "MÃ VT/CC");
+        cTemp++;
+        infoProductCol(rTemp, cTemp, "ĐVT");
+        cTemp++;
         detailCol(rTemp, cTemp, "TỒN ĐẦU KỲ");
-        receiptPosMap.put("startsem", cTemp); cTemp+=3;
-        for(ImportReceiptModel receiptModel: imports) {
+        receiptPosMap.put("startsem", cTemp);
+        cTemp += 3;
+        for (ImportReceiptModel receiptModel : imports) {
             detailCol(rTemp, cTemp, receiptModel.getInvoiceNumber());
-            receiptPosMap.put("i" + receiptModel.getId(), cTemp); cTemp+=3;
+            receiptPosMap.put("i" + receiptModel.getId(), cTemp);
+            cTemp += 3;
         }
-        for(ExportReceiptModel receiptModel: exports) {
-            detailCol(rTemp, cTemp, receiptModel.getInvoiceNumber());;
-            receiptPosMap.put("e" + receiptModel.getId(), cTemp); cTemp+=3;
+        for (ExportReceiptModel receiptModel : exports) {
+            detailCol(rTemp, cTemp, receiptModel.getInvoiceNumber());
+            ;
+            receiptPosMap.put("e" + receiptModel.getId(), cTemp);
+            cTemp += 3;
         }
         detailCol(rTemp, cTemp, "TỔNG NHẬP TRONG KỲ");
-        receiptPosMap.put("totalimport", cTemp); cTemp+=3;
+        receiptPosMap.put("totalimport", cTemp);
+        cTemp += 3;
         detailCol(rTemp, cTemp, "TỔNG XUẤT TRONG KỲ");
-        receiptPosMap.put("totalexport", cTemp); cTemp+=3;
+        receiptPosMap.put("totalexport", cTemp);
+        cTemp += 3;
         detailCol(rTemp, cTemp, "TỒN CUỐI KỲ");
-        receiptPosMap.put("endsem", cTemp); cTemp+=3;
+        receiptPosMap.put("endsem", cTemp);
+        cTemp += 3;
         curCol = cTemp - 1;
         CellStyle style = workbook.createCellStyle();
         style.setAlignment(HorizontalAlignment.CENTER);
@@ -103,7 +115,7 @@ public class ExportAll {
         font.setBold(true);
         style.setFont(font);
         style.setWrapText(false);
-        setBorder(rTemp,  rTemp + 1, 0, curCol, style);
+        setBorder(rTemp, rTemp + 1, 0, curCol, style);
     }
 
     static void fillDetailData(int r, int c, ReportModel.ReportDetail data) {
@@ -111,6 +123,7 @@ public class ExportAll {
         Cell qCol = row.createCell(c);
         Cell pCol = row.createCell(c + 1);
         Cell tCol = row.createCell(c + 2);
+
         qCol.setCellValue(data.getQuantity());
         pCol.setCellValue(data.getUnit_price());
         tCol.setCellValue(data.getTotal());
@@ -130,22 +143,28 @@ public class ExportAll {
         font.setBold(false);
         style.setFont(font);
         style.setWrapText(false);
-        for(ReportModel reportModel: reportModels) {
+        for (ReportModel reportModel : reportModels) {
             int c = 0;
             Row row = sheet.createRow(r);
             Cell gCell = row.createCell(c);
             gCell.setCellValue(reportModel.getGroupName());
             sheet.addMergedRegion(new CellRangeAddress(r, r, c, c + 3));
             style.setAlignment(HorizontalAlignment.LEFT);
-            setBorder(r, r, 0, curCol, style); r++;
-            for(ReportModel.ReportProduct reportProduct: reportModel.getReportProducts()) {
+            setBorder(r, r, 0, curCol, style);
+            r++;
+            for (ReportModel.ReportProduct reportProduct : reportModel.getReportProducts()) {
                 c = 0;
                 row = sheet.createRow(r);
-                Cell oCell = row.createCell(c); c++;
-                Cell nameCell = row.createCell(c); c++;
-                Cell idCell = row.createCell(c); c++;
-                Cell unitCell = row.createCell(c); c++;
-                oCell.setCellValue(ord); ord++;
+                Cell oCell = row.createCell(c);
+                c++;
+                Cell nameCell = row.createCell(c);
+                c++;
+                Cell idCell = row.createCell(c);
+                c++;
+                Cell unitCell = row.createCell(c);
+                c++;
+                oCell.setCellValue(ord);
+                ord++;
                 nameCell.setCellValue(reportProduct.getName());
                 idCell.setCellValue(reportProduct.getCode());
                 unitCell.setCellValue(reportProduct.getUnit());
@@ -157,10 +176,10 @@ public class ExportAll {
                 List<ReportModel.ReportDetail> importList = reportProduct.getImportDetail();
                 List<ReportModel.ReportDetail> exportList = reportProduct.getExportDetail();
                 fillDetailData(r, c, startSem);
-                for(ReportModel.ReportDetail reportDetail: importList) {
+                for (ReportModel.ReportDetail reportDetail : importList) {
                     fillDetailData(r, receiptPosMap.get(reportDetail.getId()), reportDetail);
                 }
-                for(ReportModel.ReportDetail reportDetail: exportList) {
+                for (ReportModel.ReportDetail reportDetail : exportList) {
                     fillDetailData(r, receiptPosMap.get(reportDetail.getId()), reportDetail);
                 }
                 fillDetailData(r, receiptPosMap.get("totalimport"), totalImport);
@@ -169,6 +188,14 @@ public class ExportAll {
                 CellStyle style1 = workbook.createCellStyle();
                 style1.cloneStyleFrom(style);
                 style1.setAlignment(HorizontalAlignment.RIGHT);
+                style1.setVerticalAlignment(VerticalAlignment.CENTER);
+                style1.setWrapText(false);
+                Font light = workbook.createFont();
+                light.setFontName("Times New Roman");
+                light.setBold(false);
+                style1.setFont(light);
+                DataFormat format = workbook.createDataFormat();
+                style1.setDataFormat(format.getFormat("#,##0"));
                 setBorder(r, r, c, curCol, style1);
                 r++;
             }

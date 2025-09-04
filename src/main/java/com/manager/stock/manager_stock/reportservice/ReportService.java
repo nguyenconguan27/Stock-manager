@@ -67,8 +67,20 @@ public class ReportService {
             for(ProductModel productModel: productList) {
                 InventoryDetailModel sInventoryDetail = inventoryDetailService.findAllByAcademicYearAndProductId(year - 1, Arrays.asList(productModel.getId())).get(productModel.getId());
                 InventoryDetailModel eInventoryDetail = inventoryDetailService.findAllByAcademicYearAndProductId(year, Arrays.asList(productModel.getId())).get(productModel.getId());
-                ReportModel.ReportDetail startSem = new ReportModel.ReportDetail("startsem", sInventoryDetail.getQuantity(), (int)(sInventoryDetail.getTotalPrice() / (sInventoryDetail.getQuantity() == 0 ? 1 : sInventoryDetail.getQuantity())), (int) (sInventoryDetail.getTotalPrice() / 1));
-                ReportModel.ReportDetail endSem = new ReportModel.ReportDetail("endsem", eInventoryDetail.getQuantity(), (int)(eInventoryDetail.getTotalPrice() / (eInventoryDetail.getQuantity() == 0 ? 1 : eInventoryDetail.getQuantity())), (int) (eInventoryDetail.getTotalPrice() / 1));
+                ReportModel.ReportDetail startSem;
+                ReportModel.ReportDetail endSem;
+                if(sInventoryDetail != null) {
+                    startSem = new ReportModel.ReportDetail("startsem", sInventoryDetail.getQuantity(), (int)(sInventoryDetail.getTotalPrice() / (sInventoryDetail.getQuantity() == 0 ? 1 : sInventoryDetail.getQuantity())), (int) (sInventoryDetail.getTotalPrice() / 1));
+                }
+                else {
+                    startSem = new ReportModel.ReportDetail("startsem", 0, 0, 0);
+                }
+                if(eInventoryDetail != null) {
+                    endSem = new ReportModel.ReportDetail("endsem", eInventoryDetail.getQuantity(), (int)(eInventoryDetail.getTotalPrice() / (eInventoryDetail.getQuantity() == 0 ? 1 : eInventoryDetail.getQuantity())), (int) (eInventoryDetail.getTotalPrice() / 1));
+                }
+                else {
+                    endSem = new ReportModel.ReportDetail("endsem", 0, 0, 0);
+                }
                 int totalImportQ = 0; int totalImportP = 0;
                 int totalExportQ = 0; int totalExportP = 0;
                 if(productModel.getGroupId() == group.getId()) {

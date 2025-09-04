@@ -280,6 +280,7 @@ public class Utils {
         tcell.setCellValue("Tổng cộng");
         tpqCell.setCellValue(planTotal);
         taqCell.setCellValue(actualTotal);
+        tpCell.setCellStyle(priceStyle);
         tpCell.setCellValue(total);
 
         twcell.setCellValue("Tổng số tiên: " + totalInword);
