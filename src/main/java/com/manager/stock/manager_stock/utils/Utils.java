@@ -5,6 +5,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 
+import java.time.LocalDate;
+
 public class Utils {
 
     public static <T, R> TableColumn<T, R> createColumn(String title, String property) {
@@ -86,7 +88,11 @@ public class Utils {
         sheet.addMergedRegion(new CellRangeAddress(6, 6, 0, 5));
         cell6.setCellValue(title); cell6.setCellStyle(rightBold);
         cell6_.setCellValue("Số: " + code); cell6_.setCellStyle(leftStyle);
-        cell7.setCellValue("Ngày " + "12 " + "tháng " + "7 " + "năm " + "2025"); cell7.setCellStyle(italicStyle);
+        LocalDate today = LocalDate.now();
+        int day = today.getDayOfMonth();
+        int month = today.getMonthValue();
+        int year = today.getYear();
+        cell7.setCellValue("Ngày " + day + " tháng " + month + " năm " + year); cell7.setCellStyle(italicStyle);
         cell7_.setCellValue("Nợ: "); cell7_.setCellStyle(leftStyle);
         cell8_.setCellValue("Có: "); cell8_.setCellStyle(leftStyle);
 
@@ -284,7 +290,11 @@ public class Utils {
         tpCell.setCellValue(total);
 
         twcell.setCellValue("Tổng số tiên: " + totalInword);
-        dshell.setCellValue("Ngày " + "12 " + "tháng " + "7 " + "năm " + "2025");
+        LocalDate today = LocalDate.now();
+        int day = today.getDayOfMonth();
+        int month = today.getMonthValue();
+        int year = today.getYear();
+        dshell.setCellValue("Ngày " + day + " tháng " + month + " năm " + year);
         scell1.setCellValue("PHỤ TRÁCH BỘ PHẬN");
         scell2.setCellValue("NGƯỜI NHẬN");
         scell3.setCellValue("THỦ KHO");
