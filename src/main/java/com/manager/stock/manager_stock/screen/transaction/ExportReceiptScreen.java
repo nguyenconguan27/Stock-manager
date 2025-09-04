@@ -283,7 +283,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
                             "INFORMATION", "Thành công", "Xuất dữ liệu");
                 } catch (Exception e) {
                     e.printStackTrace();
-                    AlertUtils.alert("Có lỗi khi xuất file: " + e.getMessage(),
+                    AlertUtils.alert("Có lỗi khi xuất file",
                             "ERROR", "Lỗi", "Xuất dữ liệu thất bại");
                 }
             }
@@ -300,7 +300,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
                             "INFORMATION", "Thành công", "Xuất dữ liệu");
                 } catch (Exception e) {
                     e.printStackTrace();
-                    AlertUtils.alert("Có lỗi khi xuất file: " + e.getMessage(),
+                    AlertUtils.alert("Có lỗi khi xuất file",
                             "ERROR", "Lỗi", "Xuất dữ liệu thất bại");
                 }
             }

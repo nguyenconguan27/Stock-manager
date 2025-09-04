@@ -84,13 +84,12 @@ public class ExportAll {
         receiptPosMap.put("startsem", cTemp);
         cTemp += 3;
         for (ImportReceiptModel receiptModel : imports) {
-            detailCol(rTemp, cTemp, receiptModel.getInvoiceNumber());
+            detailCol(rTemp, cTemp, receiptModel.getInvoice());
             receiptPosMap.put("i" + receiptModel.getId(), cTemp);
             cTemp += 3;
         }
         for (ExportReceiptModel receiptModel : exports) {
             detailCol(rTemp, cTemp, receiptModel.getInvoiceNumber());
-            ;
             receiptPosMap.put("e" + receiptModel.getId(), cTemp);
             cTemp += 3;
         }

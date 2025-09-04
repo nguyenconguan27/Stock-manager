@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
  */
 public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen<ImportReceiptModelTable, ImportReceiptDetailModelTable> {
 
-//    private final ImportReceiptPresenter importReceiptPresenter;
     protected TextField tfInvoice, tfDeliveredBy, tfCompanyName;
     public AddOrUpdateImportReceiptScreen(ImportReceiptModelTable importReceiptModelTable) {
         super(importReceiptModelTable);
@@ -184,6 +183,12 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 long unitPrice = Long.parseLong(tfUnitPrice.getText());
 
                 addProductToTableProductOfReceipt(selectedProduct, actualQuantity, plannedQuantity, unitPrice);
+
+                tfActualQty.clear();
+                tfPlannedQty.clear();
+                tfUnitPrice.clear();
+                tfProduct.clear();
+                tfInventory.clear();
             } catch (NumberFormatException ex) {
                 AlertUtils.alert("Vui lòng nhập đúng định dạng số cho số lượng và đơn giá.", "WARNING", "Cảnh báo", "Lỗi định dạng");
             }

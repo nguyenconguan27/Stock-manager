@@ -58,7 +58,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         dateTimePicker = new DateTimePicker(LocalDateTime.now(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
         leftForm.add(dateTimePicker, 1, 0);
 
-        leftForm.add(new Label("Số hóa đơn *"), 0, 1);
+        leftForm.add(new Label("Mã hóa đơn *"), 0, 1);
         tfInvoiceNumber = new TextField();
         leftForm.add(tfInvoiceNumber, 1, 1);
 
@@ -213,6 +213,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 tfPlannedQty.clear();
                 tfUnitPrice.clear();
                 tfProduct.clear();
+                tfInventory.clear();
             } catch (NumberFormatException ex) {
                 ex.printStackTrace();
                 AlertUtils.alert("Vui lòng nhập đúng định dạng số cho số lượng và đơn giá.", "WARNING", "Cảnh báo", "Lỗi định dạng");
