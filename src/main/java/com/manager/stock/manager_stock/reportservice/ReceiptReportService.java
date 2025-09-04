@@ -48,7 +48,7 @@ public class ReceiptReportService {
         importReceiptModelList = reportService.getImportDetail(year);
         for(int i = 0; i < importReceiptModelList.size(); i++) {
             ImportReceiptModel importReceipt = importReceiptModelList.get(i);
-            Sheet sheet = workbook.createSheet(importReceipt.getInvoiceNumber());
+            Sheet sheet = workbook.createSheet(importReceipt.getInvoice());
             printImportDetailReceipt(sheet, importReceipt);
         }
         try(FileOutputStream fos = new FileOutputStream(fileName)) {
