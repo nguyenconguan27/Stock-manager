@@ -2,6 +2,7 @@ package com.manager.stock.manager_stock.screen.transaction;
 
 import com.browniebytes.javafx.control.DateTimePicker;
 import com.manager.stock.manager_stock.exception.DaoException;
+import com.manager.stock.manager_stock.exception.InvalidException;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptDetailModelMapper;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptModelMapper;
 import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
@@ -124,7 +125,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         VBox actualQtyCol = new VBox(5, lbActualQty, tfActualQty);
 
         Label lbUnitPrice = new Label("Đơn giá *");
-        TextField tfUnitPrice = new TextField();
+        TextField tfUnitPrice = new TextField("0");
         tfUnitPrice.setPrefWidth(100);
         VBox unitPriceCol = new VBox(5, lbUnitPrice, tfUnitPrice);
 
@@ -248,16 +249,46 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
 
         TableColumn<ImportReceiptDetailModelTable, String> colUnitPrice = new TableColumn<>("Đơn giá");
         colUnitPrice.setCellValueFactory(data -> data.getValue().unitPriceFormatProperty());
+        colUnitPrice.setCellFactory(TextFieldTableCell.forTableColumn());
+        colUnitPrice.setOnEditCommit(event -> {
+            ImportReceiptDetailModelTable row = event.getRowValue();
+            String newValueStr = event.getNewValue();
+            double newValue = 0;
+            try {
+                newValue = FormatMoney.parseFlexibleMoney(newValueStr);
+            }
+            catch (InvalidException e) {
+                AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi định dạng", "Lỗi định dạng");
+                return;
+            }
+            double oldValue = row.getUnitPrice();
+            double changeUnitPrice = newValue - oldValue;
+            double changeTotalPrice = changeUnitPrice * row.getActualQuantity();
+
+            if(row.getId() != null) {
+                double changeTotalPriceByProduct = changeTotalPriceByProductMap.getOrDefault(row.getProductId(), 0.0);
+                changeTotalPriceByProductMap.put(row.getProductId(), changeTotalPriceByProduct + changeTotalPrice);
+                changeIdsOfReceiptDetails.add(row.getId());
+            }
+
+            double newTotal = newValue * row.getActualQuantity();
+            row.setTotalPrice(newTotal);
+            row.setTotalPriceFormat(FormatMoney.format(newTotal));
+            row.unitPriceProperty().set(newValue);
+            row.unitPriceFormatProperty().set(FormatMoney.format(newValue));
+            totalPriceOfReceipt += changeTotalPrice;
+            totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
+
+            productTable.refresh();
+        });
 
         TableColumn<ImportReceiptDetailModelTable, String> colTotalPrice = new TableColumn<>("Thành tiền");
         colTotalPrice.setCellValueFactory(data -> data.getValue().totalPriceFormatProperty());
         TableColumn<ImportReceiptDetailModelTable, Void> colAction = new TableColumn<>("Thao tác");
         colAction.setCellFactory(param -> new TableCell<>() {
-//            private final Button btnEdit = new Button("✎");
             private final Button btnDelete = new Button("🗑");
             private final HBox pane = new HBox(5, btnDelete);
             {
-//                btnEdit.setStyle("-fx-background-color: #ffd966; -fx-cursor: hand;");
                 btnDelete.setStyle("-fx-background-color: #f08080; -fx-cursor: hand;");
                 pane.setAlignment(Pos.CENTER);
 
@@ -275,7 +306,6 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     }
                     getTableView().getItems().remove(item);
                 });
-
             }
 
             @Override
@@ -377,8 +407,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                             .filter(importReceiptDetailModelTable -> changeIdsOfReceiptDetails.contains(importReceiptDetailModelTable.getId()) || importReceiptDetailModelTable.getId() == -1)
                             .collect(Collectors.toList());
                     ImportReceiptModel oldImportReceiptModel = ImportReceiptModelMapper.INSTANCE.fromViewModelToModel(oldImportReceiptModelTable);
-                    presenter.updateImportReceipt(importReceiptModel, oldImportReceiptModel, newProductDetails, changeQuantityByProductMap, changeTotalPriceByProductMap, receiptDetailIdsDeleted);
-//                    System.out.println("Số lượng thay đổi: " + changeQuantityByProductMap);
+                    presenter.updateImportReceipt(importReceiptModel, newProductDetails, changeQuantityByProductMap, changeTotalPriceByProductMap, receiptDetailIdsDeleted);
                     AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
                 }
                 ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
@@ -427,10 +456,10 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             AlertUtils.alert("Số lượng nhập không được phép nhỏ hơn 0, vui lòng nhập lại.", "WARNING", "Cảnh báo", "Nhập dữ liệu sai");
             return;
         }
-        if(unitPrice < 0) {
-            AlertUtils.alert("Đơn giá không được phép nhỏ hơn 0, vui lòng nhập lại.", "WARNING", "Cảnh báo", "Nhập dữ liệu sai");
-            return;
-        }
+//        if(unitPrice < 0) {
+//            AlertUtils.alert("Đơn giá không được phép nhỏ hơn 0, vui lòng nhập lại.", "WARNING", "Cảnh báo", "Nhập dữ liệu sai");
+//            return;
+//        }
         double currentTotalPrice = actualQuantity * unitPrice;
         totalPriceOfReceipt += currentTotalPrice;
         totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));

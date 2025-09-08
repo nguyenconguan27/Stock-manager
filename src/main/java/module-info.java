@@ -24,6 +24,7 @@ module com.manager.stock.manager_stock {
     requires org.slf4j;
     requires ch.qos.logback.core;
     requires java.sql;
+    requires org.checkerframework.checker.qual;
     opens com.manager.stock.manager_stock to javafx.fxml;
     exports com.manager.stock.manager_stock;
 

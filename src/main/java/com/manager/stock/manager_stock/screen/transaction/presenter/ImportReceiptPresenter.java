@@ -96,7 +96,9 @@ public class ImportReceiptPresenter {
         }
     }
 
-    public void updateImportReceipt(ImportReceiptModel importReceiptModel, ImportReceiptModel oldImportReceiptModel, List<ImportReceiptDetailModelTable> importReceiptDetailModelTables, HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap, Set<Long> receiptDetailIds) throws DaoException {
+    public void updateImportReceipt(ImportReceiptModel importReceiptModel, List<ImportReceiptDetailModelTable> importReceiptDetailModelTables,
+                                    HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap,
+                                    Set<Long> receiptDetailIds) throws DaoException {
         try {
             // cập nhật thông tin của phiếu nhập
             importReceiptService.update(importReceiptModel);
@@ -146,7 +148,9 @@ public class ImportReceiptPresenter {
     }
 
     // cập nhật hoặc thêm mới tồn kho và đơn giá
-    private void updateInventory(int academicYear, List<ImportReceiptDetailModel> importReceiptDetailModels, HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap, boolean isInsert, LocalDateTime importDate, long importReceiptId) throws DaoException {
+    private void updateInventory(int academicYear, List<ImportReceiptDetailModel> importReceiptDetailModels, HashMap<Long, Integer> changeQuantityByProductMap,
+                                 HashMap<Long, Double> changeTotalPriceByProductMap, boolean isInsert, LocalDateTime importDate,
+                                 long importReceiptId) throws DaoException {
         // lấy ra tồn kho theo năm
         // Lấy danh dách product id có trong hóa đơn
         List<Long> productIds = importReceiptDetailModels.stream()
@@ -211,6 +215,7 @@ public class ImportReceiptPresenter {
                 int currentQuantityInStock = inventoryDetailModel.getQuantity() + changeQuantityByProduct;
                 double changeTotalPriceByProduct = changeTotalPriceByProductMap.getOrDefault(productId, 0.0); // giá nhập thêm (quantity_imported)
                 double currentTotalPriceByProduct = inventoryDetailModel.getTotalPrice() + changeTotalPriceByProduct;
+
                 // trường hợp cập nhật lại mà laàm cho tồn kho âm ==> không cho cập nhật
                 if(currentQuantityInStock < 0) {
                     throw new StockUnderFlowException("Số lượng tồn kho không đủ cho các phiếu xuất sau này, không thể chỉnh suwarrr với số lượng như hiện tại.");
@@ -249,7 +254,8 @@ public class ImportReceiptPresenter {
     }
 
     // cập nhật hoặc thêm mới đơnn giá
-    private void updateExportPrice(List<Long> productIds, List<ImportReceiptDetailModel> importReceiptDetailModels, LocalDateTime importDate, HashMap<Long, Integer> changeQuantityByProductMap, long importReceiptId) throws DaoException {
+    private void updateExportPrice(List<Long> productIds, List<ImportReceiptDetailModel> importReceiptDetailModels,
+                                   LocalDateTime importDate, HashMap<Long, Integer> changeQuantityByProductMap, long importReceiptId) throws DaoException {
         // danh sách đơn giá xuất theo từng sản phẩm tính từ ngày nhập của phiếu nhạp trở đi
         Map<Long, List<ExportPriceModel>> exportPriceModelsByProductAfterImportDate = exportPriceService.findAllByProductAndMinTime(productIds, importDate);
         List<ExportPriceModel> exportPriceModelsToUpdate = new ArrayList<>();
@@ -433,5 +439,12 @@ public class ImportReceiptPresenter {
             }
         }
         return 0;
+    }
+
+    public void updateUnitPrice(ImportReceiptDetailModelTable importReceiptDetailModelTable, long importReceiptId, String importDate) throws DaoException{
+        // 1. Cần cập nhật lại đơn giá + thành tiền trong bảng import detail
+        // 2. Cập nhật lại đơn giá xuâất trong bảng export_price
+        // 3. Cập nhật lại thành tiền tồn trong bảng tồn kho
+//        importReceiptService.
     }
 }

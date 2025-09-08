@@ -49,10 +49,11 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
     @Override
     public List<ExportReceiptDetailModel> findAllByProductAndMinTime(List<Long> productIds, LocalDateTime minTime) {
         String productIdsStr = productIds.stream().map(Object::toString).collect(Collectors.joining(","));
+        System.out.println(minTime);
         String sql = "select erd.* from export_receipt_detail erd \n" +
                 "join export_receipt er on\n" +
                 "erd.export_receipt_id = er.id \n" +
-                "where er.create_at >= ?\n" +
+                "where PARSEDATETIME(er.create_at,'dd/MM/yyyy HH:mm:ss') >= ?\n" +
                 "and erd.product_id in (" + productIdsStr + ")";
         return query(sql, new ExportReceiptDetailMapperResultSet(), minTime);
     }

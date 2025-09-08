@@ -13,6 +13,7 @@ public interface IImportReceiptDetailService {
     List<ImportReceiptDetailModel> findAllByImportReceiptId(long importReceiptId);
     long save(List<ImportReceiptDetailModel> importReceiptDetailModels, long importReceiptId);
     void update(List<ImportReceiptDetailModel> importReceiptDetailModels);
+    void update(ImportReceiptDetailModel importReceiptDetailModels);
     List<ProductIdAndActualQuantityAndTotalPriceOfReceipt> findAllProductIdByImportReceipt(long importReceiptId);
     void deleteImportReceiptByImportReceipt(long importReceiptId);
     void deleteByIds(Set<Long> ids);

@@ -76,6 +76,17 @@ public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailM
     }
 
     @Override
+    public void update(ImportReceiptDetailModel importReceiptDetailModels) {
+        try {
+            String sql = "UPDATE import_receipt_detail set unit_price = ?" +
+                    " where id = ?";
+        }
+        catch (Exception e) {
+
+        }
+    }
+
+    @Override
     public List<ProductIdAndActualQuantityAndTotalPriceOfReceipt> findAllProductIdByImportReceipt(long importReceiptId) throws DaoException{
         String sql = "select product_id, actual_quantity, total_price from import_receipt_detail ird  where ird.import_receipt_id = ?;";
         return query(sql, rs -> new ProductIdAndActualQuantityAndTotalPriceOfReceipt(
