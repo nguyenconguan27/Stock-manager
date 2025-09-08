@@ -7,13 +7,25 @@
 .sidebar-tree .tree-cell {
     -fx-background-color: transparent;
     -fx-text-fill: #33536d;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
 }
 
 /* Hover + Selected */
-.sidebar-tree .tree-cell:filled:hover,
+/* Hover */
+.sidebar-tree .tree-cell:filled:hover {
+    -fx-background-color: #cde7f3; /* xanh nhạt hơn nền gốc */
+    -fx-text-fill: #000000;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* Selected */
 .sidebar-tree .tree-cell:filled:selected {
-    -fx-background-color: #0096c9;
-    -fx-text-fill: white;
+    -fx-background-color: #b3daec; /* xanh đậm hơn hover một chút */
+    -fx-text-fill: #000000;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
 }
 
 /* Mũi tên mặc định */
@@ -34,5 +46,5 @@
 /* Mũi tên hover/selected */
 .sidebar-tree .tree-cell:filled:hover .tree-disclosure-node > .arrow,
 .sidebar-tree .tree-cell:filled:selected .tree-disclosure-node > .arrow {
-    -fx-border-color: white;
+    /*-fx-border-color: white;*/
 }

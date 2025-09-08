@@ -81,14 +81,14 @@ public class ScreenNavigator {
         rootItem.setExpanded(true);
 
         rootItem.getChildren().addAll(
-                createItem("Quản lý sản phẩm", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16)
+                createItem("Quản lý sản phẩm", "/com/manager/stock/manager_stock/icons/product.png", 30, 30)
         );
 
-        TreeItem<String> transactionManagerItem = createItem("Quản lý phiếu nhập/xuất", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16);
+        TreeItem<String> transactionManagerItem = createItem("Quản lý phiếu nhập/xuất", "/com/manager/stock/manager_stock/icons/receipt.png", 26, 26);
         transactionManagerItem.setExpanded(true);
         transactionManagerItem.getChildren().addAll(
-                createItem("Phiếu nhập", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16),
-                createItem("Phiếu xuất", "/com/manager/stock/manager_stock/icons/receipt.png", 16, 16)
+                createItem("Phiếu nhập", "/com/manager/stock/manager_stock/icons/import_receipt.png", 30, 30),
+                createItem("Phiếu xuất", "/com/manager/stock/manager_stock/icons/export_receipt.png", 28, 28)
         );
         rootItem.getChildren().add(transactionManagerItem);
 

@@ -147,7 +147,7 @@ public class ProductDetailScreen extends VBox {
             VBox.setVgrow(newStatisticWrapper, Priority.ALWAYS);
             int indexOldNode = this.getChildren().indexOf(statisticWrapper);
             if(indexOldNode != -1){
-                this.getChildren().add(indexOldNode, newStatisticWrapper);
+                this.getChildren().set(indexOldNode, newStatisticWrapper);
                 statisticWrapper = newStatisticWrapper;
             }
         });
@@ -351,20 +351,20 @@ public class ProductDetailScreen extends VBox {
                 createStyledInfo(
                         "• Giá cao nhất: ",
                         (productHaveMaxExportPrice != null)
-                                ? String.format("%s - %s - %.2f",
+                                ? String.format("%s - %s - %s",
                                 productHaveMaxExportPrice.productCode(),
                                 productHaveMaxExportPrice.productName(),
-                                productHaveMaxExportPrice.exportPrice())
-                                : "UNKNOWN - UNKNOWN - 0.00"
+                                FormatMoney.format(productHaveMaxExportPrice.exportPrice()))
+                                : "UNKNOWN - UNKNOWN - 0đ"
                 ),
                 createStyledInfo(
                         "• Giá thấp nhất: ",
                         (productHaveMinExportPrice != null)
-                                ? String.format("%s - %s - %.2f",
+                                ? String.format("%s - %s - %s",
                                 productHaveMinExportPrice.productCode(),
                                 productHaveMinExportPrice.productName(),
-                                productHaveMinExportPrice.exportPrice())
-                                : "UNKNOWN - UNKNOWN - 0.00"
+                                FormatMoney.format(productHaveMinExportPrice.exportPrice()))
+                                : "UNKNOWN - UNKNOWN - 0đ"
                 )
         );
 
