@@ -16,4 +16,6 @@ public interface ProductService {
     void add(ProductModel productModel, long groupId);
 
     void update(ProductModel productModel, long groupId, boolean isUpdateCode);
+    void commit();
+    void rollback();
 }

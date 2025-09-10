@@ -272,7 +272,7 @@ public class AbstractDao<T> implements GenericDao<T> {
         }
     }
 
-    protected void commit() {
+    public void commit() {
         try {
             Connection connection = DatasourceInitialize.getInstance();
             connection.commit();
@@ -282,7 +282,7 @@ public class AbstractDao<T> implements GenericDao<T> {
         }
     }
 
-    protected void rollback() {
+    public void rollback() {
         try {
             Connection connection = DatasourceInitialize.getInstance();
             connection.rollback();

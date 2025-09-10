@@ -65,4 +65,14 @@ public class ProductServiceImpl implements ProductService {
     public void update(ProductModel productModel, long groupId, boolean isUpdateCode) {
         productDao.update(productModel, groupId, isUpdateCode);
     }
+
+    @Override
+    public void commit() {
+        productDao.commit();
+    }
+
+    @Override
+    public void rollback() {
+        productDao.rollback();
+    }
 }

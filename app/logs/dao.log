@@ -100,3 +100,4 @@
 2025-09-10 23:46:13.016 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - UPDATE import_receipt set invoice = ?, create_at = ?, delivered_by = ?, invoice_number = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ?  where id = ?
 2025-09-10 23:46:13.021 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
 2025-09-10 23:46:13.025 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ImportReceiptDetailDaoImpl - UPDATE import_receipt_detail set planned_quantity = ?, actual_quantity = ?, unit_price = ? where id = ?
+2025-09-10 23:58:31.162 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ProductGroupDao - INSERT INTO product_group(id, name) OVERRIDING SYSTEM VALUE VALUES(?, ?);

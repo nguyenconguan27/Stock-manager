@@ -46,4 +46,14 @@ public class ProductGroupServiceImpl implements ProductGroupService {
     public ProductGroup getGroupAndProduct() {
         return null;
     }
+
+    @Override
+    public void commit() {
+        productGroupDao.commit();
+    }
+
+    @Override
+    public void rollback() {
+        productGroupDao.rollback();
+    }
 }

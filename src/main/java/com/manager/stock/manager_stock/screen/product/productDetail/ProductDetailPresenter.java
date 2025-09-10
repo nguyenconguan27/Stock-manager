@@ -42,10 +42,12 @@ public class ProductDetailPresenter {
 
     public void add(ProductModel productModel, long groupId) {
         productService.add(productModel, groupId);
+        productService.commit();
     }
 
     public void update(ProductModel productModel, long groupId, boolean isUpdateCode) {
         productService.update(productModel, groupId, isUpdateCode);
+        productService.commit();
     }
 
     public ProductModel getByCode(String text) {
