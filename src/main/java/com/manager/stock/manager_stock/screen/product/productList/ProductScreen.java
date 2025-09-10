@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.text.Normalizer;
 import java.util.List;
 
@@ -234,10 +235,32 @@ public class ProductScreen extends VBox {
         TableColumn<ProductModel, String> nameCol = Utils.createColumn("Tên", "name");
         TableColumn<ProductModel, Integer> qtyCol = Utils.createColumn("Số lượng", "quantity");
         TableColumn<ProductModel, Integer> unitPriceCol = Utils.createColumn("Đơn giá", "unitPrice");
+        DecimalFormat df = new DecimalFormat("#,###");
+        unitPriceCol.setCellFactory(column -> new TableCell<ProductModel, Integer>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : FormatMoney.format(item));
+            }
+        });
         TableColumn<ProductModel, Void> actionCol = createActionColumn("Thao tác");
         TableColumn<ProductModel, Integer> startSemQCol = Utils.createColumn("Số lượng đầu kỳ", "startSemQ");
         TableColumn<ProductModel, Integer> startSemTCol = Utils.createColumn("Tổng tiền đầu kỳ", "startSemT");
+        startSemTCol.setCellFactory(column -> new TableCell<ProductModel, Integer>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : FormatMoney.format(item));
+            }
+        });
         TableColumn<ProductModel, Integer> total = Utils.createColumn("Tổng tiền", "total");
+        total.setCellFactory(column -> new TableCell<ProductModel, Integer>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : FormatMoney.format(item));
+            }
+        });
         table.getColumns().addAll(idCol, nameCol, qtyCol, unitPriceCol, total, startSemQCol, startSemTCol, actionCol);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         table.setPrefHeight(600);

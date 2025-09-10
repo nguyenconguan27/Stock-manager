@@ -181,6 +181,7 @@ public class ProductDetailScreen extends VBox {
         labelQuantity.setStyle(labelStyle);
         tfQuantity = new TextField("0");
         tfQuantity.setStyle(inputStyle);
+        tfQuantity.setDisable(true);
         leftForm.add(labelQuantity, 0, 2);
         leftForm.add(tfQuantity, 1, 2);
 
@@ -200,6 +201,7 @@ public class ProductDetailScreen extends VBox {
         Label labelUnitPrice = new Label("Đơn giá xuất *");
         labelUnitPrice.setStyle(labelStyle);
         tfUnitPrice = new TextField("0");
+        tfUnitPrice.setDisable(true);
         tfUnitPrice.setStyle(inputStyle);
         rightForm.add(labelUnitPrice, 0, 1);
         rightForm.add(tfUnitPrice, 1, 1);
@@ -207,6 +209,7 @@ public class ProductDetailScreen extends VBox {
         Label labelTotal = new Label("Thành tiền *");
         labelTotal.setStyle(labelStyle);
         tfTotal = new TextField();
+        tfTotal.setDisable(true);
         tfTotal.setStyle(inputStyle);
         tfTotal.setEditable(false);
 
