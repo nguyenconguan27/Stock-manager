@@ -77,7 +77,8 @@ public class ImportReceiptPresenter {
         return productService.getAllProducts();
     }
 
-    public void saveImportReceipt(ImportReceiptModel importReceiptModel, ObservableList<ImportReceiptDetailModelTable> importReceiptDetailModelsTable, HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap) throws DaoException{
+    public void saveImportReceipt(ImportReceiptModel importReceiptModel, ObservableList<ImportReceiptDetailModelTable> importReceiptDetailModelsTable,
+                                  HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap) throws DaoException, StockUnderFlowException{
         try {
             int academicYear = getYearOfImportReceipt(importReceiptModel.getCreateAt());
             importReceiptModel.setAcademicYear(academicYear);
@@ -98,14 +99,10 @@ public class ImportReceiptPresenter {
 
     public void updateImportReceipt(ImportReceiptModel importReceiptModel, List<ImportReceiptDetailModelTable> importReceiptDetailModelTables,
                                     HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap,
-                                    Set<Long> receiptDetailIds) throws DaoException {
+                                    Set<Long> receiptDetailIds) throws DaoException, StockUnderFlowException {
         try {
             // cập nhật thông tin của phiếu nhập
             importReceiptService.update(importReceiptModel);
-            // xóa đi những chi tiết phiếu nhập đã bị xóa
-            if(!receiptDetailIds.isEmpty()) {
-                importReceiptDetailService.deleteByIds(receiptDetailIds);
-            }
 
             if(!changeQuantityByProductMap.isEmpty() || !changeTotalPriceByProductMap.isEmpty()) {
                 // danh sách sản phẩm thêm mới
@@ -139,7 +136,16 @@ public class ImportReceiptPresenter {
                 LocalDateTime importDate = LocalDateTime.parse(importReceiptModel.getCreateAt(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
                 updateInventory(year, importReceiptDetailModelsOverNewAndEdit, changeQuantityByProductMap, changeTotalPriceByProductMap, false, importDate, importReceiptModel.getId());
             }
+            // xóa đi những chi tiết phiếu nhập đã bị xóa
+            // danh sách sản phẩm bị xóa trong phiếu nhập
+            if(!receiptDetailIds.isEmpty()) {
+                importReceiptDetailService.deleteByIds(receiptDetailIds);
+            }
             importReceiptService.commit();
+        }
+        catch (DaoException | StockUnderFlowException exception) {
+            importReceiptService.rollback();
+            throw exception;
         }
         catch (Exception e) {
             importReceiptService.rollback();
@@ -150,7 +156,7 @@ public class ImportReceiptPresenter {
     // cập nhật hoặc thêm mới tồn kho và đơn giá
     private void updateInventory(int academicYear, List<ImportReceiptDetailModel> importReceiptDetailModels, HashMap<Long, Integer> changeQuantityByProductMap,
                                  HashMap<Long, Double> changeTotalPriceByProductMap, boolean isInsert, LocalDateTime importDate,
-                                 long importReceiptId) throws DaoException {
+                                 long importReceiptId) throws DaoException, StockUnderFlowException {
         // lấy ra tồn kho theo năm
         // Lấy danh dách product id có trong hóa đơn
         List<Long> productIds = importReceiptDetailModels.stream()
@@ -218,7 +224,7 @@ public class ImportReceiptPresenter {
 
                 // trường hợp cập nhật lại mà laàm cho tồn kho âm ==> không cho cập nhật
                 if(currentQuantityInStock < 0) {
-                    throw new StockUnderFlowException("Số lượng tồn kho không đủ cho các phiếu xuất sau này, không thể chỉnh suwarrr với số lượng như hiện tại.");
+                    throw new StockUnderFlowException(String.format("Sản phẩm %s đã được xuất, số lượng trong kho hiện tại không đủ so với số lượng nhập hiện tại, không thể xóa sản phẩm khỏi phiếu xuất.", importReceiptDetailModel.getProductName()));
                 }
                 // cập nhật lại giá xuất theo đúng số lượng nhập thêm vào
                 // thêm phiếu nhâập ==> tạo mới đơn giá xuất
@@ -359,7 +365,10 @@ public class ImportReceiptPresenter {
     }
 
     // Đơn giá mới = (Thành tiên tồn kho + Thành tiền nhập) / (Số lượng tồn kho + Số lượng nhập)
-    private ExportPriceModel calculateUnitPriceOfProduct(long productId, int quantityInStock, double totalPriceInStock, double totalPriceImported, int quantityImported, ExportPriceModel exportPriceModel, long importReceiptId, LocalDateTime importDate) {
+    private ExportPriceModel calculateUnitPriceOfProduct(long productId, int quantityInStock, double totalPriceInStock,
+                                                         double totalPriceImported, int quantityImported,
+                                                         ExportPriceModel exportPriceModel, long importReceiptId,
+                                                         LocalDateTime importDate) {
         try {
             if(exportPriceModel == null) {
                 exportPriceModel = new ExportPriceModel();
@@ -395,7 +404,7 @@ public class ImportReceiptPresenter {
         return Calendar.getInstance().get(Calendar.YEAR);
     }
 
-    public boolean deleteImportReceipt(ImportReceiptModelTable importReceiptModelTable) throws DaoException, StockUnderFlowException{
+    public boolean deleteImportReceipt(ImportReceiptModelTable importReceiptModelTable) throws DaoException, StockUnderFlowException {
         try {
             int academicYear = getYearOfImportReceipt(importReceiptModelTable.getCreateAt());
             if (academicYear <= 0) {

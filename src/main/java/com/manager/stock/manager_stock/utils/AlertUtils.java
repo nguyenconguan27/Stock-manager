@@ -2,6 +2,7 @@ package com.manager.stock.manager_stock.utils;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 
 import java.util.Optional;
 
@@ -13,9 +14,15 @@ public class AlertUtils {
         Alert alert = new Alert(Alert.AlertType.valueOf(alertType));
         alert.setTitle(alertTitle);
         alert.setHeaderText(alertHeader);
-        alert.setContentText(message);
+
+        Label label = new Label(message);
+        label.setWrapText(true);
+        label.setMaxWidth(400);
+        alert.getDialogPane().setContent(label);
+
         alert.showAndWait();
     }
+
 
     public static boolean confirm(String message) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

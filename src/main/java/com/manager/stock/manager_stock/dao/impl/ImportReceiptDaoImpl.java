@@ -61,8 +61,8 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
 
     @Override
     public void update(ImportReceiptModel importReceiptModel) throws DaoException {
-        String sql = "UPDATE import_receipt set invoice_number = ?, create_at = ?, delivered_by = ?, " +
-                    "invoice = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ? " +
+        String sql = "UPDATE import_receipt set invoice = ?, create_at = ?, delivered_by = ?, " +
+                    "invoice_number = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ? " +
                     " where id = ?";
         List<Object[]> parameters = new ArrayList<>();
         parameters.add(new Object[]{

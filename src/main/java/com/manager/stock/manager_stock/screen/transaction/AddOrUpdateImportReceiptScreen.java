@@ -3,6 +3,7 @@ package com.manager.stock.manager_stock.screen.transaction;
 import com.browniebytes.javafx.control.DateTimePicker;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.exception.InvalidException;
+import com.manager.stock.manager_stock.exception.StockUnderFlowException;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptDetailModelMapper;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptModelMapper;
 import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
@@ -299,11 +300,17 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     int totalQuantity = Integer.parseInt(totalQuantityLabel.getText()) - item.getActualQuantity();
                     totalQuantityLabel.setText(totalQuantity + "");
                     receiptDetailIdsDeleted.add(item.getId());
-                    if(item.getId() != null){
+                    if(item.getId() != null) {
                         int changeQuantityByProduct = changeQuantityByProductMap.getOrDefault(item.getProductId(), 0);
+                        double changeTotalPriceByProduct = changeTotalPriceByProductMap.getOrDefault(item.getProductId(), 0.0);
                         changeQuantityByProduct -= item.getActualQuantity();
+                        changeTotalPriceByProduct -= item.getTotalPrice();
                         changeQuantityByProductMap.put(item.getProductId(), changeQuantityByProduct);
+                        changeTotalPriceByProductMap.put(item.getProductId(), changeTotalPriceByProduct);
                     }
+                    item.setActualQuantity(0);
+                    item.setTotalPrice(0);
+                    productDetailsToDelete.add(item);
                     getTableView().getItems().remove(item);
                 });
             }
@@ -379,7 +386,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 return;
             }
             if(invoice.isEmpty()) {AlertUtils.alert("Vui lòng nhập mã hóa đơn.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
-            ImportReceiptModel importReceiptModel = new ImportReceiptModel(
+            ImportReceiptModel importReceiptModel = new ImportReceiptModel (
                     oldImportReceiptModelTable != null ? oldImportReceiptModelTable.getId() : null,
                     invoiceNumber,
                     createAtStr,
@@ -406,7 +413,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     List<ImportReceiptDetailModelTable> newProductDetails = productDetails.stream()
                             .filter(importReceiptDetailModelTable -> changeIdsOfReceiptDetails.contains(importReceiptDetailModelTable.getId()) || importReceiptDetailModelTable.getId() == -1)
                             .collect(Collectors.toList());
-                    ImportReceiptModel oldImportReceiptModel = ImportReceiptModelMapper.INSTANCE.fromViewModelToModel(oldImportReceiptModelTable);
+                    newProductDetails.addAll(productDetailsToDelete);
                     presenter.updateImportReceipt(importReceiptModel, newProductDetails, changeQuantityByProductMap, changeTotalPriceByProductMap, receiptDetailIdsDeleted);
                     AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
                 }
@@ -414,8 +421,10 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 importReceiptScreen.showTable();
                 ScreenNavigator.navigateTo(importReceiptScreen);
             }
-            catch (DaoException exception) {
+            catch (DaoException | StockUnderFlowException exception) {
                 AlertUtils.alert(exception.getMessage(), "ERROR", "Lỗi khi thực hiện thao tác với phiếu nhập.", "Lỗi khi thực hiện lưu phiếu nhập.");
+                AddOrUpdateImportReceiptScreen refreshScreen = new AddOrUpdateImportReceiptScreen(oldImportReceiptModelTable);
+                ScreenNavigator.navigateTo(refreshScreen);
             }
         });
 

@@ -110,13 +110,14 @@ public class AbstractDao<T> implements GenericDao<T> {
         PreparedStatement stmt = null;
         Connection connection = null;
         try {
+            System.out.println();
             connection = DatasourceInitialize.getInstance();
             connection.setAutoCommit(false);
             if (parameters.size() == 1) {
                 stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 setParams(stmt, parameters.get(0));
                 int affectedRows = stmt.executeUpdate();
-                connection.commit();
+//                connection.commit();
                 if (affectedRows == 0) {
                     throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
                 }
@@ -174,7 +175,6 @@ public class AbstractDao<T> implements GenericDao<T> {
                 setParams(stmt, id);
             }
             stmt.executeUpdate();
-            connection.commit();
         }
         catch (SQLException e) {
             logger.error("SQL Exception while deleting database with sql: {}", sql, e);
@@ -191,9 +191,6 @@ public class AbstractDao<T> implements GenericDao<T> {
                 if(stmt != null) {
                     stmt.close();
                 }
-//                if(connection != null) {
-//                    connection.close();
-//                }
             }
             catch (SQLException e) {
                 logger.error("SQL Exception while closing ResultSet or Statement or Connection: {}", e.getMessage(), e);

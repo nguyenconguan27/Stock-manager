@@ -35,6 +35,7 @@ public abstract class BaseAddOrUpdateReceiptScreen<T, D> extends VBox {
     protected final ObservableList<ProductModel> allProducts = FXCollections.observableArrayList();
     protected FilteredList<ProductModel> filteredProducts = new FilteredList<>(allProducts, p -> true);
     protected final ObservableList<D> productDetails = FXCollections.observableArrayList();
+    protected final ObservableList<D> productDetailsToDelete = FXCollections.observableArrayList();
     protected double totalPriceOfReceipt = 0;
     protected Label totalPriceLabel = new Label(FormatMoney.format(0));
     protected Label totalQuantityLabel = new Label("0");
@@ -99,12 +100,6 @@ public abstract class BaseAddOrUpdateReceiptScreen<T, D> extends VBox {
 
     protected void styleLabel(Label label) {
         label.setStyle("-fx-border-width: 0; -fx-background-color: #e1f0f7; -fx-text-fill: #33536d; -fx-font-size: 15px");
-    }
-    protected String normalizeString(String input) {
-        if (input == null) return "";
-        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
-        return normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                .toLowerCase();
     }
 
     protected abstract VBox createFormAddNew(T receiptModelTable);
