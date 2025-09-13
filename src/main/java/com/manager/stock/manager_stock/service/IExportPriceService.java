@@ -1,6 +1,7 @@
 package com.manager.stock.manager_stock.service;
 
 import com.manager.stock.manager_stock.model.ExportPriceModel;
+import com.manager.stock.manager_stock.model.dto.ExportPriceAndProductCodeAndProductName;
 import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
 
 import java.time.LocalDate;
@@ -17,6 +18,8 @@ public interface IExportPriceService {
     void update(List<ExportPriceModel> exportPriceModels);
     ExportPriceIdAndPrice findExportPriceByProductAndLastTime(long productId);
     HashMap<Long, Double> findPriceById(List<Long> ids);
+    ExportPriceAndProductCodeAndProductName findProductHaveMaxPriceByGroup(long productGroupId);
+    ExportPriceAndProductCodeAndProductName findProductHaveMinPriceByGroup(long productGroupId);
     void commit();
     void rollback();
 }

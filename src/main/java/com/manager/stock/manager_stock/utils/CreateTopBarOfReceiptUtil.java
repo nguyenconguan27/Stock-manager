@@ -23,6 +23,7 @@ public class CreateTopBarOfReceiptUtil {
         Image reloadIcon = new Image(CreateTopBarOfReceiptUtil.class.getResource("/com/manager/stock/manager_stock/icons/reload.png").toExternalForm());
         Image printIcon = new Image(CreateTopBarOfReceiptUtil.class.getResource("/com/manager/stock/manager_stock/icons/printing.png").toExternalForm());
         Image exportIcon = new Image(CreateTopBarOfReceiptUtil.class.getResource("/com/manager/stock/manager_stock/icons/export.png").toExternalForm());
+        Image exportAllIcon = new Image(CreateTopBarOfReceiptUtil.class.getResource("/com/manager/stock/manager_stock/icons/export.png").toExternalForm());
 
         Button btnAdd = new Button("Thêm", new ImageView(addIcon));
         Button btnEdit = new Button("Sửa", new ImageView(editIcon));
@@ -30,6 +31,7 @@ public class CreateTopBarOfReceiptUtil {
         Button btnReload = new Button("Tải lại", new ImageView(reloadIcon));
         Button btnPrint = new Button("In", new ImageView(printIcon));
         Button btnExport = new Button("Xuất", new ImageView(exportIcon));
+        Button btnExportAll = new Button("Xuất báo cáo tổng hợp", new ImageView(exportAllIcon));
 
         Map<Button, Runnable> buttonActions = Map.of(
                 btnAdd, handler::onAdd,
@@ -37,7 +39,8 @@ public class CreateTopBarOfReceiptUtil {
                 btnDelete, handler::onDelete,
                 btnReload, handler::onReload,
                 btnPrint, handler::onPrint,
-                btnExport, handler::onExport
+                btnExport, handler::onExport,
+                btnExportAll, handler::onExportAll
         );
 
         for (Map.Entry<Button, Runnable> entry : buttonActions.entrySet()) {
@@ -51,7 +54,7 @@ public class CreateTopBarOfReceiptUtil {
         }
 
         // HBox for the top bar
-        HBox topBar = new HBox(10, btnAdd, btnEdit, btnDelete, btnReload, btnPrint, btnExport);
+        HBox topBar = new HBox(10, btnAdd, btnEdit, btnDelete, btnReload, btnPrint, btnExport, btnExportAll);
         topBar.setAlignment(Pos.CENTER_LEFT);
         topBar.setPadding(new Insets(5));
 

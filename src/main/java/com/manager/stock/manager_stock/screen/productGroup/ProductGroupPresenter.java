@@ -33,6 +33,7 @@ public class ProductGroupPresenter {
 
     public void saveGroupProduct(ProductGroup productGroup) {
         productGroupService.save(productGroup);
+        productGroupService.commit();
     }
 
     public ProductGroup getById(long id) {

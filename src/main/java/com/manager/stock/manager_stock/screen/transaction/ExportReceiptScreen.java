@@ -11,10 +11,13 @@ import com.manager.stock.manager_stock.model.ExportReceiptModel;
 import com.manager.stock.manager_stock.model.tableData.ExportReceiptDetailModelTable;
 import com.manager.stock.manager_stock.model.tableData.ExportReceiptModelTable;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptModelTable;
+import com.manager.stock.manager_stock.reportservice.ExportAll;
+import com.manager.stock.manager_stock.reportservice.ReceiptReportService;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.transaction.presenter.ExportReceiptPresenter;
 import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter;
 import com.manager.stock.manager_stock.utils.AlertUtils;
+import com.manager.stock.manager_stock.utils.ChoosesFolderOutput;
 import com.manager.stock.manager_stock.utils.CreateColumnTableUtil;
 import com.manager.stock.manager_stock.utils.GenericConverterBetweenModelAndTableData;
 import javafx.collections.FXCollections;
@@ -25,7 +28,9 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -83,7 +88,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
                 colInvoiceNumber, colCreateAt, colReceiver,
                 colReason, colTotalPrice
         );
-        receiptTable.getColumns().forEach(col -> col.setResizable(false));
+//        receiptTable.getColumns().forEach(col -> col.setResizable(false));
 
         receiptTable.setItems(receiptData);
         receiptTable.setPrefHeight(600);
@@ -163,10 +168,6 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
         productTable.setPrefHeight(600);
         productTable.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #c1dfee; -fx-border-width: 1px;");
 
-        productTable.getColumns().forEach(col -> {
-            col.setResizable(false);
-        });
-
         VBox box = new VBox(productTable);
         box.setSpacing(0);
         box.setPadding(Insets.EMPTY);
@@ -215,9 +216,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
             @Override
             public void onEdit() {
                 try {
-                    System.out.println("Chỉnh sửa hóa đơn");
                     if(selected != null) {
-                        System.out.println(selected);
                         AddOrUpdateExportReceiptScreen updateReceiptScreen = new AddOrUpdateExportReceiptScreen(selected);
                         ScreenNavigator.navigateTo(updateReceiptScreen);
                     }
@@ -234,7 +233,6 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
             public void onDelete() {
                 try {
                     if(selected != null) {
-                        System.out.println("Xóa hóa đơn:  " + selected);
                         boolean isConfirmDelete = AlertUtils.confirm("Bạn có chắc muốn xóa hóa đơn số: " + selected.getInvoiceNumber());
                         if(isConfirmDelete) {
                             ExportReceiptPresenter presenter = ExportReceiptPresenter.getInstance();
@@ -275,7 +273,36 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
 
             @Override
             public void onExport() {
+                try {
+                    File file = ChoosesFolderOutput.choosesFolderFile("Phieu_xuat");
+                    if(file == null) return;
+                    String outputPath = file.getAbsolutePath();
+                    ReceiptReportService.printAllExportReceipt(outputPath, 2025);
+                    // gọi hàm tạo file xlsx
+                    AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
+                            "INFORMATION", "Thành công", "Xuất dữ liệu");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    AlertUtils.alert("Có lỗi khi xuất file",
+                            "ERROR", "Lỗi", "Xuất dữ liệu thất bại");
+                }
+            }
 
+            @Override
+            public void onExportAll() {
+                try {
+                    File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
+                    if(file == null) return;
+                    String outputPath = file.getAbsolutePath();
+                    ExportAll.exportTotal(outputPath);
+                    // gọi hàm tạo file xlsx
+                    AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
+                            "INFORMATION", "Thành công", "Xuất dữ liệu");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    AlertUtils.alert("Có lỗi khi xuất file",
+                            "ERROR", "Lỗi", "Xuất dữ liệu thất bại");
+                }
             }
         };
     }
@@ -329,7 +356,6 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
                     exportReceiptModels, ExportReceiptModelTableMapper.INSTANCE::toViewModel
             );
             for(ExportReceiptModelTable table : tableModels) {
-                System.out.println("Create at: " + table.getCreateAt());
             }
             setReceiptData(tableModels);
         }

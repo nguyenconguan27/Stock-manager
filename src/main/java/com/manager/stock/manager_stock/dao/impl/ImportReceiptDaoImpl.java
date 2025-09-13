@@ -46,10 +46,10 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
                     " values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         List<Object[]> parameters = new ArrayList<>();
         parameters.add(new Object[]{
-                importReceiptModel.getInvoiceNumber(),
+                importReceiptModel.getInvoice(),
                 importReceiptModel.getCreateAt(),
                 importReceiptModel.getDeliveredBy(),
-                importReceiptModel.getInvoice(),
+                importReceiptModel.getInvoiceNumber(),
                 importReceiptModel.getCompanyName(),
                 importReceiptModel.getWarehouseName(),
                 importReceiptModel.getTotalPrice(),
@@ -61,8 +61,8 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
 
     @Override
     public void update(ImportReceiptModel importReceiptModel) throws DaoException {
-        String sql = "UPDATE import_receipt set invoice_number = ?, create_at = ?, delivered_by = ?, " +
-                    "invoice = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ? " +
+        String sql = "UPDATE import_receipt set invoice = ?, create_at = ?, delivered_by = ?, " +
+                    "invoice_number = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ? " +
                     " where id = ?";
         List<Object[]> parameters = new ArrayList<>();
         parameters.add(new Object[]{

@@ -1,6 +1,7 @@
 package com.manager.stock.manager_stock.dao;
 
 import com.manager.stock.manager_stock.model.ExportPriceModel;
+import com.manager.stock.manager_stock.model.dto.ExportPriceAndProductCodeAndProductName;
 import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
 
 import java.time.LocalDate;
@@ -18,6 +19,8 @@ public interface IExportPriceDao {
     ExportPriceIdAndPrice findExportPriceIdAndPriceByProductAndLastTime(long productId);
     void updateExportTimeByImportReceiptId(long importReceiptId, LocalDateTime importDate);
     List<ExportPriceIdAndPrice> findAllById(List<Long> ids);
+    ExportPriceAndProductCodeAndProductName findProductHaveMaxPriceByGroup(long productGroupId);
+    ExportPriceAndProductCodeAndProductName findProductHaveMinPriceByGroup(long productGroupId);
     void commit();
     void rollback();
 }

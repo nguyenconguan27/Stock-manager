@@ -2,11 +2,12 @@ package com.manager.stock.manager_stock.service.impl;
 
 import com.manager.stock.manager_stock.dao.IInventoryDetailDao;
 import com.manager.stock.manager_stock.dao.impl.InventoryDetailDaoImpl;
-import com.manager.stock.manager_stock.exception.CanNotFoundException;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.model.InventoryDetailModel;
+import com.manager.stock.manager_stock.model.dto.ProductIdAndCodeAndNameAndQuantityInStock;
 import com.manager.stock.manager_stock.service.IInventoryDetailService;
 
+import java.net.DatagramPacket;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
@@ -55,5 +56,15 @@ public class InventoryDetailServiceImpl implements IInventoryDetailService {
     @Override
     public int findQuantityInStockByProductIdAndAcademicYear(long productId, int academicYear) throws DaoException{
         return inventoryDetailDao.findQuantityInStockByProductIdAndAcademicYear(productId, academicYear);
+    }
+
+    @Override
+    public List<ProductIdAndCodeAndNameAndQuantityInStock> findProductHaveMaxQuantityByProductGroup(long productGroupId) throws DaoException {
+        return inventoryDetailDao.findProductHaveMaxQuantityByProductGroup(productGroupId);
+    }
+
+    @Override
+    public List<ProductIdAndCodeAndNameAndQuantityInStock> findProductHaveMinQuantityByProductGroup(long productGroupId) throws DaoException {
+        return inventoryDetailDao.findProductHaveMinQuantityByProductGroup(productGroupId);
     }
 }

@@ -44,6 +44,11 @@ public class ImportReceiptDetailServiceImpl implements IImportReceiptDetailServi
     }
 
     @Override
+    public void update(ImportReceiptDetailModel importReceiptDetailModels) {
+
+    }
+
+    @Override
     public List<ProductIdAndActualQuantityAndTotalPriceOfReceipt> findAllProductIdByImportReceipt(long importReceiptId) throws DaoException {
         return importReceiptDetailDao.findAllProductIdByImportReceipt(importReceiptId);
     }

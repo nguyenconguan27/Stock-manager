@@ -1,6 +1,7 @@
 package com.manager.stock.manager_stock.dao;
 
 import com.manager.stock.manager_stock.model.InventoryDetailModel;
+import com.manager.stock.manager_stock.model.dto.ProductIdAndCodeAndNameAndQuantityInStock;
 
 import java.sql.Connection;
 import java.util.List;
@@ -13,4 +14,6 @@ import java.util.List;
      void update(List<InventoryDetailModel> inventoryDetailModels);
      void updateWithTransaction(List<InventoryDetailModel> inventoryDetailModels, Connection connection);
      int findQuantityInStockByProductIdAndAcademicYear(long productId, int academicYear);
+     List<ProductIdAndCodeAndNameAndQuantityInStock> findProductHaveMaxQuantityByProductGroup(long productGroupId);
+     List<ProductIdAndCodeAndNameAndQuantityInStock> findProductHaveMinQuantityByProductGroup(long productGroupId);
 }

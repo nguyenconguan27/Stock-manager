@@ -17,7 +17,6 @@ public class ImportReceiptDetailMapperResultSet implements RowMapper<ImportRecei
         ImportReceiptDetailModel importReceiptDetailModel = new ImportReceiptDetailModel();
         for (int i = 1; i <= columnCount; i++) {
             String columnName = metaData.getColumnLabel(i).toLowerCase();
-            System.out.println(columnName);
             switch (columnName) {
                 case "id":
                     importReceiptDetailModel.setId(resultSet.getLong(columnName));
@@ -51,6 +50,7 @@ public class ImportReceiptDetailMapperResultSet implements RowMapper<ImportRecei
                     break;
             }
         }
+        importReceiptDetailModel.setTotalPrice(importReceiptDetailModel.getUnitPrice() * importReceiptDetailModel.getActualQuantity());
         return importReceiptDetailModel;
     }
 }

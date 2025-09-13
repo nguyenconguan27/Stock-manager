@@ -38,6 +38,7 @@ public class ProductMapperResultSet implements RowMapper<ProductModel>{
                     break;
             }
         }
+        productModel.setTotal(productModel.getQuantity() * productModel.getUnitPrice());
         return productModel;
     }
 }

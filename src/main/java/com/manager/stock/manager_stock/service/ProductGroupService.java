@@ -10,4 +10,6 @@ public interface ProductGroupService {
     ProductGroup getById(long id);
 
     ProductGroup getGroupAndProduct();
+    void commit();
+    void rollback();
 }

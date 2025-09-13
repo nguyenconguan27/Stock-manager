@@ -67,7 +67,6 @@ public class ExportReceiptPresenter {
 
     public List<ExportReceiptModel> findAllExportReceipt(Optional<Integer> academicYear) throws DaoException {
         int academicYearValue = academicYear.orElse(Calendar.getInstance().get(Calendar.YEAR));
-        System.out.println("Academic year: " + academicYearValue);
         return exportReceiptService.findAllByAcademicYear(academicYearValue);
     }
 
@@ -89,7 +88,6 @@ public class ExportReceiptPresenter {
                 exportReceiptDetailModelTables, ExportReceiptDetailModelTableMapper.INSTANCE::fromViewModelToModel
         );
         int academicYearValue = getYearOfExportReceipt(exportReceiptModel.getCreateAt());
-        System.out.println("Academic year(save): " + academicYearValue);
         List<Long> productIds = exportReceiptDetailModels.stream().map(ExportReceiptDetailModel::getProductId).collect(Collectors.toList());
         // thêm mới phiếu xuất
         List<Long> exportReceiptDetailIds = new ArrayList<>();
@@ -97,7 +95,6 @@ public class ExportReceiptPresenter {
         try {
             exportReceiptModel.setAcademicYear(academicYearValue);
             exportReceiptId = exportReceiptService.save(exportReceiptModel);
-            System.out.println("Export receipt id : " + exportReceiptId);
             // thêm mới danh sách phiếu xuất chi tiết
             exportReceiptDetailIds = exportReceiptDetailService.save(exportReceiptDetailModels, exportReceiptId);
 
@@ -105,14 +102,6 @@ public class ExportReceiptPresenter {
             exportReceiptService.commit();
         }
         catch (DaoException | CanNotFoundException | StockUnderFlowException e) {
-//            if(exportReceiptId != -1) {
-//                List<Long> exportReceiptIds = new ArrayList<>();
-//                exportReceiptIds.add(exportReceiptId);
-//                exportReceiptService.deleteByIds(exportReceiptIds);
-//            }
-////            if(!exportReceiptDetailIds.isEmpty()) {
-////                exportReceiptDetailService.delete(exportReceiptDetailIds);
-////            }
             // gọi rollback
             exportReceiptService.rollback();
             e.printStackTrace();
@@ -129,33 +118,37 @@ public class ExportReceiptPresenter {
 
         for(ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
             long productId = exportReceiptDetailModel.getProductId();
-//            int actualQuantity = exportReceiptDetailModel.getActualQuantity();
-//            double exportReceiptTotalPriceByProduct = exportReceiptDetailModel.getTotalPrice();
-            // số lượng sản phẩm thay đổi
+//            // số lượng sản phẩm thay đổi
             int changeQuantity = changeQuantityByProductMap.getOrDefault(productId, 0);
             // tổng giá thay đổi
             double changeTotalPrice = changeQuantity * exportReceiptDetailModel.getOriginalUnitPrice();
 
-            System.out.println("Tổng tiền thay đổi: " + changeTotalPrice);
             InventoryDetailModel inventoryDetailModel = inventoryDetailByProductAndAcademicYear.getOrDefault(productId, null);
-            // trường hợp năm của phiếu xuất chưa từng nhập
-            System.out.println(inventoryDetailModel);
+            // TH sản phẩm này chưa có tồn kho của năm nay
             if(inventoryDetailModel == null) {
+                // lấy ra tồn kho đầu kì (tức tồn kho của năm ngoái)
                 inventoryDetailModel = inventoryDetailByProductAndPreviousAcademicYear.getOrDefault(productId, null);
                 // trường hợp trong năm trước cũng chưa nhập ==> tạo mới
                 if (inventoryDetailModel == null) {
                     // thông báo sản phẩm này chưa từng được nhập trong 2 năm trở lại đây
                     throw new CanNotFoundException("Sản phẩm: " + exportReceiptDetailModel.getProductName() + " chưa từng được nhập trong 2 năm gần đây, vui lòng kiểm tra lại.");
                 }
-                // trường hợp số lượng tồn kho không đủ cho lần xuất này
+                // TH tồn kho không đủ để xuất kho ==> alert
                 if (inventoryDetailModel.getQuantity() < changeQuantity) {
                     // thông báo sản productId trong kho không đủ
                     throw new StockUnderFlowException("Số lượng tồn kho của " + exportReceiptDetailModel.getProductName() + " không đủ để xuất kho, hiện chỉ còn " + inventoryDetailModel.getQuantity() + " sản phẩm, vui lòng nhập thêm.");
                 }
                 // tính lại tồn kho
-                inventoryDetailModel.setQuantity(changeQuantity);
-                inventoryDetailModel.setTotalPrice(changeTotalPrice);
-                inventoryDetailModelsToInsert.add(inventoryDetailModel);
+                int quantityInStock = inventoryDetailModel.getQuantity();
+                double totalPriceInStock = inventoryDetailModel.getTotalPrice() - changeTotalPrice;
+
+                InventoryDetailModel newInventoryModel = new InventoryDetailModel();
+                newInventoryModel.setProductId(productId);
+                newInventoryModel.setTotalPrice(totalPriceInStock);
+                newInventoryModel.setQuantity(quantityInStock - changeQuantity);
+                newInventoryModel.setAcademicYear(academicYear);
+
+                inventoryDetailModelsToInsert.add(newInventoryModel);
             }
             // trường hợp sản phẩm này đã từng được nhập ==> có tồn kho của năm nay
             else {
@@ -181,13 +174,6 @@ public class ExportReceiptPresenter {
         Map<Long, List<ExportPriceModel>> exportPriceModelsByProductAfterExportDate = exportPriceService.findAllByProductAndMinTime(productIds, exportDate);
         List<ExportPriceModel> exportPriceModelsToUpdate = new ArrayList<>();
         Map<Long, ExportPriceModel> exportPriceModelByIdMap = new HashMap<>();
-//        List<Long> exportPriceIds = exportReceiptDetailModels.stream().map(
-//                ExportReceiptDetailModel::getExportPriceId
-//        ).collect(Collectors.toList());
-
-        // danh sách đơn giá của từng sản phẩm trong phiếu nhập
-        // đánh dấu theo id của đơn giá : đơn giá
-//        Map<Long, Double> priceById = exportPriceService.findPriceById(exportPriceIds);
 
         // duyệt toàn bộ sản phẩm trong phiếu nhập cần sửa
         for(ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
@@ -225,6 +211,11 @@ public class ExportReceiptPresenter {
             exportReceiptService.update(newExportReceipt);
             List<ExportReceiptDetailModel> exportReceiptDetailModels = GenericConverterBetweenModelAndTableData.convertToListModel(
                     exportReceiptDetailModelTables, ExportReceiptDetailModelTableMapper.INSTANCE::fromViewModelToModel);
+            // thêm mới export detail trong TH chỉnh sửa phiếu xuất có add thêm sản phẩm mới
+            List<ExportReceiptDetailModel> newExportReceiptDetails = exportReceiptDetailModels.stream().filter(ep -> ep.getId() == -1)
+                    .collect(Collectors.toList());
+            exportReceiptDetailService.save(newExportReceiptDetails, oldExportReceipt.getId());
+
             List<Long> productIds = exportReceiptDetailModelTables.stream().map(ExportReceiptDetailModelTable::getProductId).collect(Collectors.toList());
             int academicYear = getYearOfExportReceipt(oldExportReceipt.getCreateAt());
             // cập nhật tồn kho
@@ -238,10 +229,6 @@ public class ExportReceiptPresenter {
             // commit
             exportReceiptService.commit();
         } catch (Exception e) {
-            // rollback update export receipt
-//            if (oldExportReceipt != null) {
-//                exportReceiptService.update(oldExportReceipt);
-//            }
             exportReceiptService.rollback();
             throw e;
         }
@@ -298,7 +285,6 @@ public class ExportReceiptPresenter {
             try {
                 return inventoryDetailService.findQuantityInStockByProductIdAndAcademicYear(productId, year);
             } catch (CanNotFoundException e) {
-                System.out.println(String.format("Quantity not found for productId={%d} in academicYear={%d}: {%s}", productId, year, e.getMessage()));
             }
         }
         return 0;
@@ -315,8 +301,7 @@ public class ExportReceiptPresenter {
 //            }
             exportPriceModel.setQuantityInStock(quantityInStock);
             // tính giá xuất mới cho sản phẩm
-            System.out.println(String.format("Giá xuất mới dựa trên tham số: Số lượng trong kho = %d, số lượng nhập = %d, Thành tien trong kho = %f, Thành tiền nhập = %f",
-                    quantityInStock, quantityImported, totalPriceInStock, totalPriceImported));
+
 
             double newUnitPrice = Math.round((totalPriceInStock + totalPriceImported) / (quantityImported + quantityInStock));
             exportPriceModel.setExportPrice(newUnitPrice);

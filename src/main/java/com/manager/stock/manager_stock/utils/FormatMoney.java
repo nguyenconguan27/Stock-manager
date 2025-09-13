@@ -1,5 +1,8 @@
 package com.manager.stock.manager_stock.utils;
 
+import com.manager.stock.manager_stock.exception.InvalidException;
+import org.checkerframework.checker.units.qual.Current;
+
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -98,4 +101,24 @@ public class FormatMoney {
 
         return groups;
     }
+
+    public static Double parseFlexibleMoney(String moneyStr) {
+        if (moneyStr == null || moneyStr.isBlank()) return null;
+
+        String cleaned = moneyStr.trim()
+                .toLowerCase()
+                .replace("đ", "")
+                .replace("vnđ", "")
+                .replace("₫", "")
+                .replace(" ", "");
+
+        cleaned = cleaned.replace(".", "").replace(",", ".");
+
+        try {
+            return Double.parseDouble(cleaned);
+        } catch (NumberFormatException e) {
+            throw new InvalidException("Giá trị tiền tệ không hợp lệ, vui lòng điền đúng định dạng (123 ₫, 123₫, 123, 1.234,56 ₫).");
+        }
+    }
+
 }
