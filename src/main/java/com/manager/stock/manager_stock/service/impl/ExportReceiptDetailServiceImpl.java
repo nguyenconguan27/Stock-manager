@@ -46,6 +46,11 @@ public class ExportReceiptDetailServiceImpl implements IExportReceiptDetailServi
     }
 
     @Override
+    public List<ExportReceiptDetailModel> findByRangeTime(long productId, LocalDateTime start, LocalDateTime end) {
+        return exportReceiptDetailDao.findByRangeTime(productId, start, end);
+    }
+
+    @Override
     public void delete(List<Long> ids) throws DaoException {
         exportReceiptDetailDao.delete(ids);
     }
@@ -54,4 +59,5 @@ public class ExportReceiptDetailServiceImpl implements IExportReceiptDetailServi
     public void update(List<ExportReceiptDetailModel> exportReceiptDetailModels) {
         exportReceiptDetailDao.update(exportReceiptDetailModels);
     }
+
 }

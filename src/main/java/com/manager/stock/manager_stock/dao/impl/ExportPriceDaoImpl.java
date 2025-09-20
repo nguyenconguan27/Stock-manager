@@ -68,6 +68,24 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
     }
 
     @Override
+    public long save(ExportPriceModel exportPriceModel) {
+        String sql = "INSERT INTO export_price(product_id, export_time, export_price, quantity_in_stock, quantity_imported, total_price_import, total_price_in_stock, import_receipt_id)" +
+                " values (?, ?, ?, ?, ?, ?, ?, ?)";
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[] {
+                exportPriceModel.getProductId(),
+                exportPriceModel.getExportTime(),
+                exportPriceModel.getExportPrice(),
+                exportPriceModel.getQuantityInStock(),
+                exportPriceModel.getQuantityImported(),
+                exportPriceModel.getTotalImportPrice(),
+                exportPriceModel.getTotalPriceInStock(),
+                exportPriceModel.getImportReceiptId()
+        });
+        return save(sql, parameters);
+    }
+
+    @Override
     public List<ExportPriceModel> findAllByProductAndMinTime(List<Long> productIds, LocalDateTime minTime) {
         String productIdsStr = productIds.stream().map(Object::toString).collect(Collectors.joining(","));
         String sql = "SELECT * FROM export_price WHERE export_time >= ? and product_id in (" + productIdsStr + ") order by id asc";
@@ -192,5 +210,16 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
     @Override
     public void rollback() {
         super.rollback();
+    }
+
+    public List<ExportPriceModel> findByProductAndLastTime(Long productId, LocalDateTime time) {
+        String sql = "SELECT TOP 1 * FROM export_price WHERE export_time < ? and product_id = ? order by export_time desc, id asc";
+        return query(sql, new ExportPriceMapperResultSet(), time, productId);
+    }
+
+    @Override
+    public List<ExportPriceModel> findByProductAndMinTime(Long productId, LocalDateTime time) {
+        String sql = "SELECT TOP 1 * FROM export_price WHERE export_time > ? and product_id = ? order by export_time desc, id asc";
+        return query(sql, new ExportPriceMapperResultSet(), time, productId);
     }
 }

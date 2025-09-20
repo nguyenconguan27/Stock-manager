@@ -2,6 +2,7 @@ package com.manager.stock.manager_stock.service;
 
 import com.manager.stock.manager_stock.model.ExportReceiptDetailModel;
 
+import javax.swing.*;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ public interface IExportReceiptDetailService {
     List<ExportReceiptDetailModel> findAllByExportReceipt(long exportReceiptId);
     Map<Long, List<ExportReceiptDetailModel>> findAllByProductAndMinTime(List<Long> productIds, LocalDateTime minTime);
     List<Long> save(List<ExportReceiptDetailModel> exportReceiptDetailModels, long exportReceiptId);
+    List<ExportReceiptDetailModel> findByRangeTime(long productId, LocalDateTime start, LocalDateTime end);
     void delete(List<Long> ids);
     void update(List<ExportReceiptDetailModel> exportReceiptDetailModels);
 }

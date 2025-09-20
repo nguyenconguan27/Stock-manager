@@ -64,6 +64,16 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
     }
 
     @Override
+    public ExportReceiptModel findById(long id) {
+        String sql = "select * from export_receipt where id = ?";
+        List<ExportReceiptModel> exportReceiptModelList = query(sql, new ExportReceiptMapperResultSet(), id);
+        if(exportReceiptModelList != null && !exportReceiptModelList.isEmpty()) {
+            return exportReceiptModelList.get(0);
+        }
+        return null;
+    }
+
+    @Override
     public void deleteByIds(List<Long> ids) throws DaoException {
         String idsStr = ids.stream().map(String::valueOf).collect(Collectors.joining(","));
         String sql = "DELETE FROM export_receipt where id in (" + idsStr + ")";

@@ -5,11 +5,14 @@ import com.manager.stock.manager_stock.model.ExportPriceModel;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author Trọng Hướng
  */
 public class ExportPriceMapperResultSet implements RowMapper<ExportPriceModel>{
+    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     @Override
     public ExportPriceModel mapRow(ResultSet resultSet) throws SQLException {
         try {
@@ -25,9 +28,9 @@ public class ExportPriceMapperResultSet implements RowMapper<ExportPriceModel>{
                     case "product_id":
                         exportPriceModel.setProductId(resultSet.getLong(i));
                         break;
-//                    case "export_time":
-//                        exportPriceModel.setExportTime(resultSet.getLong(i));
-//                        break;
+                    case "export_time":
+                        exportPriceModel.setExportTime(LocalDateTime.parse(resultSet.getString(i), formatter));
+                        break;
                     case "export_price":
                         exportPriceModel.setExportPrice(resultSet.getDouble(i));
                         break;

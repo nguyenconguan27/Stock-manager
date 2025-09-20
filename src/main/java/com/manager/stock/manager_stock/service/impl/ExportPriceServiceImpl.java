@@ -50,6 +50,24 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     }
 
     @Override
+    public ExportPriceModel findByProductAndLastTime(Long productId, LocalDateTime time) {
+        List<ExportPriceModel> exportPriceModelList = exportPriceDao.findByProductAndLastTime(productId, time);
+        if(exportPriceModelList != null && !exportPriceModelList.isEmpty()) {
+            return exportPriceModelList.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public ExportPriceModel findByProductAndMinTime(Long productId, LocalDateTime time) {
+        List<ExportPriceModel> exportPriceModelList = exportPriceDao.findByProductAndMinTime(productId, time);
+        if(exportPriceModelList != null && !exportPriceModelList.isEmpty()) {
+            return exportPriceModelList.get(0);
+        }
+        return null;
+    }
+
+    @Override
     public void update(List<ExportPriceModel> exportPriceModels) {
         exportPriceDao.update(exportPriceModels);
     }
@@ -57,6 +75,11 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     @Override
     public ExportPriceIdAndPrice findExportPriceByProductAndLastTime(long productId) throws DaoException{
         return exportPriceDao.findExportPriceIdAndPriceByProductAndLastTime(productId);
+    }
+
+    @Override
+    public long save(ExportPriceModel exportPriceModel) {
+        return exportPriceDao.save(exportPriceModel);
     }
 
     @Override
@@ -80,6 +103,7 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     public ExportPriceAndProductCodeAndProductName findProductHaveMinPriceByGroup(long productGroupId) throws DaoException{
         return exportPriceDao.findProductHaveMinPriceByGroup(productGroupId);
     }
+
 
     @Override
     public void commit() {

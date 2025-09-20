@@ -15,8 +15,11 @@ import java.util.List;
 public interface IExportPriceService {
     void save(List<ExportPriceModel> exportPriceModels);
     HashMap<Long, List<ExportPriceModel>> findAllByProductAndMinTime(List<Long> productIds, LocalDateTime minTime);
+    ExportPriceModel findByProductAndLastTime(Long productId, LocalDateTime time);
+    ExportPriceModel findByProductAndMinTime(Long productId, LocalDateTime time);
     void update(List<ExportPriceModel> exportPriceModels);
     ExportPriceIdAndPrice findExportPriceByProductAndLastTime(long productId);
+    long save(ExportPriceModel exportPriceModel);
     HashMap<Long, Double> findPriceById(List<Long> ids);
     ExportPriceAndProductCodeAndProductName findProductHaveMaxPriceByGroup(long productGroupId);
     ExportPriceAndProductCodeAndProductName findProductHaveMinPriceByGroup(long productGroupId);

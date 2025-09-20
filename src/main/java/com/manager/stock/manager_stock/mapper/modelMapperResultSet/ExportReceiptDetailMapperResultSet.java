@@ -49,7 +49,7 @@ public class ExportReceiptDetailMapperResultSet implements RowMapper<ExportRecei
                     exportReceiptDetailModel.setUnit(resultSet.getString(columnName));
             }
         }
-        exportReceiptDetailModel.setTotalPrice(exportReceiptDetailModel.getDisplayUnitPrice() * exportReceiptDetailModel.getActualQuantity());
+        exportReceiptDetailModel.setTotalPrice(exportReceiptDetailModel.getActualQuantity() * exportReceiptDetailModel.getOriginalUnitPrice());
         return exportReceiptDetailModel;
     }
 }

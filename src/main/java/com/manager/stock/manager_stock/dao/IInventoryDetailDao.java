@@ -16,4 +16,5 @@ import java.util.List;
      int findQuantityInStockByProductIdAndAcademicYear(long productId, int academicYear);
      List<ProductIdAndCodeAndNameAndQuantityInStock> findProductHaveMaxQuantityByProductGroup(long productGroupId);
      List<ProductIdAndCodeAndNameAndQuantityInStock> findProductHaveMinQuantityByProductGroup(long productGroupId);
+     List<InventoryDetailModel> getByMinYearAndProduct(long productid, int year);
 }

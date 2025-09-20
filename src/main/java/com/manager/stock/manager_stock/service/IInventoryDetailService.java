@@ -16,4 +16,5 @@ public interface IInventoryDetailService {
     int findQuantityInStockByProductIdAndAcademicYear(long productId, int academicYear);
     List<ProductIdAndCodeAndNameAndQuantityInStock> findProductHaveMaxQuantityByProductGroup(long productGroupId);
     List<ProductIdAndCodeAndNameAndQuantityInStock> findProductHaveMinQuantityByProductGroup(long productGroupId);
+    List<InventoryDetailModel> findByMinYearAndProduct(long productId, int year);
 }

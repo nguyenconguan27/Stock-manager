@@ -83,6 +83,15 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
     }
 
     @Override
+    public List<ExportReceiptDetailModel> findByRangeTime(long productId, LocalDateTime start, LocalDateTime end) {
+        String sql = "Select * from export_receipt_detail as erd" +
+                " inner join export_receipt as er on er.id = erd.export_receipt_id" +
+                " where PARSEDATETIME(er.create_at, 'dd/MM/yyyy HH:mm:ss') > ? and PARSEDATETIME(er.create_at, 'dd/MM/yyyy HH:mm:ss') < ?" +
+                " and product_id = ?";
+        return query(sql, new ExportReceiptDetailMapperResultSet(),start, end, productId);
+    }
+
+    @Override
     public void delete(List<Long> ids) throws DaoException {
         String idsStr = ids.stream().map(Object::toString).collect(Collectors.joining(","));
         String sql = "DELETE FROM export_receipt_detail WHERE id IN (" + idsStr + ")";
@@ -91,15 +100,25 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
 
     @Override
     public void update(List<ExportReceiptDetailModel> exportReceiptDetailModels) {
-        String sql = "UPDATE export_receipt_detail set actual_quantity = ?" +
+        String sql = "UPDATE export_receipt_detail set actual_quantity = ?, export_price_id = ?" +
                 " WHERE id = ?";
         List<Object[]> parameters = new ArrayList<>();
         for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
             parameters.add(new Object[]{
-                exportReceiptDetailModel.getActualQuantity(),
+                exportReceiptDetailModel.getActualQuantity(), exportReceiptDetailModel.getExportPriceId(),
                 exportReceiptDetailModel.getId()
             });
         }
         save(sql, parameters);
+    }
+
+    @Override
+    public void updateExportPriceId(long exportPriceId, long preExportPriceId, LocalDateTime time) {
+        String slq = "update export_receipt_detail as erd set export_price_id = ? where export_price_id = ? and ";
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[] {
+                exportPriceId, preExportPriceId
+        });
+        save(slq, parameters);
     }
 }

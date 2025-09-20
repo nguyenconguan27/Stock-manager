@@ -67,4 +67,9 @@ public class InventoryDetailServiceImpl implements IInventoryDetailService {
     public List<ProductIdAndCodeAndNameAndQuantityInStock> findProductHaveMinQuantityByProductGroup(long productGroupId) throws DaoException {
         return inventoryDetailDao.findProductHaveMinQuantityByProductGroup(productGroupId);
     }
+
+    @Override
+    public List<InventoryDetailModel> findByMinYearAndProduct(long productId, int year) {
+        return inventoryDetailDao.getByMinYearAndProduct(productId, year);
+    }
 }

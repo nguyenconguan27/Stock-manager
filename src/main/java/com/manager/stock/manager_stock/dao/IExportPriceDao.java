@@ -14,6 +14,7 @@ import java.util.List;
 public interface IExportPriceDao {
     long findExportPriceByProductIdAndExportTime(long productId);
     void save(List<ExportPriceModel> exportPriceModels);
+    long save(ExportPriceModel exportPrice);
     List<ExportPriceModel> findAllByProductAndMinTime(List<Long> productIds, LocalDateTime minTime);
     void update(List<ExportPriceModel> exportPriceModels);
     ExportPriceIdAndPrice findExportPriceIdAndPriceByProductAndLastTime(long productId);
@@ -23,4 +24,6 @@ public interface IExportPriceDao {
     ExportPriceAndProductCodeAndProductName findProductHaveMinPriceByGroup(long productGroupId);
     void commit();
     void rollback();
+    List<ExportPriceModel> findByProductAndLastTime(Long productId, LocalDateTime time);
+    List<ExportPriceModel> findByProductAndMinTime(Long productId, LocalDateTime time);
 }
