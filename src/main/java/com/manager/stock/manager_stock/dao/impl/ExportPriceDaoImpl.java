@@ -5,6 +5,7 @@ import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.mapper.modelMapperResultSet.ExportPriceMapperResultSet;
 import com.manager.stock.manager_stock.model.ExportPriceModel;
 import com.manager.stock.manager_stock.model.dto.ExportPriceAndProductCodeAndProductName;
+import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndExportTimeAndExportPrice;
 import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
 import com.manager.stock.manager_stock.service.impl.ExportPriceServiceImpl;
 
@@ -70,7 +71,7 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
     @Override
     public List<ExportPriceModel> findAllByProductAndMinTime(List<Long> productIds, LocalDateTime minTime) {
         String productIdsStr = productIds.stream().map(Object::toString).collect(Collectors.joining(","));
-        String sql = "SELECT * FROM export_price WHERE export_time >= ? and product_id in (" + productIdsStr + ") order by id asc";
+        String sql = "SELECT * FROM export_price WHERE export_time >= ? and product_id in (" + productIdsStr + ") order by export_time asc";
         return query(sql, new ExportPriceMapperResultSet(), minTime);
     }
 
@@ -182,6 +183,53 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
             return new ExportPriceAndProductCodeAndProductName(0, "UNKNOWN", "UNKNOWN");
         }
         return maxPrice.get(0);
+    }
+
+    @Override
+    public ExportPriceIdAndExportTimeAndExportPrice findByProductIdAndMaxTimeByImportDate(long productId, LocalDateTime maxTime) throws DaoException{
+        String sql = "select DB.EXPORT_PRICE.id, DB.EXPORT_PRICE.export_time, DB.EXPORT_PRICE.EXPORT_PRICE from DB.EXPORT_PRICE join DB.PRODUCT \n" +
+                "on DB.PRODUCT.id = DB.EXPORT_PRICE.product_id\n" +
+                "where DB.EXPORT_PRICE.export_time < ? and DB.PRODUCT.id = ?\n" +
+                "order by DB.EXPORT_PRICE.export_time desc\n" +
+                "limit 1;";
+        List<ExportPriceIdAndExportTimeAndExportPrice> exportPriceIdAndExportTimes =
+                query(sql, rs -> new ExportPriceIdAndExportTimeAndExportPrice(rs.getLong("ID"),
+                        rs.getTimestamp("EXPORT_TIME").toLocalDateTime(),
+                        rs.getLong("EXPORT_PRICE")), maxTime, productId);
+        if(exportPriceIdAndExportTimes.isEmpty()){
+            return null;
+        }
+        return exportPriceIdAndExportTimes.get(0);
+    }
+
+    @Override
+    public ExportPriceIdAndExportTimeAndExportPrice findByProductIdAndMinTimeByImportDate(long productId, LocalDateTime minTime) {
+        String sql = "select DB.EXPORT_PRICE.id, DB.EXPORT_PRICE.export_time, DB.EXPORT_PRICE.EXPORT_PRICE from DB.EXPORT_PRICE join DB.PRODUCT \n" +
+                "on DB.PRODUCT.id = DB.EXPORT_PRICE.product_id\n" +
+                "where DB.EXPORT_PRICE.export_time > ? and DB.PRODUCT.id = ?\n" +
+                "order by DB.EXPORT_PRICE.export_time asc\n" +
+                "limit 1;";
+        List<ExportPriceIdAndExportTimeAndExportPrice> exportPriceIdAndExportTimes =
+                query(sql, rs -> new ExportPriceIdAndExportTimeAndExportPrice(rs.getLong("ID"),
+                                                rs.getTimestamp("EXPORT_TIME").toLocalDateTime(),
+                                                rs.getLong("EXPORT_PRICE")), minTime, productId);
+        if(exportPriceIdAndExportTimes.isEmpty()){
+            return null;
+        }
+        return exportPriceIdAndExportTimes.get(0);
+    }
+
+    @Override
+    public ExportPriceIdAndExportTimeAndExportPrice findByProductIdAndImportDate(long productId, LocalDateTime importDate) {
+        String sql = "select DB.EXPORT_PRICE.ID, DB.EXPORT_PRICE.EXPORT_TIME, DB.EXPORT_PRICE.EXPORT_PRICE from DB.EXPORT_PRICE \n" +
+                "where DB.EXPORT_PRICE.EXPORT_TIME = ? and DB.EXPORT_PRICE.PRODUCT_ID = ?;";
+        List<ExportPriceIdAndExportTimeAndExportPrice> exportPriceIdAndExportTimes = query(sql, rs -> new ExportPriceIdAndExportTimeAndExportPrice(rs.getLong("ID"),
+                rs.getTimestamp("EXPORT_TIME").toLocalDateTime(),
+                rs.getLong("EXPORT_PRICE")), importDate, productId);
+        if(exportPriceIdAndExportTimes.isEmpty()){
+            return null;
+        }
+        return exportPriceIdAndExportTimes.get(0);
     }
 
     @Override

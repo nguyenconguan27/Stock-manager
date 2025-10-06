@@ -1,0 +1,22 @@
+2025-10-02 00:00:57.172 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-10-02 00:01:07.727 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - UPDATE import_receipt set invoice = ?, create_at = ?, delivered_by = ?, invoice_number = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ?  where id = ?
+2025-10-02 00:01:07.731 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2025-10-02 00:01:41.380 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - update DB.EXPORT_RECEIPT_DETAIL set DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = ?, DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE = ?
+    where DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID in
+    (select DB.EXPORT_PRICE.id from DB.EXPORT_PRICE
+    join DB.EXPORT_RECEIPT_DETAIL on
+    DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID  = DB.EXPORT_PRICE.id
+    join DB.EXPORT_RECEIPT on
+    DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID
+    where DB.EXPORT_PRICE.EXPORT_TIME = ?     and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP));
+2025-10-02 00:02:15.418 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-10-02 00:02:25.694 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - UPDATE import_receipt set invoice = ?, create_at = ?, delivered_by = ?, invoice_number = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ?  where id = ?
+2025-10-02 00:02:25.698 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2025-10-02 00:02:38.607 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - update DB.EXPORT_RECEIPT_DETAIL set DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = ?, DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE = ?
+    where DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID in
+    (select DB.EXPORT_PRICE.id from DB.EXPORT_PRICE
+    join DB.EXPORT_RECEIPT_DETAIL on
+    DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID  = DB.EXPORT_PRICE.id
+    join DB.EXPORT_RECEIPT on
+    DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID
+    where DB.EXPORT_PRICE.EXPORT_TIME = ?     and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP));

@@ -12,6 +12,9 @@ public interface IExportReceiptDetailDao {
     List<ExportReceiptDetailModel> findAllByExPortReceipt(long exportReceiptId);
     List<ExportReceiptDetailModel> findAllByProductAndMinTime(List<Long> productIds, LocalDateTime minTime);
     List<Long> save(List<ExportReceiptDetailModel> exportReceiptDetailModels, long exportReceiptId);
+    void updateExportPriceByImportDate(LocalDateTime importDate, long exportPriceId, LocalDateTime newImportDate, long newExportPrice);
     void delete(List<Long> ids);
     void update(List<ExportReceiptDetailModel> exportReceiptDetailModels);
+    double calculateTotalPriceByImportDate(LocalDateTime importDate, LocalDateTime newImportDate);
+    double calculateTotalPriceByImportDateAndBetweenDates(LocalDateTime importDate, LocalDateTime startDate, LocalDateTime endDate);
 }

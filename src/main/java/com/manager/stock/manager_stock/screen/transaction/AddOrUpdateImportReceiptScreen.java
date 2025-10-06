@@ -80,8 +80,10 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         if (model != null) {
             if (model.getCreateAt() != null && !model.getCreateAt().isEmpty()) {
                 try {
+                    System.out.println(model.getCreateAt());
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-                    dateTimePicker.setTime(LocalDateTime.parse(model.getCreateAt(), formatter));
+                    LocalDateTime createAt = LocalDateTime.parse(model.getCreateAt().trim(), formatter);
+                    dateTimePicker.setTime(createAt);
                 } catch (Exception e) {
                     System.err.println("Lỗi định dạng ngày: " + model.getCreateAt());
                 }
@@ -414,7 +416,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                             .filter(importReceiptDetailModelTable -> changeIdsOfReceiptDetails.contains(importReceiptDetailModelTable.getId()) || importReceiptDetailModelTable.getId() == -1)
                             .collect(Collectors.toList());
                     newProductDetails.addAll(productDetailsToDelete);
-                    presenter.updateImportReceipt(importReceiptModel, newProductDetails, changeQuantityByProductMap, changeTotalPriceByProductMap, receiptDetailIdsDeleted);
+                    presenter.updateImportReceipt(importReceiptModel, newProductDetails, changeQuantityByProductMap, changeTotalPriceByProductMap, receiptDetailIdsDeleted, oldImportReceiptModelTable.getCreateAt(), productDetails);
                     AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
                 }
                 ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();

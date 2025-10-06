@@ -71,6 +71,17 @@ public class InventoryDetailDaoImpl extends AbstractDao<InventoryDetailModel> im
     }
 
     @Override
+    public void updateByProductId(long productId, double changeTotalPrice, int year) {
+        String sql = "update DB.INVENTORY_DETAIL set DB.INVENTORY_DETAIL.TOTAL_PRICE = DB.INVENTORY_DETAIL.TOTAL_PRICE - ?\n" +
+                "where DB.INVENTORY_DETAIL.PRODUCT_ID = ? and DB.INVENTORY_DETAIL.ACADEMIC_YEAR = ?";
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[]{
+            changeTotalPrice, productId, year
+        });
+        save(sql, parameters);
+    }
+
+    @Override
     public void updateWithTransaction(List<InventoryDetailModel> inventoryDetailModels, Connection connection) throws DaoException {
         String sql = "UPDATE inventory_detail set quantity = ?, total_price = ? where id = ?";
         List<Object[]> parameters = new ArrayList<>();

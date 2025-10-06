@@ -13,6 +13,7 @@ public interface IInventoryDetailService {
     HashMap<Long, InventoryDetailModel> findAllByAcademicYearAndProductId(int academicYear, List<Long> productIds);
     void save(List<InventoryDetailModel> inventoryDetailModels);
     void update(List<InventoryDetailModel> inventoryDetailModels);
+    void updateByProductId(long productId, double changeTotalPrice, int year);
     int findQuantityInStockByProductIdAndAcademicYear(long productId, int academicYear);
     List<ProductIdAndCodeAndNameAndQuantityInStock> findProductHaveMaxQuantityByProductGroup(long productGroupId);
     List<ProductIdAndCodeAndNameAndQuantityInStock> findProductHaveMinQuantityByProductGroup(long productGroupId);

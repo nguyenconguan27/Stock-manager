@@ -2,19 +2,21 @@ package com.manager.stock.manager_stock;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author Trọng Hướng
  */
 public class Test2 {
     public static void main(String[] args) {
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-
-        // Lấy LocalDateTime rồi trừ đi 3 năm
-        LocalDateTime threeYearsAgo = now.toLocalDateTime().minusYears(3);
-
-        // Chuyển ngược lại về Timestamp
-        Timestamp result = Timestamp.valueOf(threeYearsAgo);
-        System.out.println(threeYearsAgo);
+        try {
+            String date = "01/01/2025 21:10:16";
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            LocalDateTime createAt = LocalDateTime.parse(date, formatter);
+            System.out.println(createAt);
+        }
+        catch (Exception exception) {
+            exception.printStackTrace();
+        }
     }
 }

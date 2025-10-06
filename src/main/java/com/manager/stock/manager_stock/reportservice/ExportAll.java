@@ -50,8 +50,23 @@ public class ExportAll {
         Row row = sheet.getRow(r);
         Cell cellTT = row.createCell(c);
         cellTT.setCellValue(title);
-        sheet.addMergedRegion(new CellRangeAddress(r, r + 1, c, c));
+
+        // merge an toàn
+        mergeSafe(sheet, r, r + 1, c, c);
     }
+
+    private static void mergeSafe(Sheet sheet, int firstRow, int lastRow, int firstCol, int lastCol) {
+        CellRangeAddress newRegion = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
+
+        for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
+            if (sheet.getMergedRegion(i).equals(newRegion)) {
+                return;
+            }
+        }
+
+        sheet.addMergedRegion(newRegion);
+    }
+
 
     static void detailCol(int r, int c, String title) {
         Row row = sheet.getRow(r);

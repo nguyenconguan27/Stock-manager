@@ -5,6 +5,7 @@ import com.manager.stock.manager_stock.dao.impl.ExportPriceDaoImpl;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.model.ExportPriceModel;
 import com.manager.stock.manager_stock.model.dto.ExportPriceAndProductCodeAndProductName;
+import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndExportTimeAndExportPrice;
 import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
 import com.manager.stock.manager_stock.service.IExportPriceService;
 
@@ -54,6 +55,7 @@ public class ExportPriceServiceImpl implements IExportPriceService {
         exportPriceDao.update(exportPriceModels);
     }
 
+
     @Override
     public ExportPriceIdAndPrice findExportPriceByProductAndLastTime(long productId) throws DaoException{
         return exportPriceDao.findExportPriceIdAndPriceByProductAndLastTime(productId);
@@ -79,6 +81,21 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     @Override
     public ExportPriceAndProductCodeAndProductName findProductHaveMinPriceByGroup(long productGroupId) throws DaoException{
         return exportPriceDao.findProductHaveMinPriceByGroup(productGroupId);
+    }
+
+    @Override
+    public ExportPriceIdAndExportTimeAndExportPrice findByProductIdAndMaxTimeByImportDate(long productId, LocalDateTime maxTime) throws DaoException {
+        return exportPriceDao.findByProductIdAndMaxTimeByImportDate(productId, maxTime);
+    }
+
+    @Override
+    public ExportPriceIdAndExportTimeAndExportPrice findByProductIdAndMinTimeByImportDate(long productId, LocalDateTime minTime) throws DaoException {
+        return exportPriceDao.findByProductIdAndMinTimeByImportDate(productId, minTime);
+    }
+
+    @Override
+    public ExportPriceIdAndExportTimeAndExportPrice findByProductIdAndImportDate(long productId, LocalDateTime importDate) {
+        return exportPriceDao.findByProductIdAndImportDate(productId, importDate);
     }
 
     @Override

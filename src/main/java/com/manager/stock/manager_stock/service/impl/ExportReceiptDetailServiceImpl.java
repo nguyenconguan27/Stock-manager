@@ -46,6 +46,11 @@ public class ExportReceiptDetailServiceImpl implements IExportReceiptDetailServi
     }
 
     @Override
+    public double calculateExportPriceTotalByImportDate(LocalDateTime importDate, LocalDateTime newImportDate) {
+        return exportReceiptDetailDao.calculateTotalPriceByImportDate(importDate, newImportDate);
+    }
+
+    @Override
     public void delete(List<Long> ids) throws DaoException {
         exportReceiptDetailDao.delete(ids);
     }
@@ -53,5 +58,15 @@ public class ExportReceiptDetailServiceImpl implements IExportReceiptDetailServi
     @Override
     public void update(List<ExportReceiptDetailModel> exportReceiptDetailModels) {
         exportReceiptDetailDao.update(exportReceiptDetailModels);
+    }
+
+    @Override
+    public void updateExportPriceByImportDate(LocalDateTime importDate, long exportPriceId, LocalDateTime newImportDate, long newExportPrice) {
+        exportReceiptDetailDao.updateExportPriceByImportDate(importDate, exportPriceId, newImportDate, newExportPrice);
+    }
+
+    @Override
+    public double calculateTotalPriceByImportDateAndBetweenDates(LocalDateTime importDate, LocalDateTime startDate, LocalDateTime endDate) {
+        return exportReceiptDetailDao.calculateTotalPriceByImportDateAndBetweenDates(importDate, startDate, endDate);
     }
 }
