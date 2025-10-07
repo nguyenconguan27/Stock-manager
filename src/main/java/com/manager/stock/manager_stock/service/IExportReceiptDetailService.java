@@ -14,9 +14,10 @@ public interface IExportReceiptDetailService {
     List<ExportReceiptDetailModel> findAllByExportReceipt(long exportReceiptId);
     Map<Long, List<ExportReceiptDetailModel>> findAllByProductAndMinTime(List<Long> productIds, LocalDateTime minTime);
     List<Long> save(List<ExportReceiptDetailModel> exportReceiptDetailModels, long exportReceiptId);
-    double calculateExportPriceTotalByImportDate(LocalDateTime importDate, LocalDateTime newImportDate);
+//    double calculateExportPriceTotalByImportDate(LocalDateTime importDate, LocalDateTime newImportDate);
     void delete(List<Long> ids);
     void update(List<ExportReceiptDetailModel> exportReceiptDetailModels);
-    void updateExportPriceByImportDate(LocalDateTime importDate, long exportPriceId, LocalDateTime newImportDate, long newExportPrice);
-    double calculateTotalPriceByImportDateAndBetweenDates(LocalDateTime importDate, LocalDateTime startDate, LocalDateTime endDate);
+    void updateExportReceiptDetailPriceByProductAndTimeRange(long newExportPriceId, double newOriginalUnitPrice, LocalDateTime exportPriceTime, long productId, LocalDateTime startDate, LocalDateTime endDate);
+    double calculateTotalPriceByProductAndTimeRange(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId);
+    long calculateActualQuantityByProductBetweenImportDates(LocalDateTime startDate, LocalDateTime endDate, long productId);
 }

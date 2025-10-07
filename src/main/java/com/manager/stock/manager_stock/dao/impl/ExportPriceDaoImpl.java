@@ -233,6 +233,32 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
     }
 
     @Override
+    public List<LocalDateTime> findAllExportTimeByProductAndBetweenImportDates(LocalDateTime startDate, LocalDateTime endDate, LocalDateTime importDate, long productId) throws DaoException {
+        String sql = "" +
+                "select DB.EXPORT_PRICE.EXPORT_TIME  from DB.EXPORT_PRICE \n" +
+                "join DB.PRODUCT on DB.PRODUCT.id = DB.EXPORT_PRICE.PRODUCT_ID\n" +
+                "where DB.PRODUCT.id = ? \n" +
+                "and DB.EXPORT_PRICE.EXPORT_TIME >= ?\n" +
+                "and DB.EXPORT_PRICE.EXPORT_TIME < ?\n" +
+                "and DB.EXPORT_PRICE.EXPORT_TIME != ?;";
+        return query(sql, rs -> rs.getTimestamp("EXPORT_TIME").toLocalDateTime(), productId, startDate, endDate, importDate);
+    }
+
+    @Override
+    public long calculateTotalQuantityImportAndQuantityInStockByImportDateAndProduct(long productId, LocalDateTime importDate) {
+        String sql = "" +
+                "select DB.EXPORT_PRICE.QUANTITY_IN_STOCK + DB.EXPORT_PRICE.QUANTITY_IMPORTED as total_quantity from DB.EXPORT_PRICE \n" +
+                "join DB.PRODUCT on DB.PRODUCT.id = DB.EXPORT_PRICE.PRODUCT_ID \n" +
+                "where DB.EXPORT_PRICE.EXPORT_TIME = ?\n" +
+                "and DB.PRODUCT.id = ?;";
+        List<Long> totalQuantity = query(sql, rs -> rs.getLong("TOTAL_QUANTITY"), importDate,  productId);
+        if(totalQuantity.isEmpty()){
+            return -1;
+        }
+        return totalQuantity.get(0);
+    }
+
+    @Override
     public void commit() {
         super.commit();
     }

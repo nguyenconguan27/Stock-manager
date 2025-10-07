@@ -99,6 +99,16 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     }
 
     @Override
+    public List<LocalDateTime> findAllExportTimeByProductAndBetweenImportDates(LocalDateTime startDate, LocalDateTime endDate, LocalDateTime importDate, long productId) throws DaoException {
+        return exportPriceDao.findAllExportTimeByProductAndBetweenImportDates(startDate, endDate, importDate, productId);
+    }
+
+    @Override
+    public long calculateTotalQuantityImportAndQuantityInStockByImportDateAndProduct(long productId, LocalDateTime importDate) {
+        return exportPriceDao.calculateTotalQuantityImportAndQuantityInStockByImportDateAndProduct(productId, importDate);
+    }
+
+    @Override
     public void commit() {
         exportPriceDao.commit();
     }

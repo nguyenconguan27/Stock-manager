@@ -45,10 +45,10 @@ public class ExportReceiptDetailServiceImpl implements IExportReceiptDetailServi
         return exportReceiptDetailDao.save(exportReceiptDetailModels, exportReceiptId);
     }
 
-    @Override
-    public double calculateExportPriceTotalByImportDate(LocalDateTime importDate, LocalDateTime newImportDate) {
-        return exportReceiptDetailDao.calculateTotalPriceByImportDate(importDate, newImportDate);
-    }
+//    @Override
+//    public double calculateTotalPriceByProductAndTimeRange(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId) {
+//        return exportReceiptDetailDao.calculateTotalPriceByProductAndTimeRange(exportPriceTime, startDate, endDate, productId);
+//    }
 
     @Override
     public void delete(List<Long> ids) throws DaoException {
@@ -60,13 +60,19 @@ public class ExportReceiptDetailServiceImpl implements IExportReceiptDetailServi
         exportReceiptDetailDao.update(exportReceiptDetailModels);
     }
 
+
     @Override
-    public void updateExportPriceByImportDate(LocalDateTime importDate, long exportPriceId, LocalDateTime newImportDate, long newExportPrice) {
-        exportReceiptDetailDao.updateExportPriceByImportDate(importDate, exportPriceId, newImportDate, newExportPrice);
+    public void updateExportReceiptDetailPriceByProductAndTimeRange(long newExportPriceId, double newOriginalUnitPrice, LocalDateTime exportPriceTime, long productId, LocalDateTime startDate, LocalDateTime endDate) {
+        exportReceiptDetailDao.updateExportReceiptDetailPriceByProductAndTimeRange(newExportPriceId, newOriginalUnitPrice, exportPriceTime, productId, startDate, endDate);
     }
 
     @Override
-    public double calculateTotalPriceByImportDateAndBetweenDates(LocalDateTime importDate, LocalDateTime startDate, LocalDateTime endDate) {
-        return exportReceiptDetailDao.calculateTotalPriceByImportDateAndBetweenDates(importDate, startDate, endDate);
+    public double calculateTotalPriceByProductAndTimeRange(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId) throws DaoException {
+        return exportReceiptDetailDao.calculateTotalPriceByProductAndTimeRange(exportPriceTime, startDate, endDate, productId);
+    }
+
+    @Override
+    public long calculateActualQuantityByProductBetweenImportDates(LocalDateTime startDate, LocalDateTime endDate, long productId) {
+        return exportReceiptDetailDao.calculateActualQuantityByProductBetweenImportDates(startDate, endDate, productId);
     }
 }
