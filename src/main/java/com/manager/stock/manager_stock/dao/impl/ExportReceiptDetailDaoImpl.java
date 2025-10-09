@@ -87,23 +87,28 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
     // newImportDate: Ngày mới của phiếu nhập - dùng để cập nhật những phiến xuất đằng sau ngày của phiếu nhập đó thôi
     @Override
     public void updateExportReceiptDetailPriceByProductAndTimeRange(long newExportPriceId, double newOriginalUnitPrice, LocalDateTime exportPriceTime, long productId, LocalDateTime startDate, LocalDateTime endDate) throws DaoException {
-        String sql = "update DB.EXPORT_RECEIPT_DETAIL set DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = ?, " +
-                "DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE = ?\n" +
-                "where DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID in (\n" +
-                "    select DB.EXPORT_PRICE.id from DB.EXPORT_PRICE\n" +
-                "        join DB.EXPORT_RECEIPT_DETAIL on\n" +
-                "        DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID  = DB.EXPORT_PRICE.id\n" +
-                "        join DB.EXPORT_RECEIPT on\n" +
-                "        DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID\n" +
-                "        join DB.PRODUCT on DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID \n" +
-                "        where DB.EXPORT_PRICE.EXPORT_TIME = ? \n" +
-                "            and DB.PRODUCT.id = ?\n" +
-                "            and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
-                "            and (\n" +
-                "                (CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)) \n" +
-                "                or DB.EXPORT_RECEIPT.CREATE_AT = ?\n" +
-                "            )\n" +
-                ")";
+        String sql = "UPDATE DB.EXPORT_RECEIPT_DETAIL \n" +
+                "SET DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = ?,  \n" +
+                "    DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE = ?\n" +
+                "WHERE DB.EXPORT_RECEIPT_DETAIL.id IN (\n" +
+                "    SELECT DB.EXPORT_RECEIPT_DETAIL.id \n" +
+                "    FROM DB.EXPORT_PRICE\n" +
+                "    JOIN DB.EXPORT_RECEIPT_DETAIL \n" +
+                "        ON DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = DB.EXPORT_PRICE.id\n" +
+                "    JOIN DB.EXPORT_RECEIPT \n" +
+                "        ON DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID\n" +
+                "    JOIN DB.PRODUCT \n" +
+                "        ON DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID \n" +
+                "    WHERE DB.EXPORT_PRICE.EXPORT_TIME = ? \n" +
+                "        AND DB.PRODUCT.id = ?\n" +
+                "        AND CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "            >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "        AND (\n" +
+                "            CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "                < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "            OR ? IS NULL\n" +
+                "        )\n" +
+                ");\n";
         List<Object[]> parameters = new ArrayList<>();
         DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         parameters.add(new Object[]{

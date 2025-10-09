@@ -7,9 +7,6 @@ import com.manager.stock.manager_stock.model.ExportPriceModel;
 import com.manager.stock.manager_stock.model.dto.ExportPriceAndProductCodeAndProductName;
 import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndExportTimeAndExportPrice;
 import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
-import com.manager.stock.manager_stock.service.impl.ExportPriceServiceImpl;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +87,26 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
                exportPriceModel.getId()
             });
         }
+        save(sql, parameters);
+    }
+
+    @Override
+    public void updateExportPriceByProductIdAndImportDate(long quantityImport, double totalPriceDifference, double totalPriceImport, LocalDateTime exportTime, long productId) throws DaoException {
+        String sql = "UPDATE DB.EXPORT_PRICE \n" +
+                "SET \n" +
+                "    DB.EXPORT_PRICE.EXPORT_PRICE = CASE \n" +
+                "        WHEN (DB.EXPORT_PRICE.QUANTITY_IMPORTED + DB.EXPORT_PRICE.QUANTITY_IN_STOCK - ?) = 0 \n" +
+                "        THEN 0\n" +
+                "        ELSE (DB.EXPORT_PRICE.TOTAL_PRICE_IN_STOCK + ? - ? + DB.EXPORT_PRICE.TOTAL_PRICE_IMPORT) \n" +
+                "             / (DB.EXPORT_PRICE.QUANTITY_IMPORTED + DB.EXPORT_PRICE.QUANTITY_IN_STOCK - ?)\n" +
+                "    END,\n" +
+                "    DB.EXPORT_PRICE.QUANTITY_IN_STOCK = DB.EXPORT_PRICE.QUANTITY_IN_STOCK - ?\n" +
+                "WHERE DB.EXPORT_PRICE.EXPORT_TIME = ? \n" +
+                "  AND DB.EXPORT_PRICE.PRODUCT_ID = ?;";
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[] {
+                quantityImport, totalPriceDifference, totalPriceImport, quantityImport, quantityImport, exportTime, productId
+        });
         save(sql, parameters);
     }
 

@@ -17,6 +17,7 @@ public interface IExportPriceDao {
     void save(List<ExportPriceModel> exportPriceModels);
     List<ExportPriceModel> findAllByProductAndMinTime(List<Long> productIds, LocalDateTime minTime);
     void update(List<ExportPriceModel> exportPriceModels);
+    void updateExportPriceByProductIdAndImportDate(long quantityImport, double totalPriceDifference, double totalPriceImport, LocalDateTime exportTime, long productId);
     ExportPriceIdAndPrice findExportPriceIdAndPriceByProductAndLastTime(long productId);
     void updateExportTimeByImportReceiptId(long importReceiptId, LocalDateTime importDate);
     List<ExportPriceIdAndPrice> findAllById(List<Long> ids);

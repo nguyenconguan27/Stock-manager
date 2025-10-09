@@ -55,6 +55,10 @@ public class ExportPriceServiceImpl implements IExportPriceService {
         exportPriceDao.update(exportPriceModels);
     }
 
+    @Override
+    public void updateExportPriceByProductIdAndImportDate(long quantityImport, double totalPriceDifference, double totalPriceImport, LocalDateTime exportTime, long productId) throws DaoException {
+        exportPriceDao.updateExportPriceByProductIdAndImportDate(quantityImport, totalPriceDifference, totalPriceImport, exportTime, productId);
+    }
 
     @Override
     public ExportPriceIdAndPrice findExportPriceByProductAndLastTime(long productId) throws DaoException{
