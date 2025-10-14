@@ -61,6 +61,11 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     }
 
     @Override
+    public void updateExportPriceAfterImportCorrectionByProductIdAndImportDate(double totalPriceChanged, long totalQuantityChange, LocalDateTime oldImportDate, long productId) {
+        exportPriceDao.updateExportPriceAfterImportCorrectionByProductIdAndImportDate(totalPriceChanged, totalQuantityChange, oldImportDate, productId);
+    }
+
+    @Override
     public ExportPriceIdAndPrice findExportPriceByProductAndLastTime(long productId) throws DaoException{
         return exportPriceDao.findExportPriceIdAndPriceByProductAndLastTime(productId);
     }
@@ -88,13 +93,13 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     }
 
     @Override
-    public ExportPriceIdAndExportTimeAndExportPrice findByProductIdAndMaxTimeByImportDate(long productId, LocalDateTime maxTime) throws DaoException {
-        return exportPriceDao.findByProductIdAndMaxTimeByImportDate(productId, maxTime);
+    public ExportPriceIdAndExportTimeAndExportPrice findByProductIdAndMaxTimeByImportDate(long productId, LocalDateTime maxTime, LocalDateTime oldImportDate) throws DaoException {
+        return exportPriceDao.findByProductIdAndMaxTimeByImportDate(productId, maxTime, oldImportDate);
     }
 
     @Override
-    public ExportPriceIdAndExportTimeAndExportPrice findByProductIdAndMinTimeByImportDate(long productId, LocalDateTime minTime) throws DaoException {
-        return exportPriceDao.findByProductIdAndMinTimeByImportDate(productId, minTime);
+    public ExportPriceIdAndExportTimeAndExportPrice findByProductIdAndMinTimeByImportDate(long productId, LocalDateTime minTime, LocalDateTime oldImportDate) throws DaoException {
+        return exportPriceDao.findByProductIdAndMinTimeByImportDate(productId, minTime, oldImportDate);
     }
 
     @Override

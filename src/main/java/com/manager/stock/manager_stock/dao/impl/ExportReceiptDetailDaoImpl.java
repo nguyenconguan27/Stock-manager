@@ -159,7 +159,7 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
 //    }
 
     @Override
-    public double calculateTotalPriceByProductAndTimeRange(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId) {
+    public double calculateTotalPriceByProductAndTimeRange(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId) throws DaoException{
         String sql = "select sum(DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE * DB.EXPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY) as total_price from DB.EXPORT_RECEIPT_DETAIL  \n" +
                 "join DB.EXPORT_PRICE on\n" +
                 "DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID  = DB.EXPORT_PRICE.id\n" +
@@ -178,6 +178,27 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
         return totalPrices.get(0);
     }
 
+    // tổng số lượng đã xuất trong khoảng ngày
+    @Override
+    public long calculateTotalQuantityByProductAndTimeRange(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId) throws DaoException{
+        String sql = "select sum(DB.EXPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY) as total_quantity from DB.EXPORT_RECEIPT_DETAIL  \n" +
+                "join DB.EXPORT_PRICE on\n" +
+                "DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID  = DB.EXPORT_PRICE.id\n" +
+                "join DB.EXPORT_RECEIPT on\n" +
+                "DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID\n" +
+                "join DB.PRODUCT on DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID \n" +
+                "where DB.EXPORT_PRICE.EXPORT_TIME = ?\n" +
+                "    and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "    and DB.PRODUCT.id = ?\n" +
+                "    and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP);";
+
+        List<Long> totalPrices = query(sql, rs -> rs.getLong("TOTAL_QUANTITY"), exportPriceTime, formatter.format(startDate), productId, formatter.format(endDate));
+        if(totalPrices.isEmpty()){
+            return -1;
+        }
+        return totalPrices.get(0);
+    }
+
     @Override
     public long calculateActualQuantityByProductBetweenImportDates(LocalDateTime startDate, LocalDateTime endDate, long productId) {
         String sql =
@@ -188,7 +209,7 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
                 "where CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
                 "and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
                 "and DB.PRODUCT.id = ?;";
-        List<Long> totalActualQuantity = query(sql, rs -> rs.getLong("TOTAL_QUANTITY"), startDate, endDate, productId);
+        List<Long> totalActualQuantity = query(sql, rs -> rs.getLong("TOTAL_QUANTITY"), formatter.format(startDate), formatter.format(endDate), productId);
         if(totalActualQuantity.isEmpty()) {
             return -1;
         }

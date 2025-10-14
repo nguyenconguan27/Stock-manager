@@ -1,4 +1,493 @@
-2025-10-10 00:20:10.372 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
-2025-10-10 00:21:09.898 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
-2025-10-10 00:21:28.457 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - UPDATE import_receipt set invoice = ?, create_at = ?, delivered_by = ?, invoice_number = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ?  where id = ?
-2025-10-10 00:21:28.459 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2025-10-14 10:42:27.455 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-10-14 10:54:45.063 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-10-14 10:56:10.710 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-10-14 10:56:19.035 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE DB.EXPORT_RECEIPT_DETAIL 
+SET DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = ?,  
+    DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE = ?
+WHERE DB.EXPORT_RECEIPT_DETAIL.id IN (
+    SELECT DB.EXPORT_RECEIPT_DETAIL.id 
+    FROM DB.EXPORT_PRICE
+    JOIN DB.EXPORT_RECEIPT_DETAIL 
+        ON DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = DB.EXPORT_PRICE.id
+    JOIN DB.EXPORT_RECEIPT 
+        ON DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID
+    JOIN DB.PRODUCT 
+        ON DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID 
+    WHERE DB.EXPORT_PRICE.EXPORT_TIME = ? 
+        AND DB.PRODUCT.id = ?
+        AND CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+        AND (
+            CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+                < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            OR ? IS NULL
+        )
+);
+
+2025-10-14 10:57:01.888 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-10-14 11:03:10.533 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE DB.EXPORT_RECEIPT_DETAIL 
+SET DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = ?,  
+    DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE = ?
+WHERE DB.EXPORT_RECEIPT_DETAIL.id IN (
+    SELECT DB.EXPORT_RECEIPT_DETAIL.id 
+    FROM DB.EXPORT_PRICE
+    JOIN DB.EXPORT_RECEIPT_DETAIL 
+        ON DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = DB.EXPORT_PRICE.id
+    JOIN DB.EXPORT_RECEIPT 
+        ON DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID
+    JOIN DB.PRODUCT 
+        ON DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID 
+    WHERE DB.EXPORT_PRICE.EXPORT_TIME = ? 
+        AND DB.PRODUCT.id = ?
+        AND CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+        AND (
+            CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+                < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            OR ? IS NULL
+        )
+);
+
+2025-10-14 11:03:54.484 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-10-14 11:07:07.692 [JavaFX Application Thread] ERROR c.m.s.m.d.i.ExportReceiptDetailDaoImpl - SQL Exception while querying database with sql: SELECT sum(DB.EXPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY ) as total_quantity  FROM DB.EXPORT_RECEIPT_DETAIL 
+join DB.PRODUCT on DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID 
+join DB.EXPORT_RECEIPT on DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID 
+join DB.EXPORT_PRICE on DB.EXPORT_PRICE.ID = DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID 
+where CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+and DB.PRODUCT.id = ?;
+org.h2.jdbc.JdbcSQLDataException: Error parsing "2025-02-05 21:10:16"; SQL statement:
+SELECT sum(DB.EXPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY ) as total_quantity  FROM DB.EXPORT_RECEIPT_DETAIL 
+join DB.PRODUCT on DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID 
+join DB.EXPORT_RECEIPT on DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID 
+join DB.EXPORT_PRICE on DB.EXPORT_PRICE.ID = DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID 
+where CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+and DB.PRODUCT.id = ? [90014-222]
+	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:658)
+	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at com.h2database@2.2.222/org.h2.message.DbException.get(DbException.java:212)
+	at com.h2database@2.2.222/org.h2.expression.function.DateTimeFormatFunction.parseDateTime(DateTimeFormatFunction.java:270)
+	at com.h2database@2.2.222/org.h2.expression.function.DateTimeFormatFunction.getValue(DateTimeFormatFunction.java:132)
+	at com.h2database@2.2.222/org.h2.expression.function.FunctionN.getValue(FunctionN.java:52)
+	at com.h2database@2.2.222/org.h2.expression.function.Function1_2.getValue(Function1_2.java:26)
+	at com.h2database@2.2.222/org.h2.expression.condition.Comparison.getValue(Comparison.java:230)
+	at com.h2database@2.2.222/org.h2.expression.condition.ConditionAndOrN.getValue(ConditionAndOrN.java:128)
+	at com.h2database@2.2.222/org.h2.expression.Expression.getBooleanValue(Expression.java:332)
+	at com.h2database@2.2.222/org.h2.table.TableFilter.isOk(TableFilter.java:505)
+	at com.h2database@2.2.222/org.h2.table.TableFilter.next(TableFilter.java:451)
+	at com.h2database@2.2.222/org.h2.table.TableFilter.next(TableFilter.java:464)
+	at com.h2database@2.2.222/org.h2.table.TableFilter.next(TableFilter.java:464)
+	at com.h2database@2.2.222/org.h2.command.query.Select.gatherGroup(Select.java:517)
+	at com.h2database@2.2.222/org.h2.command.query.Select.queryGroup(Select.java:488)
+	at com.h2database@2.2.222/org.h2.command.query.Select.queryWithoutCache(Select.java:828)
+	at com.h2database@2.2.222/org.h2.command.query.Query.queryWithoutCacheLazyCheck(Query.java:197)
+	at com.h2database@2.2.222/org.h2.command.query.Query.query(Query.java:520)
+	at com.h2database@2.2.222/org.h2.command.query.Query.query(Query.java:483)
+	at com.h2database@2.2.222/org.h2.command.CommandContainer.query(CommandContainer.java:252)
+	at com.h2database@2.2.222/org.h2.command.Command.executeQuery(Command.java:192)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcPreparedStatement.executeQuery(JdbcPreparedStatement.java:131)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.dao.impl.AbstractDao.query(AbstractDao.java:78)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.dao.impl.ExportReceiptDetailDaoImpl.calculateActualQuantityByProductBetweenImportDates(ExportReceiptDetailDaoImpl.java:191)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.service.impl.ExportReceiptDetailServiceImpl.calculateActualQuantityByProductBetweenImportDates(ExportReceiptDetailServiceImpl.java:76)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter.updateForeignExportDetail(ImportReceiptPresenter.java:492)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter.updateImportReceipt(ImportReceiptPresenter.java:113)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.screen.transaction.AddOrUpdateImportReceiptScreen.lambda$createTableItemDetailByReceipt$16(AddOrUpdateImportReceiptScreen.java:419)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:234)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:191)
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54)
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198)
+	at javafx.graphics/javafx.scene.Scene$ClickGenerator.postProcess(Scene.java:3602)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Scene.java:3906)
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Scene.java:1878)
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Scene.java:2623)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:411)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:301)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(GlassViewEventHandler.java:450)
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:424)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(GlassViewEventHandler.java:449)
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(View.java:557)
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(View.java:943)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:184)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+Caused by: java.time.format.DateTimeParseException: Text '2025-02-05 21:10:16' could not be parsed at index 2
+	at java.base/java.time.format.DateTimeFormatter.parseResolved0(DateTimeFormatter.java:2052)
+	at java.base/java.time.format.DateTimeFormatter.parse(DateTimeFormatter.java:1880)
+	at com.h2database@2.2.222/org.h2.expression.function.DateTimeFormatFunction.parseDateTime(DateTimeFormatFunction.java:229)
+	... 53 common frames omitted
+2025-10-14 11:10:11.986 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-10-14 11:11:06.973 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - UPDATE import_receipt set invoice = ?, create_at = ?, delivered_by = ?, invoice_number = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ?  where id = ?
+2025-10-14 11:11:06.982 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2025-10-14 11:14:19.653 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-10-14 11:14:31.622 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - UPDATE import_receipt set invoice = ?, create_at = ?, delivered_by = ?, invoice_number = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ?  where id = ?
+2025-10-14 11:14:31.624 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2025-10-14 11:15:35.771 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-10-14 12:22:45.565 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE DB.EXPORT_RECEIPT_DETAIL 
+SET DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = ?,  
+    DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE = ?
+WHERE DB.EXPORT_RECEIPT_DETAIL.id IN (
+    SELECT DB.EXPORT_RECEIPT_DETAIL.id 
+    FROM DB.EXPORT_PRICE
+    JOIN DB.EXPORT_RECEIPT_DETAIL 
+        ON DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = DB.EXPORT_PRICE.id
+    JOIN DB.EXPORT_RECEIPT 
+        ON DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID
+    JOIN DB.PRODUCT 
+        ON DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID 
+    WHERE DB.EXPORT_PRICE.EXPORT_TIME = ? 
+        AND DB.PRODUCT.id = ?
+        AND CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+        AND (
+            CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+                < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            OR ? IS NULL
+        )
+);
+
+2025-10-14 12:23:21.277 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-10-14 12:28:31.515 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE DB.EXPORT_RECEIPT_DETAIL 
+SET DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = ?,  
+    DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE = ?
+WHERE DB.EXPORT_RECEIPT_DETAIL.id IN (
+    SELECT DB.EXPORT_RECEIPT_DETAIL.id 
+    FROM DB.EXPORT_PRICE
+    JOIN DB.EXPORT_RECEIPT_DETAIL 
+        ON DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = DB.EXPORT_PRICE.id
+    JOIN DB.EXPORT_RECEIPT 
+        ON DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID
+    JOIN DB.PRODUCT 
+        ON DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID 
+    WHERE DB.EXPORT_PRICE.EXPORT_TIME = ? 
+        AND DB.PRODUCT.id = ?
+        AND CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+        AND (
+            CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+                < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            OR ? IS NULL
+        )
+);
+
+2025-10-14 12:28:53.602 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-10-14 12:32:16.894 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE DB.EXPORT_RECEIPT_DETAIL 
+SET DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = ?,  
+    DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE = ?
+WHERE DB.EXPORT_RECEIPT_DETAIL.id IN (
+    SELECT DB.EXPORT_RECEIPT_DETAIL.id 
+    FROM DB.EXPORT_PRICE
+    JOIN DB.EXPORT_RECEIPT_DETAIL 
+        ON DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = DB.EXPORT_PRICE.id
+    JOIN DB.EXPORT_RECEIPT 
+        ON DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID
+    JOIN DB.PRODUCT 
+        ON DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID 
+    WHERE DB.EXPORT_PRICE.EXPORT_TIME = ? 
+        AND DB.PRODUCT.id = ?
+        AND CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+        AND (
+            CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+                < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            OR ? IS NULL
+        )
+);
+
+2025-10-14 12:43:20.744 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-10-14 12:43:54.349 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE DB.EXPORT_RECEIPT_DETAIL 
+SET DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = ?,  
+    DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE = ?
+WHERE DB.EXPORT_RECEIPT_DETAIL.id IN (
+    SELECT DB.EXPORT_RECEIPT_DETAIL.id 
+    FROM DB.EXPORT_PRICE
+    JOIN DB.EXPORT_RECEIPT_DETAIL 
+        ON DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = DB.EXPORT_PRICE.id
+    JOIN DB.EXPORT_RECEIPT 
+        ON DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID
+    JOIN DB.PRODUCT 
+        ON DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID 
+    WHERE DB.EXPORT_PRICE.EXPORT_TIME = ? 
+        AND DB.PRODUCT.id = ?
+        AND CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+        AND (
+            CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+                < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            OR ? IS NULL
+        )
+);
+
+2025-10-14 12:47:49.160 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-10-14 12:48:28.156 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE DB.EXPORT_RECEIPT_DETAIL 
+SET DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = ?,  
+    DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE = ?
+WHERE DB.EXPORT_RECEIPT_DETAIL.id IN (
+    SELECT DB.EXPORT_RECEIPT_DETAIL.id 
+    FROM DB.EXPORT_PRICE
+    JOIN DB.EXPORT_RECEIPT_DETAIL 
+        ON DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = DB.EXPORT_PRICE.id
+    JOIN DB.EXPORT_RECEIPT 
+        ON DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID
+    JOIN DB.PRODUCT 
+        ON DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID 
+    WHERE DB.EXPORT_PRICE.EXPORT_TIME = ? 
+        AND DB.PRODUCT.id = ?
+        AND CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+        AND (
+            CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+                < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            OR ? IS NULL
+        )
+);
+
+2025-10-14 12:55:11.098 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-10-14 12:55:40.823 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE DB.EXPORT_RECEIPT_DETAIL 
+SET DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = ?,  
+    DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE = ?
+WHERE DB.EXPORT_RECEIPT_DETAIL.id IN (
+    SELECT DB.EXPORT_RECEIPT_DETAIL.id 
+    FROM DB.EXPORT_PRICE
+    JOIN DB.EXPORT_RECEIPT_DETAIL 
+        ON DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = DB.EXPORT_PRICE.id
+    JOIN DB.EXPORT_RECEIPT 
+        ON DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID
+    JOIN DB.PRODUCT 
+        ON DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID 
+    WHERE DB.EXPORT_PRICE.EXPORT_TIME = ? 
+        AND DB.PRODUCT.id = ?
+        AND CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+        AND (
+            CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+                < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            OR ? IS NULL
+        )
+);
+
+2025-10-14 13:12:53.550 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - UPDATE DB.EXPORT_PRICE 
+SET 
+    DB.EXPORT_PRICE.EXPORT_PRICE = CASE 
+        WHEN (DB.EXPORT_PRICE.QUANTITY_IMPORTED + DB.EXPORT_PRICE.QUANTITY_IN_STOCK - ?) = 0 
+        THEN 0
+        ELSE (DB.EXPORT_PRICE.TOTAL_PRICE_IN_STOCK + ? - ? + DB.EXPORT_PRICE.TOTAL_PRICE_IMPORT) 
+             / (DB.EXPORT_PRICE.QUANTITY_IMPORTED + DB.EXPORT_PRICE.QUANTITY_IN_STOCK - ?)
+    END,
+    DB.EXPORT_PRICE.QUANTITY_IN_STOCK = DB.EXPORT_PRICE.QUANTITY_IN_STOCK - ?
+WHERE DB.EXPORT_PRICE.EXPORT_TIME = ? 
+  AND DB.EXPORT_PRICE.PRODUCT_ID = ?;
+2025-10-14 13:13:01.818 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - UPDATE import_receipt set invoice = ?, create_at = ?, delivered_by = ?, invoice_number = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ?  where id = ?
+2025-10-14 13:13:01.822 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2025-10-14 14:52:07.160 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-10-14 16:22:30.246 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-10-14 16:23:52.253 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE DB.EXPORT_RECEIPT_DETAIL 
+SET DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = ?,  
+    DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE = ?
+WHERE DB.EXPORT_RECEIPT_DETAIL.id IN (
+    SELECT DB.EXPORT_RECEIPT_DETAIL.id 
+    FROM DB.EXPORT_PRICE
+    JOIN DB.EXPORT_RECEIPT_DETAIL 
+        ON DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = DB.EXPORT_PRICE.id
+    JOIN DB.EXPORT_RECEIPT 
+        ON DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID
+    JOIN DB.PRODUCT 
+        ON DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID 
+    WHERE DB.EXPORT_PRICE.EXPORT_TIME = ? 
+        AND DB.PRODUCT.id = ?
+        AND CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+        AND (
+            CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+                < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            OR ? IS NULL
+        )
+);
+
+2025-10-14 16:24:44.499 [JavaFX Application Thread] ERROR c.m.s.m.d.i.ImportReceiptDetailDaoImpl - SQL Exception while querying database with sql: select sum(DB.IMPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY * DB.IMPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY) as total_price_imported from DB.IMPORT_RECEIPT_DETAIL
+join DB.IMPORT_RECEIPT on DB.IMPORT_RECEIPT.id = DB.IMPORT_RECEIPT_DETAIL.IMPORT_RECEIPT_ID
+join DB.PRODUCT on DB.PRODUCT.id = DB.IMPORT_RECEIPT_DETAIL.PRODUCT_ID
+where DB.PRODUCT.id = ?
+and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+and and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) != CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+;
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "select sum(DB.IMPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY * DB.IMPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY) as total_price_imported from DB.IMPORT_RECEIPT_DETAIL\000ajoin DB.IMPORT_RECEIPT on DB.IMPORT_RECEIPT.id = DB.IMPORT_RECEIPT_DETAIL.IMPORT_RECEIPT_ID\000ajoin DB.PRODUCT on DB.PRODUCT.id = DB.IMPORT_RECEIPT_DETAIL.PRODUCT_ID\000awhere DB.PRODUCT.id = ?\000aand CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\000aand CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\000aand [*]and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) != CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\000a;"; expected "INTERSECTS (, NOT, EXISTS, UNIQUE, INTERSECTS"; SQL statement:
+select sum(DB.IMPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY * DB.IMPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY) as total_price_imported from DB.IMPORT_RECEIPT_DETAIL
+join DB.IMPORT_RECEIPT on DB.IMPORT_RECEIPT.id = DB.IMPORT_RECEIPT_DETAIL.IMPORT_RECEIPT_ID
+join DB.PRODUCT on DB.PRODUCT.id = DB.IMPORT_RECEIPT_DETAIL.PRODUCT_ID
+where DB.PRODUCT.id = ?
+and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+and and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) != CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+; [42001-222]
+	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:514)
+	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at com.h2database@2.2.222/org.h2.message.DbException.getSyntaxError(DbException.java:261)
+	at com.h2database@2.2.222/org.h2.command.ParserBase.getSyntaxError(ParserBase.java:750)
+	at com.h2database@2.2.222/org.h2.command.Parser.readTermWithoutIdentifier(Parser.java:5134)
+	at com.h2database@2.2.222/org.h2.command.Parser.readTerm(Parser.java:4834)
+	at com.h2database@2.2.222/org.h2.command.Parser.readFactor(Parser.java:3337)
+	at com.h2database@2.2.222/org.h2.command.Parser.readSum(Parser.java:3324)
+	at com.h2database@2.2.222/org.h2.command.Parser.readConcat(Parser.java:3289)
+	at com.h2database@2.2.222/org.h2.command.Parser.readCondition(Parser.java:3079)
+	at com.h2database@2.2.222/org.h2.command.Parser.readAnd(Parser.java:3038)
+	at com.h2database@2.2.222/org.h2.command.Parser.readExpressionWithGlobalConditions(Parser.java:2991)
+	at com.h2database@2.2.222/org.h2.command.Parser.parseSelect(Parser.java:2827)
+	at com.h2database@2.2.222/org.h2.command.Parser.parseQueryPrimary(Parser.java:2708)
+	at com.h2database@2.2.222/org.h2.command.Parser.parseQueryTerm(Parser.java:2564)
+	at com.h2database@2.2.222/org.h2.command.Parser.parseQueryExpressionBody(Parser.java:2543)
+	at com.h2database@2.2.222/org.h2.command.Parser.parseQueryExpressionBodyAndEndOfQuery(Parser.java:2536)
+	at com.h2database@2.2.222/org.h2.command.Parser.parseQueryExpression(Parser.java:2529)
+	at com.h2database@2.2.222/org.h2.command.Parser.parseQuery(Parser.java:2498)
+	at com.h2database@2.2.222/org.h2.command.Parser.parsePrepared(Parser.java:627)
+	at com.h2database@2.2.222/org.h2.command.Parser.parse(Parser.java:592)
+	at com.h2database@2.2.222/org.h2.command.Parser.parse(Parser.java:569)
+	at com.h2database@2.2.222/org.h2.command.Parser.prepareCommand(Parser.java:483)
+	at com.h2database@2.2.222/org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:639)
+	at com.h2database@2.2.222/org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:559)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1166)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:93)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:316)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.dao.impl.AbstractDao.query(AbstractDao.java:76)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.dao.impl.ImportReceiptDetailDaoImpl.calculateTotalPriceImportedByProduct(ImportReceiptDetailDaoImpl.java:106)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.service.impl.ImportReceiptDetailServiceImpl.calculateTotalPriceImportedByProduct(ImportReceiptDetailServiceImpl.java:74)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter.updateForeignExportDetail(ImportReceiptPresenter.java:558)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter.updateImportReceipt(ImportReceiptPresenter.java:113)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.screen.transaction.AddOrUpdateImportReceiptScreen.lambda$createTableItemDetailByReceipt$16(AddOrUpdateImportReceiptScreen.java:419)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:234)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:191)
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54)
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198)
+	at javafx.graphics/javafx.scene.Scene$ClickGenerator.postProcess(Scene.java:3602)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Scene.java:3906)
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Scene.java:1878)
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Scene.java:2623)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:411)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:301)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(GlassViewEventHandler.java:450)
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:424)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(GlassViewEventHandler.java:449)
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(View.java:557)
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(View.java:943)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:184)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+2025-10-14 16:25:11.435 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-10-14 16:25:45.052 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE DB.EXPORT_RECEIPT_DETAIL 
+SET DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = ?,  
+    DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE = ?
+WHERE DB.EXPORT_RECEIPT_DETAIL.id IN (
+    SELECT DB.EXPORT_RECEIPT_DETAIL.id 
+    FROM DB.EXPORT_PRICE
+    JOIN DB.EXPORT_RECEIPT_DETAIL 
+        ON DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = DB.EXPORT_PRICE.id
+    JOIN DB.EXPORT_RECEIPT 
+        ON DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID
+    JOIN DB.PRODUCT 
+        ON DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID 
+    WHERE DB.EXPORT_PRICE.EXPORT_TIME = ? 
+        AND DB.PRODUCT.id = ?
+        AND CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+        AND (
+            CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+                < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+            OR ? IS NULL
+        )
+);
+
+2025-10-14 16:26:03.826 [JavaFX Application Thread] ERROR c.m.s.m.d.i.ImportReceiptDetailDaoImpl - SQL Exception while querying database with sql: select sum(DB.IMPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY * DB.IMPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY) as total_price_imported from DB.IMPORT_RECEIPT_DETAIL
+join DB.IMPORT_RECEIPT on DB.IMPORT_RECEIPT.id = DB.IMPORT_RECEIPT_DETAIL.IMPORT_RECEIPT_ID
+join DB.PRODUCT on DB.PRODUCT.id = DB.IMPORT_RECEIPT_DETAIL.PRODUCT_ID
+where DB.PRODUCT.id = ?
+and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) != CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+;
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "DB.EXPORT_RECEIPT.CREATE_AT" not found; SQL statement:
+select sum(DB.IMPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY * DB.IMPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY) as total_price_imported from DB.IMPORT_RECEIPT_DETAIL
+join DB.IMPORT_RECEIPT on DB.IMPORT_RECEIPT.id = DB.IMPORT_RECEIPT_DETAIL.IMPORT_RECEIPT_ID
+join DB.PRODUCT on DB.PRODUCT.id = DB.IMPORT_RECEIPT_DETAIL.PRODUCT_ID
+where DB.PRODUCT.id = ?
+and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) != CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)
+; [42122-222]
+	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:514)
+	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at com.h2database@2.2.222/org.h2.message.DbException.get(DbException.java:223)
+	at com.h2database@2.2.222/org.h2.message.DbException.get(DbException.java:199)
+	at com.h2database@2.2.222/org.h2.expression.ExpressionColumn.getColumnException(ExpressionColumn.java:244)
+	at com.h2database@2.2.222/org.h2.expression.ExpressionColumn.optimizeOther(ExpressionColumn.java:226)
+	at com.h2database@2.2.222/org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:213)
+	at com.h2database@2.2.222/org.h2.expression.OperationN.optimizeArguments(OperationN.java:80)
+	at com.h2database@2.2.222/org.h2.expression.function.DateTimeFormatFunction.optimize(DateTimeFormatFunction.java:316)
+	at com.h2database@2.2.222/org.h2.expression.function.CastSpecification.optimize(CastSpecification.java:80)
+	at com.h2database@2.2.222/org.h2.expression.condition.Comparison.optimize(Comparison.java:147)
+	at com.h2database@2.2.222/org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:137)
+	at com.h2database@2.2.222/org.h2.expression.condition.ConditionAndOrN.optimize(ConditionAndOrN.java:168)
+	at com.h2database@2.2.222/org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at com.h2database@2.2.222/org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at com.h2database@2.2.222/org.h2.command.query.Select.prepareExpressions(Select.java:1177)
+	at com.h2database@2.2.222/org.h2.command.query.Query.prepare(Query.java:218)
+	at com.h2database@2.2.222/org.h2.command.Parser.prepareCommand(Parser.java:489)
+	at com.h2database@2.2.222/org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:639)
+	at com.h2database@2.2.222/org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:559)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1166)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:93)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:316)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.dao.impl.AbstractDao.query(AbstractDao.java:76)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.dao.impl.ImportReceiptDetailDaoImpl.calculateTotalPriceImportedByProduct(ImportReceiptDetailDaoImpl.java:106)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.service.impl.ImportReceiptDetailServiceImpl.calculateTotalPriceImportedByProduct(ImportReceiptDetailServiceImpl.java:74)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter.updateForeignExportDetail(ImportReceiptPresenter.java:558)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter.updateImportReceipt(ImportReceiptPresenter.java:113)
+	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.screen.transaction.AddOrUpdateImportReceiptScreen.lambda$createTableItemDetailByReceipt$16(AddOrUpdateImportReceiptScreen.java:419)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:234)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:191)
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54)
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198)
+	at javafx.graphics/javafx.scene.Scene$ClickGenerator.postProcess(Scene.java:3602)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Scene.java:3906)
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Scene.java:1878)
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Scene.java:2623)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:411)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:301)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(GlassViewEventHandler.java:450)
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:424)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(GlassViewEventHandler.java:449)
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(View.java:557)
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(View.java:943)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:184)
+	at java.base/java.lang.Thread.run(Thread.java:842)

@@ -18,4 +18,5 @@ public interface IExportReceiptDetailDao {
 //    double calculateTotalPriceByImportDate(LocalDateTime importDate, LocalDateTime newImportDate);
     double calculateTotalPriceByProductAndTimeRange(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId);
     long calculateActualQuantityByProductBetweenImportDates(LocalDateTime startDate, LocalDateTime endDate, long productId);
+    long calculateTotalQuantityByProductAndTimeRange(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId);
 }

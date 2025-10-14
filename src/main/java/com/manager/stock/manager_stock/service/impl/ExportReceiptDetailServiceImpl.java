@@ -75,4 +75,9 @@ public class ExportReceiptDetailServiceImpl implements IExportReceiptDetailServi
     public long calculateActualQuantityByProductBetweenImportDates(LocalDateTime startDate, LocalDateTime endDate, long productId) {
         return exportReceiptDetailDao.calculateActualQuantityByProductBetweenImportDates(startDate, endDate, productId);
     }
+
+    @Override
+    public long calculateTotalQuantityByProductAndTimeRange(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId) {
+        return exportReceiptDetailDao.calculateTotalQuantityByProductAndTimeRange(exportPriceTime, startDate, endDate, productId);
+    }
 }
