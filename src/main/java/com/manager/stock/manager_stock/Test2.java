@@ -13,7 +13,9 @@ public class Test2 {
             String date = "01/01/2025 21:10:16";
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
             LocalDateTime createAt = LocalDateTime.parse(date, formatter);
-            System.out.println(createAt);
+            LocalDateTime newCreateAt = LocalDateTime.parse(date, formatter);
+            System.out.println("Before " + createAt.isBefore(newCreateAt));
+            System.out.println("After " + createAt.isAfter(newCreateAt));
         }
         catch (Exception exception) {
             exception.printStackTrace();

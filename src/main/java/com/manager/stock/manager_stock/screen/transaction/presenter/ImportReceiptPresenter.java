@@ -471,6 +471,10 @@ public class ImportReceiptPresenter {
             long productId = importReceiptDetailModel.getProductId();
             // đơn giá của ngày (old - 1)
             ExportPriceIdAndExportTimeAndExportPrice beforeOldDayExportPriceInfo = exportPriceService.findByProductIdAndMaxTimeByImportDate(productId, oldImportDate, oldImportDate);
+            // lấy đơn giá của ngày (new - 1)
+            ExportPriceIdAndExportTimeAndExportPrice beforeNewDayExportPriceInfo = exportPriceService.findByProductIdAndMaxTimeByImportDate(productId, newImportDate, oldImportDate);
+            // đơn giá của ngày mới + ngày cũ
+            ExportPriceIdAndExportTimeAndExportPrice newDayExportPriceInfo = exportPriceService.findByProductIdAndImportDate(productId, oldImportDate);
             // TH chuyen tu ngay be len ngay lớn
             double totalPriceBeforeUpdate = 0;
             double totalPriceAfterUpdate = 0;
@@ -490,7 +494,6 @@ public class ImportReceiptPresenter {
                     }
                     long totalQuantityExportBetweenImportDates = exportReceiptDetailService.calculateActualQuantityByProductBetweenImportDates(importDatesInRange.get(i), importDatesInRange.get(i+1), productId);
                     if(totalQuantityExportBetweenImportDates > totalQuantityByImportDate) {
-//                        AlertUtils.alert("Không đủ điều kiện để cập nhật, vui lòng thử lại sau.", "ERROR", "Lỗi", "Lỗi");
                         throw new DaoException(String.format("Số lượng xuất từ ngày %s đến ngày %s lớn hơn số lượng tồn kho tại thời điểm %s", formatter.format(importDatesInRange.get(i)), formatter.format(importDatesInRange.get(i+1)), formatter.format(importDatesInRange.get(i))));
                     }
 
@@ -517,9 +520,6 @@ public class ImportReceiptPresenter {
                 if(newYear != oldYear) {
                     inventoryDetailService.updateByProductId(productId, totalPriceBeforeUpdate - totalPriceAfterUpdate, Math.min(newYear, oldYear));
                 }
-
-                // lấy đơn giá của ngày new - 1
-                ExportPriceIdAndExportTimeAndExportPrice beforeNewDayExportPriceInfo = exportPriceService.findByProductIdAndMaxTimeByImportDate(productId, newImportDate, oldImportDate);
                 /*
                 *    TH new - 1 != old - 1
                 *  ==> Cập nhật thêm khóa ngoại với điều kiện:
@@ -528,20 +528,19 @@ public class ImportReceiptPresenter {
                 if(beforeNewDayExportPriceInfo.exportPriceId() != beforeOldDayExportPriceInfo.exportPriceId()) {
                     totalPriceBeforeUpdate += exportReceiptDetailService.calculateTotalPriceByProductAndTimeRange(beforeNewDayExportPriceInfo.exportTime(), newImportDate, null, productId);
                     // lấy đơn giá của ngày new
-                    ExportPriceIdAndExportTimeAndExportPrice newDayExportPriceInfo = exportPriceService.findByProductIdAndImportDate(productId, oldImportDate);
                     exportReceiptDetailService.updateExportReceiptDetailPriceByProductAndTimeRange(newDayExportPriceInfo.exportPriceId(), newDayExportPriceInfo.exportPrrice(),
                             beforeNewDayExportPriceInfo.exportTime(), productId, newImportDate, null);
                     totalPriceAfterUpdate += exportReceiptDetailService.calculateTotalQuantityByProductAndTimeRange(newDayExportPriceInfo.exportTime(), newImportDate, null, productId) * newDayExportPriceInfo.exportPrrice();
                     // cập nhật tồn kho trong năm của ngày mới
-                    inventoryDetailService.updateByProductId(productId, totalPriceBeforeUpdate - totalPriceAfterUpdate, newYear);
+//                    inventoryDetailService.updateByProductId(productId, totalPriceBeforeUpdate - totalPriceAfterUpdate, newYear);
                 }
 
                 // cập nhật lại toàn bộ đơn giá với điều kiện: old <= x < new
                 totalPriceBeforeUpdateMap.put(-1, 0.0);
                 importDatesInRange.remove(newImportDate);
                 for(int i = 0; i < importDatesInRange.size() - 1; i++) {
-                    LocalDateTime importDate_i =  importDatesInRange.get(i);
-                    LocalDateTime importDate_i_1 =  importDatesInRange.get(i+1);
+                    LocalDateTime importDate_i = importDatesInRange.get(i);
+                    LocalDateTime importDate_i_1 = importDatesInRange.get(i+1);
                     double totalPriceBeforeUpdateByRangeTime = totalPriceBeforeUpdateMap.get(i);
                     // tính tổng tiền xuất từ ngày nhập thứ i -> i+1 sau khi đã cập nhật
                     double totalPriceAfterUpdateByRangeTime = exportReceiptDetailService.calculateTotalPriceByProductAndTimeRange(
@@ -561,8 +560,54 @@ public class ImportReceiptPresenter {
                 exportPriceService.updateExportPriceAfterImportCorrectionByProductIdAndImportDate(totalPriceChanged, totalQuantityChanged, oldImportDate, productId);
             }
             else {
+                // cập nhật trường hợp khóa export_price_id = (new_export_price_id)
+                // 1. tính tổng thành tiền trước khi cập nhật đơn giá
+                totalPriceBeforeUpdate += exportReceiptDetailService.calculateTotalPriceByProductAndTimeRange(beforeNewDayExportPriceInfo.exportTime(), newImportDate, oldImportDate, productId);
+                // 2. cập nhật lại khóa ngoại
+                exportReceiptDetailService.updateExportReceiptDetailPriceByProductAndTimeRange(
+                        newDayExportPriceInfo.exportPriceId(), newDayExportPriceInfo.exportPrrice(),
+                        beforeNewDayExportPriceInfo.exportTime(), productId, newImportDate, oldImportDate);
+                // 3. tính tổng tiền mới sau khi thay đổi
+                totalPriceAfterUpdate += exportReceiptDetailService.calculateTotalPriceByProductAndTimeRange(beforeNewDayExportPriceInfo.exportTime(), newImportDate, oldImportDate, productId);
 
+                if(newYear != oldYear) {
+                    inventoryDetailService.updateByProductId(productId, totalPriceBeforeUpdate - totalPriceAfterUpdate, Math.min(newYear, oldYear));
+                }
+
+                // trường hợp old - 1 != new - 1 ==> cập nhật thêm đoạn từ old -> vô cùng
+                if(beforeOldDayExportPriceInfo.exportPriceId() != beforeNewDayExportPriceInfo.exportPriceId()) {
+                    totalPriceBeforeUpdate += exportReceiptDetailService.calculateTotalPriceByProductAndTimeRange(
+                            oldImportDate, oldImportDate, null, productId);
+                    // cập nhật lại khóa ngoại
+                    exportReceiptDetailService.updateExportReceiptDetailPriceByProductAndTimeRange(beforeOldDayExportPriceInfo.exportPriceId(),
+                            beforeOldDayExportPriceInfo.exportPrrice(), oldImportDate, productId, oldImportDate, null);
+                    // tính lại tổng tiền sau khi đã thay đổi
+                    totalPriceAfterUpdate += exportReceiptDetailService.calculateTotalPriceByProductAndTimeRange(
+                            oldImportDate, oldImportDate, null, productId);
+                }
+
+                // cập nhật lại đơn giá tính từ ngày new -> vô cùng
+                //  1. lấy danh sách các ngày nhập tính từ ngày new - 1
+                List<LocalDateTime> importDatesInRange = exportPriceService.findAllExportTimeByProductAndMoreThanImportDate(
+                        beforeNewDayExportPriceInfo.exportTime(), oldImportDate, productId);
+                for(int i = 0; i < importDatesInRange.size() - 1; i++) {
+                    // lấy đơn giá (exportPriceModel) theo ngày
+                    ExportPriceModel exportPriceModel_i = exportPriceService.findByProductAndImportDate(productId, importDatesInRange.get(i));
+                    // tính tổng số lượng đã xuất trong khoảng ngày (i -> i + 1)
+                    long totalQuantityExportBetweenImportDates = exportReceiptDetailService.calculateActualQuantityByProductBetweenImportDates(importDatesInRange.get(i), importDatesInRange.get(i+1), productId);
+                    // tính tổng tiền xuất từ ngày thứ nhập thứ i->i+1
+                    double totalPriceBeforeUpdateBetweenImportDates = exportReceiptDetailService.calculateTotalPriceByProductAndTimeRange(
+                            importDatesInRange.get(i), importDatesInRange.get(i), importDatesInRange.get(i+1), productId
+                    );
+                    // tính lại tồn kho và đơn giá của của ngày i+1
+                    long newQuantityInStock = exportPriceModel_i.getQuantityInStock() + exportPriceModel_i.getQuantityImported() - totalQuantityExportBetweenImportDates;
+                    double newTotalPriceInStock = exportPriceModel_i.getTotalPriceInStock() + exportPriceModel_i.getTotalImportPrice() - totalPriceBeforeUpdateBetweenImportDates;
+                    // tính lại đơn giá và cập nhật
+                    exportPriceService.updateExportPriceByImportTimeAndProduct(newQuantityInStock, newTotalPriceInStock, importDatesInRange.get(i+1), productId);
+                }
             }
+            // cập nhật lại tồn kho
+            inventoryDetailService.updateByProductId(productId, totalPriceBeforeUpdate - totalPriceAfterUpdate, newYear);
         }
     }
 

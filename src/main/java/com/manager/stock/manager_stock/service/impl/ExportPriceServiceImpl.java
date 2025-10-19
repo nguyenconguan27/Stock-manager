@@ -108,13 +108,28 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     }
 
     @Override
+    public ExportPriceModel findByProductAndImportDate(long productId, LocalDateTime importDate) {
+        return exportPriceDao.findOneByProductIdAndImportDate(productId, importDate);
+    }
+
+    @Override
     public List<LocalDateTime> findAllExportTimeByProductAndBetweenImportDates(LocalDateTime startDate, LocalDateTime endDate, LocalDateTime importDate, long productId) throws DaoException {
         return exportPriceDao.findAllExportTimeByProductAndBetweenImportDates(startDate, endDate, importDate, productId);
     }
 
     @Override
+    public List<LocalDateTime> findAllExportTimeByProductAndMoreThanImportDate(LocalDateTime startDate, LocalDateTime importDate, long productId) {
+        return exportPriceDao.findAllExportTimeByProductAndMoreThanImportDate(startDate, importDate, productId);
+    }
+
+    @Override
     public long calculateTotalQuantityImportAndQuantityInStockByImportDateAndProduct(long productId, LocalDateTime importDate) {
         return exportPriceDao.calculateTotalQuantityImportAndQuantityInStockByImportDateAndProduct(productId, importDate);
+    }
+
+    @Override
+    public void updateExportPriceByImportTimeAndProduct(long newQuantityInStock, double newTotalPriceInStock, LocalDateTime importDateTime, long productId) throws DaoException{
+        exportPriceDao.updateExportPriceByImportTimeAndProduct(newQuantityInStock, newTotalPriceInStock, importDateTime, productId);
     }
 
     @Override

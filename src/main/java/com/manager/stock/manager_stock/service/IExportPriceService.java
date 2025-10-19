@@ -5,7 +5,6 @@ import com.manager.stock.manager_stock.model.dto.ExportPriceAndProductCodeAndPro
 import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndExportTimeAndExportPrice;
 import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +25,10 @@ public interface IExportPriceService {
     ExportPriceIdAndExportTimeAndExportPrice findByProductIdAndMaxTimeByImportDate(long productId, LocalDateTime maxTime, LocalDateTime oldImportDate);
     ExportPriceIdAndExportTimeAndExportPrice findByProductIdAndMinTimeByImportDate(long productId, LocalDateTime minTime, LocalDateTime oldImportDate);
     ExportPriceIdAndExportTimeAndExportPrice findByProductIdAndImportDate(long productId, LocalDateTime importDate);
+    void updateExportPriceByImportTimeAndProduct(long newQuantityInStock, double newTotalPriceInStock, LocalDateTime importDateTime, long productId);
+    ExportPriceModel findByProductAndImportDate(long productId, LocalDateTime importDate);
     List<LocalDateTime> findAllExportTimeByProductAndBetweenImportDates(LocalDateTime startDate, LocalDateTime endDate, LocalDateTime importDate, long productId);
+    List<LocalDateTime> findAllExportTimeByProductAndMoreThanImportDate(LocalDateTime startDate, LocalDateTime importDate, long productId);
     long calculateTotalQuantityImportAndQuantityInStockByImportDateAndProduct(long productId, LocalDateTime importDate);
     void commit();
     void rollback();

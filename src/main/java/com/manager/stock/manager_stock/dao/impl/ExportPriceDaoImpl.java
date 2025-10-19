@@ -7,6 +7,8 @@ import com.manager.stock.manager_stock.model.ExportPriceModel;
 import com.manager.stock.manager_stock.model.dto.ExportPriceAndProductCodeAndProductName;
 import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndExportTimeAndExportPrice;
 import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -267,6 +269,17 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
     }
 
     @Override
+    public ExportPriceModel findOneByProductIdAndImportDate(long productId, LocalDateTime importDate) {
+        String sql = "select * from DB.EXPORT_PRICE \n" +
+                "where DB.EXPORT_PRICE.EXPORT_TIME = ? and DB.EXPORT_PRICE.PRODUCT_ID = ?;";
+        List<ExportPriceModel> exportPriceModels = query(sql, new ExportPriceMapperResultSet(), importDate, productId);
+        if(exportPriceModels.isEmpty()){
+            return new ExportPriceModel();
+        }
+        return exportPriceModels.get(0);
+    }
+
+    @Override
     public List<LocalDateTime> findAllExportTimeByProductAndBetweenImportDates(LocalDateTime startDate, LocalDateTime endDate, LocalDateTime importDate, long productId) throws DaoException {
         String sql = "" +
                 "select DB.EXPORT_PRICE.EXPORT_TIME  from DB.EXPORT_PRICE \n" +
@@ -276,6 +289,37 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
                 "and DB.EXPORT_PRICE.EXPORT_TIME < ?\n" +
                 "and DB.EXPORT_PRICE.EXPORT_TIME != ?;";
         return query(sql, rs -> rs.getTimestamp("EXPORT_TIME").toLocalDateTime(), productId, startDate, endDate, importDate);
+    }
+
+    @Override
+    public List<LocalDateTime> findAllExportTimeByProductAndMoreThanImportDate(LocalDateTime startDate, LocalDateTime importDate, long productId) throws DaoException {
+        String sql = "" +
+                "select DB.EXPORT_PRICE.EXPORT_TIME  from DB.EXPORT_PRICE \n" +
+                "join DB.PRODUCT on DB.PRODUCT.id = DB.EXPORT_PRICE.PRODUCT_ID\n" +
+                "where DB.PRODUCT.id = ? \n" +
+                "and DB.EXPORT_PRICE.EXPORT_TIME >= ?\n" +
+                "and DB.EXPORT_PRICE.EXPORT_TIME != ?;";
+        return query(sql, rs -> rs.getTimestamp("EXPORT_TIME").toLocalDateTime(), productId, startDate, importDate);
+    }
+
+    @Override
+    public void updateExportPriceByImportTimeAndProduct(long newQuantityInStock, double newTotalPriceInStock, LocalDateTime importDateTime, long productId) throws DaoException{
+        String sql = "update DB.EXPORT_PRICE set\n" +
+                "DB.EXPORT_PRICE.QUANTITY_IN_STOCK = ?,\n" +
+                "TOTAL_PRICE_IN_STOCK = ?,\n" +
+                "EXPORT_PRICE = (DB.EXPORT_PRICE.TOTAL_PRICE_IMPORT  + ?) / (DB.EXPORT_PRICE.QUANTITY_IMPORTED + ?)\n" +
+                "where DB.EXPORT_PRICE.EXPORT_TIME = ?\n" +
+                "and DB.EXPORT_PRICE.PRODUCT_ID = ?;";
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[]{
+                newQuantityInStock,
+                newTotalPriceInStock,
+                newTotalPriceInStock,
+                newQuantityInStock,
+                importDateTime,
+                productId
+        });
+        save(sql, parameters);
     }
 
     @Override
