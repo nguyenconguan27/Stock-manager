@@ -92,7 +92,7 @@ public class ImportReceiptPresenter {
             LocalDateTime importDate = LocalDateTime.parse(importReceiptModel.getCreateAt(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
             updateInventory(academicYear, importReceiptDetailModels, changeQuantityByProductMap, changeTotalPriceByProductMap, true, importDate, importReceiptId);
             LocalDateTime newImportDate = LocalDateTime.parse(importReceiptModel.getCreateAt(), formatter);
-            updateForeignExportDetail(importReceiptDetailModels, newImportDate, newImportDate, false);
+//            updateForeignExportDetail(importReceiptDetailModels, newImportDate, newImportDate, false);
             importReceiptService.commit();
         }
         catch (Exception e) {
@@ -110,7 +110,7 @@ public class ImportReceiptPresenter {
                     ImportReceiptDetailModelMapper.INSTANCE::fromViewModelToModel);
             LocalDateTime oldImportDate = LocalDateTime.parse(oldImportDateStr.trim(), formatter);
             LocalDateTime newImportDate = LocalDateTime.parse(importReceiptModel.getCreateAt().trim(), formatter);
-            updateForeignExportDetail(allProductOfImportReceipt, newImportDate, oldImportDate, false);
+            updateForeignExportDetail(allProductOfImportReceipt, newImportDate, oldImportDate);
             importReceiptService.update(importReceiptModel);
 
             if(!changeQuantityByProductMap.isEmpty() || !changeTotalPriceByProductMap.isEmpty()) {
@@ -436,17 +436,17 @@ public class ImportReceiptPresenter {
             LocalDateTime importDate = LocalDateTime.parse(importReceiptModelTable.getCreateAt(), formatter);
             updateInventory(academicYear, importReceiptDetailModels, changeQuantityMap, changeTotalPriceMap, false, importDate, importReceiptModelTable.getId());
 
+            updateForeignExportDetail(importReceiptDetailModels, null, importDate);
             // cập nhật tồn kho + giá xuất thành công ==> xóa phiếu nhập
             importReceiptService.delete(importReceiptModelTable.getId());
-            updateForeignExportDetail(importReceiptDetailModels, importDate, importDate, true);
             importReceiptService.commit();
             return true;
         }
         catch (Exception e) {
             importReceiptService.rollback();
             e.printStackTrace();
+            throw e;
         }
-        return false;
     }
 
     public int findQuantityInStockByProductIdAndAcademicYear(long productId, int academicYear) throws DaoException{
@@ -462,23 +462,28 @@ public class ImportReceiptPresenter {
 
     // cập nhật lại đơn giá cho phiếu xuất trong trường hợp xóa phiếu nhập hoặc sửa ngày phiếu nhập hoặc xóa sản phẩm trong phiêếu nhập
     // hoặc thêm mới phiếu nhập vào giữa phiếu xuất + phiếu nhập
-    private void updateForeignExportDetail(List<ImportReceiptDetailModel> importReceiptDetailModels, LocalDateTime newImportDate, LocalDateTime oldImportDate, boolean isDelete) throws DaoException, StockUnderFlowException {
+    private void updateForeignExportDetail(List<ImportReceiptDetailModel> importReceiptDetailModels, LocalDateTime newImportDate, LocalDateTime oldImportDate) throws DaoException, StockUnderFlowException {
         // lấy ra năm của ngày cũ và ngày mới
         int oldYear = oldImportDate.getYear();
-        int newYear = newImportDate.getYear();
+        int newYear = newImportDate == null ? oldImportDate.getYear() : newImportDate.getYear();
         // 1. Lấy ra danh sách export_receipt_detail có ngày >= ngày của phiếu nhập
         for(ImportReceiptDetailModel importReceiptDetailModel : importReceiptDetailModels) {
             long productId = importReceiptDetailModel.getProductId();
+            // truong hop xoa phieu nhap(newDate = null) ==> gan lai newDate = ngay xuat moi nhat
+            if(newImportDate == null) {
+                newImportDate = LocalDateTime.parse(exportReceiptService.findLatestCreatedByProduct(productId), formatter).plusMinutes(10);
+            }
             // đơn giá của ngày (old - 1)
             ExportPriceIdAndExportTimeAndExportPrice beforeOldDayExportPriceInfo = exportPriceService.findByProductIdAndMaxTimeByImportDate(productId, oldImportDate, oldImportDate);
             // lấy đơn giá của ngày (new - 1)
             ExportPriceIdAndExportTimeAndExportPrice beforeNewDayExportPriceInfo = exportPriceService.findByProductIdAndMaxTimeByImportDate(productId, newImportDate, oldImportDate);
-            // đơn giá của ngày mới + ngày cũ
+            // đơn giá của ngày mới và ngày cũ (đơn giá 2 ngày này thực chất là cùng 1 giá trị)
             ExportPriceIdAndExportTimeAndExportPrice newDayExportPriceInfo = exportPriceService.findByProductIdAndImportDate(productId, oldImportDate);
             // TH chuyen tu ngay be len ngay lớn
             double totalPriceBeforeUpdate = 0;
             double totalPriceAfterUpdate = 0;
             long totalQuantityExported = 0;
+            // truong hop chuyen tu ngay be qua ngay lon
             if(newImportDate.isAfter(oldImportDate)) {
                 // 1. Lấy danh sách các ngày của phiếu nhập trong khoảng từ ngày (old - 1) -> new
                 List<LocalDateTime> importDatesInRange = exportPriceService.findAllExportTimeByProductAndBetweenImportDates(beforeOldDayExportPriceInfo.exportTime(), newImportDate, oldImportDate, productId);
@@ -568,7 +573,7 @@ public class ImportReceiptPresenter {
                         newDayExportPriceInfo.exportPriceId(), newDayExportPriceInfo.exportPrrice(),
                         beforeNewDayExportPriceInfo.exportTime(), productId, newImportDate, oldImportDate);
                 // 3. tính tổng tiền mới sau khi thay đổi
-                totalPriceAfterUpdate += exportReceiptDetailService.calculateTotalPriceByProductAndTimeRange(beforeNewDayExportPriceInfo.exportTime(), newImportDate, oldImportDate, productId);
+                totalPriceAfterUpdate += exportReceiptDetailService.calculateTotalPriceByProductAndTimeRange(newDayExportPriceInfo.exportTime(), newImportDate, oldImportDate, productId);
 
                 if(newYear != oldYear) {
                     inventoryDetailService.updateByProductId(productId, totalPriceBeforeUpdate - totalPriceAfterUpdate, Math.min(newYear, oldYear));

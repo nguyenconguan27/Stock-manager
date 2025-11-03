@@ -9,16 +9,11 @@ import java.time.format.DateTimeFormatter;
  */
 public class Test2 {
     public static void main(String[] args) {
-        try {
-            String date = "01/01/2025 21:10:16";
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-            LocalDateTime createAt = LocalDateTime.parse(date, formatter);
-            LocalDateTime newCreateAt = LocalDateTime.parse(date, formatter);
-            System.out.println("Before " + createAt.isBefore(newCreateAt));
-            System.out.println("After " + createAt.isAfter(newCreateAt));
-        }
-        catch (Exception exception) {
-            exception.printStackTrace();
-        }
+        String newDate = "02/11/2025 11:30:22";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        LocalDateTime date = LocalDateTime.parse(newDate, formatter);
+        LocalDateTime now = LocalDateTime.now();
+
+        System.out.println(date.isBefore(now));
     }
 }

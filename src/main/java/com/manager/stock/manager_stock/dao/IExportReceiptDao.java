@@ -17,6 +17,7 @@ public interface IExportReceiptDao {
     List<ExportReceiptIdAndCreateDate> findExportReceiptIdAndCreatedAtByProductIdsAndYearAndMinCreatedAt(List<Long> productIds, int academicYear, LocalDate minCreateAt);
     List<ProductIdAndActualQuantityAndTotalPriceOfReceipt> findProductIdAndTotalPriceAndTotalQuantityByExportReceipt(List<Long> exportReceiptIds);
     void deleteByIds(List<Long> ids);
+    String findLatestCreatedByProduct(long productId);
     void deleteByIdsWithTransaction(List<Long> ids, Connection connection);
     List<ExportReceiptModel> findAllByAcademicYear(int academicYear);
     long save(ExportReceiptModel exportReceiptModel);

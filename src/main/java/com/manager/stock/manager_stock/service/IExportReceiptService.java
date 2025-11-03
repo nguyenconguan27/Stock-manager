@@ -15,6 +15,7 @@ public interface IExportReceiptService {
     List<ProductIdAndActualQuantityAndTotalPriceOfReceipt> findProductIdAndTotalPriceAndTotalQuantityByExportReceipt(List<Long> exportReceiptIds);
     void deleteByIds(List<Long> ids);
     List<ExportReceiptModel> findAllByAcademicYear(int academicYear);
+    String findLatestCreatedByProduct(long productId);
     long save(ExportReceiptModel exportReceiptModel);
     void update(ExportReceiptModel exportReceiptModel);
     void commit();
