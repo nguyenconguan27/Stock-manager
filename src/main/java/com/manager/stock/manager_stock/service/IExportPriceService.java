@@ -23,6 +23,8 @@ public interface IExportPriceService {
     HashMap<Long, Double> findPriceById(List<Long> ids);
     ExportPriceAndProductCodeAndProductName findProductHaveMaxPriceByGroup(long productGroupId);
     ExportPriceAndProductCodeAndProductName findProductHaveMinPriceByGroup(long productGroupId);
+    ExportPriceModel findByProductIdAndBeforeTime(long productId, LocalDateTime time);
+    List<ExportPriceModel> findAllByProductIdAndAfterTime(long productId, LocalDateTime time);
     void commit();
     void rollback();
 }

@@ -26,4 +26,6 @@ public interface IExportPriceDao {
     void rollback();
     List<ExportPriceModel> findByProductAndLastTime(Long productId, LocalDateTime time);
     List<ExportPriceModel> findByProductAndMinTime(Long productId, LocalDateTime time);
+    List<ExportPriceModel> findByProductIdAndBeforeTime(long productId, LocalDateTime time);
+    List<ExportPriceModel> findAllByProductIdAndAfterTime(long productId, LocalDateTime time);
 }

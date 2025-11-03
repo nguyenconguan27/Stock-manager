@@ -222,4 +222,16 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
         String sql = "SELECT TOP 1 * FROM export_price WHERE export_time > ? and product_id = ? order by export_time desc, id asc";
         return query(sql, new ExportPriceMapperResultSet(), time, productId);
     }
+
+    @Override
+    public List<ExportPriceModel> findByProductIdAndBeforeTime(long productId, LocalDateTime time) {
+        String sql = "select top 1 * from export_price where product_id = ? and export_time < ? order by export_time asc";
+        return query(sql, new ExportPriceMapperResultSet(), productId, time);
+    }
+
+    @Override
+    public List<ExportPriceModel> findAllByProductIdAndAfterTime(long productId, LocalDateTime time) {
+        String sql = "select * from export_price where product_id = ? and export_time > ?";
+        return query(sql, new ExportPriceMapperResultSet(), productId, time);
+    }
 }

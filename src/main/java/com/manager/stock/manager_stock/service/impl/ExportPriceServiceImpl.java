@@ -104,6 +104,20 @@ public class ExportPriceServiceImpl implements IExportPriceService {
         return exportPriceDao.findProductHaveMinPriceByGroup(productGroupId);
     }
 
+    @Override
+    public ExportPriceModel findByProductIdAndBeforeTime(long productId, LocalDateTime time) {
+        List<ExportPriceModel> exportPriceModels = exportPriceDao.findByProductIdAndBeforeTime(productId, time);
+        if(exportPriceModels == null || exportPriceModels.isEmpty()) {
+            return null;
+        }
+        return exportPriceModels.get(0);
+    }
+
+    @Override
+    public List<ExportPriceModel> findAllByProductIdAndAfterTime(long productId, LocalDateTime time) {
+        return exportPriceDao.findAllByProductIdAndAfterTime(productId, time);
+    }
+
 
     @Override
     public void commit() {

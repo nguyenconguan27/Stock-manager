@@ -13,8 +13,10 @@ import com.manager.stock.manager_stock.model.tableData.ExportReceiptDetailModelT
 import com.manager.stock.manager_stock.model.tableData.ExportReceiptModelTable;
 import com.manager.stock.manager_stock.service.*;
 import com.manager.stock.manager_stock.service.impl.*;
+import com.manager.stock.manager_stock.utils.AlertUtils;
 import com.manager.stock.manager_stock.utils.GenericConverterBetweenModelAndTableData;
 import javafx.animation.ScaleTransition;
+import javafx.scene.control.Alert;
 
 import javax.sound.midi.Soundbank;
 import java.time.LocalDate;
@@ -34,6 +36,7 @@ public class ExportReceiptPresenter {
     private final ProductService productService;
     private final IExportPriceService exportPriceService;
     private static ExportReceiptPresenter instance;
+    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
     private ExportReceiptPresenter() {
         exportReceiptDetailService = ExportReceiptDetailServiceImpl.getInstance();
@@ -44,7 +47,7 @@ public class ExportReceiptPresenter {
     }
 
     public static ExportReceiptPresenter getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new ExportReceiptPresenter();
         }
         return instance;
@@ -54,10 +57,10 @@ public class ExportReceiptPresenter {
         List<ProductIdAndActualQuantityAndTotalPriceOfReceipt> productIdAndActualQuantityAndTotalPriceOfReceipts = exportReceiptService.findProductIdAndTotalPriceAndTotalQuantityByExportReceipt(exportReceiptIds);
         return productIdAndActualQuantityAndTotalPriceOfReceipts.stream()
                 .collect(Collectors.toMap(
-                   ProductIdAndActualQuantityAndTotalPriceOfReceipt::productId,
-                   Function.identity(),
-                    (existing, replacement) -> replacement,
-                    HashMap::new
+                        ProductIdAndActualQuantityAndTotalPriceOfReceipt::productId,
+                        Function.identity(),
+                        (existing, replacement) -> replacement,
+                        HashMap::new
                 ));
     }
 
@@ -100,8 +103,7 @@ public class ExportReceiptPresenter {
 
             updateInventory(exportReceiptDetailModels, academicYearValue, productIds, changeQuantityByProductMap);
             exportReceiptService.commit();
-        }
-        catch (DaoException | CanNotFoundException | StockUnderFlowException e) {
+        } catch (DaoException | CanNotFoundException | StockUnderFlowException e) {
             // gọi rollback
             exportReceiptService.rollback();
             e.printStackTrace();
@@ -111,12 +113,12 @@ public class ExportReceiptPresenter {
 
     private void updateInventory(List<ExportReceiptDetailModel> exportReceiptDetailModels, int academicYear, List<Long> productIds, HashMap<Long, Integer> changeQuantityByProductMap) throws DaoException {
         HashMap<Long, InventoryDetailModel> inventoryDetailByProductAndAcademicYear = inventoryDetailService.findAllByAcademicYearAndProductId(academicYear, productIds);
-        HashMap<Long, InventoryDetailModel> inventoryDetailByProductAndPreviousAcademicYear = inventoryDetailService.findAllByAcademicYearAndProductId(academicYear-1, productIds);
+        HashMap<Long, InventoryDetailModel> inventoryDetailByProductAndPreviousAcademicYear = inventoryDetailService.findAllByAcademicYearAndProductId(academicYear - 1, productIds);
 
         List<InventoryDetailModel> inventoryDetailModelsToInsert = new ArrayList<>();
         List<InventoryDetailModel> inventoryDetailModelsToUpdate = new ArrayList<>();
 
-        for(ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
+        for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
             long productId = exportReceiptDetailModel.getProductId();
 //            // số lượng sản phẩm thay đổi
             int changeQuantity = changeQuantityByProductMap.getOrDefault(productId, 0);
@@ -125,7 +127,7 @@ public class ExportReceiptPresenter {
 
             InventoryDetailModel inventoryDetailModel = inventoryDetailByProductAndAcademicYear.getOrDefault(productId, null);
             // TH sản phẩm này chưa có tồn kho của năm nay
-            if(inventoryDetailModel == null) {
+            if (inventoryDetailModel == null) {
                 // lấy ra tồn kho đầu kì (tức tồn kho của năm ngoái)
                 inventoryDetailModel = inventoryDetailByProductAndPreviousAcademicYear.getOrDefault(productId, null);
                 // trường hợp trong năm trước cũng chưa nhập ==> tạo mới
@@ -161,10 +163,10 @@ public class ExportReceiptPresenter {
                 inventoryDetailModelsToUpdate.add(inventoryDetailModel);
             }
         }
-        if(!inventoryDetailModelsToInsert.isEmpty()) {
+        if (!inventoryDetailModelsToInsert.isEmpty()) {
             inventoryDetailService.save(inventoryDetailModelsToInsert);
         }
-        if(!inventoryDetailModelsToUpdate.isEmpty()) {
+        if (!inventoryDetailModelsToUpdate.isEmpty()) {
             inventoryDetailService.update(inventoryDetailModelsToUpdate);
         }
     }
@@ -176,11 +178,11 @@ public class ExportReceiptPresenter {
         Map<Long, ExportPriceModel> exportPriceModelByIdMap = new HashMap<>();
 
         // duyệt toàn bộ sản phẩm trong phiếu nhập cần sửa
-        for(ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
+        for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
             long productId = exportReceiptDetailModel.getProductId();
             List<ExportPriceModel> exportPriceModels = exportPriceModelsByProductAfterExportDate.getOrDefault(productId, null);
             // trường hợp sản phẩm này sau đó chưa được nhập thêm ==> không cần cập nhật lại đơn giá
-            if(exportPriceModels == null) {
+            if (exportPriceModels == null) {
                 continue;
             }
             // cập nhật lại toàn bộ đơn giá cho sản phẩm hiện tại
@@ -201,14 +203,93 @@ public class ExportReceiptPresenter {
                 exportPriceModelByIdMap.put(exportPriceModel.getId(), exportPriceModelToUpdate);
             }
         }
-        if(!exportPriceModelsToUpdate.isEmpty()) {
+        if (!exportPriceModelsToUpdate.isEmpty()) {
             exportPriceService.update(exportPriceModelsToUpdate);
         }
     }
 
+    public void checkAndUpdateExportPriceWhenChangeDate(ExportPriceModel preExportPrice, ExportPriceModel nextExportPrice,
+                                                        List<ExportReceiptDetailModel> exportReceiptDetailModelList) {
+        int totalQuanExported = 0;
+        long totalPriceExported = 0;
+        for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModelList) {
+            totalQuanExported += exportReceiptDetailModel.getActualQuantity();
+        }
+        totalPriceExported = totalQuanExported * (long) preExportPrice.getExportPrice();
+        if (totalQuanExported > preExportPrice.getQuantityInStock()) {
+            throw new StockUnderFlowException("");
+        }
+        nextExportPrice.setQuantityInStock(preExportPrice.getQuantityInStock() + preExportPrice.getQuantityImported() - totalQuanExported);
+        nextExportPrice.setTotalPriceInStock((nextExportPrice.getQuantityInStock() - totalPriceExported) * preExportPrice.getExportPrice());
+        nextExportPrice.setExportPrice((nextExportPrice.getTotalPriceInStock() + nextExportPrice.getTotalImportPrice()) / (nextExportPrice.getQuantityImported() + nextExportPrice.getTotalPriceInStock()));
+    }
+
+    public boolean updateExportReceiptDate(LocalDateTime fromDate, LocalDateTime toDate, long exportReceiptId) {
+        List<ExportReceiptDetailModel> exportReceiptDetailModels = exportReceiptDetailService.findAllByExportReceipt(exportReceiptId);
+        for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
+            ExportPriceModel exBeforeNewDate;
+            List<ExportPriceModel> exsToUpdate;
+            if (fromDate.isBefore(toDate)) {
+                exBeforeNewDate = exportPriceService.findByProductIdAndBeforeTime(exportReceiptDetailModel.getProductId(), fromDate);
+                exsToUpdate = exportPriceService.findAllByProductIdAndAfterTime(exportReceiptDetailModel.getProductId(), fromDate);
+            } else {
+                exBeforeNewDate = exportPriceService.findByProductIdAndBeforeTime(exportReceiptDetailModel.getProductId(), toDate);
+                exsToUpdate = exportPriceService.findAllByProductIdAndAfterTime(exportReceiptDetailModel.getProductId(), toDate);
+            }
+            exsToUpdate.add(0, exBeforeNewDate);
+            for (int i = 0; i < exsToUpdate.size() - 1; i++) {
+                List<ExportReceiptDetailModel> exportReceiptDetailToCheck;
+                if (i < exsToUpdate.size() - 1) {
+                    exportReceiptDetailToCheck = exportReceiptDetailService.findByRangeTime(
+                            exportReceiptDetailModel.getProductId(), exsToUpdate.get(i).getExportTime(), exsToUpdate.get(i + 1).getExportTime()
+                    );
+                } else {
+                    exportReceiptDetailToCheck = exportReceiptDetailService.findByRangeTime(
+                            exportReceiptDetailModel.getProductId(), exsToUpdate.get(i).getExportTime(), LocalDateTime.now()
+                    );
+                }
+                if (i == 0) {
+                    if (fromDate.isBefore(toDate)) {
+                        exportReceiptDetailToCheck.remove(exportReceiptDetailModel);
+                    } else {
+                        exportReceiptDetailToCheck.add(exportReceiptDetailModel);
+                    }
+                }
+                if (fromDate.isBefore(toDate)) {
+                    for (ExportPriceModel exportPriceModel : exsToUpdate) {
+                        if (exportPriceModel.getId() == exBeforeNewDate.getId()) {
+                            exportReceiptDetailToCheck.add(exportReceiptDetailModel);
+                            break;
+                        }
+                    }
+                } else {
+                    for (ExportReceiptDetailModel exportReceiptDetailModel1 : exportReceiptDetailToCheck) {
+                        if (exportReceiptDetailModel1.getId() == exportReceiptDetailModel.getId()) {
+                            exportReceiptDetailToCheck.remove(exportReceiptDetailModel1);
+                            break;
+                        }
+                    }
+                }
+
+                checkAndUpdateExportPriceWhenChangeDate(exsToUpdate.get(i), exsToUpdate.get(i + 1), exportReceiptDetailToCheck);
+            }
+        }
+
+        return false;
+    }
+
+
     public void updateExportReceipt(ExportReceiptModel newExportReceipt, ExportReceiptModel oldExportReceipt, List<ExportReceiptDetailModelTable> exportReceiptDetailModelTables, HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap) throws DaoException {
         try {
             exportReceiptService.update(newExportReceipt);
+            if (!Objects.equals(newExportReceipt.getCreateAt(), oldExportReceipt.getCreateAt())) {
+                LocalDateTime fromDate = LocalDateTime.parse(oldExportReceipt.getCreateAt(), formatter);
+                LocalDateTime toDate = LocalDateTime.parse(newExportReceipt.getCreateAt(), formatter);
+                if (!updateExportReceiptDate(fromDate, toDate, oldExportReceipt.getId())) {
+                    AlertUtils.alert("Không đủ điều kiện cập nhập phiếu nhập", "ERROR", "Lỗi", "Lỗi cập nhập ngày phiếu nhập");
+                }
+
+            }
             List<ExportReceiptDetailModel> exportReceiptDetailModels = GenericConverterBetweenModelAndTableData.convertToListModel(
                     exportReceiptDetailModelTables, ExportReceiptDetailModelTableMapper.INSTANCE::fromViewModelToModel);
             // thêm mới export detail trong TH chỉnh sửa phiếu xuất có add thêm sản phẩm mới
@@ -258,8 +339,7 @@ public class ExportReceiptPresenter {
             exportReceiptService.deleteByIds(exportReceiptIds);
 
             return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             exportReceiptService.rollback();
             e.printStackTrace();
             throw e;
@@ -271,15 +351,14 @@ public class ExportReceiptPresenter {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
             LocalDateTime date = LocalDateTime.parse(createAt, formatter);
             return date.getYear();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return Calendar.getInstance().get(Calendar.YEAR);
     }
 
-    public int findQuantityInStockByProductIdAndAcademicYear(long productId, int academicYear) throws DaoException{
-        int[] yearsToTry = { academicYear, academicYear - 1 };
+    public int findQuantityInStockByProductIdAndAcademicYear(long productId, int academicYear) throws DaoException {
+        int[] yearsToTry = {academicYear, academicYear - 1};
 
         for (int year : yearsToTry) {
             try {
@@ -307,8 +386,7 @@ public class ExportReceiptPresenter {
             exportPriceModel.setExportPrice(newUnitPrice);
             exportPriceModel.setTotalPriceInStock(totalPriceInStock);
             return exportPriceModel;
-        }
-        catch (ArithmeticException e) {
+        } catch (ArithmeticException e) {
             e.printStackTrace();
             throw new DivisionByZeroException("Số lượng tồn kho và số lượng nhập không hợp lệ, vui lòng kiểm tra lại.");
         }
