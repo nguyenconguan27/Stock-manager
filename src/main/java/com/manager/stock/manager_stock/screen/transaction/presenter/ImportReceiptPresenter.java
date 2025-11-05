@@ -20,6 +20,7 @@ import javafx.collections.ObservableList;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -88,6 +89,13 @@ public class ImportReceiptPresenter {
                     importReceiptDetailModelsTable, ImportReceiptDetailModelMapper.INSTANCE::fromViewModelToModel);
             importReceiptDetailService.save(importReceiptDetailModels, importReceiptId);
             LocalDateTime importDate = LocalDateTime.parse(importReceiptModel.getCreateAt(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+            List<Long> productIds = importReceiptDetailModels.stream()
+                    .map(ImportReceiptDetailModel::getProductId)
+                    .collect(Collectors.toList());
+            if (importNextExportDate(productIds, importDate, importReceiptModel.getId(), changeQuantityByProductMap, changeTotalPriceByProductMap)) {
+                importReceiptService.commit();
+                return;
+            }
             updateInventory(academicYear, importReceiptDetailModels, changeQuantityByProductMap, changeTotalPriceByProductMap, true, importDate, importReceiptId);
             importReceiptService.commit();
         } catch (Exception e) {
@@ -150,7 +158,7 @@ public class ImportReceiptPresenter {
 
     public ExportPriceModel exportPrice2Update(Long productId, ExportPriceModel current, ExportPriceModel pre,
                                                int quantity, double totalPrice, LocalDateTime time, Long importReceiptId) {
-        if(current == null) {
+        if (current == null) {
             current = new ExportPriceModel();
             current.setProductId(productId);
             current.setExportTime(time);
@@ -169,16 +177,21 @@ public class ImportReceiptPresenter {
         Map<Long, List<ExportPriceModel>> exportPriceMap = exportPriceService.findAllByProductAndMinTime(List.of(productId), time);
         ExportPriceModel pre = exportPriceService.findByProductAndLastTime(productId, time);
         ExportPriceModel next = exportPriceService.findByProductAndMinTime(productId, time);
-        List<ExportReceiptDetailModel> preExportDetail = exportReceiptDetailService.findByRangeTime(productId, pre.getExportTime(), time);
+        List<ExportReceiptDetailModel> preExportDetail;
+        if (pre == null) {
+            preExportDetail = exportReceiptDetailService.findByRangeTime(productId, LocalDateTime.of(2000, 1, 1, 0, 0), time);
+        } else {
+            preExportDetail = exportReceiptDetailService.findByRangeTime(productId, pre.getExportTime(), time);
+        }
         List<ExportReceiptDetailModel> exportDetail2Update;
-        if(next != null) {
+        if (next != null) {
             exportDetail2Update = exportReceiptDetailService.findByRangeTime(productId, time, next.getExportTime());
         } else {
             exportDetail2Update = exportReceiptDetailService.findByRangeTime(productId, time, LocalDateTime.now());
         }
         double totalPriceInTimeRangeExported = 0;
         int totalQuanInTimeRangeExported = 0;
-        for(ExportReceiptDetailModel exportReceiptDetailModel: preExportDetail) {
+        for (ExportReceiptDetailModel exportReceiptDetailModel : preExportDetail) {
             totalQuanInTimeRangeExported += exportReceiptDetailModel.getActualQuantity();
             totalPriceInTimeRangeExported += exportReceiptDetailModel.getTotalPrice();
         }
@@ -186,21 +199,35 @@ public class ImportReceiptPresenter {
         // cập nhập pre nhưng không luu lại
         pre.setQuantityInStock(pre.getQuantityInStock() + pre.getQuantityImported() - totalQuanInTimeRangeExported);
         pre.setTotalPriceInStock(pre.getTotalPriceInStock() - totalPriceInTimeRangeExported + pre.getTotalImportPrice());
-        exportPriceModel =  exportPrice2Update(productId, null, pre, quantity, totalPrice, time, importReceiptId);
-        List<ExportPriceModel> exportPriceModelList = exportPriceMap.get(productId);
+        exportPriceModel = exportPrice2Update(productId, null, pre, quantity, totalPrice, time, importReceiptId);
+        List<ExportPriceModel> exportPriceModelList = exportPriceMap.get(productId) == null ? new ArrayList<>() : exportPriceMap.get(productId);
+        exportPriceModelList.add(0, exportPriceModel);
         long exportPriceId;
-        if (exportPriceModelList != null && !exportPriceModelList.isEmpty()) {
-            for(int i = 0; i < exportPriceModelList.size(); i++) {
-                ExportPriceModel current = exportPriceModelList.get(i);
-                current.setQuantityInStock(current.getQuantityInStock() + quantity);
-                current.setTotalPriceInStock(current.getTotalPriceInStock() + totalPrice);
-
-                exportPrice2Update(productId, current, null ,0, 0, time, importReceiptId);
+        for (int i = 1; i < exportPriceModelList.size(); i++) {
+            ExportPriceModel current = exportPriceModelList.get(i);
+            List<ExportReceiptDetailModel> exportReceiptDetailModels = exportReceiptDetailService.findByRangeTime(
+                    productId, exportPriceModelList.get(i - 1).getExportTime(), current.getExportTime()
+            );
+            for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
+                exportReceiptDetailModel.setOriginalUnitPrice(exportPriceModelList.get(i - 1).getExportPrice());
+                exportReceiptDetailModel.setDisplayUnitPrice(exportPriceModelList.get(i - 1).getExportPrice());
+                exportReceiptDetailModel.setTotalPrice(exportPriceModelList.get(i - 1).getExportPrice() * exportReceiptDetailModel.getActualQuantity());
             }
-            exportPriceService.update(exportPriceModelList);
+            totalQuanInTimeRangeExported = 0; totalPriceInTimeRangeExported = 0;
+            for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
+                totalQuanInTimeRangeExported += exportReceiptDetailModel.getActualQuantity();
+                totalPriceInTimeRangeExported += exportReceiptDetailModel.getTotalPrice();
+            }
+            current.setQuantityInStock(exportPriceModelList.get(i - 1).getQuantityInStock() +
+                    exportPriceModelList.get(i - 1).getQuantityImported() - totalQuanInTimeRangeExported);
+            current.setTotalPriceInStock(exportPriceModelList.get(i - 1).getTotalPriceInStock() +
+                    exportPriceModelList.get(i - 1).getTotalImportPrice() - totalPriceInTimeRangeExported);
+
+            exportPrice2Update(productId, current, null, 0, 0, time, importReceiptId);
         }
+        exportPriceService.update(exportPriceModelList);
         exportPriceId = exportPriceService.save(exportPriceModel);
-        for(ExportReceiptDetailModel exportReceiptDetailModel: exportDetail2Update) {
+        for (ExportReceiptDetailModel exportReceiptDetailModel : exportDetail2Update) {
             exportReceiptDetailModel.setExportPriceId(exportPriceId);
             exportReceiptDetailModel.setOriginalUnitPrice(exportPriceModel.getExportPrice());
         }
@@ -210,7 +237,7 @@ public class ImportReceiptPresenter {
     public void updateInventory(long productId, LocalDateTime time, int quantity, double totalPrice) {
         int year = time.getYear();
         List<InventoryDetailModel> inventoryDetailModelList = inventoryDetailService.findByMinYearAndProduct(productId, year);
-        for(InventoryDetailModel inventoryDetailModel: inventoryDetailModelList) {
+        for (InventoryDetailModel inventoryDetailModel : inventoryDetailModelList) {
             inventoryDetailModel.setQuantity(inventoryDetailModel.getQuantity() + quantity);
             inventoryDetailModel.setTotalPrice(inventoryDetailModel.getTotalPrice() + totalPrice);
         }
@@ -218,18 +245,33 @@ public class ImportReceiptPresenter {
     }
 
     public boolean importNextExportDate(List<Long> productIds, LocalDateTime time, long importReceiptId,
-                HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap) {
+                                        HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap) {
         Map<Long, List<ExportReceiptDetailModel>> detailModelMap = exportReceiptDetailService.findAllByProductAndMinTime(productIds, time);
-
-        if (detailModelMap == null || detailModelMap.isEmpty()) {
+        Map<Long, List<ExportPriceModel>> exportPriceMap = exportPriceService.findAllByProductAndMinTime(productIds, time);
+        if ((detailModelMap == null || detailModelMap.isEmpty()) && (exportPriceMap == null || exportPriceMap.isEmpty())) {
             return false;
         }
-        for (Map.Entry<Long, List<ExportReceiptDetailModel>> entry : detailModelMap.entrySet()) {
-            if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-                addExportPriceAndUpdateNext(time, entry.getKey(), importReceiptId,
-                        changeQuantityByProductMap.get(entry.getKey()), changeTotalPriceByProductMap.get(entry.getKey()));
-                updateInventory(entry.getKey(), time, changeQuantityByProductMap.get(entry.getKey()), changeTotalPriceByProductMap.get(entry.getKey()));
-            }
+//        if(detailModelMap != null && !detailModelMap.isEmpty()) {
+//            for (Map.Entry<Long, List<ExportReceiptDetailModel>> entry : detailModelMap.entrySet()) {
+//                if (entry.getValue() != null && !entry.getValue().isEmpty()) {
+//                    addExportPriceAndUpdateNext(time, entry.getKey(), importReceiptId,
+//                            changeQuantityByProductMap.get(entry.getKey()), changeTotalPriceByProductMap.get(entry.getKey()));
+//                    updateInventory(entry.getKey(), time, changeQuantityByProductMap.get(entry.getKey()), changeTotalPriceByProductMap.get(entry.getKey()));
+//                }
+//            }
+//        }
+//        else {
+//            for(Map.Entry<Long, List<ExportPriceModel>> entry: exportPriceMap.entrySet()) {
+//                addExportPriceAndUpdateNext(time, entry.getKey(), importReceiptId,
+//                        changeQuantityByProductMap.get(entry.getKey()), changeTotalPriceByProductMap.get(entry.getKey()));
+//                updateInventory(entry.getKey(), time, changeQuantityByProductMap.get(entry.getKey()), changeTotalPriceByProductMap.get(entry.getKey()));
+//            }
+//        }
+
+        for (Long productId : productIds) {
+            addExportPriceAndUpdateNext(time, productId, importReceiptId,
+                    changeQuantityByProductMap.get(productId), changeTotalPriceByProductMap.get(productId));
+            updateInventory(productId, time, changeQuantityByProductMap.get(productId), changeTotalPriceByProductMap.get(productId));
         }
         return true;
     }
@@ -243,10 +285,6 @@ public class ImportReceiptPresenter {
         List<Long> productIds = importReceiptDetailModels.stream()
                 .map(ImportReceiptDetailModel::getProductId)
                 .collect(Collectors.toList());
-
-        if (importNextExportDate(productIds, importDate, importReceiptId, changeQuantityByProductMap, changeTotalPriceByProductMap)) {
-            return;
-        }
 
         HashMap<Long, InventoryDetailModel> inventoryDetailModelMapCurrentYear = inventoryDetailService.findAllByAcademicYearAndProductId(academicYear, productIds);
         HashMap<Long, InventoryDetailModel> inventoryDetailModelMapPreviousYear = inventoryDetailService.findAllByAcademicYearAndProductId(academicYear - 1, productIds);
