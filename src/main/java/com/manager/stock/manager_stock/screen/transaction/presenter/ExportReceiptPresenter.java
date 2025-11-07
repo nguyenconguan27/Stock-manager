@@ -283,9 +283,13 @@ public class ExportReceiptPresenter {
             }
             if(exBeforeNewDate != null) {
                 exsToUpdate.add(0, exBeforeNewDate);
+            } else {
+                throw new StockUnderFlowException("Cập nhập ngày xuất thất bại do không đủ số lượng tồn kho");
             }
             for (int i = 0; i < exsToUpdate.size(); i++) {
                 List<ExportReceiptDetailModel> exportReceiptDetailToCheck;
+                ExportPriceModel pre = exsToUpdate.get(i);
+                ExportPriceModel next =  i == exsToUpdate.size() - 1 ? null : exsToUpdate.get(i + 1);
                 if (i < exsToUpdate.size() - 1) {
                     exportReceiptDetailToCheck = exportReceiptDetailService.findByRangeTime(
                             exportReceiptDetailModel.getProductId(), exsToUpdate.get(i).getExportTime(), exsToUpdate.get(i + 1).getExportTime()
@@ -294,9 +298,6 @@ public class ExportReceiptPresenter {
                     exportReceiptDetailToCheck = exportReceiptDetailService.findByRangeTime(
                             exportReceiptDetailModel.getProductId(), exsToUpdate.get(i).getExportTime(), LocalDateTime.now()
                     );
-                    checkAndUpdateExportPriceWhenChangeDate(exsToUpdate.get(i), null, exportReceiptDetailToCheck);
-                    updateExportReceiptDetail(exportReceiptDetailToCheck, exportReceiptDetailModel, exsToUpdate.get(i - 1), exportReceiptId, isNew);
-                    break;
                 }
                 if (i == 0) {
                     if (fromDate.isBefore(toDate)) {
@@ -307,16 +308,16 @@ public class ExportReceiptPresenter {
                             }
                         }
                     } else {
-                        exportReceiptDetailModel.setExportPriceId(exsToUpdate.get(i).getId());
+                        exportReceiptDetailModel.setExportPriceId(pre.getId());
                         exportReceiptDetailToCheck.add(exportReceiptDetailModel);
                     }
                 }
                 if (fromDate.isBefore(toDate)) {
-                    if(toDate.isAfter(exsToUpdate.get(i).getExportTime()) && toDate.isBefore(exsToUpdate.get(i + 1).getExportTime())) {
+                    if(toDate.isAfter(pre.getExportTime()) && (next == null || toDate.isBefore(next.getExportTime()))) {
                         exportReceiptDetailModel.setExportPriceId(exsToUpdate.get(i).getId());
                         exportReceiptDetailToCheck.add(exportReceiptDetailModel);
                     }
-                } else if(fromDate.isAfter(exsToUpdate.get(i).getExportTime()) && fromDate.isBefore(exsToUpdate.get(i + 1).getExportTime())) {
+                } else if(fromDate.isAfter(pre.getExportTime()) && (next == null || fromDate.isBefore(next.getExportTime()))) {
                     for (ExportReceiptDetailModel exportReceiptDetailModel1 : exportReceiptDetailToCheck) {
                         if (exportReceiptDetailModel1.getId() == exportReceiptDetailModel.getId()) {
                             exportReceiptDetailToCheck.remove(exportReceiptDetailModel1);
@@ -324,8 +325,8 @@ public class ExportReceiptPresenter {
                         }
                     }
                 }
-                checkAndUpdateExportPriceWhenChangeDate(exsToUpdate.get(i), exsToUpdate.get(i + 1), exportReceiptDetailToCheck);
-                updateExportReceiptDetail(exportReceiptDetailToCheck, exportReceiptDetailModel, exsToUpdate.get(i), exportReceiptId, isNew);
+                checkAndUpdateExportPriceWhenChangeDate(pre, next, exportReceiptDetailToCheck);
+                updateExportReceiptDetail(exportReceiptDetailToCheck, exportReceiptDetailModel, pre, exportReceiptId, isNew);
             }
             exportPriceService.update(exsToUpdate);
         }
