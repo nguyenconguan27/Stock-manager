@@ -1,5 +1,7 @@
 package com.manager.stock.manager_stock.model;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +21,7 @@ public class ExportReceiptModel {
     private int academicYear;
     private List<ExportReceiptDetailModel> exportReceiptDetailModels;
 
+    private LocalDateTime createdAtTs;
     public ExportReceiptModel() {
         this.exportReceiptDetailModels = new ArrayList<>();
     }
@@ -33,6 +36,14 @@ public class ExportReceiptModel {
         this.wareHouse = wareHouse;
         this.totalPrice = totalPrice;
         this.totalPriceInWord = totalPriceInWord;
+    }
+
+    public LocalDateTime getCreatedAtTs() {
+        return createdAtTs;
+    }
+
+    public void setCreatedAtTs(LocalDateTime createdAtTs) {
+        this.createdAtTs = createdAtTs;
     }
 
     public long getId() {

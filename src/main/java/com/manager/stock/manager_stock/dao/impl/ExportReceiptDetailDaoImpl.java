@@ -7,6 +7,7 @@ import com.manager.stock.manager_stock.model.ExportReceiptDetailModel;
 
 import java.net.DatagramPacket;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -88,6 +89,11 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
                 " inner join export_receipt as er on er.id = erd.export_receipt_id" +
                 " where PARSEDATETIME(er.create_at, 'dd/MM/yyyy HH:mm:ss') > ? and PARSEDATETIME(er.create_at, 'dd/MM/yyyy HH:mm:ss') < ?" +
                 " and product_id = ?";
+
+//        String sql = "Select * from export_receipt_detail as erd" +
+//                " inner join export_receipt as er on er.id = erd.export_receipt_id" +
+//                " where er.create_at_ts > ? and er.create_at_ts < ?" +
+//                " and product_id = ?";
         return query(sql, new ExportReceiptDetailMapperResultSet(),start, end, productId);
     }
 
@@ -100,12 +106,14 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
 
     @Override
     public void update(List<ExportReceiptDetailModel> exportReceiptDetailModels) {
-        String sql = "UPDATE export_receipt_detail set actual_quantity = ?, export_price_id = ?" +
+        String sql = "UPDATE export_receipt_detail set actual_quantity = ?, original_unit_price = ?, export_price_id = ?" +
                 " WHERE id = ?";
         List<Object[]> parameters = new ArrayList<>();
         for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
             parameters.add(new Object[]{
-                exportReceiptDetailModel.getActualQuantity(), exportReceiptDetailModel.getExportPriceId(),
+                exportReceiptDetailModel.getActualQuantity(),
+                    exportReceiptDetailModel.getOriginalUnitPrice(),
+                    exportReceiptDetailModel.getExportPriceId(),
                 exportReceiptDetailModel.getId()
             });
         }

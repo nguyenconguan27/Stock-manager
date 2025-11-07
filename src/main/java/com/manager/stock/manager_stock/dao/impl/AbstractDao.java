@@ -77,7 +77,7 @@ public class AbstractDao<T> implements GenericDao<T> {
             setParams(stmt, parameters);
             rs = stmt.executeQuery();
             while(rs.next()) {
-                resultsList.add(mapper.mapRow(rs));
+                resultsList.add(mapper. mapRow(rs));
             }
             return resultsList;
         }
