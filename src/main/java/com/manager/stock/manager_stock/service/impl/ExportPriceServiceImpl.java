@@ -11,6 +11,7 @@ import com.manager.stock.manager_stock.service.IExportPriceService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +53,13 @@ public class ExportPriceServiceImpl implements IExportPriceService {
 
     @Override
     public void update(List<ExportPriceModel> exportPriceModels) {
+        exportPriceDao.update(exportPriceModels);
+    }
+
+    @Override
+    public void update(ExportPriceModel exportPriceModel) {
+        List<ExportPriceModel> exportPriceModels = new ArrayList<>();
+        exportPriceModels.add(exportPriceModel);
         exportPriceDao.update(exportPriceModels);
     }
 
@@ -105,6 +113,16 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     @Override
     public ExportPriceIdAndExportTimeAndExportPrice findByProductIdAndImportDate(long productId, LocalDateTime importDate) {
         return exportPriceDao.findByProductIdAndImportDate(productId, importDate);
+    }
+
+    @Override
+    public ExportPriceModel findByProductIdAndMinTimeByDate(long productId, LocalDateTime minTime, LocalDateTime oldImportDate) {
+        return exportPriceDao.findByProductIdAndMinTimeByDate(productId, minTime, oldImportDate);
+    }
+
+    @Override
+    public List<ExportPriceModel> findAllExportPriceInfoByProductAndBetweenImportDates(LocalDateTime startDate, LocalDateTime endDate, LocalDateTime importDate, long productId) throws DaoException {
+        return exportPriceDao.findAllExportPriceInfoByProductAndBetweenImportDates(startDate, endDate, importDate, productId);
     }
 
     @Override

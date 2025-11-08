@@ -256,6 +256,22 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
     }
 
     @Override
+    public ExportPriceModel findByProductIdAndMinTimeByDate(long productId, LocalDateTime minTime, LocalDateTime oldImportDate) {
+        String sql = "select * from DB.EXPORT_PRICE join DB.PRODUCT \n" +
+                "on DB.PRODUCT.id = DB.EXPORT_PRICE.product_id\n" +
+                "where DB.EXPORT_PRICE.export_time > ? and DB.PRODUCT.id = ?\n" +
+                " and DB.EXPORT_PRICE.export_time != ? \n" +
+                "order by DB.EXPORT_PRICE.export_time asc\n" +
+                "limit 1;";
+        List<ExportPriceModel> exportPriceIdAndExportTimes =
+                query(sql, new ExportPriceMapperResultSet(), minTime, productId, oldImportDate);
+        if(exportPriceIdAndExportTimes.isEmpty()){
+            return null;
+        }
+        return exportPriceIdAndExportTimes.get(0);
+    }
+
+    @Override
     public ExportPriceIdAndExportTimeAndExportPrice findByProductIdAndImportDate(long productId, LocalDateTime importDate) {
         String sql = "select DB.EXPORT_PRICE.ID, DB.EXPORT_PRICE.EXPORT_TIME, DB.EXPORT_PRICE.EXPORT_PRICE from DB.EXPORT_PRICE \n" +
                 "where DB.EXPORT_PRICE.EXPORT_TIME = ? and DB.EXPORT_PRICE.PRODUCT_ID = ?;";
@@ -289,6 +305,18 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
                 "and DB.EXPORT_PRICE.EXPORT_TIME < ?\n" +
                 "and DB.EXPORT_PRICE.EXPORT_TIME != ?;";
         return query(sql, rs -> rs.getTimestamp("EXPORT_TIME").toLocalDateTime(), productId, startDate, endDate, importDate);
+    }
+
+    @Override
+    public List<ExportPriceModel> findAllExportPriceInfoByProductAndBetweenImportDates(LocalDateTime startDate, LocalDateTime endDate, LocalDateTime importDate, long productId) throws DaoException {
+        String sql = "" +
+                "select DB.EXPORT_PRICE.EXPORT_TIME  from DB.EXPORT_PRICE \n" +
+                "join DB.PRODUCT on DB.PRODUCT.id = DB.EXPORT_PRICE.PRODUCT_ID\n" +
+                "where DB.PRODUCT.id = ? \n" +
+                "and DB.EXPORT_PRICE.EXPORT_TIME >= ?\n" +
+                "and DB.EXPORT_PRICE.EXPORT_TIME < ?\n" +
+                "and DB.EXPORT_PRICE.EXPORT_TIME != ?;";
+        return query(sql, new ExportPriceMapperResultSet(), productId, startDate, endDate, importDate);
     }
 
     @Override

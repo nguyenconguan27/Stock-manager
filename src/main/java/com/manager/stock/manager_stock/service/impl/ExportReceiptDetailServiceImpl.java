@@ -67,8 +67,18 @@ public class ExportReceiptDetailServiceImpl implements IExportReceiptDetailServi
     }
 
     @Override
+    public void updateUnitPriceOriginByProductAndTimeRangeAndExceptDate(double newOriginalUnitPrice, LocalDateTime exportPriceTime, long productId, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime exceptDate) {
+        exportReceiptDetailDao.updateUnitPriceOriginByProductAndTimeRangeAndExceptDate(newOriginalUnitPrice, exportPriceTime, productId, startDate, endDate, exceptDate);
+    }
+
+    @Override
     public double calculateTotalPriceByProductAndTimeRange(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId) throws DaoException {
         return exportReceiptDetailDao.calculateTotalPriceByProductAndTimeRange(exportPriceTime, startDate, endDate, productId);
+    }
+
+    @Override
+    public double calculateTotalPriceByProductAndTimeRangeAndExceptDate(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId, LocalDateTime exceptDate) throws DaoException {
+        return exportReceiptDetailDao.calculateTotalPriceByProductAndTimeRangeAndExceptDate(exportPriceTime, startDate, endDate, productId, exceptDate);
     }
 
     @Override

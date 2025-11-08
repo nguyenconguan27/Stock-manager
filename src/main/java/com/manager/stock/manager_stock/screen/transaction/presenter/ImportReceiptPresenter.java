@@ -615,9 +615,4 @@ public class ImportReceiptPresenter {
             inventoryDetailService.updateByProductId(productId, totalPriceBeforeUpdate - totalPriceAfterUpdate, newYear);
         }
     }
-
-    // cập nhật lại đơn giá gốc của phiếu xuất và tổng tiền tồn kho
-    private void updateTotalPriceOfInventory() {
-
-    }
 }

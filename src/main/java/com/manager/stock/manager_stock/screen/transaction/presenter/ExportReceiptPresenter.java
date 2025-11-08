@@ -7,6 +7,7 @@ import com.manager.stock.manager_stock.exception.DivisionByZeroException;
 import com.manager.stock.manager_stock.exception.StockUnderFlowException;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ExportReceiptDetailModelTableMapper;
 import com.manager.stock.manager_stock.model.*;
+import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndExportTimeAndExportPrice;
 import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
 import com.manager.stock.manager_stock.model.dto.ProductIdAndActualQuantityAndTotalPriceOfReceipt;
 import com.manager.stock.manager_stock.model.tableData.ExportReceiptDetailModelTable;
@@ -34,6 +35,7 @@ public class ExportReceiptPresenter {
     private final ProductService productService;
     private final IExportPriceService exportPriceService;
     private static ExportReceiptPresenter instance;
+    private final DateTimeFormatter formatter;
 
     private ExportReceiptPresenter() {
         exportReceiptDetailService = ExportReceiptDetailServiceImpl.getInstance();
@@ -41,6 +43,7 @@ public class ExportReceiptPresenter {
         productService = ProductServiceImpl.getInstance();
         inventoryDetailService = InventoryDetailServiceImpl.getInstance();
         exportPriceService = ExportPriceServiceImpl.getInstance();
+        formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
     }
 
     public static ExportReceiptPresenter getInstance() {
@@ -224,6 +227,12 @@ public class ExportReceiptPresenter {
             LocalDateTime exportDate = LocalDateTime.parse(oldExportReceipt.getCreateAt(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
             updateExportPrice(productIds, exportReceiptDetailModels, exportDate, changeQuantityByProductMap, changeTotalPriceByProductMap);
 
+            if(!newExportReceipt.getCreateAt().equals(oldExportReceipt.getCreateAt())) {
+                LocalDateTime oldExportDate = LocalDateTime.parse(oldExportReceipt.getCreateAt(), formatter);
+                LocalDateTime newExportDate = LocalDateTime.parse(newExportReceipt.getCreateAt(), formatter);
+                // cập nhật lại tồn kho + đơn giá xuất
+                updateForeignExportDetail(exportReceiptDetailModels, oldExportDate, newExportDate);
+            }
             // cập nhật danh sách chi tiết phiếu xuất
             exportReceiptDetailService.update(exportReceiptDetailModels);
             // commit
@@ -293,16 +302,7 @@ public class ExportReceiptPresenter {
     // Đơn giá mới = (Thành tiên tồn kho + Thành tiền nhập) / (Số lượng tồn kho + Số lượng nhập)
     private ExportPriceModel calculateUnitPriceOfProduct(int quantityInStock, double totalPriceInStock, double totalPriceImported, int quantityImported, ExportPriceModel exportPriceModel) {
         try {
-//            if(exportPriceModel == null) {
-//                exportPriceModel = new ExportPriceModel();
-//                exportPriceModel.setProductId(productId);
-//                exportPriceModel.setExportTime(importDate);
-//                exportPriceModel.setImportReceiptId(importReceiptId);
-//            }
             exportPriceModel.setQuantityInStock(quantityInStock);
-            // tính giá xuất mới cho sản phẩm
-
-
             double newUnitPrice = Math.round((totalPriceInStock + totalPriceImported) / (quantityImported + quantityInStock));
             exportPriceModel.setExportPrice(newUnitPrice);
             exportPriceModel.setTotalPriceInStock(totalPriceInStock);
@@ -312,5 +312,78 @@ public class ExportReceiptPresenter {
             e.printStackTrace();
             throw new DivisionByZeroException("Số lượng tồn kho và số lượng nhập không hợp lệ, vui lòng kiểm tra lại.");
         }
+    }
+
+    private void updateForeignExportDetail(List<ExportReceiptDetailModel> exportReceiptDetails, LocalDateTime oldExportDate, LocalDateTime newExportDate) {
+        // 1. kiểm tra tồn kho của PN (new + 1). Nếu TK < old ==> alert không được phép chỉnh sửa
+        // 2. Cập nhật lại ID = (new-1) id
+        // 3. Cập nhật lại TK + đơn giá toàn bộ PN từ ngày new <= x < vô cùng
+        // 4. Cập nhật lại toàn bộ unit_price_origin của các px từ ngày new <= x < vô cùng
+
+        for(ExportReceiptDetailModel exportReceiptDetail : exportReceiptDetails) {
+            long productId = exportReceiptDetail.getProductId();
+            // TH chuyển từ ngày lớn sang ngày bé
+            if(oldExportDate.isAfter(newExportDate)) {
+                // 1. Lấy ra đơn giá ngày old-1
+                ExportPriceIdAndExportTimeAndExportPrice beforeOldDayExportPriceInfo = exportPriceService.findByProductIdAndMaxTimeByImportDate(
+                        productId, oldExportDate, oldExportDate
+                );
+
+                // 2. Lấy ra thông tin đơn giá ngày new + 1
+                ExportPriceModel afterNewDayExportPriceInfo = exportPriceService.findByProductIdAndMinTimeByDate(productId, newExportDate, oldExportDate);
+                // 3. kiểm tra nếu số lượng tồn kho trong thông tin đơn giá mới này < số lượng xuất hiện tại ==> alert không cập nhật được do không đủ số lượng
+                if(afterNewDayExportPriceInfo != null && afterNewDayExportPriceInfo.getQuantityInStock() < exportReceiptDetail.getActualQuantity()) {
+                    throw new StockUnderFlowException("Số lượng tồn kho không trước đó không còn đủ để cập nhật phiếu xuất này, vui lòng kiểm tra lại.");
+                }
+                // 4. Kiểm tra: nếu ngày mới > old-1 ==> không cần cập nhật do không có gì thay đổi
+                if(newExportDate.isAfter(beforeOldDayExportPriceInfo.exportTime())) continue;
+                // 5. Lấy danh sách toàn bộ đơn giá tính từ ngày new
+                List<ExportPriceModel> exportPriceInfoInRange = exportPriceService.findAllExportPriceInfoByProductAndBetweenImportDates(newExportDate, newExportDate.plusYears(100), newExportDate, productId);
+                double totalPriceExportChanged = 0;
+                // 6. Duyệt danh sách các phiếu nhập và cập nhật
+                for(int i = 0; i < exportPriceInfoInRange.size(); i++) {
+                    ExportPriceModel exportPriceModel_i = exportPriceInfoInRange.get(i);
+                    // 6.1: Nếu phiếu nhập này nằm trong khoảng: new -> old ==> cập nhật lại số lượng tồn kho
+                    if(exportPriceModel_i.getExportTime().isAfter(newExportDate) && exportPriceModel_i.getExportTime().isBefore(oldExportDate)) {
+                        exportPriceModel_i.setQuantityInStock(exportPriceModel_i.getQuantityInStock() - exportReceiptDetail.getActualQuantity());
+//                        exportPriceModel_i.setTotalPriceInStock(exportPriceModel_i.getTotalPriceInStock() - exportReceiptDetailModelTable.getTotalPrice());
+                    }
+                    // 6.2  Nếu là phiếu nhập đầu tiên trong danh sách ==> tính lại đơn giá luôn
+                    if(i == 0) {
+                        calculateUnitPriceOfProduct(exportPriceModel_i.getQuantityInStock(), exportPriceModel_i.getTotalPriceInStock() - exportReceiptDetail.getTotalPrice(),
+                                exportPriceModel_i.getTotalImportPrice(), exportPriceModel_i.getQuantityImported(), exportPriceModel_i);
+                        exportPriceService.update(exportPriceModel_i);
+                        continue;
+                    }
+                    ExportPriceModel exportPriceModel_i_1 = exportPriceInfoInRange.get(i - 1);
+                    // 6.2: tính tổng tiền xuất giữa 2 ngày nhập i -> (i+1) trước khi cập nhật lại đơn giá, ngoại trừ phiếu xuất hiện tại
+                    double totalPriceExportedInRangeBeforeUpdate = exportReceiptDetailService.calculateTotalPriceByProductAndTimeRangeAndExceptDate(exportPriceModel_i_1.getExportTime(),
+                                                    exportPriceModel_i_1.getExportTime(), exportPriceModel_i.getExportTime(), productId, oldExportDate);
+                    // 6.3: cập nhật lại unit_price_origin cho toàn bộ phiếu xuất giữa ngày i -> i+1, ngoại trừ của phiếu xuất hiện tại
+                    exportReceiptDetailService.updateUnitPriceOriginByProductAndTimeRangeAndExceptDate(exportPriceModel_i.getExportPrice(),
+                            exportPriceModel_i.getExportTime(), productId, exportPriceModel_i_1.getExportTime(), exportPriceModel_i.getExportTime(),
+                            oldExportDate);
+                    // 6.4: Tính lại tổng tiền xuất sau khi đã cập nhật unitPriceOrigin, ngoại trừ phiếu xuất hiện tại
+                    double totalPriceExportedInRangeAfterUpdate = exportReceiptDetailService.calculateTotalPriceByProductAndTimeRangeAndExceptDate(exportPriceModel_i_1.getExportTime(),
+                            exportPriceModel_i_1.getExportTime(), exportPriceModel_i.getExportTime(), productId, oldExportDate);
+                    // 6.5: Tính chênh lệch tổng tiền xuất
+                    double totalPriceExportChangedInRange = totalPriceExportedInRangeBeforeUpdate - totalPriceExportedInRangeAfterUpdate;
+                    // 6.6: Tính lại đơn giá cho phiếu nhập ngày i
+                    calculateUnitPriceOfProduct(exportPriceModel_i.getQuantityInStock(), exportPriceModel_i.getTotalPriceInStock() + totalPriceExportChangedInRange,
+                            exportPriceModel_i.getTotalImportPrice(), exportPriceModel_i.getQuantityImported(), exportPriceModel_i);
+                    totalPriceExportChanged += totalPriceExportChangedInRange;
+                }
+                // 7. Lấy ra thông tin đơn giá ngày new - 1
+                ExportPriceIdAndExportTimeAndExportPrice beforeNewDayExportPriceInfo = exportPriceService.findByProductIdAndMaxTimeByImportDate(
+                        productId, newExportDate, oldExportDate
+                );
+                totalPriceExportChanged += exportReceiptDetail.getTotalPrice() - beforeNewDayExportPriceInfo.exportPrrice() * exportReceiptDetail.getActualQuantity();
+                // cập nhật lại đơn giá + unit price origin cho phiếu xuất hiện tại
+                exportReceiptDetail.setOriginalUnitPrice(beforeNewDayExportPriceInfo.exportPrrice() * exportReceiptDetail.getActualQuantity());
+                exportReceiptDetail.setExportPriceId(beforeNewDayExportPriceInfo.exportPriceId());
+                inventoryDetailService.updateByProductId(productId, totalPriceExportChanged, newExportDate.getYear());
+            }
+        }
+//        exportReceiptDetailService.update(exportReceiptDetails);
     }
 }
