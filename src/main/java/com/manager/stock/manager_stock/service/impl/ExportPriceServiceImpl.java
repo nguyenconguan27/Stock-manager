@@ -78,8 +78,8 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     }
 
     @Override
-    public ExportPriceIdAndPrice findExportPriceByProductAndLastTime(long productId) throws DaoException{
-        return exportPriceDao.findExportPriceIdAndPriceByProductAndLastTime(productId);
+    public ExportPriceIdAndPrice findExportPriceByProductAndLastTime(long productId, LocalDateTime exportDate) throws DaoException{
+        return exportPriceDao.findExportPriceIdAndPriceByProductAndLastTime(productId, exportDate);
     }
 
     @Override

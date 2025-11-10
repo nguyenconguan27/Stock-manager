@@ -174,7 +174,12 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         ac.valueProperty().addListener((obs, oldP, newP) -> {
             if(newP != null) {
                 System.out.println("Chọn sản phẩm: " + newP.getCode());
-                ExportPriceIdAndPrice ep = exportReceiptPresenter.findExportPriceIdAndPriceByProductAndLastTime(newP.getId());
+                LocalDateTime exportDate = dateTimePicker.dateTimeProperty().get();
+                if(exportDate == null) {
+                    AlertUtils.alert("Vui lòng chọn ngày xuất trước khi chọn sản phẩm.", "WARNING", "Cảnh báo", "Cảnh báo");
+                    return;
+                }
+                ExportPriceIdAndPrice ep = exportReceiptPresenter.findExportPriceIdAndPriceByProductAndLastTime(newP.getId(), exportDate);
                 if (ep.exportPriceId() == -1) {
                     AlertUtils.alert("Sản phẩm này không có đơn giá, vui lòng nhập đơn giá cho sản phẩm.", "WARNING", "Cảnh báo", "Không có đơn giá.");
                     tfUnitPrice.clear();

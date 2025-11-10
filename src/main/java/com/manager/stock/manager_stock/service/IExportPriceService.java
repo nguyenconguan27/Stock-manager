@@ -1,5 +1,6 @@
 package com.manager.stock.manager_stock.service;
 
+import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.model.ExportPriceModel;
 import com.manager.stock.manager_stock.model.dto.ExportPriceAndProductCodeAndProductName;
 import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
@@ -19,7 +20,7 @@ public interface IExportPriceService {
     ExportPriceModel findByProductAndMinTime(Long productId, LocalDateTime time);
     ExportPriceModel findAllByProductAndMinTime(Long productId, LocalDateTime time);
     void update(List<ExportPriceModel> exportPriceModels);
-    ExportPriceIdAndPrice findExportPriceByProductAndLastTime(long productId);
+    ExportPriceIdAndPrice findExportPriceByProductAndLastTime(long productId, LocalDateTime exportDate) throws DaoException;
     long save(ExportPriceModel exportPriceModel);
     HashMap<Long, Double> findPriceById(List<Long> ids);
     ExportPriceAndProductCodeAndProductName findProductHaveMaxPriceByGroup(long productGroupId);

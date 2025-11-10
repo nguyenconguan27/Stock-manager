@@ -81,8 +81,8 @@ public class ExportReceiptPresenter {
         return productService.getAllProducts();
     }
 
-    public ExportPriceIdAndPrice findExportPriceIdAndPriceByProductAndLastTime(long productId) throws DaoException {
-        return exportPriceService.findExportPriceByProductAndLastTime(productId);
+    public ExportPriceIdAndPrice findExportPriceIdAndPriceByProductAndLastTime(long productId, LocalDateTime exportDate) throws DaoException {
+        return exportPriceService.findExportPriceByProductAndLastTime(productId, exportDate);
     }
 
     public boolean checkDate2AddNewReceipt(List<Long> productIds, LocalDateTime time) {
@@ -261,6 +261,7 @@ public class ExportReceiptPresenter {
             }
         }
         for(int j = 0; j < exportReceiptDetailToCheck.size(); j++) {
+            double oldUnitPrice = exportReceiptDetailToCheck.get(j).getOriginalUnitPrice();
             // cộng tổng tiền của phiếu xuất trước khi thay đổi
             totalPriceExportedBeforeUpdate += exportReceiptDetailToCheck.get(j).getOriginalUnitPrice() *  exportReceiptDetailToCheck.get(j).getActualQuantity();
             // cập nhật
@@ -268,7 +269,12 @@ public class ExportReceiptPresenter {
             exportReceiptDetailToCheck.get(j).setDisplayUnitPrice(exportPriceModel.getExportPrice());
             exportReceiptDetailToCheck.get(j).setExportPriceId(exportPriceModel.getId());
             // cập nhật xong
-            totalPriceExportedAfterUpdate += exportReceiptDetailToCheck.get(j).getOriginalUnitPrice() *  exportReceiptDetailToCheck.get(j).getActualQuantity();
+            if(oldUnitPrice != exportReceiptDetailToCheck.get(j).getOriginalUnitPrice()) {
+                totalPriceExportedAfterUpdate += exportReceiptDetailToCheck.get(j).getOriginalUnitPrice() *  exportReceiptDetailToCheck.get(j).getActualQuantity();
+            }
+            else {
+                totalPriceExportedBeforeUpdate -= exportReceiptDetailToCheck.get(j).getOriginalUnitPrice() *  exportReceiptDetailToCheck.get(j).getActualQuantity();
+            }
             // TH phát hiện thêm mới
             if(exportReceiptDetailToCheck.get(j).getId() == exportReceiptDetailModel.getId()
                     && isNew) {
@@ -293,7 +299,6 @@ public class ExportReceiptPresenter {
             exportReceiptDetailToCheck.remove(checkNew);
             exportReceiptDetailService.save(List.of(exportReceiptDetailModel), exportReceiptId);
             quantityChanged = exportReceiptDetailModel.getActualQuantity();
-            totalPriceExportedAfterUpdate += exportReceiptDetailModel.getTotalPrice();
         }
         // cập nhật lại tồn kho. Nếu update ==> chỉ có tổng tiền thay đổi
         // Nếu thêm mới ==> cả số lượng + tổng tiền thay đổi
