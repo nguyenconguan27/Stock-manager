@@ -72,4 +72,9 @@ public class InventoryDetailServiceImpl implements IInventoryDetailService {
     public List<InventoryDetailModel> findByMinYearAndProduct(long productId, int year) {
         return inventoryDetailDao.getByMinYearAndProduct(productId, year);
     }
+
+    @Override
+    public InventoryDetailModel findByYearAndProduct(long productId, int year) {
+        return inventoryDetailDao.getByYearAndProduct(productId, year);
+    }
 }

@@ -179,4 +179,14 @@ public class InventoryDetailDaoImpl extends AbstractDao<InventoryDetailModel> im
         String sql = "select * from inventory_detail where academic_year >= ? and product_id = ?";
         return query(sql, new InventoryDetailMapperResultSet(), year, productId);
     }
+
+    @Override
+    public InventoryDetailModel getByYearAndProduct(long productId, int year) {
+        String sql = "select * from inventory_detail where academic_year = ? and product_id = ?";
+        List<InventoryDetailModel> inventoryDetailModels = query(sql, new InventoryDetailMapperResultSet(), year, productId);
+        if(inventoryDetailModels.isEmpty()) {
+            return new InventoryDetailModel();
+        }
+        return inventoryDetailModels.get(0);
+    }
 }

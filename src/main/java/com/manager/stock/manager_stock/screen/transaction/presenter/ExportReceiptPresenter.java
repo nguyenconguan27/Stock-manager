@@ -244,33 +244,79 @@ public class ExportReceiptPresenter {
         nextExportPrice.setExportPrice((nextExportPrice.getTotalPriceInStock() + nextExportPrice.getTotalImportPrice()) / (nextExportPrice.getQuantityImported() + nextExportPrice.getQuantityInStock()));
     }
 
-
     public void updateExportReceiptDetail(List<ExportReceiptDetailModel> exportReceiptDetailToCheck, ExportReceiptDetailModel exportReceiptDetailModel,
-                                          ExportPriceModel exportPriceModel, long exportReceiptId, boolean isNew) {
+                                          ExportPriceModel exportPriceModel, long exportReceiptId, boolean isNew, int fromYear, int toYear) {
         int checkNew = -1;
+        double totalPriceExportedBeforeUpdate = 0; // Huong
+        double totalPriceExportedAfterUpdate = 0; // Huong
+        // lâấy danh sách tồn kho cần cập nhật
+        List<InventoryDetailModel> oldInventoryDetailModels = inventoryDetailService.findByMinYearAndProduct(exportReceiptDetailModel.getProductId(), Math.min(fromYear, toYear));
+        // nếu đổi từ ngày của năm này sang năm khác ==> cần cập nhật lại số lượng + tồn tiền tồn
+        if(toYear > fromYear && !isNew) {
+            // TH đổi từ ngày bé ==> lên ngày lớn ==> cập nhật lại tồn kho của năm cũ
+            if(!oldInventoryDetailModels.isEmpty()) {
+                InventoryDetailModel oldInventory = oldInventoryDetailModels.get(0);
+                oldInventory.setQuantity(oldInventory.getQuantity() + exportReceiptDetailModel.getActualQuantity());
+                oldInventory.setTotalPrice(oldInventory.getTotalPrice() + exportReceiptDetailModel.getTotalPrice());
+            }
+        }
         for(int j = 0; j < exportReceiptDetailToCheck.size(); j++) {
+            // cộng tổng tiền của phiếu xuất trước khi thay đổi
+            totalPriceExportedBeforeUpdate += exportReceiptDetailToCheck.get(j).getOriginalUnitPrice() *  exportReceiptDetailToCheck.get(j).getActualQuantity();
+            // cập nhật
             exportReceiptDetailToCheck.get(j).setOriginalUnitPrice(exportPriceModel.getExportPrice());
             exportReceiptDetailToCheck.get(j).setDisplayUnitPrice(exportPriceModel.getExportPrice());
             exportReceiptDetailToCheck.get(j).setExportPriceId(exportPriceModel.getId());
+            // cập nhật xong
+            totalPriceExportedAfterUpdate += exportReceiptDetailToCheck.get(j).getOriginalUnitPrice() *  exportReceiptDetailToCheck.get(j).getActualQuantity();
+            // TH phát hiện thêm mới
             if(exportReceiptDetailToCheck.get(j).getId() == exportReceiptDetailModel.getId()
                     && isNew) {
                 checkNew = j;
+                // TH sản phẩm này được thêm mới ==> tổng tiền trc là = 0
+                totalPriceExportedBeforeUpdate -= exportReceiptDetailToCheck.get(j).getOriginalUnitPrice() *  exportReceiptDetailToCheck.get(j).getActualQuantity();
+                // kiểm tra xem ngày xuât hiện tại so với
             }
         }
-        if(checkNew >= 0) {
+        // TH chuyển từ năm lớn sang năm bé ==> cần cập nhật
+        if(toYear < fromYear && !isNew) {
+            exportReceiptDetailModel.setOriginalUnitPrice(exportPriceModel.getExportPrice()); // pre (i)
+            exportReceiptDetailModel.setTotalPrice(exportPriceModel.getExportPrice() * exportReceiptDetailModel.getActualQuantity());
+            if(!oldInventoryDetailModels.isEmpty()) {
+                InventoryDetailModel inventory = oldInventoryDetailModels.get(0);
+                inventory.setQuantity(inventory.getQuantity() - exportReceiptDetailModel.getActualQuantity());
+                inventory.setTotalPrice(inventory.getTotalPrice() - exportReceiptDetailModel.getTotalPrice());
+            }
+        }
+        int quantityChanged = 0;
+        if(checkNew >= 0) { // TH thêm mới sp vào phiếu xuất
             exportReceiptDetailToCheck.remove(checkNew);
             exportReceiptDetailService.save(List.of(exportReceiptDetailModel), exportReceiptId);
+            quantityChanged = exportReceiptDetailModel.getActualQuantity();
+            totalPriceExportedAfterUpdate += exportReceiptDetailModel.getTotalPrice();
         }
+        // cập nhật lại tồn kho. Nếu update ==> chỉ có tổng tiền thay đổi
+        // Nếu thêm mới ==> cả số lượng + tổng tiền thay đổi
+        int i = fromYear == toYear ? 0 : 1;
+        for(; i < oldInventoryDetailModels.size(); i++) {
+            InventoryDetailModel inventory = oldInventoryDetailModels.get(i);
+            inventory.setQuantity(inventory.getQuantity() - quantityChanged);
+            inventory.setTotalPrice(inventory.getTotalPrice() + totalPriceExportedBeforeUpdate - totalPriceExportedAfterUpdate);
+        }
+        inventoryDetailService.update(oldInventoryDetailModels);
+
         exportReceiptDetailService.update(exportReceiptDetailToCheck);
     }
+
     public boolean updateExportReceiptDate(LocalDateTime fromDate, LocalDateTime toDate, long exportReceiptId, boolean isNew, List<ExportReceiptDetailModel> newExportReceiptDetailModels) {
 
         List<ExportReceiptDetailModel> exportReceiptDetailModels;
-        if(isNew) {
+        if(isNew) { // TH thêm mới
             exportReceiptDetailModels = newExportReceiptDetailModels;
-        } else {
+        } else { // TH cập nhật
             exportReceiptDetailModels = exportReceiptDetailService.findAllByExportReceipt(exportReceiptId);
         }
+        // danh các sản phầm cần cập nhật lại của phiếu xuất
         for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
             ExportPriceModel exBeforeNewDate;
             List<ExportPriceModel> exsToUpdate;
@@ -326,13 +372,14 @@ public class ExportReceiptPresenter {
                     }
                 }
                 checkAndUpdateExportPriceWhenChangeDate(pre, next, exportReceiptDetailToCheck);
-                updateExportReceiptDetail(exportReceiptDetailToCheck, exportReceiptDetailModel, pre, exportReceiptId, isNew);
+                int fromYear = fromDate.getYear();
+                int toYear = toDate.getYear();
+                updateExportReceiptDetail(exportReceiptDetailToCheck, exportReceiptDetailModel, pre, exportReceiptId, isNew, fromYear, toYear);
             }
             exportPriceService.update(exsToUpdate);
         }
         return true;
     }
-
 
     public void updateExportReceipt(ExportReceiptModel newExportReceipt, ExportReceiptModel oldExportReceipt, List<ExportReceiptDetailModelTable> exportReceiptDetailModelTables, HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap) throws DaoException {
         try {
