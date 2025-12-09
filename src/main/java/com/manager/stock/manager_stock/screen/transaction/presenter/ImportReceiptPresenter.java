@@ -575,7 +575,6 @@ public class ImportReceiptPresenter {
             e.printStackTrace();
             throw e;
         }
-        return false;
     }
 
     public int findQuantityInStockByProductIdAndAcademicYear(long productId, int academicYear) throws DaoException{

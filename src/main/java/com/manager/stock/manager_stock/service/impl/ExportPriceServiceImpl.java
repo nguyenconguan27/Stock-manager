@@ -52,6 +52,21 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     }
 
     @Override
+    public ExportPriceModel findByProductAndLastTime(Long productId, LocalDateTime time) {
+        return null;
+    }
+
+    @Override
+    public ExportPriceModel findByProductAndMinTime(Long productId, LocalDateTime time) {
+        return null;
+    }
+
+    @Override
+    public ExportPriceModel findAllByProductAndMinTime(Long productId, LocalDateTime time) {
+        return null;
+    }
+
+    @Override
     public void update(List<ExportPriceModel> exportPriceModels) {
         exportPriceDao.update(exportPriceModels);
     }
@@ -71,6 +86,11 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     @Override
     public void updateExportPriceAfterImportCorrectionByProductIdAndImportDate(double totalPriceChanged, long totalQuantityChange, LocalDateTime oldImportDate, long productId) {
         exportPriceDao.updateExportPriceAfterImportCorrectionByProductIdAndImportDate(totalPriceChanged, totalQuantityChange, oldImportDate, productId);
+    }
+
+    @Override
+    public ExportPriceIdAndPrice findExportPriceByProductAndLastTime(long productId) {
+        return null;
     }
 
     @Override

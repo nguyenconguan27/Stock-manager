@@ -16,3 +16,5 @@
 2025-11-11 00:35:34.409 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
 2025-11-11 00:50:00.612 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
 2025-11-11 00:50:00.612 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2025-12-09 10:45:56.951 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2025-12-09 10:45:56.952 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!

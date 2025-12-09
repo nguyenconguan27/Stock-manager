@@ -146,6 +146,11 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
     }
 
     @Override
+    public ExportPriceIdAndPrice findExportPriceIdAndPriceByProductAndLastTime(long productId) {
+        return null;
+    }
+
+    @Override
     public ExportPriceIdAndPrice findExportPriceIdAndPriceByProductAndLastTime(long productId, LocalDateTime exportDate) throws DaoException{
         String sql = "select id, export_price from export_price ep \n" +
                 "where product_id = ? and export_time <= ?\n" +
