@@ -23,3 +23,8 @@
 2025-11-11 00:35:34.862 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
 2025-11-11 00:35:39.870 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
 2025-11-11 00:35:39.889 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2025-11-11 00:50:00.610 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2025-11-11 00:50:01.039 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2025-11-11 00:50:01.053 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2025-11-11 00:50:06.917 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2025-11-11 00:50:06.919 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!

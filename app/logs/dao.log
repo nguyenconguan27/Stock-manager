@@ -109,3 +109,14 @@
 2025-11-11 00:49:49.549 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE export_receipt_detail set actual_quantity = ?, original_unit_price = ?, export_price_id = ? WHERE id = ?
 2025-11-11 00:49:49.552 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ? WHERE id = ?
 2025-11-11 00:49:49.565 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ExportReceiptDaoImpl - UPDATE export_receipt set invoice_number = ?, create_at = ?, receiver = ?, receive_address = ?, reason = ?, warehouse = ? where id = ?
+2025-11-11 00:50:06.917 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-11-11 00:50:33.360 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - UPDATE inventory_detail set quantity = ?, total_price = ? where id = ?
+2025-11-11 00:50:33.860 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE export_receipt_detail set actual_quantity = ?, original_unit_price = ?, export_price_id = ? WHERE id = ?
+2025-11-11 00:56:59.512 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - UPDATE inventory_detail set quantity = ?, total_price = ? where id = ?
+2025-11-11 00:56:59.514 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE export_receipt_detail set actual_quantity = ?, original_unit_price = ?, export_price_id = ? WHERE id = ?
+2025-11-11 00:57:00.138 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - UPDATE inventory_detail set quantity = ?, total_price = ? where id = ?
+2025-11-11 00:57:00.140 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE export_receipt_detail set actual_quantity = ?, original_unit_price = ?, export_price_id = ? WHERE id = ?
+2025-11-11 00:57:00.817 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - UPDATE inventory_detail set quantity = ?, total_price = ? where id = ?
+2025-11-11 00:57:00.819 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE export_receipt_detail set actual_quantity = ?, original_unit_price = ?, export_price_id = ? WHERE id = ?
+2025-11-11 00:57:00.820 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ? WHERE id = ?
+2025-11-11 00:57:00.825 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ExportReceiptDaoImpl - UPDATE export_receipt set invoice_number = ?, create_at = ?, receiver = ?, receive_address = ?, reason = ?, warehouse = ? where id = ?
