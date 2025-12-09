@@ -10,6 +10,7 @@ import com.manager.stock.manager_stock.model.dto.ProductIdAndActualQuantityAndTo
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
  */
 public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implements IExportReceiptDao {
     private static ExportReceiptDaoImpl instance;
-
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
     private ExportReceiptDaoImpl() {}
 
     public static ExportReceiptDaoImpl getInstance() {
@@ -78,6 +79,22 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
         String idsStr = ids.stream().map(String::valueOf).collect(Collectors.joining(","));
         String sql = "DELETE FROM export_receipt where id in (" + idsStr + ")";
         delete(sql);
+    }
+
+    @Override
+    public String findLatestCreatedByProduct(long productId) {
+        String sql = "select DB.EXPORT_RECEIPT.CREATE_AT  from DB.EXPORT_RECEIPT \n" +
+                "join DB.EXPORT_RECEIPT_DETAIL on DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID = DB.EXPORT_RECEIPT.id\n" +
+                "join DB.PRODUCT on DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID \n" +
+                "where DB.PRODUCT.id = ?\n" +
+                "order by CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) desc\n" +
+                "limit 1;";
+
+        List<String> createdList = query(sql, rs -> rs.getString("CREATE_AT"), productId);
+        if(createdList.isEmpty()) {
+            return formatter.format(LocalDateTime.now());
+        }
+        return createdList.get(0);
     }
 
     @Override

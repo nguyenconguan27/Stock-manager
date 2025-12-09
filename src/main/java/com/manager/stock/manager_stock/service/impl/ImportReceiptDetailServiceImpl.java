@@ -7,6 +7,7 @@ import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
 import com.manager.stock.manager_stock.model.dto.ProductIdAndActualQuantityAndTotalPriceOfReceipt;
 import com.manager.stock.manager_stock.service.IImportReceiptDetailService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -61,5 +62,15 @@ public class ImportReceiptDetailServiceImpl implements IImportReceiptDetailServi
     @Override
     public void deleteByIds(Set<Long> ids) throws DaoException {
         importReceiptDetailDao.deleteByIds(ids);
+    }
+
+    @Override
+    public long calculateTotalQuantityImportedByProduct(long productId, LocalDateTime startDate, LocalDateTime endTime, LocalDateTime oldImportDate) {
+        return importReceiptDetailDao.calculateTotalQuantityImportedByProduct(productId, startDate, endTime, oldImportDate);
+    }
+
+    @Override
+    public double calculateTotalPriceImportedByProduct(long productId, LocalDateTime startDate, LocalDateTime endTime, LocalDateTime oldImportDate) {
+        return importReceiptDetailDao.calculateTotalPriceImportedByProduct(productId, startDate, endTime, oldImportDate);
     }
 }

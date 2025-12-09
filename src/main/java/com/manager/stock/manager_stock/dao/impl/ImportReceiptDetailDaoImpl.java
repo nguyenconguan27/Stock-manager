@@ -6,6 +6,8 @@ import com.manager.stock.manager_stock.mapper.modelMapperResultSet.ImportReceipt
 import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
 import com.manager.stock.manager_stock.model.dto.ProductIdAndActualQuantityAndTotalPriceOfReceipt;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailModel> implements IImportReceiptDetailDao {
 
     private static ImportReceiptDetailDaoImpl instance;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
     private ImportReceiptDetailDaoImpl() {
 
     }
@@ -73,6 +76,38 @@ public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailM
             });
         }
         save(sql, parameters);
+    }
+
+    @Override
+    public long calculateTotalQuantityImportedByProduct(long productId, LocalDateTime startDate, LocalDateTime endTime, LocalDateTime oldImportDate) throws DaoException{
+        String sql = "select sum(DB.IMPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY) as total_quantity_imported from DB.IMPORT_RECEIPT_DETAIL\n" +
+                "join DB.IMPORT_RECEIPT on DB.IMPORT_RECEIPT.id = DB.IMPORT_RECEIPT_DETAIL.IMPORT_RECEIPT_ID\n" +
+                "join DB.PRODUCT on DB.PRODUCT.id = DB.IMPORT_RECEIPT_DETAIL.PRODUCT_ID\n" +
+                "where DB.PRODUCT.id = ?\n" +
+                "and CAST(PARSEDATETIME(DB.IMPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "and CAST(PARSEDATETIME(DB.IMPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "and CAST(PARSEDATETIME(DB.IMPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) != CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n;";
+        List<Long> totalQuantityImported = query(sql, rs -> rs.getLong("TOTAL_QUANTITY_IMPORTED"), productId, formatter.format(startDate), formatter.format(endTime), formatter.format(oldImportDate));
+        if(totalQuantityImported.isEmpty()) {
+            return 0;
+        }
+        return totalQuantityImported.get(0);
+    }
+
+    @Override
+    public double calculateTotalPriceImportedByProduct(long productId, LocalDateTime startDate, LocalDateTime endTime, LocalDateTime oldImportDate) throws DaoException {
+        String sql = "select sum(DB.IMPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY * DB.IMPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY) as total_price_imported from DB.IMPORT_RECEIPT_DETAIL\n" +
+                "join DB.IMPORT_RECEIPT on DB.IMPORT_RECEIPT.id = DB.IMPORT_RECEIPT_DETAIL.IMPORT_RECEIPT_ID\n" +
+                "join DB.PRODUCT on DB.PRODUCT.id = DB.IMPORT_RECEIPT_DETAIL.PRODUCT_ID\n" +
+                "where DB.PRODUCT.id = ?\n" +
+                "and CAST(PARSEDATETIME(DB.IMPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "and CAST(PARSEDATETIME(DB.IMPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "and CAST(PARSEDATETIME(DB.IMPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) != CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n;";
+        List<Double> totalPriceImported = query(sql, rs -> rs.getDouble("TOTAL_PRICE_IMPORTED"), productId, formatter.format(startDate), formatter.format(endTime), formatter.format(oldImportDate));
+        if(totalPriceImported.isEmpty()) {
+            return 0;
+        }
+        return totalPriceImported.get(0);
     }
 
     @Override

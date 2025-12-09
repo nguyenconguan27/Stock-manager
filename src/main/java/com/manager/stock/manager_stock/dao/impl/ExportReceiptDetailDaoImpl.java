@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
  */
 public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailModel> implements IExportReceiptDetailDao {
     private static ExportReceiptDetailDaoImpl instance;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
     private ExportReceiptDetailDaoImpl() {}
 
@@ -83,6 +84,75 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
         return ids;
     }
 
+    // import date: Ngày của đơn giá cũ - dùng để lọc ra những phiếu xuất cần cập nhật
+    // newImportDate: Ngày mới của phiếu nhập - dùng để cập nhật những phiến xuất đằng sau ngày của phiếu nhập đó thôi
+    @Override
+    public void updateExportReceiptDetailPriceByProductAndTimeRange(long newExportPriceId, double newOriginalUnitPrice, LocalDateTime exportPriceTime, long productId, LocalDateTime startDate, LocalDateTime endDate) throws DaoException {
+        String sql = "UPDATE DB.EXPORT_RECEIPT_DETAIL \n" +
+                "SET DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = ?,  \n" +
+                "    DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE = ?\n" +
+                "WHERE DB.EXPORT_RECEIPT_DETAIL.id IN (\n" +
+                "    SELECT DB.EXPORT_RECEIPT_DETAIL.id \n" +
+                "    FROM DB.EXPORT_PRICE\n" +
+                "    JOIN DB.EXPORT_RECEIPT_DETAIL \n" +
+                "        ON DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = DB.EXPORT_PRICE.id\n" +
+                "    JOIN DB.EXPORT_RECEIPT \n" +
+                "        ON DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID\n" +
+                "    JOIN DB.PRODUCT \n" +
+                "        ON DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID \n" +
+                "    WHERE DB.EXPORT_PRICE.EXPORT_TIME = ? \n" +
+                "        AND DB.PRODUCT.id = ?\n" +
+                "        AND CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "            >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "        AND (\n" +
+                "            CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "                < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "            OR ? IS NULL\n" +
+                "        )\n" +
+                ");\n";
+        List<Object[]> parameters = new ArrayList<>();
+        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        parameters.add(new Object[]{
+           newExportPriceId, newOriginalUnitPrice, formatter1.format(exportPriceTime), productId, formatter.format(startDate),
+                endDate != null ? formatter.format(endDate) : null, endDate != null ? formatter.format(endDate) : null
+        });
+        save(sql, parameters);
+    }
+
+    @Override
+    public void updateUnitPriceOriginByProductAndTimeRangeAndExceptDate(double newOriginalUnitPrice, LocalDateTime exportPriceTime, long productId, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime exceptDate) throws DaoException {
+        String sql = "UPDATE DB.EXPORT_RECEIPT_DETAIL \n" +
+                "SET DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE = ?\n" +
+                "WHERE DB.EXPORT_RECEIPT_DETAIL.id IN (\n" +
+                "    SELECT DB.EXPORT_RECEIPT_DETAIL.id \n" +
+                "    FROM DB.EXPORT_PRICE\n" +
+                "    JOIN DB.EXPORT_RECEIPT_DETAIL \n" +
+                "        ON DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID = DB.EXPORT_PRICE.id\n" +
+                "    JOIN DB.EXPORT_RECEIPT \n" +
+                "        ON DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID\n" +
+                "    JOIN DB.PRODUCT \n" +
+                "        ON DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID \n" +
+                "    WHERE DB.EXPORT_PRICE.EXPORT_TIME = ? \n" +
+                "        AND DB.PRODUCT.id = ?\n" +
+                "        AND CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "            >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "        AND (\n" +
+                "            CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "                < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "            OR ? IS NULL\n" +
+                "        )\n" +
+                "        AND CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) != ?\n" +
+                "        )\n" +
+                ");\n";
+        List<Object[]> parameters = new ArrayList<>();
+        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        parameters.add(new Object[]{
+                newOriginalUnitPrice, formatter1.format(exportPriceTime), productId, formatter.format(startDate),
+                endDate != null ? formatter.format(endDate) : null, endDate != null ? formatter.format(endDate) : null, formatter.format(exceptDate)
+        });
+        save(sql, parameters);
+    }
+
     @Override
     public List<ExportReceiptDetailModel> findByRangeTime(long productId, LocalDateTime start, LocalDateTime end) {
         String sql = "Select * from export_receipt_detail as erd" +
@@ -118,6 +188,104 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
             });
         }
         save(sql, parameters);
+    }
+
+//    @Override
+//    public double calculateTotalPriceByImportDate(LocalDateTime importDate, LocalDateTime newImportDate) {
+//        String sql = "select sum(DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE * DB.EXPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY) as total_price from DB.EXPORT_RECEIPT_DETAIL  \n" +
+//                "join DB.EXPORT_PRICE on\n" +
+//                "DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID  = DB.EXPORT_PRICE.id\n" +
+//                "join DB.EXPORT_RECEIPT on\n" +
+//                "DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID\n" +
+//                "join DB.PRODUCT on DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID \n" +
+//                "where DB.EXPORT_PRICE.EXPORT_TIME = ?\n" +
+//                "    and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+//                "    and DB.PRODUCT.id = ?\n" +
+//                "    and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP);";
+//        List<Long> totalPrices = query(sql, rs -> rs.getLong("TOTAL_PRICE"), importDate, formatter.format(newImportDate));
+//        if(totalPrices.isEmpty()){
+//            return -1;
+//        }
+//        return totalPrices.get(0);
+//    }
+
+    @Override
+    public double calculateTotalPriceByProductAndTimeRange(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId) throws DaoException{
+        String sql = "select sum(DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE * DB.EXPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY) as total_price from DB.EXPORT_RECEIPT_DETAIL  \n" +
+                "join DB.EXPORT_PRICE on\n" +
+                "DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID  = DB.EXPORT_PRICE.id\n" +
+                "join DB.EXPORT_RECEIPT on\n" +
+                "DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID\n" +
+                "join DB.PRODUCT on DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID \n" +
+                "where DB.EXPORT_PRICE.EXPORT_TIME = ?\n" +
+                "    and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "    and DB.PRODUCT.id = ?\n" +
+                "    and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP);";
+
+        List<Long> totalPrices = query(sql, rs -> rs.getLong("TOTAL_PRICE"), exportPriceTime, formatter.format(startDate), productId, formatter.format(endDate));
+        if(totalPrices.isEmpty()){
+            return -1;
+        }
+        return totalPrices.get(0);
+    }
+
+    @Override
+    public double calculateTotalPriceByProductAndTimeRangeAndExceptDate(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId, LocalDateTime exceptDate) throws DaoException{
+        String sql = "select sum(DB.EXPORT_RECEIPT_DETAIL.ORIGINAL_UNIT_PRICE * DB.EXPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY) as total_price from DB.EXPORT_RECEIPT_DETAIL  \n" +
+                "join DB.EXPORT_PRICE on\n" +
+                "DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID  = DB.EXPORT_PRICE.id\n" +
+                "join DB.EXPORT_RECEIPT on\n" +
+                "DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID\n" +
+                "join DB.PRODUCT on DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID \n" +
+                "where DB.EXPORT_PRICE.EXPORT_TIME = ?\n" +
+                "    and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "    and DB.PRODUCT.id = ?\n" +
+                "    and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "    and and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) != ?;";
+
+        List<Long> totalPrices = query(sql, rs -> rs.getLong("TOTAL_PRICE"), exportPriceTime, formatter.format(startDate), productId, formatter.format(endDate), formatter.format(exceptDate));
+        if(totalPrices.isEmpty()){
+            return -1;
+        }
+        return totalPrices.get(0);
+    }
+
+    // tổng số lượng đã xuất trong khoảng ngày
+    @Override
+    public long calculateTotalQuantityByProductAndTimeRange(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId) throws DaoException{
+        String sql = "select sum(DB.EXPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY) as total_quantity from DB.EXPORT_RECEIPT_DETAIL  \n" +
+                "join DB.EXPORT_PRICE on\n" +
+                "DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID  = DB.EXPORT_PRICE.id\n" +
+                "join DB.EXPORT_RECEIPT on\n" +
+                "DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID\n" +
+                "join DB.PRODUCT on DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID \n" +
+                "where DB.EXPORT_PRICE.EXPORT_TIME = ?\n" +
+                "    and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "    and DB.PRODUCT.id = ?\n" +
+                "    and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP);";
+
+        List<Long> totalPrices = query(sql, rs -> rs.getLong("TOTAL_QUANTITY"), exportPriceTime, formatter.format(startDate), productId, formatter.format(endDate));
+        if(totalPrices.isEmpty()){
+            return -1;
+        }
+        return totalPrices.get(0);
+    }
+
+    @Override
+    public long calculateActualQuantityByProductBetweenImportDates(LocalDateTime startDate, LocalDateTime endDate, long productId) {
+        String sql =
+                "SELECT sum(DB.EXPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY ) as total_quantity  FROM DB.EXPORT_RECEIPT_DETAIL \n" +
+                "join DB.PRODUCT on DB.PRODUCT.id = DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID \n" +
+                "join DB.EXPORT_RECEIPT on DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID \n" +
+                "join DB.EXPORT_PRICE on DB.EXPORT_PRICE.ID = DB.EXPORT_RECEIPT_DETAIL.EXPORT_PRICE_ID \n" +
+                "where CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP)\n" +
+                "and DB.PRODUCT.id = ?;";
+        List<Long> totalActualQuantity = query(sql, rs -> rs.getLong("TOTAL_QUANTITY"), formatter.format(startDate), formatter.format(endDate), productId);
+        if(totalActualQuantity.isEmpty()) {
+            return -1;
+        }
+        return totalActualQuantity.get(0);
     }
 
     @Override

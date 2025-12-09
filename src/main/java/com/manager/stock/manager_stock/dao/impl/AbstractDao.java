@@ -110,7 +110,6 @@ public class AbstractDao<T> implements GenericDao<T> {
         PreparedStatement stmt = null;
         Connection connection = null;
         try {
-            System.out.println();
             connection = DatasourceInitialize.getInstance();
             connection.setAutoCommit(false);
             if (parameters.size() == 1) {
@@ -119,7 +118,7 @@ public class AbstractDao<T> implements GenericDao<T> {
                 int affectedRows = stmt.executeUpdate();
 //                connection.commit();
                 if (affectedRows == 0) {
-                    throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
+                    return affectedRows;
                 }
 
                 try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {

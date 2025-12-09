@@ -63,6 +63,11 @@ public class ExportReceiptServiceImpl implements IExportReceiptService {
     }
 
     @Override
+    public String findLatestCreatedByProduct(long productId) {
+        return exportReceiptDao.findLatestCreatedByProduct(productId);
+    }
+
+    @Override
     public long save(ExportReceiptModel exportReceiptModel) {
         return exportReceiptDao.save(exportReceiptModel);
     }
