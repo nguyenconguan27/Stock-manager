@@ -120,3 +120,17 @@
 2025-11-11 00:57:00.819 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE export_receipt_detail set actual_quantity = ?, original_unit_price = ?, export_price_id = ? WHERE id = ?
 2025-11-11 00:57:00.820 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ? WHERE id = ?
 2025-11-11 00:57:00.825 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ExportReceiptDaoImpl - UPDATE export_receipt set invoice_number = ?, create_at = ?, receiver = ?, receive_address = ?, reason = ?, warehouse = ? where id = ?
+2025-12-11 21:02:53.261 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-12-11 21:05:21.096 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-12-11 21:11:35.313 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-12-11 21:17:21.896 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-12-11 21:20:34.141 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-12-11 21:21:28.947 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-12-11 21:21:54.219 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-12-11 21:22:59.065 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-12-11 21:32:24.532 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - INSERT INTO import_receipt (invoice_number, create_at, delivered_by, invoice, company_name, warehouse_name, total_price, total_price_in_word, academic_year)  values (?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-12-11 21:32:24.534 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ImportReceiptDetailDaoImpl - INSERT INTO import_receipt_detail (import_receipt_id, product_id, planned_quantity, actual_quantity, unit_price, product_name) values (?, ?, ?, ?, ?, ?)
+2025-12-11 21:32:24.553 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ? WHERE id = ?
+2025-12-11 21:32:24.556 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - INSERT INTO export_price(product_id, export_time, export_price, quantity_in_stock, quantity_imported, total_price_import, total_price_in_stock, import_receipt_id) values (?, ?, ?, ?, ?, ?, ?, ?)
+2025-12-11 21:32:24.557 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE export_receipt_detail set actual_quantity = ?, original_unit_price = ?, export_price_id = ? WHERE id = ?
+2025-12-11 21:32:24.558 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - UPDATE inventory_detail set quantity = ?, total_price = ? where id = ?

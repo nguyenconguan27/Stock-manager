@@ -50,14 +50,31 @@ public class ExportAll {
         Row row = sheet.getRow(r);
         Cell cellTT = row.createCell(c);
         cellTT.setCellValue(title);
-        sheet.addMergedRegion(new CellRangeAddress(r, r + 1, c, c));
+
+        // merge an toàn
+        mergeSafe(sheet, r, r + 1, c, c);
     }
+
+    private static void mergeSafe(Sheet sheet, int firstRow, int lastRow, int firstCol, int lastCol) {
+        CellRangeAddress newRegion = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
+
+        for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
+            if (sheet.getMergedRegion(i).equals(newRegion)) {
+                return;
+            }
+        }
+
+        sheet.addMergedRegion(newRegion);
+    }
+
 
     static void detailCol(int r, int c, String title) {
         Row row = sheet.getRow(r);
         Cell titleCell = row.createCell(c);
         titleCell.setCellValue(title);
-        sheet.addMergedRegion(new CellRangeAddress(r, r, c, c + 2));
+        if (!isMergedRegionExists(sheet, r, r, c, c + 2)) {
+            sheet.addMergedRegion(new CellRangeAddress(r, r, c, c + 2));
+        }
         Row infoRow = sheet.getRow(r + 1);
         Cell qCol = infoRow.createCell(c);
         Cell pCol = infoRow.createCell(c + 1);
@@ -200,4 +217,18 @@ public class ExportAll {
             }
         }
     }
+
+    private static boolean isMergedRegionExists(Sheet sheet, int firstRow, int lastRow, int firstCol, int lastCol) {
+        for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
+            CellRangeAddress region = sheet.getMergedRegion(i);
+            if (region.getFirstRow() == firstRow &&
+                    region.getLastRow() == lastRow &&
+                    region.getFirstColumn() == firstCol &&
+                    region.getLastColumn() == lastCol) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
