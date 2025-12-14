@@ -257,11 +257,16 @@ public class ExportReceiptPresenter {
                 checkNew = j;
             }
         }
+        ExportReceiptDetailModel temp = null;
         if(checkNew >= 0) {
-            exportReceiptDetailToCheck.remove(checkNew);
+            temp = exportReceiptDetailToCheck.remove(checkNew);
             exportReceiptDetailService.save(List.of(exportReceiptDetailModel), exportReceiptId);
         }
         exportReceiptDetailService.update(exportReceiptDetailToCheck);
+        if(temp != null) {
+            exportReceiptDetailToCheck.add(checkNew, temp);
+        }
+
     }
     public boolean updateExportReceiptDate(LocalDateTime fromDate, LocalDateTime toDate, long exportReceiptId, boolean isNew, List<ExportReceiptDetailModel> newExportReceiptDetailModels) {
 
@@ -327,6 +332,20 @@ public class ExportReceiptPresenter {
                 }
                 checkAndUpdateExportPriceWhenChangeDate(pre, next, exportReceiptDetailToCheck);
                 updateExportReceiptDetail(exportReceiptDetailToCheck, exportReceiptDetailModel, pre, exportReceiptId, isNew);
+                ExportPriceModel exportPriceModel2Check = exportPriceService.findLastByProductIdAndYear(pre.getProductId(), pre.getExportTime().getYear());
+                if(exportPriceModel2Check.getId() == pre.getId()) {
+                    InventoryDetailModel inventoryDetailModel = inventoryDetailService.findByMinYearAndProduct(pre.getProductId(), pre.getExportTime().getYear()).get(0);
+                    int totalQExported = 0;
+                    for(ExportReceiptDetailModel exportReceiptDetailModel1: exportReceiptDetailToCheck) {
+                        ExportReceiptModel exportReceiptModel = exportReceiptService.findById(exportReceiptDetailModel1.getExportReceiptId());
+                        if(exportReceiptModel.getAcademicYear() == inventoryDetailModel.getAcademicYear()) {
+                            totalQExported += exportReceiptDetailModel1.getActualQuantity();
+                        }
+                    }
+                    inventoryDetailModel.setQuantity(pre.getQuantityImported() + pre.getQuantityInStock() - totalQExported);
+                    inventoryDetailModel.setTotalPrice(inventoryDetailModel.getQuantity() * pre.getExportPrice());
+                    inventoryDetailService.update(List.of(inventoryDetailModel));
+                }
             }
             exportPriceService.update(exsToUpdate);
         }

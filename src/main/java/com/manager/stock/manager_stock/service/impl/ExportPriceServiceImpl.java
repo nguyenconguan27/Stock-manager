@@ -119,6 +119,15 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     }
 
     @Override
+    public ExportPriceModel findLastByProductIdAndYear(long productId, int year) {
+        List<ExportPriceModel> exportPriceModels = exportPriceDao.findLastByProductIdAndYear(productId, year);
+        if(exportPriceModels == null || exportPriceModels.isEmpty()) {
+            return null;
+        }
+        return exportPriceModels.get(0);
+    }
+
+    @Override
     public List<ExportPriceModel> findAllByProductIdAndAfterTime(long productId, LocalDateTime time) {
         return exportPriceDao.findAllByProductIdAndAfterTime(productId, time);
     }

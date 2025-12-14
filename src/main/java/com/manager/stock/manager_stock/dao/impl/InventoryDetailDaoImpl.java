@@ -176,7 +176,7 @@ public class InventoryDetailDaoImpl extends AbstractDao<InventoryDetailModel> im
 
     @Override
     public List<InventoryDetailModel> getByMinYearAndProduct(long productId, int year) {
-        String sql = "select * from inventory_detail where academic_year >= ? and product_id = ?";
+        String sql = "select * from inventory_detail where academic_year >= ? and product_id = ? order by academic_year asc";
         return query(sql, new InventoryDetailMapperResultSet(), year, productId);
     }
 }

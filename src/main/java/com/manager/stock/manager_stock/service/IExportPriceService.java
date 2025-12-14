@@ -25,6 +25,7 @@ public interface IExportPriceService {
     ExportPriceAndProductCodeAndProductName findProductHaveMaxPriceByGroup(long productGroupId);
     ExportPriceAndProductCodeAndProductName findProductHaveMinPriceByGroup(long productGroupId);
     ExportPriceModel findByProductIdAndBeforeTime(long productId, LocalDateTime time);
+    ExportPriceModel findLastByProductIdAndYear(long productId, int year);
     List<ExportPriceModel> findAllByProductIdAndAfterTime(long productId, LocalDateTime time);
     void commit();
     void rollback();
