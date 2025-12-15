@@ -72,7 +72,9 @@ public class ExportAll {
         Row row = sheet.getRow(r);
         Cell titleCell = row.createCell(c);
         titleCell.setCellValue(title);
-        sheet.addMergedRegion(new CellRangeAddress(r, r, c, c + 2));
+        if (!isMergedRegionExists(sheet, r, r, c, c + 2)) {
+            sheet.addMergedRegion(new CellRangeAddress(r, r, c, c + 2));
+        }
         Row infoRow = sheet.getRow(r + 1);
         Cell qCol = infoRow.createCell(c);
         Cell pCol = infoRow.createCell(c + 1);
@@ -215,4 +217,18 @@ public class ExportAll {
             }
         }
     }
+
+    private static boolean isMergedRegionExists(Sheet sheet, int firstRow, int lastRow, int firstCol, int lastCol) {
+        for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
+            CellRangeAddress region = sheet.getMergedRegion(i);
+            if (region.getFirstRow() == firstRow &&
+                    region.getLastRow() == lastRow &&
+                    region.getFirstColumn() == firstCol &&
+                    region.getLastColumn() == lastCol) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -94,7 +94,7 @@ public class ReportService {
                     for(ImportReceiptDetailModel detailModel: importReceiptDetailList) {
                         if(detailModel.getProductId() == productModel.getId()) {
                             totalImportQ += detailModel.getActualQuantity();
-                            totalImportP += (int) detailModel.getUnitPrice();
+                            totalImportP += (int) detailModel.getTotalPrice();
                             ReportModel.ReportDetail reportDetail = new ReportModel.ReportDetail();
                             reportDetail.setId("i" + detailModel.getImportReceiptId());
                             reportDetail.setQuantity(detailModel.getActualQuantity());
@@ -106,7 +106,7 @@ public class ReportService {
                     for(ExportReceiptDetailModel detailModel: exportReceiptDetailList) {
                         if(detailModel.getProductId() == productModel.getId()) {
                             totalExportQ += detailModel.getActualQuantity();
-                            totalExportP += (int )detailModel.getDisplayUnitPrice();
+                            totalExportP += (int )detailModel.getDisplayUnitPrice() * detailModel.getActualQuantity();
                             ReportModel.ReportDetail reportDetail = new ReportModel.ReportDetail();
                             reportDetail.setId("e" + detailModel.getExportReceiptId());
                             reportDetail.setQuantity(detailModel.getActualQuantity());
@@ -116,8 +116,8 @@ public class ReportService {
                         }
                     }
                     int importCount = importDetails.size(); int exportCount = exportDetails.size();
-                    ReportModel.ReportDetail totalImport = new ReportModel.ReportDetail("totalimport", totalImportQ, totalImportP / (importCount == 0 ? 1 : importCount), totalImportQ * ( totalImportP / (importCount == 0 ? 1 : importCount)));
-                    ReportModel.ReportDetail totalExport = new ReportModel.ReportDetail("totalexport", totalExportQ, totalExportP / (exportCount == 0 ? 1 : exportCount), totalExportQ * (totalExportP / (exportCount == 0 ? 1 : exportCount)));
+                    ReportModel.ReportDetail totalImport = new ReportModel.ReportDetail("totalimport", totalImportQ, totalImportP / (importCount == 0 ? 1 : importCount), totalImportP);
+                    ReportModel.ReportDetail totalExport = new ReportModel.ReportDetail("totalexport", totalExportQ, totalExportP / (exportCount == 0 ? 1 : exportCount), totalExportP);
                     reportProduct.setStartSem(startSem);
                     reportProduct.setEndSem(endSem);
                     reportProduct.setTotalImport(totalImport);
