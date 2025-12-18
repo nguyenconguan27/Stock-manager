@@ -1,1 +1,9 @@
-2025-12-11 20:49:44.375 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-12-19 00:08:28.317 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-12-19 00:08:53.279 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-12-19 00:10:03.486 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-12-19 00:13:24.809 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-12-19 00:13:54.658 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-12-19 00:14:13.985 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-12-19 00:14:25.500 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-12-19 00:19:12.612 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2025-12-19 00:28:47.823 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);

@@ -144,6 +144,10 @@ public class ProductScreen extends VBox {
             }
 
             @Override
+            public void onSelectYear(int year) {
+            }
+
+            @Override
             public void onExportAll() {
                 try {
                     File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");

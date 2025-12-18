@@ -21,6 +21,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
+import java.time.Year;
 import java.util.Objects;
 import java.util.Stack;
 
@@ -120,7 +121,7 @@ public class ScreenNavigator {
                     new Thread(() -> {
                         ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
                         Platform.runLater(() -> {
-                            importReceiptScreen.showTable();
+                            importReceiptScreen.showTable(Year.now().getValue());
                             ScreenNavigator.navigateTo(importReceiptScreen);
                         });
                     }).start();
@@ -130,7 +131,7 @@ public class ScreenNavigator {
                     new Thread(() -> {
                         ExportReceiptScreen exportReceiptScreen = new ExportReceiptScreen();
                         Platform.runLater(() -> {
-                            exportReceiptScreen.showTable();
+                            exportReceiptScreen.showTable(Year.now().getValue());
                             ScreenNavigator.navigateTo(exportReceiptScreen);
                         });
                     }).start();

@@ -44,6 +44,7 @@ public abstract class BaseAddOrUpdateReceiptScreen<T, D> extends VBox {
     protected HashMap<Long, Double> changeTotalPriceByProductMap = new HashMap<>();
     protected Set<Long> receiptDetailIdsDeleted = new HashSet<>();
     protected TextField tfInvoiceNumber, tfWareHouse;
+    protected int selectedYear;
 
     public BaseAddOrUpdateReceiptScreen(T receiptModelTable) {
         HBox topBar = CreateTopBarOfReceiptUtil.createTopBar(new TopBarActionHandler() {
@@ -91,6 +92,11 @@ public abstract class BaseAddOrUpdateReceiptScreen<T, D> extends VBox {
                     AlertUtils.alert("Có lỗi khi xuất file: " + e.getMessage(),
                             "ERROR", "Lỗi", "Xuất dữ liệu thất bại");
                 }
+            }
+
+            @Override
+            public void onSelectYear(int year) {
+
             }
         });
 

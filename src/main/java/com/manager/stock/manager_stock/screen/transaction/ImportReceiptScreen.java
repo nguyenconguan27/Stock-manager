@@ -26,13 +26,14 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
 public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTable, ImportReceiptDetailModelTable> {
 
     private TextField tfId, tfInvoiceNumber, tfCreateAt, tfInvoice, tfCompany, tfWarehouse, tfProductNameImportReceipt, tfProductIdImportReceipt;
-
+    private int selectedYear = Year.now().getValue();
     public ImportReceiptScreen() {
         super();
     }
@@ -196,7 +197,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
                             boolean isDeleteSuccess = presenter.deleteImportReceipt(selected);
                             if(isDeleteSuccess) {
                                 AlertUtils.alert("Xóa phiếu nhập thành công.", "INFORMATION", "Thành công", "Xóa thành công");
-                                showTable();
+                                showTable(selectedYear);
                             }
                         }
                         catch (DaoException | StockUnderFlowException e) {
@@ -214,7 +215,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
 
             @Override
             public void onReload() {
-                showTable();
+                showTable(selectedYear);
                 showItemDetails(0);
             }
 
@@ -255,6 +256,12 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
                     AlertUtils.alert("Có lỗi khi xuất file: " + e.getMessage(),
                             "ERROR", "Lỗi", "Xuất dữ liệu thất bại");
                 }
+            }
+
+            @Override
+            public void onSelectYear(int year) {
+                selectedYear = year;
+                showTable(year);
             }
         };
     }
@@ -302,11 +309,11 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
         return filterRow;
     }
 
-    public void showTable() {
+    public void showTable(int year) {
         try {
             this.getStylesheets().add(this.getClass().getResource("/com/manager/stock/manager_stock/css/importReceipt/importReceipt.css").toExternalForm());
             ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
-            List<ImportReceiptModel> importReceiptModels = presenter.loadImportReceiptList(Optional.empty());
+            List<ImportReceiptModel> importReceiptModels = presenter.loadImportReceiptList(Optional.of(year));
             List<ImportReceiptModelTable> tableModels = GenericConverterBetweenModelAndTableData.convertToList(
                     importReceiptModels, ImportReceiptModelMapper.INSTANCE::toViewModel
             );

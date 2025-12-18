@@ -11,4 +11,5 @@ public interface TopBarActionHandler {
     void onPrint();
     void onExport();
     void onExportAll();
+    void onSelectYear(int year);
 }

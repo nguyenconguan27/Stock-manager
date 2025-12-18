@@ -420,7 +420,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
                 }
                 ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
-                importReceiptScreen.showTable();
+                importReceiptScreen.showTable(selectedYear);
                 ScreenNavigator.navigateTo(importReceiptScreen);
             }
             catch (DaoException | StockUnderFlowException exception) {
@@ -434,7 +434,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         AddCssStyleForBtnUtil.addCssStyleForBtn(cancelBtn);
         cancelBtn.setOnMouseClicked(e -> {
             ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
-            importReceiptScreen.showTable();
+            importReceiptScreen.showTable(selectedYear);
             ScreenNavigator.navigateTo(importReceiptScreen);
         });
 

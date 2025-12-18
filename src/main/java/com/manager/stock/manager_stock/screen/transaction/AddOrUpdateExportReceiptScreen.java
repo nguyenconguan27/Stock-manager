@@ -41,9 +41,11 @@ import java.util.stream.Collectors;
  */
 public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen<ExportReceiptModelTable, ExportReceiptDetailModelTable> {
     private TextField tfReceiver, tfReceiveAddress, tfReason;
+    private int selectedYear;
 
-    public AddOrUpdateExportReceiptScreen(ExportReceiptModelTable exportReceiptModelTable) {
+    public AddOrUpdateExportReceiptScreen(ExportReceiptModelTable exportReceiptModelTable, int year) {
         super(exportReceiptModelTable);
+        selectedYear = year;
     }
 
     @Override
@@ -405,7 +407,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
                 }
                 ExportReceiptScreen exportReceiptScreen = new ExportReceiptScreen();
-                exportReceiptScreen.showTable();
+                exportReceiptScreen.showTable(selectedYear);
                 ScreenNavigator.navigateTo(exportReceiptScreen);
             }
             catch (DaoException | StockUnderFlowException | CanNotFoundException exception) {
@@ -420,7 +422,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         AddCssStyleForBtnUtil.addCssStyleForBtn(cancelBtn);
         cancelBtn.setOnMouseClicked(e -> {
             ExportReceiptScreen exportReceiptScreen = new ExportReceiptScreen();
-            exportReceiptScreen.showTable();
+            exportReceiptScreen.showTable(selectedYear);
             ScreenNavigator.navigateTo(exportReceiptScreen);
         });
 

@@ -78,6 +78,9 @@ public class ReportService {
                 if(eInventoryDetail != null) {
                     endSem = new ReportModel.ReportDetail("endsem", eInventoryDetail.getQuantity(), (int)(eInventoryDetail.getTotalPrice() / (eInventoryDetail.getQuantity() == 0 ? 1 : eInventoryDetail.getQuantity())), (int) (eInventoryDetail.getTotalPrice() / 1));
                 }
+                else if(sInventoryDetail != null) {
+                    endSem = new ReportModel.ReportDetail("endsem", sInventoryDetail.getQuantity(), (int)(sInventoryDetail.getTotalPrice() / (sInventoryDetail.getQuantity() == 0 ? 1 : sInventoryDetail.getQuantity())), (int) (sInventoryDetail.getTotalPrice() / 1));
+                }
                 else {
                     endSem = new ReportModel.ReportDetail("endsem", 0, 0, 0);
                 }

@@ -510,6 +510,11 @@ public class ProductDetailScreen extends VBox {
                             "ERROR", "Lỗi", "Xuất dữ liệu thất bại");
                 }
             }
+
+            @Override
+            public void onSelectYear(int year) {
+
+            }
         });
         VBox.setVgrow(this, Priority.ALWAYS);
         this.setStyle("-fx-background-color: #e0f2f7;");

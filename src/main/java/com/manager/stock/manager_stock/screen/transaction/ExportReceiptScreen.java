@@ -31,6 +31,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +41,7 @@ import java.util.Optional;
 public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTable, ExportReceiptDetailModelTable> {
 
     private TextField tfInvoiceNumber, tfCreateAt, tfReceiver, tfProductNameExportReceipt, tfProductIdExportReceipt;
-
+    private int selectYear = Year.now().getValue();
     public ExportReceiptScreen() {
         super();
     }
@@ -209,7 +210,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
         return new TopBarActionHandler() {
             @Override
             public void onAdd() {
-                AddOrUpdateExportReceiptScreen addReceiptScreen = new AddOrUpdateExportReceiptScreen(null);
+                AddOrUpdateExportReceiptScreen addReceiptScreen = new AddOrUpdateExportReceiptScreen(null, selectYear);
                 ScreenNavigator.navigateTo(addReceiptScreen);
             }
 
@@ -217,7 +218,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
             public void onEdit() {
                 try {
                     if(selected != null) {
-                        AddOrUpdateExportReceiptScreen updateReceiptScreen = new AddOrUpdateExportReceiptScreen(selected);
+                        AddOrUpdateExportReceiptScreen updateReceiptScreen = new AddOrUpdateExportReceiptScreen(selected, selectYear);
                         ScreenNavigator.navigateTo(updateReceiptScreen);
                     }
                     else {
@@ -240,7 +241,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
                                 boolean isDeleteSuccess = presenter.deleteExportReceipt(selected);
                                 if(isDeleteSuccess) {
                                     AlertUtils.alert("Xóa phiếu xuất thành công.", "INFORMATION", "Thành công", "Xóa thành công");
-                                    showTable();
+                                    showTable(selectYear);
                                 }
                             }
                             catch (DaoException | CanNotFoundException | StockUnderFlowException e) {
@@ -262,7 +263,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
 
             @Override
             public void onReload() {
-                showTable();
+                showTable(selectYear);
                 showItemDetails(0);
             }
 
@@ -303,6 +304,12 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
                     AlertUtils.alert("Có lỗi khi xuất file",
                             "ERROR", "Lỗi", "Xuất dữ liệu thất bại");
                 }
+            }
+
+            @Override
+            public void onSelectYear(int year) {
+                selectYear = year;
+                showTable(year);
             }
         };
     }
@@ -347,11 +354,11 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
         productData.setAll(filteredData);
     }
 
-    public void showTable() {
+    public void showTable(int year) {
         try {
             this.getStylesheets().add(this.getClass().getResource("/com/manager/stock/manager_stock/css/importReceipt/importReceipt.css").toExternalForm());
             ExportReceiptPresenter presenter = ExportReceiptPresenter.getInstance();
-            List<ExportReceiptModel> exportReceiptModels = presenter.findAllExportReceipt(Optional.empty());
+            List<ExportReceiptModel> exportReceiptModels = presenter.findAllExportReceipt(Optional.of(year));
             List<ExportReceiptModelTable> tableModels = GenericConverterBetweenModelAndTableData.convertToList(
                     exportReceiptModels, ExportReceiptModelTableMapper.INSTANCE::toViewModel
             );

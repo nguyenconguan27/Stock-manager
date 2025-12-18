@@ -5,10 +5,12 @@ import com.manager.stock.manager_stock.interfaceActionHandler.TopBarActionHandle
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
+import java.time.Year;
 import java.util.Map;
 
 /**
@@ -29,7 +31,17 @@ public class CreateTopBarOfReceiptUtil {
         Button btnEdit = new Button("Sửa", new ImageView(editIcon));
         Button btnDelete = new Button("Xóa", new ImageView(deleteIcon));
         Button btnReload = new Button("Tải lại", new ImageView(reloadIcon));
-        Button btnPrint = new Button("In", new ImageView(printIcon));
+//        Button btnPrint = new Button("In", new ImageView(printIcon));
+        ComboBox<String> cbYear = new ComboBox<>();
+
+        int currentYear = Year.now().getValue();
+
+        for (int y = currentYear - 20; y <= currentYear + 10; y++) {
+            cbYear.getItems().add(String.valueOf(y));
+        }
+
+        cbYear.setValue(String.valueOf(currentYear));
+
         Button btnExport = new Button("Xuất", new ImageView(exportIcon));
         Button btnExportAll = new Button("Xuất báo cáo tổng hợp", new ImageView(exportAllIcon));
 
@@ -38,10 +50,11 @@ public class CreateTopBarOfReceiptUtil {
                 btnEdit, handler::onEdit,
                 btnDelete, handler::onDelete,
                 btnReload, handler::onReload,
-                btnPrint, handler::onPrint,
                 btnExport, handler::onExport,
                 btnExportAll, handler::onExportAll
         );
+
+        AddCssStyleForBtnUtil.addCssStyleForComboBox(cbYear);
 
         for (Map.Entry<Button, Runnable> entry : buttonActions.entrySet()) {
             Button btn = entry.getKey();
@@ -54,9 +67,14 @@ public class CreateTopBarOfReceiptUtil {
         }
 
         // HBox for the top bar
-        HBox topBar = new HBox(10, btnAdd, btnEdit, btnDelete, btnReload, btnPrint, btnExport, btnExportAll);
+        HBox topBar = new HBox(10, btnAdd, btnEdit, btnDelete, btnReload, btnExport, btnExportAll, cbYear);
         topBar.setAlignment(Pos.CENTER_LEFT);
         topBar.setPadding(new Insets(5));
+
+        cbYear.setOnAction(e -> {
+            int newYear = Integer.parseInt(String.valueOf(cbYear.getValue()));
+            handler.onSelectYear(newYear);
+        });
 
         topBar.setStyle(
                 "-fx-background-color: #e0f2f7;" +
