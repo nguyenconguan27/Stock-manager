@@ -419,4 +419,12 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
         String sql = "select * from export_price where product_id = ? and export_time > ? order by export_time asc";
         return query(sql, new ExportPriceMapperResultSet(), productId, time);
     }
+
+    @Override
+    public List<ExportPriceModel> findLastByProductIdAndYear(long productId, int year) {
+        String sql = "select top 1 * from export_price where product_id = ? and year(export_time) = ? order by export_time desc";
+        return query(sql, new ExportPriceMapperResultSet(), productId, year);
+    }
+
+
 }

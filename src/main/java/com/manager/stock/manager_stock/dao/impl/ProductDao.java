@@ -135,8 +135,8 @@ public class ProductDao extends AbstractDao<ProductModel>{
     public ProductModel add(ProductModel p, long groupId) {
         String sql = "INSERT INTO product(id, code, name, unit, group_id) " +
                 " OVERRIDING SYSTEM VALUE values(?, ?, ?, ?, ?)";
-        String sqlInv = "insert into inventory_detail(id, product_id, quantity, total_price, academic_year) " +
-                "OVERRIDING SYSTEM VALUE values(?, ?, ?, ?, ?)";
+//        String sqlInv = "insert into inventory_detail(id, product_id, quantity, total_price, academic_year) " +
+//                "OVERRIDING SYSTEM VALUE values(?, ?, ?, ?, ?)";
 //        String sqlPrice = "insert into export_price(id, product_id, export_time, export_price, quantity_in_stock, quantity_imported, " +
 //                "total_price_in_stock, total_price_import) " +
 //                "OVERRIDING SYSTEM VALUE values(?, ?, ?, ?, ?, ?, ?, ?)";
@@ -150,7 +150,7 @@ public class ProductDao extends AbstractDao<ProductModel>{
         invParams.add(new Object[] {
                 System.currentTimeMillis(), p.getId(), p.getQuantity(), p.getUnitPrice() * p.getQuantity(), new Date().getYear() - 1
         });
-        save(sqlInv, invParams);
+//        save(sqlInv, invParams);
         priceParams.add(new Object[] {
                 System.currentTimeMillis(), p.getId(), LocalDateTime.now(), p.getUnitPrice(), p.getQuantity(), 0, p.getUnitPrice() * p.getQuantity(), 0
         });
