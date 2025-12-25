@@ -88,7 +88,7 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
     @Override
     public List<ExportPriceModel> findAllByProductAndMinTime(List<Long> productIds, LocalDateTime minTime) {
         String productIdsStr = productIds.stream().map(Object::toString).collect(Collectors.joining(","));
-        String sql = "SELECT * FROM export_price WHERE export_time >= ? and product_id in (" + productIdsStr + ") order by id asc";
+        String sql = "SELECT * FROM export_price WHERE export_time >= ? and product_id in (" + productIdsStr + ") order by export_time asc";
         return query(sql, new ExportPriceMapperResultSet(), minTime);
     }
 
@@ -238,7 +238,7 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
     @Override
     public List<ExportPriceModel> findLastByProductIdAndYear(long productId, int year) {
         String sql = "select top 1 * from export_price where product_id = ? and year(export_time) = ? order by export_time desc";
-        return null;
+        return query(sql, new ExportPriceMapperResultSet(), productId, year);
     }
 
 

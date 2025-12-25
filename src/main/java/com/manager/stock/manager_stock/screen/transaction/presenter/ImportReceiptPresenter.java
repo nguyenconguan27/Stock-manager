@@ -197,51 +197,114 @@ public class ImportReceiptPresenter {
         }
         ExportPriceModel exportPriceModel;
         // cập nhập pre nhưng không luu lại
+        if(pre == null) {
+            pre = new ExportPriceModel(0, productId,  LocalDateTime.of(2000, 1, 1, 0, 0, 0), 0,0,0,0,0);
+        }
         pre.setQuantityInStock(pre.getQuantityInStock() + pre.getQuantityImported() - totalQuanInTimeRangeExported);
         pre.setTotalPriceInStock(pre.getTotalPriceInStock() - totalPriceInTimeRangeExported + pre.getTotalImportPrice());
         exportPriceModel = exportPrice2Update(productId, null, pre, quantity, totalPrice, time, importReceiptId);
         List<ExportPriceModel> exportPriceModelList = exportPriceMap.get(productId) == null ? new ArrayList<>() : exportPriceMap.get(productId);
         exportPriceModelList.add(0, exportPriceModel);
         long exportPriceId;
-        for (int i = 1; i < exportPriceModelList.size(); i++) {
-            ExportPriceModel current = exportPriceModelList.get(i);
+
+        if(pre.getExportTime().getYear() != exportPriceModel.getExportTime().getYear()) {
             List<ExportReceiptDetailModel> exportReceiptDetailModels = exportReceiptDetailService.findByRangeTime(
-                    productId, exportPriceModelList.get(i - 1).getExportTime(), current.getExportTime()
+                    productId, pre.getExportTime(), exportPriceModel.getExportTime()
             );
+            updateInventory(pre, exportReceiptDetailModels);
+        }
+
+        for (int i = 0; i < exportPriceModelList.size(); i++) {
+            ExportPriceModel preExportPrice = exportPriceModelList.get(i);
+            ExportPriceModel nextExportPrice = i < exportPriceModelList.size() - 1 ? exportPriceModelList.get(i + 1) : null;
+            List<ExportReceiptDetailModel> exportReceiptDetailModels;
+            if(i == exportPriceModelList.size() - 1) {
+                exportReceiptDetailModels = exportReceiptDetailService.findByRangeTime(
+                        productId, preExportPrice.getExportTime(), LocalDateTime.now()
+                );
+            } else {
+                exportReceiptDetailModels = exportReceiptDetailService.findByRangeTime(
+                        productId, preExportPrice.getExportTime(), nextExportPrice.getExportTime()
+                );
+            }
+
             for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
-                exportReceiptDetailModel.setOriginalUnitPrice(exportPriceModelList.get(i - 1).getExportPrice());
-                exportReceiptDetailModel.setDisplayUnitPrice(exportPriceModelList.get(i - 1).getExportPrice());
-                exportReceiptDetailModel.setTotalPrice(exportPriceModelList.get(i - 1).getExportPrice() * exportReceiptDetailModel.getActualQuantity());
+                exportReceiptDetailModel.setOriginalUnitPrice(preExportPrice.getExportPrice());
+                exportReceiptDetailModel.setDisplayUnitPrice(preExportPrice.getExportPrice());
+                exportReceiptDetailModel.setTotalPrice(preExportPrice.getExportPrice() * exportReceiptDetailModel.getActualQuantity());
             }
             totalQuanInTimeRangeExported = 0; totalPriceInTimeRangeExported = 0;
             for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
                 totalQuanInTimeRangeExported += exportReceiptDetailModel.getActualQuantity();
                 totalPriceInTimeRangeExported += exportReceiptDetailModel.getTotalPrice();
             }
-            current.setQuantityInStock(exportPriceModelList.get(i - 1).getQuantityInStock() +
-                    exportPriceModelList.get(i - 1).getQuantityImported() - totalQuanInTimeRangeExported);
-            current.setTotalPriceInStock(exportPriceModelList.get(i - 1).getTotalPriceInStock() +
-                    exportPriceModelList.get(i - 1).getTotalImportPrice() - totalPriceInTimeRangeExported);
-
-            exportPrice2Update(productId, current, null, 0, 0, time, importReceiptId);
+            if(nextExportPrice != null) {
+                nextExportPrice.setQuantityInStock(preExportPrice.getQuantityInStock() +
+                        preExportPrice.getQuantityImported() - totalQuanInTimeRangeExported);
+                nextExportPrice.setTotalPriceInStock(preExportPrice.getTotalPriceInStock() +
+                        preExportPrice.getTotalImportPrice() - totalPriceInTimeRangeExported);
+                exportPrice2Update(productId, nextExportPrice, null, 0, 0, time, importReceiptId);
+            }
+            ExportPriceModel exportPriceModel2Check = exportPriceService.findLastByProductIdAndYear(preExportPrice.getProductId(), preExportPrice.getExportTime().getYear());
+            if(exportPriceModel2Check == null || exportPriceModel2Check.getId() == preExportPrice.getId()) {
+                updateInventory(preExportPrice, exportReceiptDetailModels);
+            }
         }
-        exportPriceService.update(exportPriceModelList);
+
+//
+//        for (int i = 1; i < exportPriceModelList.size(); i++) {
+//            ExportPriceModel current = exportPriceModelList.get(i);
+//            ExportPriceModel preExportPrice = exportPriceModelList.get(i - 1);
+//            List<ExportReceiptDetailModel> exportReceiptDetailModels = exportReceiptDetailService.findByRangeTime(
+//                    productId, exportPriceModelList.get(i - 1).getExportTime(), current.getExportTime()
+//            );
+//            for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
+//                exportReceiptDetailModel.setOriginalUnitPrice(exportPriceModelList.get(i - 1).getExportPrice());
+//                exportReceiptDetailModel.setDisplayUnitPrice(exportPriceModelList.get(i - 1).getExportPrice());
+//                exportReceiptDetailModel.setTotalPrice(exportPriceModelList.get(i - 1).getExportPrice() * exportReceiptDetailModel.getActualQuantity());
+//            }
+//            totalQuanInTimeRangeExported = 0; totalPriceInTimeRangeExported = 0;
+//            for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
+//                totalQuanInTimeRangeExported += exportReceiptDetailModel.getActualQuantity();
+//                totalPriceInTimeRangeExported += exportReceiptDetailModel.getTotalPrice();
+//            }
+//            current.setQuantityInStock(exportPriceModelList.get(i - 1).getQuantityInStock() +
+//                    exportPriceModelList.get(i - 1).getQuantityImported() - totalQuanInTimeRangeExported);
+//            current.setTotalPriceInStock(exportPriceModelList.get(i - 1).getTotalPriceInStock() +
+//                    exportPriceModelList.get(i - 1).getTotalImportPrice() - totalPriceInTimeRangeExported);
+//
+//            exportPrice2Update(productId, current, null, 0, 0, time, importReceiptId);
+////
+////            ExportPriceModel exportPriceModel2Check = exportPriceService.findLastByProductIdAndYear(preExportPrice.getProductId(), preExportPrice.getExportTime().getYear());
+////            if(exportPriceModel2Check.getId() == pre.getId() || exportPriceModel2Check.getId() == preExportPrice.getId()) {
+////                updateInventory(preExportPrice, exportReceiptDetailModels);
+////            }
+//        }
         exportPriceId = exportPriceService.save(exportPriceModel);
+        exportPriceModelList.remove(0);
+        if(!exportPriceModelList.isEmpty()) {
+            exportPriceService.update(exportPriceModelList);
+        }
         for (ExportReceiptDetailModel exportReceiptDetailModel : exportDetail2Update) {
             exportReceiptDetailModel.setExportPriceId(exportPriceId);
             exportReceiptDetailModel.setOriginalUnitPrice(exportPriceModel.getExportPrice());
+            exportReceiptDetailModel.setDisplayUnitPrice(exportPriceModel.getExportPrice());
         }
         exportReceiptDetailService.update(exportDetail2Update);
     }
 
-    public void updateInventory(long productId, LocalDateTime time, int quantity, double totalPrice) {
-        int year = time.getYear();
-        List<InventoryDetailModel> inventoryDetailModelList = inventoryDetailService.findByMinYearAndProduct(productId, year);
-        for (InventoryDetailModel inventoryDetailModel : inventoryDetailModelList) {
-            inventoryDetailModel.setQuantity(inventoryDetailModel.getQuantity() + quantity);
-            inventoryDetailModel.setTotalPrice(inventoryDetailModel.getTotalPrice() + totalPrice);
+    public void updateInventory(ExportPriceModel preExportPrice, List<ExportReceiptDetailModel> exportReceiptDetailModels) {
+        InventoryDetailModel inventoryDetailModel2Update = inventoryDetailService.findByMinYearAndProduct(preExportPrice.getProductId(), preExportPrice.getExportTime().getYear()).get(0);
+        int totalQExported = 0;
+        for(ExportReceiptDetailModel exportReceiptDetailModel: exportReceiptDetailModels) {
+            ExportReceiptModel exportReceiptModel = exportReceiptService.findById(exportReceiptDetailModel.getExportReceiptId());
+            if(exportReceiptModel.getAcademicYear() == inventoryDetailModel2Update.getAcademicYear()) {
+                totalQExported += exportReceiptDetailModel.getActualQuantity();
+            }
         }
-        inventoryDetailService.update(inventoryDetailModelList);
+        inventoryDetailModel2Update.setQuantity(preExportPrice.getQuantityImported() + preExportPrice.getQuantityInStock() - totalQExported);
+        inventoryDetailModel2Update.setTotalPrice(inventoryDetailModel2Update.getQuantity() * preExportPrice.getExportPrice());
+        inventoryDetailService.update(List.of(inventoryDetailModel2Update));
     }
 
     public boolean importNextExportDate(List<Long> productIds, LocalDateTime time, long importReceiptId,
@@ -271,7 +334,6 @@ public class ImportReceiptPresenter {
         for (Long productId : productIds) {
             addExportPriceAndUpdateNext(time, productId, importReceiptId,
                     changeQuantityByProductMap.get(productId), changeTotalPriceByProductMap.get(productId));
-            updateInventory(productId, time, changeQuantityByProductMap.get(productId), changeTotalPriceByProductMap.get(productId));
         }
         return true;
     }
