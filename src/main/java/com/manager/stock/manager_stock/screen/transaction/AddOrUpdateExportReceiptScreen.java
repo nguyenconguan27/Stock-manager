@@ -1,6 +1,7 @@
 package com.manager.stock.manager_stock.screen.transaction;
 
 import com.browniebytes.javafx.control.DateTimePicker;
+import com.google.api.services.drive.Drive;
 import com.manager.stock.manager_stock.exception.CanNotFoundException;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.exception.StockUnderFlowException;
@@ -42,14 +43,19 @@ import java.util.stream.Collectors;
 public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen<ExportReceiptModelTable, ExportReceiptDetailModelTable> {
     private TextField tfReceiver, tfReceiveAddress, tfReason;
     private int selectedYear;
+    private ExportReceiptPresenter exportReceiptPresenter;
 
     public AddOrUpdateExportReceiptScreen(ExportReceiptModelTable exportReceiptModelTable, int year) {
         super(exportReceiptModelTable);
         selectedYear = year;
+        exportReceiptPresenter = ExportReceiptPresenter.getInstance();
     }
 
     @Override
     protected VBox createFormAddNew(ExportReceiptModelTable model) {
+        if(exportReceiptPresenter == null) {
+            exportReceiptPresenter = ExportReceiptPresenter.getInstance();
+        }
         // === Form bên trái ===
         GridPane leftForm = new GridPane();
         leftForm.setHgap(10);
@@ -105,7 +111,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             // Lấy danh sách receiptDetail
             totalPriceOfReceipt = model.getTotalPrice();
             totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
-            ExportReceiptPresenter exportReceiptPresenter = ExportReceiptPresenter.getInstance();
+//            ExportReceiptPresenter exportReceiptPresenter = ExportReceiptPresenter.getInstance();
             List<ExportReceiptDetailModel> exportReceiptDetailModels = exportReceiptPresenter.findAllExportReceiptDetailByExportReceipt(model.getId());
             List<ExportReceiptDetailModelTable> importReceiptDetailModelTablesByReceipt = GenericConverterBetweenModelAndTableData.convertToList(exportReceiptDetailModels
                     , ExportReceiptDetailModelTableMapper.INSTANCE::toViewModel);
@@ -168,37 +174,22 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         productBox.setPadding(new javafx.geometry.Insets(0, 15, 0, 15));
         productBox.setAlignment(Pos.CENTER_LEFT);
 
-        ExportReceiptPresenter exportReceiptPresenter = ExportReceiptPresenter.getInstance();
+
         List<ProductModel> products = exportReceiptPresenter.loadAllProduct();
         allProducts.setAll(products);
         ProductAutoComplete ac = new ProductAutoComplete(tfProduct, allProducts);
         AtomicReference<ProductModel> selected = new AtomicReference<>();
+        // set export price
         ac.valueProperty().addListener((obs, oldP, newP) -> {
-            if(newP != null) {
-                System.out.println("Chọn sản phẩm: " + newP.getCode());
-                LocalDateTime exportDate = dateTimePicker.dateTimeProperty().get();
-                if(exportDate == null) {
-                    AlertUtils.alert("Vui lòng chọn ngày xuất trước khi chọn sản phẩm.", "WARNING", "Cảnh báo", "Cảnh báo");
-                    return;
-                }
-                ExportPriceIdAndPrice ep = exportReceiptPresenter.findExportPriceIdAndPriceByProductAndLastTime(newP.getId(), exportDate);
-                if (ep.exportPriceId() == -1) {
-                    AlertUtils.alert("Sản phẩm này không có đơn giá, vui lòng nhập đơn giá cho sản phẩm.", "WARNING", "Cảnh báo", "Không có đơn giá.");
-                    tfUnitPrice.clear();
-                    tfUnitPrice.setUserData(null);
-                    return;
-                }
+            setExportPriceForProduct(newP, tfUnitPrice, tfInventory, selected);
+        });
 
-                tfUnitPrice.setText(String.valueOf(ep.price()));
-                tfUnitPrice.setUserData(ep.exportPriceId());
-
-                LocalDateTime createAtStr = dateTimePicker.dateTimeProperty().get();
-                int academicYear = createAtStr.getYear();
-                int quantityInStock = exportReceiptPresenter.findQuantityInStockByProductIdAndAcademicYear(newP.getId(), academicYear);
-                tfInventory.setText(String.valueOf(quantityInStock));
-                selected.set(newP);
+        dateTimePicker.dateTimeProperty().addListener((obs, oldVal, newVal) -> {
+            if(selected.get() != null) {
+                setExportPriceForProduct(selected.get(), tfUnitPrice, tfInventory, selected);
             }
         });
+
 
         // === Giao diện tổng thể ===
         VBox root = new VBox(20, formColumns, productBox);
@@ -363,7 +354,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         AddCssStyleForBtnUtil.addCssStyleForBtn(saveBtn);
         saveBtn.setOnMouseClicked(e -> {
             try {
-                ExportReceiptPresenter presenter = ExportReceiptPresenter.getInstance();
+//                ExportReceiptPresenter presenter = ExportReceiptPresenter.getInstance();
                 if(dateTimePicker.dateTimeProperty() == null || dateTimePicker.dateTimeProperty().get() == null) {
                     AlertUtils.alert("Vui lòng chọn ngày nhập hàng.", "WARNING", "Cảnh báo", "Thiếu thông tin");
                     return;
@@ -397,13 +388,13 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 if(receiptModelTable == null) {
                     // changeQuantityByProductMap: số lượng sản phẩm thay đổi
                     // changeTotalPriceByProductMap: tổng tiền thay đổi
-                    presenter.save(exportReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
+                    exportReceiptPresenter.save(exportReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
                     AlertUtils.alert("Thêm mới phiếu xuất thành công.", "INFORMATION", "Thành công", "Thành công");
                 }
                 // Cập nhật hóa đơn xuất
                 else {
                     ExportReceiptModel oldExportReceiptModel = ExportReceiptModelTableMapper.INSTANCE.fromViewModelToModel(receiptModelTable);
-                    presenter.updateExportReceipt(exportReceiptModel, oldExportReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
+                    exportReceiptPresenter.updateExportReceipt(exportReceiptModel, oldExportReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
                     AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
                 }
                 ExportReceiptScreen exportReceiptScreen = new ExportReceiptScreen();
@@ -501,5 +492,33 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         int totalQuantity = Integer.parseInt(totalQuantityLabel.getText()) + actualQuantity;
         totalQuantityLabel.setText(totalQuantity + "");
         productTable.refresh();
+    }
+
+    private void setExportPriceForProduct(ProductModel newP, TextField tfUnitPrice, TextField tfInventory, AtomicReference<ProductModel> selected) {
+        if(newP != null) {
+            System.out.println("Chọn sản phẩm: " + newP.getCode());
+            LocalDateTime exportDate = dateTimePicker.dateTimeProperty().get();
+            System.out.println("Ngày xuất: " + exportDate);
+            if(exportDate == null) {
+                AlertUtils.alert("Vui lòng chọn ngày xuất trước khi chọn sản phẩm.", "WARNING", "Cảnh báo", "Cảnh báo");
+                return;
+            }
+            ExportPriceIdAndPrice ep = exportReceiptPresenter.findExportPriceIdAndPriceByProductAndLastTime(newP.getId(), exportDate);
+            if (ep.exportPriceId() == -1) {
+                AlertUtils.alert("Sản phẩm này không có đơn giá, vui lòng nhập đơn giá cho sản phẩm.", "WARNING", "Cảnh báo", "Không có đơn giá.");
+                tfUnitPrice.clear();
+                tfUnitPrice.setUserData(null);
+                return;
+            }
+
+            tfUnitPrice.setText(String.valueOf(ep.price()));
+            tfUnitPrice.setUserData(ep.exportPriceId());
+
+            LocalDateTime createAtStr = dateTimePicker.dateTimeProperty().get();
+            int academicYear = createAtStr.getYear();
+            int quantityInStock = exportReceiptPresenter.findQuantityInStockByProductIdAndAcademicYear(newP.getId(), academicYear);
+            tfInventory.setText(String.valueOf(quantityInStock));
+            selected.set(newP);
+        }
     }
 }

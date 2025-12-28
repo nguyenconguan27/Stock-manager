@@ -420,7 +420,8 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
                 }
                 ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
-                importReceiptScreen.showTable(selectedYear);
+                System.out.println("Select year: " + selectedYear);
+                importReceiptScreen.showTable(LocalDateTime.now().getYear());
                 ScreenNavigator.navigateTo(importReceiptScreen);
             }
             catch (DaoException | StockUnderFlowException exception) {

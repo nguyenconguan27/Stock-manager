@@ -25,6 +25,7 @@ module com.manager.stock.manager_stock {
     requires ch.qos.logback.core;
     requires java.sql;
     requires org.checkerframework.checker.qual;
+    requires google.api.services.drive.v3.rev197;
     opens com.manager.stock.manager_stock to javafx.fxml;
     exports com.manager.stock.manager_stock;
 
