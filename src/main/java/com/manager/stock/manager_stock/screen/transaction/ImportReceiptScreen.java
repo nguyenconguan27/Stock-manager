@@ -26,6 +26,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
@@ -314,6 +315,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
         try {
             this.getStylesheets().add(this.getClass().getResource("/com/manager/stock/manager_stock/css/importReceipt/importReceipt.css").toExternalForm());
             ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
+            year = LocalDate.now().getYear();
             List<ImportReceiptModel> importReceiptModels = presenter.loadImportReceiptList(Optional.of(year));
             List<ImportReceiptModelTable> tableModels = GenericConverterBetweenModelAndTableData.convertToList(
                     importReceiptModels, ImportReceiptModelMapper.INSTANCE::toViewModel

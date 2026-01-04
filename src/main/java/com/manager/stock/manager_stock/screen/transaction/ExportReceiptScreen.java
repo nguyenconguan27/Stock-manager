@@ -31,6 +31,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
@@ -358,6 +359,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
     public void showTable(int year) {
         try {
             this.getStylesheets().add(this.getClass().getResource("/com/manager/stock/manager_stock/css/importReceipt/importReceipt.css").toExternalForm());
+            year = LocalDate.now().getYear();
             ExportReceiptPresenter presenter = ExportReceiptPresenter.getInstance();
             List<ExportReceiptModel> exportReceiptModels = presenter.findAllExportReceipt(Optional.of(year));
             List<ExportReceiptModelTable> tableModels = GenericConverterBetweenModelAndTableData.convertToList(
