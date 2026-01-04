@@ -296,7 +296,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
                     File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
                     if(file == null) return;
                     String outputPath = file.getAbsolutePath();
-                    ExportAll exportService = new ExportAll();
+                    ExportAll exportService = new ExportAll(selectYear);
                     exportService.exportTotal(outputPath);
                     // gọi hàm tạo file xlsx
                     AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),

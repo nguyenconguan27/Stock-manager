@@ -83,7 +83,7 @@ public abstract class BaseAddOrUpdateReceiptScreen<T, D> extends VBox {
                 try {
                     File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
                     String outputPath = file.getAbsolutePath();
-                    ExportAll exportService = new ExportAll();
+                    ExportAll exportService = new ExportAll(selectedYear);
                     exportService.exportTotal(outputPath);
                     // gọi hàm tạo file xlsx
                     AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
@@ -97,7 +97,7 @@ public abstract class BaseAddOrUpdateReceiptScreen<T, D> extends VBox {
 
             @Override
             public void onSelectYear(int year) {
-
+                selectedYear = year;
             }
         });
 

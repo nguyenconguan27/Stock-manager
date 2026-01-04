@@ -15,12 +15,21 @@ import java.util.Map;
 public class ExportAll {
     ReportService reportService = new ReportService();
     int curCol;
-    List<ExportReceiptModel> exports = reportService.getExport(LocalDate.now().getYear());
-    List<ImportReceiptModel> imports = reportService.getImport(LocalDate.now().getYear());
-    List<ReportModel> reportModels = reportService.getData(LocalDate.now().getYear());
+    List<ExportReceiptModel> exports;
+    List<ImportReceiptModel> imports;
+    List<ReportModel> reportModels;
     Workbook workbook = new XSSFWorkbook();
     Sheet sheet = workbook.createSheet("Export");
     Map<String, Integer> receiptPosMap = new HashMap<>();
+
+    int selectedYear;
+
+    public ExportAll(int selectedYear) {
+        this.selectedYear = selectedYear;
+        exports = reportService.getExport(selectedYear);
+        imports = reportService.getImport(selectedYear);
+        reportModels = reportService.getData(selectedYear);
+    }
 
 
     public void exportTotal(String pathFile) {
