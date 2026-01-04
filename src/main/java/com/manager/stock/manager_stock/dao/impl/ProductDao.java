@@ -57,6 +57,10 @@ public class ProductDao extends AbstractDao<ProductModel>{
                 product.setQuantity(now.quantity());
             }
             QuantityAndTotal start = getQuantityAndTotal(product, year - 1);
+            if(start == null) {
+                year -= 1;
+                start = getQuantityAndTotal(product, year - 1);
+            }
             product.setStartSemQ(start.quantity());
             product.setStartSemT(start.total());
             if(now == null) {
