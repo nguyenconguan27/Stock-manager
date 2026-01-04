@@ -36,7 +36,7 @@ public class CreateTopBarOfReceiptUtil {
 
         int currentYear = Year.now().getValue();
 
-        for (int y = currentYear - 20; y <= currentYear + 10; y++) {
+        for (int y = 2025; y <= currentYear; y++) {
             cbYear.getItems().add(String.valueOf(y));
         }
 
