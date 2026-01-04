@@ -121,4 +121,11 @@ public class FormatMoney {
         }
     }
 
+    public static int parseMoneyToInt(String value) {
+        return Integer.parseInt(
+                value.replace(".", "")
+                        .replaceAll("\\D", "")
+        );
+    }
+
 }

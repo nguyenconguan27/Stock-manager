@@ -231,7 +231,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
                     File file = ChoosesFolderOutput.choosesFolderFile("Phieu_nhap");
                     if(file == null) return;
                     String outputPath = file.getAbsolutePath();
-                    ReceiptReportService.printAllImportReceipt(outputPath, 2025);
+                    ReceiptReportService.printAllImportReceipt(outputPath, selectedYear);
                     // gọi hàm tạo file xlsx
                     AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
                             "INFORMATION", "Thành công", "Xuất dữ liệu");

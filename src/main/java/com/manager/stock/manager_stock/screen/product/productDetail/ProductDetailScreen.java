@@ -278,7 +278,7 @@ public class ProductDetailScreen extends VBox {
             newProduct.setName(tfName.getText());
             newProduct.setQuantity(Integer.parseInt(tfQuantity.getText()));
             newProduct.setUnit(tfUnit.getText());
-            newProduct.setUnitPrice(Integer.parseInt(tfUnitPrice.getText()));
+            newProduct.setUnitPrice(FormatMoney.parseMoneyToInt(tfUnitPrice.getText()));
             newProduct.setQuantity(Integer.parseInt(tfQuantity.getText()));
             newProduct.setGroupId(comboBox.getSelectionModel().getSelectedItem().getId());
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -296,12 +296,12 @@ public class ProductDetailScreen extends VBox {
             }
             else {
                 newProduct.setId(productData.getId());
-//                if(productByCode == null) {
-//                    productDetailPresenter.update(newProduct, groupId, false);
-//                }
-//                else {
+                if(productByCode == null) {
                     productDetailPresenter.update(newProduct, groupId, true);
-//                }
+                }
+                else {
+                    productDetailPresenter.update(newProduct, groupId, false);
+                }
                 alert.setContentText("Sửa vật tư thành công!");
             }
             updateData(newProduct);
@@ -554,10 +554,10 @@ public class ProductDetailScreen extends VBox {
         comboBox.getSelectionModel().select(productGroup);
         tfId.setText(productData.getCode());
         tfName.setText(productData.getName());
-//        tfQuantity.setText(productData.getQuantity() + "");
+        tfQuantity.setText(productData.getQuantity() + "");
         tfUnit.setText(productData.getUnit());
-//        tfUnitPrice.setText(productData.getUnitPrice() + "");
-//        tfTotal.setText(FormatMoney.format(productData.getUnitPrice() * productData.getQuantity())+ "");
+        tfUnitPrice.setText(productData.getUnitPrice() + "");
+        tfTotal.setText(FormatMoney.format(productData.getUnitPrice() * productData.getQuantity())+ "");
     }
 
     public static double parseViCurrency(String s) {
