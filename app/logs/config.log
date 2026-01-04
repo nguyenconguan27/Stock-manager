@@ -1,2 +1,10 @@
 2026-01-05 00:31:07.649 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
 2026-01-05 00:31:07.654 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-01-05 00:34:39.978 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-01-05 00:34:39.979 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-01-05 00:42:39.592 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-01-05 00:42:39.593 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-01-05 00:43:42.559 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-01-05 00:43:42.560 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-01-05 00:45:08.819 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-01-05 00:45:08.819 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!

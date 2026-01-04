@@ -47,6 +47,7 @@ public class ProductScreen extends VBox {
     private final ProductGroupPresenter productGroupPresenter;
     private TextField tfGroupName;
     private ProductGroup currentProductGroup;
+    private int selectedYear;
 
     private void createPagination() {
         pagination = new Pagination();
@@ -146,17 +147,18 @@ public class ProductScreen extends VBox {
 
             @Override
             public void onSelectYear(int year) {
+                selectedYear = year;
             }
 
             @Override
             public void onExportAll() {
                 try {
                     File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
-                    if(file == null) {
+                    if (file == null) {
                         return;
                     }
                     String outputPath = file.getAbsolutePath();
-                    ExportAll exportService = new ExportAll();
+                    ExportAll exportService = new ExportAll(selectedYear);
                     exportService.exportTotal(outputPath);
                     // gọi hàm tạo file xlsx
                     AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),

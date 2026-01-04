@@ -43,6 +43,7 @@ public class ProductDetailScreen extends VBox {
 
     TextField tfId, tfQuantity, tfName, tfUnit, tfUnitPrice, tfTotal;
     Button btnSave, btnCancel;
+    private int selectedYear;
 
     private void initProductGroup() {
         comboBox = new ComboBox<>();
@@ -296,12 +297,12 @@ public class ProductDetailScreen extends VBox {
             }
             else {
                 newProduct.setId(productData.getId());
-                if(productByCode == null) {
-                    productDetailPresenter.update(newProduct, groupId, true);
-                }
-                else {
-                    productDetailPresenter.update(newProduct, groupId, false);
-                }
+//                if(productByCode == null) {
+                productDetailPresenter.update(newProduct, groupId, true);
+//                }
+//                else {
+//                    productDetailPresenter.update(newProduct, groupId, false);
+//                }
                 alert.setContentText("Sửa vật tư thành công!");
             }
             updateData(newProduct);
@@ -503,7 +504,7 @@ public class ProductDetailScreen extends VBox {
                     File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
                     if(file == null) return;
                     String outputPath = file.getAbsolutePath();
-                    ExportAll exportService = new ExportAll();
+                    ExportAll exportService = new ExportAll(selectedYear);
                     exportService.exportTotal(outputPath);
                     // gọi hàm tạo file xlsx
                     AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
@@ -517,7 +518,7 @@ public class ProductDetailScreen extends VBox {
 
             @Override
             public void onSelectYear(int year) {
-
+                selectedYear = year;
             }
         });
         VBox.setVgrow(this, Priority.ALWAYS);

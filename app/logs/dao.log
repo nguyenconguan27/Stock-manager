@@ -1,1 +1,8 @@
 2026-01-05 00:31:11.746 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2026-01-05 00:34:43.626 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2026-01-05 00:42:43.472 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2026-01-05 00:42:49.285 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ProductDao - UPDATE product SET name = ?, unit = ?, group_id = ? WHERE id = ?
+2026-01-05 00:43:46.801 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2026-01-05 00:44:04.799 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ProductDao - UPDATE product SET name = ?, unit = ?, group_id = ? WHERE id = ?
+2026-01-05 00:45:12.820 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2026-01-05 00:45:27.008 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ProductDao - UPDATE product SET code = ?, name = ?, unit = ?, group_id = ? WHERE id = ?
