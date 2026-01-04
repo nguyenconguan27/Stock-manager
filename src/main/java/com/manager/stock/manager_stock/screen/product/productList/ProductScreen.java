@@ -18,6 +18,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -155,7 +156,8 @@ public class ProductScreen extends VBox {
                         return;
                     }
                     String outputPath = file.getAbsolutePath();
-                    ExportAll.exportTotal(outputPath);
+                    ExportAll exportService = new ExportAll();
+                    exportService.exportTotal(outputPath);
                     // gọi hàm tạo file xlsx
                     AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
                             "INFORMATION", "Thành công", "Xuất dữ liệu");

@@ -13,17 +13,17 @@ import java.util.List;
 import java.util.Map;
 
 public class ExportAll {
-    static ReportService reportService = new ReportService();
-    static int curCol;
-    static List<ExportReceiptModel> exports = reportService.getExport(LocalDate.now().getYear());
-    static List<ImportReceiptModel> imports = reportService.getImport(LocalDate.now().getYear());
-    static List<ReportModel> reportModels = reportService.getData(LocalDate.now().getYear());
-    static Workbook workbook = new XSSFWorkbook();
-    static Sheet sheet = workbook.createSheet("Export");
-    static Map<String, Integer> receiptPosMap = new HashMap<>();
+    ReportService reportService = new ReportService();
+    int curCol;
+    List<ExportReceiptModel> exports = reportService.getExport(LocalDate.now().getYear());
+    List<ImportReceiptModel> imports = reportService.getImport(LocalDate.now().getYear());
+    List<ReportModel> reportModels = reportService.getData(LocalDate.now().getYear());
+    Workbook workbook = new XSSFWorkbook();
+    Sheet sheet = workbook.createSheet("Export");
+    Map<String, Integer> receiptPosMap = new HashMap<>();
 
 
-    public static void exportTotal(String pathFile) {
+    public void exportTotal(String pathFile) {
         createTitleRow();
         fillData();
         try (FileOutputStream fos = new FileOutputStream(pathFile)) {
@@ -33,7 +33,7 @@ public class ExportAll {
         }
     }
 
-    static void setBorder(int sr, int er, int sc, int ec, CellStyle style) {
+    void setBorder(int sr, int er, int sc, int ec, CellStyle style) {
         for (int i = sr; i <= er; i++) {
             Row row = sheet.getRow(i);
             for (int j = sc; j <= ec; j++) {
@@ -46,7 +46,7 @@ public class ExportAll {
         }
     }
 
-    static void infoProductCol(int r, int c, String title) {
+    void infoProductCol(int r, int c, String title) {
         Row row = sheet.getRow(r);
         Cell cellTT = row.createCell(c);
         cellTT.setCellValue(title);
@@ -55,7 +55,7 @@ public class ExportAll {
         mergeSafe(sheet, r, r + 1, c, c);
     }
 
-    private static void mergeSafe(Sheet sheet, int firstRow, int lastRow, int firstCol, int lastCol) {
+    private void mergeSafe(Sheet sheet, int firstRow, int lastRow, int firstCol, int lastCol) {
         CellRangeAddress newRegion = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
 
         for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
@@ -68,7 +68,7 @@ public class ExportAll {
     }
 
 
-    static void detailCol(int r, int c, String title) {
+    void detailCol(int r, int c, String title) {
         Row row = sheet.getRow(r);
         Cell titleCell = row.createCell(c);
         titleCell.setCellValue(title);
@@ -84,7 +84,7 @@ public class ExportAll {
         tCol.setCellValue("TT");
     }
 
-    static void createTitleRow() {
+    void createTitleRow() {
         int rTemp = 4;
         int cTemp = 0;
         sheet.createRow(4);
@@ -134,7 +134,7 @@ public class ExportAll {
         setBorder(rTemp, rTemp + 1, 0, curCol, style);
     }
 
-    static void fillDetailData(int r, int c, ReportModel.ReportDetail data) {
+    void fillDetailData(int r, int c, ReportModel.ReportDetail data) {
         Row row = sheet.getRow(r);
         Cell qCol = row.createCell(c);
         Cell pCol = row.createCell(c + 1);
@@ -145,7 +145,7 @@ public class ExportAll {
         tCol.setCellValue(data.getTotal());
     }
 
-    static void fillData() {
+    void fillData() {
         int r = 6;
         int ord = 1;
         CellStyle style = workbook.createCellStyle();
@@ -218,7 +218,7 @@ public class ExportAll {
         }
     }
 
-    private static boolean isMergedRegionExists(Sheet sheet, int firstRow, int lastRow, int firstCol, int lastCol) {
+    private boolean isMergedRegionExists(Sheet sheet, int firstRow, int lastRow, int firstCol, int lastCol) {
         for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
             CellRangeAddress region = sheet.getMergedRegion(i);
             if (region.getFirstRow() == firstRow &&

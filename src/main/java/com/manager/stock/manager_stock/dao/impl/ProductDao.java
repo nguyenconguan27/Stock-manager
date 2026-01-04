@@ -32,9 +32,10 @@ public class ProductDao extends AbstractDao<ProductModel>{
         String sqlQuantity = "select inv.quantity, inv.total_price from inventory_detail as inv " +
                 "inner join product as p on p.id = inv.product_id " +
                 "where p.id = ? and inv.academic_year = ? order by inv.academic_year desc limit 1";
-        List<QuantityAndTotal> quantityAndTotal = query(sqlQuantity, rs -> new QuantityAndTotal(rs.getInt("quantity"),
+        List<QuantityAndTotal> quantityAndTotal = query(sqlQuantity, rs ->
+                new QuantityAndTotal(rs.getInt("quantity"),
                 rs.getInt("total_price")), product.getId(), year);
-        return quantityAndTotal.isEmpty() ? new QuantityAndTotal(0, 0) : quantityAndTotal.get(0);
+        return quantityAndTotal.isEmpty() ? null : quantityAndTotal.get(0);
     }
 
     public int getPrice(ProductModel product) {
@@ -51,11 +52,17 @@ public class ProductDao extends AbstractDao<ProductModel>{
         List<ProductModel> productList  = query(sqlProduct, new ProductMapperResultSet(), id);
         for(ProductModel product: productList) {
             QuantityAndTotal now = getQuantityAndTotal(product, year);
-            product.setTotal(now.total());
-            product.setQuantity(now.quantity());
+            if(now != null) {
+                product.setTotal(now.total());
+                product.setQuantity(now.quantity());
+            }
             QuantityAndTotal start = getQuantityAndTotal(product, year - 1);
             product.setStartSemQ(start.quantity());
             product.setStartSemT(start.total());
+            if(now == null) {
+                product.setTotal(start.total());
+                product.setQuantity(start.quantity());
+            }
             product.setUnitPrice(getPrice(product));
         }
         return productList;
@@ -82,13 +89,18 @@ public class ProductDao extends AbstractDao<ProductModel>{
 
     public List<ProductModel> getAll() {
         int year = LocalDate.now().getYear();
-        String sqlProduct = "select p.id, p.code, p.name, p.group_id from product as p";
+        String sqlProduct = "select p.id, p.code, p.name, p.unit, p.group_id from product as p";
         List<ProductModel> productList = query(sqlProduct, new ProductMapperResultSet());
         for(ProductModel product: productList) {
             QuantityAndTotal now = getQuantityAndTotal(product, year);
-            product.setTotal(now.total());
-            product.setQuantity(now.quantity());
             QuantityAndTotal start = getQuantityAndTotal(product, year - 1);
+            if(now != null) {
+                product.setTotal(now.total());
+                product.setQuantity(now.quantity());
+            } else {
+                product.setTotal(start.total());
+                product.setQuantity(start.quantity());
+            }
             product.setStartSemQ(start.quantity());
             product.setStartSemT(start.total());
             product.setUnitPrice(getPrice(product));

@@ -500,7 +500,8 @@ public class ProductDetailScreen extends VBox {
                     File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
                     if(file == null) return;
                     String outputPath = file.getAbsolutePath();
-                    ExportAll.exportTotal(outputPath);
+                    ExportAll exportService = new ExportAll();
+                    exportService.exportTotal(outputPath);
                     // gọi hàm tạo file xlsx
                     AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
                             "INFORMATION", "Thành công", "Xuất dữ liệu");
