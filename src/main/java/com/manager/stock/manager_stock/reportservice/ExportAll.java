@@ -22,10 +22,6 @@ public class ExportAll {
     Sheet sheet = workbook.createSheet("Export");
     Map<String, Integer> receiptPosMap = new HashMap<>();
 
-    public ExportAll(int selectedYear) {
-
-    }
-
     public void exportTotal(String pathFile) {
         createTitleRow();
         fillData();
