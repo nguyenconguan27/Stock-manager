@@ -200,5 +200,4 @@ public class ProductDao extends AbstractDao<ProductModel>{
         save(sql, parameters);
         return p;
     }
-
 }

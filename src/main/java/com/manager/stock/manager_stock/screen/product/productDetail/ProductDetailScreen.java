@@ -296,16 +296,19 @@ public class ProductDetailScreen extends VBox {
             }
             else {
                 newProduct.setId(productData.getId());
-                if(productByCode == null) {
-                    productDetailPresenter.update(newProduct, groupId, false);
-                }
-                else {
+//                if(productByCode == null) {
+//                    productDetailPresenter.update(newProduct, groupId, false);
+//                }
+//                else {
                     productDetailPresenter.update(newProduct, groupId, true);
-                }
+//                }
                 alert.setContentText("Sửa vật tư thành công!");
             }
             updateData(newProduct);
             alert.showAndWait();
+            ProductScreen productScreen = new ProductScreen();
+            productScreen.showProducts();
+            ScreenNavigator.navigateTo(productScreen);
         });
 
         btnCancel = new Button("Cancel");
@@ -551,10 +554,10 @@ public class ProductDetailScreen extends VBox {
         comboBox.getSelectionModel().select(productGroup);
         tfId.setText(productData.getCode());
         tfName.setText(productData.getName());
-        tfQuantity.setText(productData.getQuantity() + "");
+//        tfQuantity.setText(productData.getQuantity() + "");
         tfUnit.setText(productData.getUnit());
-        tfUnitPrice.setText(productData.getUnitPrice() + "");
-        tfTotal.setText(FormatMoney.format(productData.getUnitPrice() * productData.getQuantity())+ "");
+//        tfUnitPrice.setText(productData.getUnitPrice() + "");
+//        tfTotal.setText(FormatMoney.format(productData.getUnitPrice() * productData.getQuantity())+ "");
     }
 
     public static double parseViCurrency(String s) {
