@@ -422,7 +422,10 @@ public class ExportReceiptPresenter {
             List<Long> exportReceiptIds = new ArrayList<>();
             exportReceiptIds.add(exportReceiptModel.getId());
             exportReceiptService.deleteByIds(exportReceiptIds);
-
+            List<Long> exportReceiptDetailIds = exportReceiptDetailModels.stream().map(exportReceiptDetailModel -> exportReceiptDetailModel.getId())
+                    .collect(Collectors.toList());
+            exportReceiptDetailService.delete(exportReceiptDetailIds);
+            exportReceiptService.commit();
             return true;
         } catch (Exception e) {
             exportReceiptService.rollback();

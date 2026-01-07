@@ -365,9 +365,8 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
             List<ExportReceiptModelTable> tableModels = GenericConverterBetweenModelAndTableData.convertToList(
                     exportReceiptModels, ExportReceiptModelTableMapper.INSTANCE::toViewModel
             );
-            for(ExportReceiptModelTable table : tableModels) {
-            }
             setReceiptData(tableModels);
+            productData.clear();
         }
         catch (DaoException e) {
             AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi", "Lỗi khi load dữ liệu.");
