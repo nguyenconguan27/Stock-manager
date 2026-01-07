@@ -55,7 +55,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         tfInvoiceNumber = new TextField();
         leftForm.add(tfInvoiceNumber, 1, 1);
 
-        leftForm.add(new Label("Mã hóa đơn *"), 0, 2);
+        leftForm.add(new Label("Số phiếu nhập kho *"), 0, 2);
         tfInvoice = new TextField();
         leftForm.add(tfInvoice, 1, 2);
 
@@ -387,7 +387,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 AlertUtils.alert("Vui lòng nhập số hóa đơn.", "WARNING", "Cảnh báo", "Thiếu thông tin");
                 return;
             }
-            if(invoice.isEmpty()) {AlertUtils.alert("Vui lòng nhập mã hóa đơn.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
+            if(invoice.isEmpty()) {AlertUtils.alert("Vui lòng nhập số phiếu nhập kho.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
             ImportReceiptModel importReceiptModel = new ImportReceiptModel (
                     oldImportReceiptModelTable != null ? oldImportReceiptModelTable.getId() : null,
                     invoiceNumber,

@@ -222,7 +222,7 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
                 "    and DB.PRODUCT.id = ?\n" +
                 "    and CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) < CAST(PARSEDATETIME(?, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP);";
 
-        List<Long> totalPrices = query(sql, rs -> rs.getLong("TOTAL_PRICE"), exportPriceTime, formatter.format(startDate), productId, formatter.format(endDate));
+        List<Long> totalPrices = query(sql, rs -> rs.getLong("TOTAL_PRICE"), exportPriceTime, formatter.format(startDate), productId, formatter.format(endDate == null ? LocalDateTime.now().plusYears(100) : endDate));
         if(totalPrices.isEmpty()){
             return -1;
         }

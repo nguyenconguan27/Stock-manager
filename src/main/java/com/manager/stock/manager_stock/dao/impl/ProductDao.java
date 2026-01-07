@@ -82,8 +82,10 @@ public class ProductDao extends AbstractDao<ProductModel>{
                 "where p.id = ? order by inv.academic_year desc limit 1";
         List<ProductModel> productList  = query(sqlProduct, new ProductMapperResultSet(), "%" + text.toLowerCase() + "%");
         for(ProductModel product: productList) {
-            int price = query(sqlPrice, rs -> rs.getInt("export_price"), product.getId()).get(0);
-            int quantity = query(sqlQuantity, rs -> rs.getInt("quantity"), product.getId()).get(0);
+            List<Integer> pricesTmp = query(sqlPrice, rs -> rs.getInt("export_price"), product.getId());
+            List<Integer> quantitiesTmp = query(sqlQuantity, rs -> rs.getInt("quantity"), product.getId());
+            int price = pricesTmp.isEmpty() ? 0 : pricesTmp.get(0);
+            int quantity = quantitiesTmp.isEmpty() ? 0 : quantitiesTmp.get(0);
             product.setUnitPrice(price);
             product.setQuantity(quantity);
         }
@@ -102,6 +104,11 @@ public class ProductDao extends AbstractDao<ProductModel>{
                 start = getQuantityAndTotal(product, year - 1);
             }
             QuantityAndTotal now = getQuantityAndTotal(product, year);
+            if(start == null) {
+                start = new QuantityAndTotal(
+                        0, 0
+                );
+            }
             if(now != null) {
                 product.setTotal(now.total());
                 product.setQuantity(now.quantity());

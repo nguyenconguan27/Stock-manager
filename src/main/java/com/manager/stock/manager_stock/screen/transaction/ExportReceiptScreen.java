@@ -359,7 +359,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
     public void showTable(int year) {
         try {
             this.getStylesheets().add(this.getClass().getResource("/com/manager/stock/manager_stock/css/importReceipt/importReceipt.css").toExternalForm());
-            year = LocalDate.now().getYear();
+            if(year <= 0) year = LocalDate.now().getYear();
             ExportReceiptPresenter presenter = ExportReceiptPresenter.getInstance();
             List<ExportReceiptModel> exportReceiptModels = presenter.findAllExportReceipt(Optional.of(year));
             List<ExportReceiptModelTable> tableModels = GenericConverterBetweenModelAndTableData.convertToList(

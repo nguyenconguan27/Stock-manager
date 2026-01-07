@@ -14,7 +14,7 @@ public class ExportPriceModel {
     private double totalPriceInStock;
     private int quantityImported;
     private double totalImportPrice;
-    private long importReceiptId;
+    private Long importReceiptId;
 
     public ExportPriceModel() {
     }
@@ -94,11 +94,11 @@ public class ExportPriceModel {
         this.totalPriceInStock = totalPriceInStock;
     }
 
-    public long getImportReceiptId() {
+    public Long getImportReceiptId() {
         return importReceiptId;
     }
 
-    public void setImportReceiptId(long importReceiptId) {
+    public void setImportReceiptId(Long importReceiptId) {
         this.importReceiptId = importReceiptId;
     }
 }

@@ -687,7 +687,10 @@ public class ImportReceiptPresenter {
                     if(i > 0) {
                         totalQuantityByImportDate -= importReceiptDetailModel.getActualQuantity();
                     }
+                    if(totalQuantityByImportDate < 0) continue;
                     long totalQuantityExportBetweenImportDates = exportReceiptDetailService.calculateActualQuantityByProductBetweenImportDates(importDatesInRange.get(i), importDatesInRange.get(i+1), productId);
+                    System.out.println(totalQuantityExportBetweenImportDates);
+                    System.out.println(totalQuantityByImportDate);
                     if(totalQuantityExportBetweenImportDates > totalQuantityByImportDate) {
                         throw new DaoException(String.format("Số lượng xuất từ ngày %s đến ngày %s lớn hơn số lượng tồn kho tại thời điểm %s", formatter.format(importDatesInRange.get(i)), formatter.format(importDatesInRange.get(i+1)), formatter.format(importDatesInRange.get(i))));
                     }
@@ -751,6 +754,8 @@ public class ImportReceiptPresenter {
                 long totalQuantityImported = importReceiptDetailService.calculateTotalQuantityImportedByProduct(productId, beforeOldDayExportPriceInfo.exportTime(), newImportDate, oldImportDate);
                 double totalPriceChanged = totalPriceAfterUpdate - totalPriceImported;
                 long totalQuantityChanged = totalQuantityExported - totalQuantityImported;
+                // nếu totalPriceImported == 0: tức không có phiếu nhập nào ==> không cần cập nhật lại đơn giá
+                if(totalPriceImported <= 0) continue;
                 // cập nhật lại đơn giá cho đơn giá đang chỉnh sửa
                 exportPriceService.updateExportPriceAfterImportCorrectionByProductIdAndImportDate(totalPriceChanged, totalQuantityChanged, oldImportDate, productId);
             }

@@ -2,6 +2,7 @@ package com.manager.stock.manager_stock.screen.product.productDetail;
 
 import com.almasb.fxgl.physics.box2d.dynamics.joints.LimitState;
 import com.manager.stock.manager_stock.exception.DaoException;
+import com.manager.stock.manager_stock.model.ExportPriceModel;
 import com.manager.stock.manager_stock.model.ProductModel;
 import com.manager.stock.manager_stock.model.dto.ExportPriceAndProductCodeAndProductName;
 import com.manager.stock.manager_stock.model.dto.ProductIdAndActualQuantityAndTotalPriceOfReceipt;
@@ -14,6 +15,7 @@ import com.manager.stock.manager_stock.service.impl.ExportPriceServiceImpl;
 import com.manager.stock.manager_stock.service.impl.InventoryDetailServiceImpl;
 import com.manager.stock.manager_stock.service.impl.ProductServiceImpl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ProductDetailPresenter {
@@ -42,6 +44,14 @@ public class ProductDetailPresenter {
 
     public void add(ProductModel productModel, long groupId) {
         productService.add(productModel, groupId);
+        // thêm mới sản phẩm ==> tồn kho = 0
+//        inventoryDetailService.save();
+        // thêm mới tồn kho + đơn giá
+        ExportPriceModel exportPriceModel = new ExportPriceModel(
+                System.currentTimeMillis(), productModel.getId(),
+                LocalDateTime.now().minusYears(3), 0, 0, -1, -1,0);
+        exportPriceModel.setImportReceiptId(null);
+        exportPriceService.save(exportPriceModel);
         productService.commit();
     }
 

@@ -132,15 +132,37 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
 
     @Override
     public void updateExportPriceAfterImportCorrectionByProductIdAndImportDate(double totalPriceChanged, long totalQuantityChange, LocalDateTime oldImportDate, long productId) throws DaoException {
-        String sql = "update DB.EXPORT_PRICE \n" +
-                "set DB.EXPORT_PRICE.EXPORT_PRICE = (DB.EXPORT_PRICE.TOTAL_PRICE_IN_STOCK - ? + DB.EXPORT_PRICE.TOTAL_PRICE_IMPORT ) / (DB.EXPORT_PRICE.QUANTITY_IN_STOCK - ? + DB.EXPORT_PRICE.QUANTITY_IMPORTED),\n" +
-                "DB.EXPORT_PRICE.QUANTITY_IN_STOCK = DB.EXPORT_PRICE.QUANTITY_IN_STOCK - ?,\n" +
-                "DB.EXPORT_PRICE.TOTAL_PRICE_IN_STOCK = DB.EXPORT_PRICE.TOTAL_PRICE_IN_STOCK - ?\n" +
-                "WHERE DB.EXPORT_PRICE.EXPORT_TIME = ? \n" +
-                "AND DB.EXPORT_PRICE.PRODUCT_ID = ?;";
+        String sql = """
+                    UPDATE DB.EXPORT_PRICE
+                    SET\s
+                        DB.EXPORT_PRICE.EXPORT_PRICE = ROUND(
+                            (
+                                DB.EXPORT_PRICE.TOTAL_PRICE_IN_STOCK\s
+                                - ?\s
+                                + DB.EXPORT_PRICE.TOTAL_PRICE_IMPORT
+                            )\s
+                            /
+                            NULLIF(
+                                DB.EXPORT_PRICE.QUANTITY_IN_STOCK\s
+                                - ?\s
+                                + DB.EXPORT_PRICE.QUANTITY_IMPORTED,
+                                0
+                            )
+                        , 2),
+                
+                        DB.EXPORT_PRICE.QUANTITY_IN_STOCK =
+                            DB.EXPORT_PRICE.QUANTITY_IN_STOCK - ?,
+                
+                        DB.EXPORT_PRICE.TOTAL_PRICE_IN_STOCK =
+                            DB.EXPORT_PRICE.TOTAL_PRICE_IN_STOCK - ?
+                
+                    WHERE DB.EXPORT_PRICE.EXPORT_TIME = ?
+                      AND DB.EXPORT_PRICE.PRODUCT_ID = ?;
+                """;
         List<Object[]> parameters = new ArrayList<>();
         parameters.add(new Object[] {
-                totalPriceChanged, totalQuantityChange, totalQuantityChange, totalPriceChanged, oldImportDate, productId
+                totalPriceChanged, totalQuantityChange, totalQuantityChange,
+                totalPriceChanged, oldImportDate, productId
         });
         save(sql, parameters);
     }
@@ -355,12 +377,16 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
 
     @Override
     public void updateExportPriceByImportTimeAndProduct(long newQuantityInStock, double newTotalPriceInStock, LocalDateTime importDateTime, long productId) throws DaoException{
-        String sql = "update DB.EXPORT_PRICE set\n" +
+        String sql = "UPDATE DB.EXPORT_PRICE SET\n" +
                 "DB.EXPORT_PRICE.QUANTITY_IN_STOCK = ?,\n" +
                 "TOTAL_PRICE_IN_STOCK = ?,\n" +
-                "EXPORT_PRICE = (DB.EXPORT_PRICE.TOTAL_PRICE_IMPORT  + ?) / (DB.EXPORT_PRICE.QUANTITY_IMPORTED + ?)\n" +
-                "where DB.EXPORT_PRICE.EXPORT_TIME = ?\n" +
-                "and DB.EXPORT_PRICE.PRODUCT_ID = ?;";
+                "EXPORT_PRICE = ROUND(\n" +
+                "   (DB.EXPORT_PRICE.TOTAL_PRICE_IMPORT + ?)\n" +
+                "   /\n" +
+                "   NULLIF(DB.EXPORT_PRICE.QUANTITY_IMPORTED + ?, 0)\n" +
+                ", 2)\n" +
+                "WHERE DB.EXPORT_PRICE.EXPORT_TIME = ?\n" +
+                "AND DB.EXPORT_PRICE.PRODUCT_ID = ?;";;
         List<Object[]> parameters = new ArrayList<>();
         parameters.add(new Object[]{
                 newQuantityInStock,

@@ -66,7 +66,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         dateTimePicker = new DateTimePicker(LocalDateTime.now(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
         leftForm.add(dateTimePicker, 1, 0);
 
-        leftForm.add(new Label("Mã hóa đơn *"), 0, 1);
+        leftForm.add(new Label("Số phiếu xuất kho *"), 0, 1);
         tfInvoiceNumber = new TextField();
         leftForm.add(tfInvoiceNumber, 1, 1);
 
