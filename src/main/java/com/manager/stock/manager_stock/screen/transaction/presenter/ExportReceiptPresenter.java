@@ -243,7 +243,7 @@ public class ExportReceiptPresenter {
             return;
         nextExportPrice.setQuantityInStock(preExportPrice.getQuantityInStock() + preExportPrice.getQuantityImported() - totalQuanExported);
         nextExportPrice.setTotalPriceInStock((preExportPrice.getQuantityInStock() + preExportPrice.getQuantityImported() - totalQuanExported) * preExportPrice.getExportPrice());
-        nextExportPrice.setExportPrice((nextExportPrice.getTotalPriceInStock() + nextExportPrice.getTotalImportPrice()) / (nextExportPrice.getQuantityImported() + nextExportPrice.getQuantityInStock()));
+        nextExportPrice.setExportPrice(Math.round(nextExportPrice.getTotalPriceInStock() + nextExportPrice.getTotalImportPrice()) / (nextExportPrice.getQuantityImported() + nextExportPrice.getQuantityInStock()));
     }
 
 
