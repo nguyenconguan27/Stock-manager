@@ -273,6 +273,17 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
     }
 
     @Override
+    public List<ExportReceiptDetailModel> findAllByProductIdAndOrderByExportDateAsc(long productId) {
+        String sql = """
+                    select DB.EXPORT_RECEIPT_DETAIL.*, DB.EXPORT_RECEIPT.CREATE_AT from DB.EXPORT_RECEIPT_DETAIL
+                       join DB.EXPORT_RECEIPT on DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID = DB.EXPORT_RECEIPT.ID
+                       WHERE DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID = ?
+                       ORDER BY CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) ASC;
+                """;
+        return query(sql, new ExportReceiptDetailMapperResultSet(), productId);
+    }
+
+    @Override
     public long calculateActualQuantityByProductBetweenImportDates(LocalDateTime startDate, LocalDateTime endDate, long productId) {
         String sql =
                 "SELECT sum(DB.EXPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY ) as total_quantity  FROM DB.EXPORT_RECEIPT_DETAIL \n" +

@@ -5,11 +5,15 @@ import com.manager.stock.manager_stock.model.ExportReceiptDetailModel;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author Trọng Hướng
  */
 public class ExportReceiptDetailMapperResultSet implements RowMapper<ExportReceiptDetailModel> {
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+    private final DateTimeFormatter dbFmt =  DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     @Override
     public ExportReceiptDetailModel mapRow(ResultSet resultSet) throws SQLException {
         ResultSetMetaData metaData = resultSet.getMetaData();
@@ -50,6 +54,11 @@ public class ExportReceiptDetailMapperResultSet implements RowMapper<ExportRecei
                     break;
                 case "export_price_id":
                     exportReceiptDetailModel.setExportPriceId(resultSet.getLong(columnName));
+                    break;
+                case "create_at":
+                    LocalDateTime exportDate = LocalDateTime.parse(resultSet.getString(columnName), formatter);
+                    exportReceiptDetailModel.setExportDate(LocalDateTime.parse(exportDate.format(dbFmt)));
+                    break;
             }
         }
         exportReceiptDetailModel.setTotalPrice(exportReceiptDetailModel.getActualQuantity() * exportReceiptDetailModel.getOriginalUnitPrice());

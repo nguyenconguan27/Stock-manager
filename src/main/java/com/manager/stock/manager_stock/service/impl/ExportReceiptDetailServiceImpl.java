@@ -4,6 +4,7 @@ import com.manager.stock.manager_stock.dao.IExportReceiptDetailDao;
 import com.manager.stock.manager_stock.dao.impl.ExportReceiptDetailDaoImpl;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.model.ExportReceiptDetailModel;
+import com.manager.stock.manager_stock.model.ProductModel;
 import com.manager.stock.manager_stock.service.IExportReceiptDetailService;
 
 import java.net.DatagramPacket;
@@ -95,5 +96,10 @@ public class ExportReceiptDetailServiceImpl implements IExportReceiptDetailServi
     @Override
     public long calculateTotalQuantityByProductAndTimeRange(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId) {
         return exportReceiptDetailDao.calculateTotalQuantityByProductAndTimeRange(exportPriceTime, startDate, endDate, productId);
+    }
+
+    @Override
+    public List<ExportReceiptDetailModel> findAllByProduct(long productId) {
+        return exportReceiptDetailDao.findAllByExPortReceipt(productId);
     }
 }

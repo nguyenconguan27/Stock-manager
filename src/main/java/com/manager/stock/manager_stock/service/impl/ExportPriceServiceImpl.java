@@ -169,6 +169,11 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     }
 
     @Override
+    public List<ExportPriceModel> findAllExportPriceByProductAndOrderByAsc(long productId) {
+        return exportPriceDao.findAllByProductIdAndAfterTime(productId, LocalDateTime.now().minusYears(100));
+    }
+
+    @Override
     public void updateExportPriceByImportTimeAndProduct(long newQuantityInStock, double newTotalPriceInStock, LocalDateTime importDateTime, long productId) throws DaoException{
         exportPriceDao.updateExportPriceByImportTimeAndProduct(newQuantityInStock, newTotalPriceInStock, importDateTime, productId);
     }

@@ -42,6 +42,7 @@ public interface IExportPriceService {
     List<LocalDateTime> findAllExportTimeByProductAndBetweenImportDates(LocalDateTime startDate, LocalDateTime endDate, LocalDateTime importDate, long productId);
     List<LocalDateTime> findAllExportTimeByProductAndMoreThanImportDate(LocalDateTime startDate, LocalDateTime importDate, long productId);
     long calculateTotalQuantityImportAndQuantityInStockByImportDateAndProduct(long productId, LocalDateTime importDate);
+    List<ExportPriceModel> findAllExportPriceByProductAndOrderByAsc(long productId);
     void commit();
     void rollback();
 }

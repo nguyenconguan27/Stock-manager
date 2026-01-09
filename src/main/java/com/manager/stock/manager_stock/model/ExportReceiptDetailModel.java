@@ -1,5 +1,7 @@
 package com.manager.stock.manager_stock.model;
 
+import java.time.LocalDateTime;
+
 /**
  * @author Trọng Hướng
  */
@@ -16,6 +18,7 @@ public class ExportReceiptDetailModel {
     private long exportPriceId;
     private double originalUnitPrice;
     private double displayUnitPrice;
+    private LocalDateTime exportDate;
 
     // thêm trường đánh dấu nếu sau khi sửa hoặc xóa phiếu nhập mà số lượng tồn kho tại thời điểm
     // đó không còn đáp ứng được số lượng của phiếu xuất ==> lại lại actualQuantity = 0 và thêm status + message
@@ -150,5 +153,12 @@ public class ExportReceiptDetailModel {
 
     public void setDisplayUnitPrice(double displayUnitPrice) {
         this.displayUnitPrice = displayUnitPrice;
+    }
+
+    public void setExportDate(LocalDateTime exportDate) {
+        this.exportDate = exportDate;
+    }
+    public LocalDateTime getExportDate() {
+        return exportDate;
     }
 }
