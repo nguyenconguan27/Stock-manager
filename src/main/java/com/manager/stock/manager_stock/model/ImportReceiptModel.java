@@ -6,10 +6,8 @@ import java.util.List;
 /**
  * @author Trọng Hướng
  */
-public class ImportReceiptModel {
-    private Long id;
+public class ImportReceiptModel extends ReceiptModel{
     private String invoiceNumber;
-    private String createAt;
     private String deliveredBy;
     private String invoice;
     private String companyName;
@@ -20,12 +18,13 @@ public class ImportReceiptModel {
 //    private String totalPriceFormat;
     private List<ImportReceiptDetailModel> importReceiptDetails = new ArrayList<>();
 
-    public ImportReceiptModel() {}
+    public ImportReceiptModel() {
+        super();
+    }
 
     public ImportReceiptModel(Long id, String invoiceNumber, String createAt, String deliveredBy, String invoice, String companyName, String warehouseName, double totalPrice, String totalPriceInWord) {
-        this.id = id;
+        super(createAt, id);
         this.invoiceNumber = invoiceNumber;
-        this.createAt = createAt;
         this.deliveredBy = deliveredBy;
         this.invoice = invoice;
         this.companyName = companyName;
@@ -35,28 +34,12 @@ public class ImportReceiptModel {
         this.importReceiptDetails = new ArrayList<>();
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getInvoiceNumber() {
         return invoiceNumber;
     }
 
     public void setInvoiceNumber(String invoiceNumber) {
         this.invoiceNumber = invoiceNumber;
-    }
-
-    public String getCreateAt() {
-        return createAt;
-    }
-
-    public void setCreateAt(String createAt) {
-        this.createAt = createAt;
     }
 
     public String getDeliveredBy() {

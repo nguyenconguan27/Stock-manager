@@ -10,6 +10,7 @@ import java.util.List;
  */
 public interface IImportReceiptDao {
     List<ImportReceiptModel> findAllByAcademicYear(int academicYear);
+    List<ImportReceiptModel> findAllByProductIdAndYear(long productId, int academicYear);
     long save(ImportReceiptModel importReceiptModel);
     void update(ImportReceiptModel importReceiptModel);
     void delete(List<Long> ids);

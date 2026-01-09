@@ -452,5 +452,16 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
         return query(sql, new ExportPriceMapperResultSet(), productId, year);
     }
 
+    @Override
+    public void delete(long productId, LocalDateTime time) {
+        String sql = "select from export_price where product_id = ? and export_time >= ?";
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[]{
+                productId,
+                time
+        });
+        save(sql, parameters);
+    }
+
 
 }

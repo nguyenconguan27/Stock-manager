@@ -63,6 +63,11 @@ public class ExportReceiptServiceImpl implements IExportReceiptService {
     }
 
     @Override
+    public List<ExportReceiptModel> findAllByProductAndYear(long productId, int year) {
+        return exportReceiptDao.findAllByProductIdAndYear(productId, year);
+    }
+
+    @Override
     public String findLatestCreatedByProduct(long productId) {
         return exportReceiptDao.findLatestCreatedByProduct(productId);
     }

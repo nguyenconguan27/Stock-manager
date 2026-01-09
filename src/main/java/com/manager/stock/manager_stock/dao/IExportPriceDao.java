@@ -44,4 +44,6 @@ public interface IExportPriceDao {
     List<ExportPriceModel> findByProductIdAndBeforeTime(long productId, LocalDateTime time);
     List<ExportPriceModel> findAllByProductIdAndAfterTime(long productId, LocalDateTime time);
     List<ExportPriceModel> findLastByProductIdAndYear(long productId, int year);
+
+    void delete(long productId, LocalDateTime time);
 }

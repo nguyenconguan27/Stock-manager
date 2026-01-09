@@ -19,7 +19,7 @@ public class ExportReceiptMapperResultSet implements RowMapper<ExportReceiptMode
             String columnName = resultSetMetaData.getColumnName(i).toLowerCase();
             switch (columnName){
                 case "id":
-                    exportReceiptModel.setId(resultSet.getInt(columnName));
+                    exportReceiptModel.setId(resultSet.getLong(columnName));
                     break;
                 case "invoice_number":
                     exportReceiptModel.setInvoiceNumber(resultSet.getString(columnName));

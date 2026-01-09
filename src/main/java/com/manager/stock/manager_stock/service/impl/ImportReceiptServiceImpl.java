@@ -41,6 +41,11 @@ public class ImportReceiptServiceImpl implements IImportReceiptService {
     }
 
     @Override
+    public List<ImportReceiptModel> findAllByProductAndYear(long productId, int year) {
+        return importReceiptDao.findAllByProductIdAndYear(productId, year);
+    }
+
+    @Override
     public long save(ImportReceiptModel importReceiptModel) throws DaoException {
         return importReceiptDao.save(importReceiptModel);
     }

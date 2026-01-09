@@ -8,10 +8,8 @@ import java.util.List;
 /**
  * @author Trọng Hướng
  */
-public class ExportReceiptModel {
-    private long id;
+public class ExportReceiptModel extends ReceiptModel{
     private String invoiceNumber;
-    private String createAt;
     private String receiver;
     private String receiveAddress;
     private String reason;
@@ -27,9 +25,8 @@ public class ExportReceiptModel {
     }
 
     public ExportReceiptModel(Long id, String invoiceNumber, String createAt, String receiver, String receiveAddress, String reason, String wareHouse, Double totalPrice, String totalPriceInWord) {
-        this.id = id;
+        super(createAt, id);
         this.invoiceNumber = invoiceNumber;
-        this.createAt = createAt;
         this.receiver = receiver;
         this.receiveAddress = receiveAddress;
         this.reason = reason;
@@ -46,28 +43,12 @@ public class ExportReceiptModel {
         this.createdAtTs = createdAtTs;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public String getInvoiceNumber() {
         return invoiceNumber;
     }
 
     public void setInvoiceNumber(String invoiceNumber) {
         this.invoiceNumber = invoiceNumber;
-    }
-
-    public String getCreateAt() {
-        return createAt;
-    }
-
-    public void setCreateAt(String createAt) {
-        this.createAt = createAt;
     }
 
     public String getReceiver() {

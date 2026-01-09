@@ -25,4 +25,5 @@ public interface IExportReceiptDao {
     void update(ExportReceiptModel exportReceiptModel);
     void commit();
     void rollback();
+    List<ExportReceiptModel> findAllByProductIdAndYear(long productId, int year);
 }

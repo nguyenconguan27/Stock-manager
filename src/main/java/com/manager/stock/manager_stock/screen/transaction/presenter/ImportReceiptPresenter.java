@@ -88,6 +88,10 @@ public class ImportReceiptPresenter {
             importReceiptModel.setId(importReceiptId);
             List<ImportReceiptDetailModel> importReceiptDetailModels = GenericConverterBetweenModelAndTableData.convertToListModel(
                     importReceiptDetailModelsTable, ImportReceiptDetailModelMapper.INSTANCE::fromViewModelToModel);
+
+
+
+
             importReceiptDetailService.save(importReceiptDetailModels, importReceiptId);
             LocalDateTime importDate = LocalDateTime.parse(importReceiptModel.getCreateAt(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
             List<Long> productIds = importReceiptDetailModels.stream()
@@ -115,6 +119,10 @@ public class ImportReceiptPresenter {
             // cập nhật thông tin của phiếu nhập
             List<ImportReceiptDetailModel> allProductOfImportReceipt = GenericConverterBetweenModelAndTableData.convertToListModel(importReceiptDetails,
                     ImportReceiptDetailModelMapper.INSTANCE::fromViewModelToModel);
+
+
+
+
             LocalDateTime oldImportDate = LocalDateTime.parse(oldImportDateStr.trim(), formatter);
             LocalDateTime newImportDate = LocalDateTime.parse(importReceiptModel.getCreateAt().trim(), formatter);
             updateForeignExportDetail(allProductOfImportReceipt, newImportDate, oldImportDate);

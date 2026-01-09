@@ -44,4 +44,6 @@ public interface IExportPriceService {
     long calculateTotalQuantityImportAndQuantityInStockByImportDateAndProduct(long productId, LocalDateTime importDate);
     void commit();
     void rollback();
+
+    void delete(long productId, LocalDateTime time);
 }

@@ -114,7 +114,7 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
                 "join export_price ep on\n" +
                 "ep.id = erd.export_price_id \n" +
                 "where er.academic_year = ?\n" +
-                "group by er.id;";
+                "group by er.id order by to_timestamp(er.created_at, 'DD/MM/YYYY HH24:MI:SS') asc;";
         return query(sql, new ExportReceiptMapperResultSet(), academicYear);
     }
 
@@ -160,5 +160,17 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
     @Override
     public void rollback() {
         super.rollback();
+    }
+
+    @Override
+    public List<ExportReceiptModel> findAllByProductIdAndYear(long productId, int year) {
+        String sql = "SELECT er.*, sum(ep.export_price * erd.actual_quantity) as total_price_receipt from export_receipt er \n" +
+                "join export_receipt_detail erd on\n" +
+                "er.id = erd.export_receipt_id \n" +
+                "join export_price ep on\n" +
+                "ep.id = erd.export_price_id \n" +
+                "where er.academic_year = ? and erd.product_id = ?\n" +
+                "group by er.id order by PARSEDATETIME(er.create_at, 'DD/MM/YYYY HH:mm:ss') asc;";
+        return query(sql, new ExportReceiptMapperResultSet(), year, productId);
     }
 }

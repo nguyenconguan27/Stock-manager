@@ -77,7 +77,7 @@ public class ReceiptReportService {
             actualTotal += detail.getActualQuantity();
         }
         Utils.fillFooter(sheet, planTotal, actualTotal, total, FormatMoney.formatMoneyToWord(total),
-                null, null, null, r, null, workbook);
+                null, importReceipt.getDeliveredBy(), null, r,  importReceipt.getCreateAt(), workbook);
     }
 
     public static void printExportDetailReceipt(Sheet sheet, ExportReceiptModel exportReceipt) {
@@ -98,7 +98,7 @@ public class ReceiptReportService {
         }
 
         Utils.fillFooter(sheet, planTotal, actualTotal, total, FormatMoney.formatMoneyToWord(total),
-                null, exportReceipt.getReceiver(), null, r, null, workbook);
+                null, exportReceipt.getReceiver(), null, r, exportReceipt.getCreateAt(), workbook);
     }
 
 }

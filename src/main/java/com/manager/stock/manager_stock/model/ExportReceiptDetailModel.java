@@ -3,10 +3,9 @@ package com.manager.stock.manager_stock.model;
 /**
  * @author Trọng Hướng
  */
-public class ExportReceiptDetailModel {
+public class ExportReceiptDetailModel extends DetailModel{
     private long id;
     private long exportReceiptId;
-    private long productId;
     private int plannedQuantity;
     private int actualQuantity;
     private double totalPrice;
@@ -22,12 +21,12 @@ public class ExportReceiptDetailModel {
     private int status;
     private String message;
 
-    public ExportReceiptDetailModel() {}
+    public ExportReceiptDetailModel() {super();}
 
     public ExportReceiptDetailModel(long id, long exportReceiptId, long productId, int plannedQuantity, int actualQuantity, double displayUnitPrice, double totalPrice, String productName, String productCode, long exportPriceId, int status, String message, double originalUnitPrice) {
+        super(productId);
         this.id = id;
         this.exportReceiptId = exportReceiptId;
-        this.productId = productId;
         this.plannedQuantity = plannedQuantity;
         this.actualQuantity = actualQuantity;
         this.displayUnitPrice = displayUnitPrice;
@@ -54,14 +53,6 @@ public class ExportReceiptDetailModel {
 
     public void setExportReceiptId(long exportReceiptId) {
         this.exportReceiptId = exportReceiptId;
-    }
-
-    public long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(long productId) {
-        this.productId = productId;
     }
 
     public int getPlannedQuantity() {

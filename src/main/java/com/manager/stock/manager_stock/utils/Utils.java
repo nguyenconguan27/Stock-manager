@@ -6,6 +6,8 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Utils {
 
@@ -258,7 +260,7 @@ public class Utils {
         Row trow = sheet.createRow(r);
         Row twrow = sheet.createRow(r + 1);
         Row drow = sheet.createRow(r + 2);
-        Row strow = sheet.createRow(r + 3);
+        Row strow = sheet.createRow(r + 5);
         Row srow = sheet.createRow(r + 4);
         Cell tcell = trow.createCell(0);
         Cell tpqCell = trow.createCell(6);
@@ -290,10 +292,15 @@ public class Utils {
         tpCell.setCellValue(total);
 
         twcell.setCellValue("Tổng số tiên: " + totalInword);
-        LocalDate today = LocalDate.now();
-        int day = today.getDayOfMonth();
-        int month = today.getMonthValue();
-        int year = today.getYear();
+
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.parse(createdAt, formatter);
+
+        int day = dateTime.getDayOfMonth();
+        int month = dateTime.getMonthValue();
+        int year = dateTime.getYear();
+
         dshell.setCellValue("Ngày " + day + " tháng " + month + " năm " + year);
         scell1.setCellValue("PHỤ TRÁCH BỘ PHẬN");
         scell2.setCellValue("NGƯỜI NHẬN");
@@ -302,9 +309,10 @@ public class Utils {
         Cell scell1_ = strow.createCell(0);
         Cell scell2_ = strow.createCell(3);
         Cell scell3_ = strow.createCell(7);
-        sheet.addMergedRegion(new CellRangeAddress(r + 4, r + 4, 0, 2));
-        sheet.addMergedRegion(new CellRangeAddress(r + 4, r + 4, 3, 6));
-        sheet.addMergedRegion(new CellRangeAddress(r + 4, r + 4, 7, 9));
+        sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 0, 2));
+        sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 3, 6));
+        sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 7, 9));
+        scell2_.setCellValue(n2);
     }
 
     static void setBorder(int sr, int er, int sc, int ec, CellStyle style, Sheet sheet) {

@@ -206,4 +206,9 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     public void rollback() {
         exportPriceDao.rollback();
     }
+
+    @Override
+    public void delete(long productId, LocalDateTime time) {
+        exportPriceDao.delete(productId, time);
+    }
 }

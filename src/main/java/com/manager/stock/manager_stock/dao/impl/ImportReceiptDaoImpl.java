@@ -36,8 +36,18 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
                 "join import_receipt_detail ird on\n" +
                 "ir.id = ird.import_receipt_id\n" +
                 "where ir.academic_year = ? \n" +
-                "group by ir.id ;";
+                "group by ir.id order by PARSEDATETIME(ir.create_at, 'DD/MM/YYYY HH:mm:ss') asc;";
         return query(sql, new ImportReceiptMapperResultSet(), academicYear);
+    }
+
+    @Override
+    public List<ImportReceiptModel> findAllByProductIdAndYear(long productId, int academicYear) {
+        String sql = "select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir \n" +
+                "join import_receipt_detail ird on\n" +
+                "ir.id = ird.import_receipt_id\n" +
+                "where ir.academic_year = ? and ird.product_id = ?\n" +
+                "group by ir.id order by PARSEDATETIME(ir.create_at, 'DD/MM/YYYY HH:mm:ss') asc;";
+        return query(sql, new ImportReceiptMapperResultSet(), academicYear, productId);
     }
 
     @Override

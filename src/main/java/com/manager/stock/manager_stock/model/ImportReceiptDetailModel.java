@@ -3,10 +3,9 @@ package com.manager.stock.manager_stock.model;
 /**
  * @author Trọng Hướng
  */
-public class ImportReceiptDetailModel {
+public class ImportReceiptDetailModel extends DetailModel {
     private long id;
     private long importReceiptId;
-    private long productId;
     private String unit;
     private int plannedQuantity;
     private int actualQuantity;
@@ -17,12 +16,12 @@ public class ImportReceiptDetailModel {
     private String totalPriceFormat;
     private String productCode;
 
-    public ImportReceiptDetailModel() {}
+    public ImportReceiptDetailModel() {super();}
 
     public ImportReceiptDetailModel(long id, long importReceiptId, long productId, int plannedQuantity, int actualQuantity, double unitPrice, double totalPrice, String productName, String productCode) {
+        super(productId);
         this.id = id;
         this.importReceiptId = importReceiptId;
-        this.productId = productId;
         this.plannedQuantity = plannedQuantity;
         this.actualQuantity = actualQuantity;
         this.unitPrice = unitPrice;
@@ -45,14 +44,6 @@ public class ImportReceiptDetailModel {
 
     public void setImportReceiptId(long importReceiptId) {
         this.importReceiptId = importReceiptId;
-    }
-
-    public long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(long productId) {
-        this.productId = productId;
     }
 
     public int getPlannedQuantity() {
