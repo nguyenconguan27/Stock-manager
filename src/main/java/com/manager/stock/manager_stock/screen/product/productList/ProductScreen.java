@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.Normalizer;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -47,7 +48,7 @@ public class ProductScreen extends VBox {
     private final ProductGroupPresenter productGroupPresenter;
     private TextField tfGroupName;
     private ProductGroup currentProductGroup;
-    private int selectedYear;
+    private int selectedYear = LocalDate.now().getYear();
 
     private void createPagination() {
         pagination = new Pagination();
@@ -148,6 +149,7 @@ public class ProductScreen extends VBox {
             @Override
             public void onSelectYear(int year) {
                 selectedYear = year;
+                System.out.println("Selected year: " + selectedYear);
             }
 
             @Override
@@ -158,6 +160,7 @@ public class ProductScreen extends VBox {
                         return;
                     }
                     String outputPath = file.getAbsolutePath();
+                    System.out.println(selectedYear);
                     ExportAll exportService = new ExportAll(selectedYear);
                     exportService.exportTotal(outputPath);
                     // gọi hàm tạo file xlsx

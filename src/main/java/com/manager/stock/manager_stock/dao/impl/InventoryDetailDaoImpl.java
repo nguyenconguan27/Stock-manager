@@ -196,7 +196,7 @@ public class InventoryDetailDaoImpl extends AbstractDao<InventoryDetailModel> im
         String sql = "select * from inventory_detail where academic_year = ? and product_id = ?";
         List<InventoryDetailModel> inventoryDetailModels = query(sql, new InventoryDetailMapperResultSet(), year, productId);
         if(inventoryDetailModels.isEmpty()) {
-            return new InventoryDetailModel();
+            return null;
         }
         return inventoryDetailModels.get(0);
     }

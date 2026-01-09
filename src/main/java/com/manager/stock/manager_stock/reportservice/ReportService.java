@@ -65,8 +65,14 @@ public class ReportService {
             reportModel.setGroupName(group.getName());
             List<ReportModel.ReportProduct> reportProductList = new ArrayList<>();
             for(ProductModel productModel: productList) {
-                InventoryDetailModel sInventoryDetail = inventoryDetailService.findAllByAcademicYearAndProductId(year - 1, Arrays.asList(productModel.getId())).get(productModel.getId());
+                InventoryDetailModel sInventoryDetail = null;
+                for(int i = year - 1; i >= 2020; i--) {
+                    sInventoryDetail = inventoryDetailService.findAllByAcademicYearAndProductId(i, Arrays.asList(productModel.getId())).get(productModel.getId());
+                    if(sInventoryDetail != null) break;
+                }
+
                 InventoryDetailModel eInventoryDetail = inventoryDetailService.findAllByAcademicYearAndProductId(year, Arrays.asList(productModel.getId())).get(productModel.getId());
+                if(eInventoryDetail == null) eInventoryDetail = sInventoryDetail;
                 ReportModel.ReportDetail startSem;
                 ReportModel.ReportDetail endSem;
                 if(sInventoryDetail != null) {

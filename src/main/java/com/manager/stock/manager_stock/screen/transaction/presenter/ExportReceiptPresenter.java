@@ -133,7 +133,7 @@ public class ExportReceiptPresenter {
 
     private void updateInventory(List<ExportReceiptDetailModel> exportReceiptDetailModels, int academicYear, List<Long> productIds, HashMap<Long, Integer> changeQuantityByProductMap) throws DaoException {
         HashMap<Long, InventoryDetailModel> inventoryDetailByProductAndAcademicYear = inventoryDetailService.findAllByAcademicYearAndProductId(academicYear, productIds);
-        HashMap<Long, InventoryDetailModel> inventoryDetailByProductAndPreviousAcademicYear = inventoryDetailService.findAllByAcademicYearAndProductId(academicYear - 1, productIds);
+//        HashMap<Long, InventoryDetailModel> inventoryDetailByProductAndPreviousAcademicYear = inventoryDetailService.findAllByAcademicYearAndProductId(academicYear - 1, productIds);
 
         List<InventoryDetailModel> inventoryDetailModelsToInsert = new ArrayList<>();
         List<InventoryDetailModel> inventoryDetailModelsToUpdate = new ArrayList<>();
@@ -149,7 +149,11 @@ public class ExportReceiptPresenter {
             // TH sản phẩm này chưa có tồn kho của năm nay
             if (inventoryDetailModel == null) {
                 // lấy ra tồn kho đầu kì (tức tồn kho của năm ngoái)
-                inventoryDetailModel = inventoryDetailByProductAndPreviousAcademicYear.getOrDefault(productId, null);
+//                inventoryDetailModel = inventoryDetailByProductAndPreviousAcademicYear.getOrDefault(productId, null);
+                for(int i = academicYear - 1; i >= 2020; i--) {
+                    inventoryDetailModel = inventoryDetailService.findByYearAndProduct(productId, i);
+                    if(inventoryDetailModel != null) break;
+                }
                 // trường hợp trong năm trước cũng chưa nhập ==> tạo mới
                 if (inventoryDetailModel == null) {
                     // thông báo sản phẩm này chưa từng được nhập trong 2 năm trở lại đây
@@ -271,7 +275,6 @@ public class ExportReceiptPresenter {
 
     }
     public boolean updateExportReceiptDate(LocalDateTime fromDate, LocalDateTime toDate, long exportReceiptId, boolean isNew, List<ExportReceiptDetailModel> newExportReceiptDetailModels) {
-
         List<ExportReceiptDetailModel> exportReceiptDetailModels;
         if(isNew) { // TH thêm mới
             exportReceiptDetailModels = newExportReceiptDetailModels;
@@ -354,7 +357,6 @@ public class ExportReceiptPresenter {
         }
         return true;
     }
-
 
     public void updateExportReceipt(ExportReceiptModel newExportReceipt, ExportReceiptModel oldExportReceipt, List<ExportReceiptDetailModelTable> exportReceiptDetailModelTables, HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap) throws DaoException {
         try {
@@ -446,7 +448,9 @@ public class ExportReceiptPresenter {
     }
 
     public int findQuantityInStockByProductIdAndAcademicYear(long productId, int academicYear) throws DaoException {
-        int[] yearsToTry = {academicYear, academicYear - 1};
+        List<Integer> yearsToTry = new ArrayList<>();
+        for(int i = academicYear; i >= 2020; i--)
+            yearsToTry.add(i);
 
         for (int year : yearsToTry) {
             try {

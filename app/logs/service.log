@@ -1,127 +1,121 @@
-2026-01-07 21:25:16.595 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 21:25:16.932 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 21:25:16.947 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 21:25:21.278 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-01-07 21:25:21.299 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-01-07 21:40:52.787 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 21:40:53.112 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 21:40:53.145 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 21:40:57.033 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-01-07 21:40:57.037 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-01-07 22:03:06.104 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 22:03:06.483 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 22:03:06.507 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 22:03:11.621 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-01-07 22:03:11.670 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-01-07 22:21:14.688 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 22:21:15.106 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 22:21:15.126 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 22:21:19.580 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-01-07 22:21:19.585 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-01-07 22:25:39.737 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 22:25:40.157 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 22:25:40.179 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 22:25:45.372 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-01-07 22:25:45.389 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-01-07 22:26:19.664 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 22:26:20.031 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 22:26:20.053 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 22:26:24.141 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-01-07 22:26:24.156 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-01-07 22:27:29.600 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 22:27:29.992 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 22:27:30.009 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 22:27:33.865 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-01-07 22:27:33.880 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-01-07 22:32:11.909 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 22:32:12.291 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 22:32:12.314 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 22:32:16.461 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-01-07 22:32:16.478 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-01-07 22:34:37.789 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 22:34:38.109 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 22:34:38.132 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 22:34:41.983 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-01-07 22:34:42.001 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-01-07 22:36:46.490 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 22:36:46.900 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 22:36:46.924 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 22:36:51.736 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-01-07 22:36:51.741 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-01-07 22:42:07.479 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 22:42:07.866 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 22:42:07.889 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 22:42:12.521 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-01-07 22:42:12.542 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-01-07 22:51:09.693 [main] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 22:51:09.839 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 22:51:09.856 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 22:51:13.962 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-01-07 22:51:13.965 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-01-07 22:58:18.796 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 22:58:19.229 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 22:58:19.249 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 22:58:22.568 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-01-07 22:58:22.572 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-01-07 23:05:18.547 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 23:05:18.853 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 23:05:18.874 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 23:05:22.503 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-01-07 23:05:22.530 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-01-07 23:06:22.588 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 23:06:22.926 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 23:06:22.951 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 23:06:26.441 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-01-07 23:06:26.456 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-01-07 23:16:35.972 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 23:16:36.281 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 23:16:36.309 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 23:16:40.020 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-01-07 23:16:40.028 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-01-07 23:20:50.796 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 23:20:51.091 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 23:20:51.120 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 23:20:54.636 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-01-07 23:20:54.641 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-01-07 23:23:36.294 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 23:23:36.698 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 23:23:36.722 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 23:23:52.490 [ForkJoinPool.commonPool-worker-1] ERROR c.m.s.m.service.UpfileService - Up file fail: e
-java.net.UnknownHostException: www.googleapis.com
-	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:572)
-	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
-	at java.base/java.net.Socket.connect(Socket.java:633)
-	at java.base/sun.security.ssl.SSLSocketImpl.connect(SSLSocketImpl.java:304)
-	at java.base/sun.net.NetworkClient.doConnect(NetworkClient.java:178)
-	at java.base/sun.net.www.http.HttpClient.openServer(HttpClient.java:534)
-	at java.base/sun.net.www.http.HttpClient.openServer(HttpClient.java:639)
-	at java.base/sun.net.www.protocol.https.HttpsClient.<init>(HttpsClient.java:266)
-	at java.base/sun.net.www.protocol.https.HttpsClient.New(HttpsClient.java:380)
-	at java.base/sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.getNewHttpClient(AbstractDelegateHttpsURLConnection.java:193)
-	at java.base/sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1241)
-	at java.base/sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:1127)
-	at java.base/sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(AbstractDelegateHttpsURLConnection.java:179)
-	at java.base/sun.net.www.protocol.https.HttpsURLConnectionImpl.connect(HttpsURLConnectionImpl.java:142)
-	at com.google.api.client.http.javanet.NetHttpRequest.execute(NetHttpRequest.java:151)
-	at com.google.api.client.http.javanet.NetHttpRequest.execute(NetHttpRequest.java:84)
-	at com.google.api.client.http.HttpRequest.execute(HttpRequest.java:1012)
-	at com.google.api.client.googleapis.services.AbstractGoogleClientRequest.executeUnparsed(AbstractGoogleClientRequest.java:525)
-	at com.google.api.client.googleapis.services.AbstractGoogleClientRequest.executeUnparsed(AbstractGoogleClientRequest.java:466)
-	at com.google.api.client.googleapis.services.AbstractGoogleClientRequest.execute(AbstractGoogleClientRequest.java:576)
-	at upfileservice@1.0/com.upfileservice.UpfileService.uploadOrUpdateFile(UpfileService.java:61)
-	at upfileservice@1.0/com.upfileservice.UpfileService.upFile(UpfileService.java:119)
-	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.service.UpfileService.upFile(UpfileService.java:26)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run$$$capture(CompletableFuture.java:1804)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java)
-	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.exec(CompletableFuture.java:1796)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec$$$capture(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-2026-01-07 23:29:48.576 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-01-07 23:29:49.007 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-01-07 23:29:49.027 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-01-07 23:29:52.575 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-01-07 23:29:52.594 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 20:43:11.250 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 20:43:11.662 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 20:43:11.683 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 20:43:16.747 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 20:43:16.766 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 20:52:37.591 [main] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 20:52:37.729 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 20:52:37.751 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 20:52:41.176 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 20:52:41.180 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 20:53:24.507 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 20:53:24.867 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 20:53:24.889 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 20:53:28.184 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 20:53:28.200 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 21:11:27.518 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 21:11:27.797 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 21:11:27.809 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 21:11:31.378 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 21:11:31.393 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 21:18:33.337 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 21:18:33.621 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 21:18:33.631 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 21:19:48.348 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 21:19:48.591 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 21:19:48.599 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 21:20:19.144 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 21:20:19.430 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 21:20:19.439 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 21:20:22.652 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 21:20:22.667 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 21:28:44.449 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 21:28:44.735 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 21:28:44.754 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 21:28:48.274 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 21:28:48.301 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 21:39:42.736 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 21:39:43.101 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 21:39:43.124 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 21:39:46.652 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 21:39:46.685 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 21:40:27.163 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 21:40:27.520 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 21:40:27.542 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 21:40:32.930 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 21:40:32.946 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 21:47:07.133 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 21:47:07.483 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 21:47:07.497 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 21:47:12.738 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 21:47:12.754 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 21:48:51.222 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 21:48:51.587 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 21:48:51.608 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 21:48:55.169 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 21:48:55.187 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 21:50:46.645 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 21:50:46.958 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 21:50:46.977 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 21:50:50.854 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 21:50:50.883 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 21:56:35.361 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 21:56:35.755 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 21:56:35.778 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 21:56:39.204 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 21:56:39.221 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 21:58:07.777 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 21:58:08.145 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 21:58:08.168 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 21:58:11.752 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 21:58:11.769 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 21:58:39.089 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 21:58:39.458 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 21:58:39.482 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 21:58:43.172 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 21:58:43.190 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 21:59:12.458 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 21:59:12.779 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 21:59:12.801 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 21:59:17.516 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 21:59:17.533 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 22:22:07.662 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 22:22:07.973 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 22:22:07.994 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 22:22:12.108 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 22:22:12.128 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 22:24:47.811 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 22:24:48.128 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 22:24:48.148 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 22:24:51.758 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 22:24:51.780 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 22:26:09.723 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 22:26:10.155 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 22:26:10.171 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 22:26:14.468 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 22:26:14.474 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 22:27:05.725 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 22:27:06.079 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 22:27:06.100 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 22:27:10.462 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 22:27:10.478 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 22:28:08.925 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 22:28:09.327 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 22:28:09.348 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 22:28:14.011 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 22:28:14.017 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 22:29:42.789 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 22:29:43.174 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 22:29:43.197 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 22:29:47.501 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 22:29:47.516 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 22:37:43.384 [main] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 22:37:43.533 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 22:37:43.559 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 22:37:48.071 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 22:37:48.075 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-01-08 22:39:04.182 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-01-08 22:39:04.561 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-01-08 22:39:04.584 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-01-08 22:39:08.317 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-01-08 22:39:08.340 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!

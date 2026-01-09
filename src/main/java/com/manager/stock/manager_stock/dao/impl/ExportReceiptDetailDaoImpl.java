@@ -34,7 +34,8 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
                 "\terd.*,\n" +
                 "\tp.code as product_code,\n" +
                 "\tp.name as product_name, p.unit,\n" +
-                "\tep.export_price as export_price \n" +
+                "\tep.export_price as export_price, \n" +
+                "\tep.id as export_price_id \n" +
                 "from\n" +
                 "\texport_receipt_detail erd\n" +
                 "join export_receipt er on\n" +
@@ -182,8 +183,8 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
         for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
             parameters.add(new Object[]{
                 exportReceiptDetailModel.getActualQuantity(),
-                    exportReceiptDetailModel.getOriginalUnitPrice(),
-                    exportReceiptDetailModel.getExportPriceId(),
+                exportReceiptDetailModel.getOriginalUnitPrice(),
+                exportReceiptDetailModel.getExportPriceId(),
                 exportReceiptDetailModel.getId()
             });
         }

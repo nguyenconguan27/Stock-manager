@@ -384,7 +384,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     AlertUtils.alert("Phiếu nhập này chưa có sản phẩm nào, vui lòng chọn ít nhất 1 sản phẩm.", "WARNING", "Cảnh báo", "Thiếu thông tin");
                     return;
                 }
-                // thêm mới hóa đơn nhập
+                // thêm mới hóa đơn xxuất
                 if(receiptModelTable == null) {
                     // changeQuantityByProductMap: số lượng sản phẩm thay đổi
                     // changeTotalPriceByProductMap: tổng tiền thay đổi

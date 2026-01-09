@@ -379,8 +379,12 @@ public class ImportReceiptPresenter {
             // Trường hợp sản phẩm này chưa từng được nhập trong năm nay (tồn kho trong năm đang không có)
             // ==> chưa có đơn giá mới ==> chỉ có thể insert đơn giá mới
             if(inventoryDetailModel == null) {
-                // lấy tồn kho đầu năm(của năm trước) của sản phẩm
-                inventoryDetailModel = inventoryDetailModelMapPreviousYear.getOrDefault(productId, null);
+                // lấy tồn kho đầu năm(tồn kho cuối kì của năm trước) của sản phẩm
+//                inventoryDetailModel = inventoryDetailModelMapPreviousYear.getOrDefault(productId, null);
+                for(int i = academicYear - 1; i >= 2020; i--) {
+                    inventoryDetailModel = inventoryDetailService.findByYearAndProduct(productId, i);
+                    if(inventoryDetailModel != null) break;
+                }
                 // trong năm trước cũng chưa từng được nhập ==> sẽ tạo mới tồn kho của sản phẩm này trong năm hiện tại
 //                ExportPriceModel exportPriceModel = new ExportPriceModel();
                 if(inventoryDetailModel == null) {
@@ -640,7 +644,9 @@ public class ImportReceiptPresenter {
     }
 
     public int findQuantityInStockByProductIdAndAcademicYear(long productId, int academicYear) throws DaoException{
-        int[] yearsToTry = { academicYear, academicYear - 1 };
+        List<Integer> yearsToTry = new ArrayList<>();
+        for(int i = academicYear; i >= 2020; i--)
+            yearsToTry.add(i);
         for (int year : yearsToTry) {
             try {
                 return inventoryDetailService.findQuantityInStockByProductIdAndAcademicYear(productId, year);

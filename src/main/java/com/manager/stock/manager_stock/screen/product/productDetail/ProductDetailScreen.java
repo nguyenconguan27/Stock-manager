@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,7 +44,7 @@ public class ProductDetailScreen extends VBox {
 
     TextField tfId, tfQuantity, tfName, tfUnit, tfUnitPrice, tfTotal;
     Button btnSave, btnCancel;
-    private int selectedYear;
+    private int selectedYear = LocalDate.now().getYear();
 
     private void initProductGroup() {
         comboBox = new ComboBox<>();

@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS product_group (
     );
 
 CREATE TABLE IF NOT EXISTS product (
-                                       id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-                                       code VARCHAR(50) UNIQUE NOT NULL,
+   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+   code VARCHAR(50) UNIQUE NOT NULL,
     name VARCHAR(100) NOT NULL,
     unit VARCHAR(20),
     created_at VARCHAR(20),
