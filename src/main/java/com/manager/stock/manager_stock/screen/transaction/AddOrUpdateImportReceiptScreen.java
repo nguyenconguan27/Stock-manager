@@ -13,6 +13,7 @@ import com.manager.stock.manager_stock.model.tableData.ImportReceiptDetailModelT
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptModelTable;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter;
+import com.manager.stock.manager_stock.screen.transaction.presenter.InventoryReceiptService;
 import com.manager.stock.manager_stock.utils.*;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -313,6 +314,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     item.setActualQuantity(0);
                     item.setTotalPrice(0);
                     productDetailsToDelete.add(item);
+                    item.setIsDeleted(true);
                     getTableView().getItems().remove(item);
                 });
             }
@@ -389,7 +391,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             }
             if(invoice.isEmpty()) {AlertUtils.alert("Vui lòng nhập số phiếu nhập kho.", "WARNING", "Cảnh báo", "Thiếu thông tin"); return;}
             ImportReceiptModel importReceiptModel = new ImportReceiptModel (
-                    oldImportReceiptModelTable != null ? oldImportReceiptModelTable.getId() : null,
+                    oldImportReceiptModelTable != null ? oldImportReceiptModelTable.getId() : -1,
                     invoiceNumber,
                     createAtStr,
                     deliveredBy,
@@ -399,26 +401,30 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     totalPriceOfReceipt,
                     FormatMoney.formatMoneyToWord((long)totalPriceOfReceipt)
             );
+            importReceiptModel.setInsert(true);
             ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
+            InventoryReceiptService inventoryReceiptService = InventoryReceiptService.getInstance();
             if(productDetails.isEmpty()) {
                 AlertUtils.alert("Phiếu nhập này chưa có sản phẩm nào, vui lòng chọn ít nhất 1 sản phẩm.", "WARNING", "Cảnh báo", "Thiếu thông tin");
                 return;
             }
             try {
+                inventoryReceiptService.solveImportReceipt(importReceiptModel, productDetails, oldImportReceiptModelTable == null ? importReceiptModel.getCreateAt() : oldImportReceiptModelTable.getCreateAt());
                 // thêm mới hóa đơn nhập
-                if(oldImportReceiptModelTable == null) {
-                    presenter.saveImportReceipt(importReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
-                    AlertUtils.alert("Thêm mới phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
-                }
-                // Cập nhật hóa đơn nhập
-                else {
-                    List<ImportReceiptDetailModelTable> newProductDetails = productDetails.stream()
-                            .filter(importReceiptDetailModelTable -> changeIdsOfReceiptDetails.contains(importReceiptDetailModelTable.getId()) || importReceiptDetailModelTable.getId() == -1)
-                            .collect(Collectors.toList());
-                    newProductDetails.addAll(productDetailsToDelete);
-                    presenter.updateImportReceipt(importReceiptModel, newProductDetails, changeQuantityByProductMap, changeTotalPriceByProductMap, receiptDetailIdsDeleted, oldImportReceiptModelTable.getCreateAt(), productDetails);
-                    AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
-                }
+//                if(oldImportReceiptModelTable == null) {
+//                    presenter.saveImportReceipt(importReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
+//                    AlertUtils.alert("Thêm mới phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
+//                }
+//                // Cập nhật hóa đơn nhập
+//                else {
+//                    List<ImportReceiptDetailModelTable> newProductDetails = productDetails.stream()
+//                            .filter(importReceiptDetailModelTable -> changeIdsOfReceiptDetails.contains(importReceiptDetailModelTable.getId()) || importReceiptDetailModelTable.getId() == -1)
+//                            .collect(Collectors.toList());
+//                    newProductDetails.addAll(productDetailsToDelete);
+//                    presenter.updateImportReceipt(importReceiptModel, newProductDetails, changeQuantityByProductMap, changeTotalPriceByProductMap, receiptDetailIdsDeleted, oldImportReceiptModelTable.getCreateAt(), productDetails);
+//                    AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
+//                }
+
                 ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
                 System.out.println("Select year: " + selectedYear);
                 importReceiptScreen.showTable(LocalDateTime.now().getYear());
@@ -428,6 +434,9 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 AlertUtils.alert(exception.getMessage(), "ERROR", "Lỗi khi thực hiện thao tác với phiếu nhập.", "Lỗi khi thực hiện lưu phiếu nhập.");
                 AddOrUpdateImportReceiptScreen refreshScreen = new AddOrUpdateImportReceiptScreen(oldImportReceiptModelTable);
                 ScreenNavigator.navigateTo(refreshScreen);
+            }
+            catch (Exception exception) {
+                exception.printStackTrace();
             }
         });
 

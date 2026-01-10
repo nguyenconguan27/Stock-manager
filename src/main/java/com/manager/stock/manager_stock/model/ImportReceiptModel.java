@@ -17,6 +17,8 @@ public class ImportReceiptModel {
     private double totalPrice;
     private String totalPriceInWord;
     private int academicYear;
+    private boolean isDeleted;
+    private boolean isInsert;
 //    private String totalPriceFormat;
     private List<ImportReceiptDetailModel> importReceiptDetails = new ArrayList<>();
 
@@ -122,6 +124,9 @@ public class ImportReceiptModel {
     public void setAcademicYear(int academicYear) {
         this.academicYear = academicYear;
     }
+
+    public void setIsDeleted(boolean isDeleted) {this.isDeleted = isDeleted;}
+    public boolean isIsDeleted() {return isDeleted;}
 //    public String getTotalPriceFormat() {
 //        return totalPriceFormat;
 //    }
@@ -129,6 +134,14 @@ public class ImportReceiptModel {
 //    public void setTotalPriceFormat(String totalPriceFormat) {
 //        this.totalPriceFormat = totalPriceFormat;
 //    }
+
+    public boolean isInsert() {
+        return isInsert;
+    }
+
+    public void setInsert(boolean insert) {
+        isInsert = insert;
+    }
 
     @Override
     public String toString() {

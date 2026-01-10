@@ -36,11 +36,13 @@ public class ImportReceiptDetailServiceImpl implements IImportReceiptDetailServi
 
     @Override
     public long save(List<ImportReceiptDetailModel> importReceiptDetailModels, long importReceiptId) throws DaoException {
+        if(importReceiptDetailModels==null||importReceiptDetailModels.isEmpty()) return 0;
         return importReceiptDetailDao.save(importReceiptDetailModels, importReceiptId);
     }
 
     @Override
     public void update(List<ImportReceiptDetailModel> importReceiptDetailModels) throws DaoException {
+        if(importReceiptDetailModels==null||importReceiptDetailModels.isEmpty()) return ;
         importReceiptDetailDao.update(importReceiptDetailModels);
     }
 

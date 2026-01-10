@@ -100,6 +100,6 @@ public class ExportReceiptDetailServiceImpl implements IExportReceiptDetailServi
 
     @Override
     public List<ExportReceiptDetailModel> findAllByProduct(long productId) {
-        return exportReceiptDetailDao.findAllByExPortReceipt(productId);
+        return exportReceiptDetailDao.findAllByProduct(productId);
     }
 }

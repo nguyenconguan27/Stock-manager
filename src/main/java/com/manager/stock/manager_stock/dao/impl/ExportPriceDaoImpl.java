@@ -452,5 +452,9 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
         return query(sql, new ExportPriceMapperResultSet(), productId, year);
     }
 
-
+    @Override
+    public void deleteByImportReceipt(long importReceiptId) {
+        String sql = "delete from export_price where import_receipt = ?";
+        delete(sql, importReceiptId);
+    }
 }

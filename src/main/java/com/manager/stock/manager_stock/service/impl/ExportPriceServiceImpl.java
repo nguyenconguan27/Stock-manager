@@ -35,6 +35,7 @@ public class ExportPriceServiceImpl implements IExportPriceService {
 
     @Override
     public void save(List<ExportPriceModel> exportPriceModels) throws DaoException {
+        if(exportPriceModels==null || exportPriceModels.isEmpty()) return;
         exportPriceDao.save(exportPriceModels);
     }
 
@@ -171,6 +172,16 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     @Override
     public List<ExportPriceModel> findAllExportPriceByProductAndOrderByAsc(long productId) {
         return exportPriceDao.findAllByProductIdAndAfterTime(productId, LocalDateTime.now().minusYears(100));
+    }
+
+    @Override
+    public void updateExportTimeByImportReceipt(long importReceiptId, LocalDateTime exportTime) {
+        exportPriceDao.updateExportTimeByImportReceiptId(importReceiptId, exportTime);
+    }
+
+    @Override
+    public void deleteByImportReceipt(long importReceiptId) {
+        exportPriceDao.deleteByImportReceipt(importReceiptId);
     }
 
     @Override

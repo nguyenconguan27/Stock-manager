@@ -27,6 +27,7 @@ module com.manager.stock.manager_stock {
     requires org.checkerframework.checker.qual;
     requires google.api.services.drive.v3.rev197;
     requires com.google.common;
+    requires com.google.api.client;
     opens com.manager.stock.manager_stock to javafx.fxml;
     exports com.manager.stock.manager_stock;
 
