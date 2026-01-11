@@ -114,31 +114,38 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
                 "join export_price ep on\n" +
                 "ep.id = erd.export_price_id \n" +
                 "where er.academic_year = ?\n" +
-                "group by er.id order by to_timestamp(er.created_at, 'DD/MM/YYYY HH24:MI:SS') asc;";
+                "group by er.id;";
         return query(sql, new ExportReceiptMapperResultSet(), academicYear);
     }
 
     @Override
     public long save(ExportReceiptModel exportReceiptModel) {
+        String sqlQuery = "select * from export_receipt where id = ?";
+        List<ExportReceiptModel> exportReceiptModels = query(sqlQuery, new ExportReceiptMapperResultSet(),exportReceiptModel.getId());
         String sql = "INSERT INTO export_receipt(invoice_number, create_at, receiver, receive_address, reason, warehouse, academic_year) " +
-                    "values (?, ?, ?, ?, ?, ?, ?)";
-        List<Object[]> parameters = new ArrayList<>();
-        parameters.add(new Object[] {
-            exportReceiptModel.getInvoiceNumber(),
-            exportReceiptModel.getCreateAt(),
-            exportReceiptModel.getReceiver(),
-            exportReceiptModel.getReceiveAddress(),
-            exportReceiptModel.getReason(),
-            exportReceiptModel.getWareHouse(),
-            exportReceiptModel.getAcademicYear()
-        });
-        return save(sql, parameters);
+                "values (?, ?, ?, ?, ?, ?, ?)";
+        if(exportReceiptModels.isEmpty()) {
+            List<Object[]> parameters = new ArrayList<>();
+            parameters.add(new Object[] {
+                    exportReceiptModel.getInvoiceNumber(),
+                    exportReceiptModel.getCreateAt(),
+                    exportReceiptModel.getReceiver(),
+                    exportReceiptModel.getReceiveAddress(),
+                    exportReceiptModel.getReason(),
+                    exportReceiptModel.getWareHouse(),
+                    exportReceiptModel.getAcademicYear()
+            });
+            return save(sql, parameters);
+        } else {
+            update(exportReceiptModel);
+            return exportReceiptModel.getId();
+        }
     }
 
     @Override
     public void update(ExportReceiptModel exportReceiptModel) {
         String sql = "UPDATE export_receipt set invoice_number = ?, create_at = ?, receiver = ?, receive_address = ?, " +
-                        "reason = ?, warehouse = ? where id = ?";
+                        "reason = ?, warehouse = ?, academic_year = ? where id = ?";
         List<Object[]> parameters = new ArrayList<>();
         parameters.add(new Object[] {
                 exportReceiptModel.getInvoiceNumber(),
@@ -147,6 +154,7 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
                 exportReceiptModel.getReceiveAddress(),
                 exportReceiptModel.getReason(),
                 exportReceiptModel.getWareHouse(),
+                exportReceiptModel.getAcademicYear(),
                 exportReceiptModel.getId()
         });
         save(sql, parameters);
@@ -172,5 +180,17 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
                 "where er.academic_year = ? and erd.product_id = ?\n" +
                 "group by er.id order by PARSEDATETIME(er.create_at, 'DD/MM/YYYY HH:mm:ss') asc;";
         return query(sql, new ExportReceiptMapperResultSet(), year, productId);
+    }
+
+    @Override
+    public void delete(long id) {
+        String sqlDetail = "delete from export_receipt_detail where export_receipt_id = ?";
+        String sql = "delete from export_receipt where id = ?";
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[] {
+                id
+        });
+        save(sqlDetail, parameters);
+        save(sql, parameters);
     }
 }

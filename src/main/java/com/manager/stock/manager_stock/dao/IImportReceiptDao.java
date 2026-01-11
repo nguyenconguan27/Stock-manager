@@ -11,10 +11,12 @@ import java.util.List;
 public interface IImportReceiptDao {
     List<ImportReceiptModel> findAllByAcademicYear(int academicYear);
     List<ImportReceiptModel> findAllByProductIdAndYear(long productId, int academicYear);
+    ImportReceiptModel findById(long id);
     long save(ImportReceiptModel importReceiptModel);
-    void update(ImportReceiptModel importReceiptModel);
+    long update(ImportReceiptModel importReceiptModel);
     void delete(List<Long> ids);
     void deleteByIdWithTransaction(long id, Connection connection);
     void commit();
     void rollback();
+    void delete(long id);
 }

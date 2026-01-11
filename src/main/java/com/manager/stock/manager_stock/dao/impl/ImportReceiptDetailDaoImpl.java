@@ -95,6 +95,36 @@ public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailM
     }
 
     @Override
+    public void save(ImportReceiptDetailModel detailModel, long receiptId) {
+        String sqlQuery = "select * from import_receipt_detail where id = ?";
+        String sqlUpdate = "UPDATE import_receipt_detail set planned_quantity = ?, actual_quantity = ?, unit_price = ?" +
+                " where id = ?";
+        String sqlInsert = "INSERT INTO import_receipt_detail (import_receipt_id, product_id, planned_quantity, actual_quantity, unit_price, product_name)" +
+                " values (?, ?, ?, ?, ?, ?)";
+        List<ImportReceiptDetailModel> importReceiptDetailModels = query(sqlQuery, new ImportReceiptDetailMapperResultSet(),detailModel.getId());
+        List<Object[]> parameters = new ArrayList<>();
+        if(importReceiptDetailModels.isEmpty()) {
+            parameters.add(new Object[]{
+                    receiptId,
+                    detailModel.getProductId(),
+                    detailModel.getPlannedQuantity(),
+                    detailModel.getActualQuantity(),
+                    detailModel.getUnitPrice(),
+                    detailModel.getProductName()
+            });
+            save(sqlInsert, parameters);
+        } else {
+            parameters.add(new Object[]{
+                    detailModel.getPlannedQuantity(),
+                    detailModel.getActualQuantity(),
+                    detailModel.getUnitPrice(),
+                    detailModel.getId()
+            });
+            save(sqlUpdate, parameters);
+        }
+    }
+
+    @Override
     public double calculateTotalPriceImportedByProduct(long productId, LocalDateTime startDate, LocalDateTime endTime, LocalDateTime oldImportDate) throws DaoException {
         String sql = "select sum(DB.IMPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY * DB.IMPORT_RECEIPT_DETAIL.ACTUAL_QUANTITY) as total_price_imported from DB.IMPORT_RECEIPT_DETAIL\n" +
                 "join DB.IMPORT_RECEIPT on DB.IMPORT_RECEIPT.id = DB.IMPORT_RECEIPT_DETAIL.IMPORT_RECEIPT_ID\n" +

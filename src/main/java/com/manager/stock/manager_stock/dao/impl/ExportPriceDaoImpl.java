@@ -69,20 +69,28 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
 
     @Override
     public long save(ExportPriceModel exportPriceModel) {
+        String sqlQuery = "select * from export_price where id = ?";
         String sql = "INSERT INTO export_price(product_id, export_time, export_price, quantity_in_stock, quantity_imported, total_price_import, total_price_in_stock, import_receipt_id)" +
                 " values (?, ?, ?, ?, ?, ?, ?, ?)";
-        List<Object[]> parameters = new ArrayList<>();
-        parameters.add(new Object[] {
-                exportPriceModel.getProductId(),
-                exportPriceModel.getExportTime(),
-                exportPriceModel.getExportPrice(),
-                exportPriceModel.getQuantityInStock(),
-                exportPriceModel.getQuantityImported(),
-                exportPriceModel.getTotalImportPrice(),
-                exportPriceModel.getTotalPriceInStock(),
-                exportPriceModel.getImportReceiptId()
-        });
-        return save(sql, parameters);
+        List<ExportPriceModel> exportPriceModels = query(sqlQuery, new ExportPriceMapperResultSet(), exportPriceModel.getId());
+        if(exportPriceModels.isEmpty()) {
+
+            List<Object[]> parameters = new ArrayList<>();
+            parameters.add(new Object[]{
+                    exportPriceModel.getProductId(),
+                    exportPriceModel.getExportTime(),
+                    exportPriceModel.getExportPrice(),
+                    exportPriceModel.getQuantityInStock(),
+                    exportPriceModel.getQuantityImported(),
+                    exportPriceModel.getTotalImportPrice(),
+                    exportPriceModel.getTotalPriceInStock(),
+                    exportPriceModel.getImportReceiptId()
+            });
+            return save(sql, parameters);
+        } else {
+            update(List.of(exportPriceModel));
+            return exportPriceModel.getId();
+        }
     }
 
     @Override
@@ -453,15 +461,32 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
     }
 
     @Override
-    public void delete(long productId, LocalDateTime time) {
-        String sql = "select from export_price where product_id = ? and export_time >= ?";
+    public void delete(long productId, int year) {
+        String sql = "delete from export_price where product_id = ? and year(export_time) = ?";
         List<Object[]> parameters = new ArrayList<>();
         parameters.add(new Object[]{
                 productId,
-                time
+                year
         });
         save(sql, parameters);
     }
+
+    @Override
+    public void delete(long receiptId) {
+        String sql = "delete from export_price where import_receipt_id = ?";
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[] {
+                receiptId
+        });
+        save(sql, parameters);
+    }
+
+    @Override
+    public List<ExportPriceModel> findByProductAndYear(long productId, int year) {
+        String sql = "select * from export_price where product_id = ? and year(export_time) = ?";
+        return query(sql, new ExportPriceMapperResultSet(), productId, year);
+    }
+
 
 
 }

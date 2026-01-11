@@ -6,4 +6,5 @@ package com.manager.stock.manager_stock.mapper.viewModelMapper;
 public interface ViewModelMapper<T, R> {
     R toViewModel(T model);
     T fromViewModelToModel(R viewModel);
+
 }

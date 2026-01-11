@@ -19,4 +19,6 @@ public interface IInventoryDetailService {
     List<ProductIdAndCodeAndNameAndQuantityInStock> findProductHaveMinQuantityByProductGroup(long productGroupId);
     List<InventoryDetailModel> findByMinYearAndProduct(long productId, int year);
     InventoryDetailModel findByYearAndProduct(long productId, int year);
+    void save(InventoryDetailModel inventoryDetailModel);
+    void delete(long productId, int year);
 }

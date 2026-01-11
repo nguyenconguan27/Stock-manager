@@ -200,4 +200,39 @@ public class InventoryDetailDaoImpl extends AbstractDao<InventoryDetailModel> im
         }
         return inventoryDetailModels.get(0);
     }
+
+    @Override
+    public void save(InventoryDetailModel inventoryDetailModel) {
+        String sqlQuery = "select * from inventory_detail where id = ?";
+        String sqlInsert = "INSERT INTO inventory_detail(product_id, quantity, total_price, academic_year) " +
+                "values(?, ?, ?, ?)";
+        String sqlUpdate = "UPDATE inventory_detail set quantity = ?, total_price = ? where id = ?";
+        List<InventoryDetailModel> inventoryDetailModels = query(sqlQuery, new InventoryDetailMapperResultSet(), inventoryDetailModel.getId());
+        List<Object[]> parameters = new ArrayList<>();
+        if(inventoryDetailModels.isEmpty()) {
+            parameters.add(new Object[]{
+                    inventoryDetailModel.getProductId(),
+                    inventoryDetailModel.getQuantity(),
+                    inventoryDetailModel.getTotalPrice(),
+                    inventoryDetailModel.getAcademicYear()
+            });
+            save(sqlInsert, parameters);
+        } else {
+            parameters.add(new Object[]{
+                    inventoryDetailModel.getQuantity(),
+                    inventoryDetailModel.getTotalPrice(),
+                    inventoryDetailModel.getId()
+            });
+            save(sqlUpdate, parameters);
+        }
+    }
+
+    @Override
+    public void delete(long productId, int year) {
+        String sql = "delete from inventory_detail where product_id = ? and academic_year = ?";
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[]{productId, year
+        });
+        save(sql, parameters);
+    }
 }

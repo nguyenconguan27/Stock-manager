@@ -20,4 +20,5 @@ public interface IImportReceiptDetailService {
     void deleteByIds(Set<Long> ids);
     long calculateTotalQuantityImportedByProduct(long productId, LocalDateTime startDate, LocalDateTime endTime, LocalDateTime oldImportDate);
     double calculateTotalPriceImportedByProduct(long productId, LocalDateTime startDate, LocalDateTime endTime, LocalDateTime oldImportDate);
+    void save(ImportReceiptDetailModel detailModel, long receiptId);
 }

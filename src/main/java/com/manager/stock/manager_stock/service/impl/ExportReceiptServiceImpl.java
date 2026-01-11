@@ -91,4 +91,9 @@ public class ExportReceiptServiceImpl implements IExportReceiptService {
     public void rollback() {
         exportReceiptDao.rollback();
     }
+
+    @Override
+    public void delete(long id) {
+        exportReceiptDao.delete(id);
+    }
 }

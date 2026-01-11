@@ -46,6 +46,11 @@ public class ImportReceiptServiceImpl implements IImportReceiptService {
     }
 
     @Override
+    public ImportReceiptModel findById(long id) {
+        return importReceiptDao.findById(id);
+    }
+
+    @Override
     public long save(ImportReceiptModel importReceiptModel) throws DaoException {
         return importReceiptDao.save(importReceiptModel);
     }
@@ -60,9 +65,11 @@ public class ImportReceiptServiceImpl implements IImportReceiptService {
 
     @Override
     public void delete(long id) throws  DaoException {
-        List<Long> ids = new ArrayList<>();
-        ids.add(id);
-        importReceiptDao.delete(ids);
+//        List<Long> ids = new ArrayList<>();
+//        ids.add(id);
+//        importReceiptDao.delete(ids);
+//        exportPriceDao.delete(id);
+        importReceiptDao.delete(id);
     }
 
     @Override

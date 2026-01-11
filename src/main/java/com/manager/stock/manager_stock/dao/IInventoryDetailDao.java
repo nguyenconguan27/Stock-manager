@@ -19,4 +19,6 @@ import java.util.List;
      List<ProductIdAndCodeAndNameAndQuantityInStock> findProductHaveMinQuantityByProductGroup(long productGroupId);
      List<InventoryDetailModel> getByMinYearAndProduct(long productId, int year);
      InventoryDetailModel getByYearAndProduct(long productId, int year);
+     void save(InventoryDetailModel inventoryDetailModel);
+     void delete(long productId, int year);
 }

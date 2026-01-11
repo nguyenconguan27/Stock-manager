@@ -1,6 +1,7 @@
 package com.manager.stock.manager_stock.dao;
 
 import com.manager.stock.manager_stock.model.ExportReceiptDetailModel;
+import com.manager.stock.manager_stock.model.ExportReceiptModel;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,4 +23,5 @@ public interface IExportReceiptDetailDao {
     double calculateTotalPriceByProductAndTimeRangeAndExceptDate(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId, LocalDateTime exceptDate);
     long calculateActualQuantityByProductBetweenImportDates(LocalDateTime startDate, LocalDateTime endDate, long productId);
     long calculateTotalQuantityByProductAndTimeRange(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId);
+    void save(ExportReceiptDetailModel detailModel, long receiptId);
 }

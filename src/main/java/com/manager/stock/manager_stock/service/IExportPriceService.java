@@ -45,5 +45,6 @@ public interface IExportPriceService {
     void commit();
     void rollback();
 
-    void delete(long productId, LocalDateTime time);
+    void delete(long productId, int year);
+    List<ExportPriceModel> findByProductAndYear(long productId, int year);
 }

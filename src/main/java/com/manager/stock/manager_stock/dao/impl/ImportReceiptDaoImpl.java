@@ -36,7 +36,7 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
                 "join import_receipt_detail ird on\n" +
                 "ir.id = ird.import_receipt_id\n" +
                 "where ir.academic_year = ? \n" +
-                "group by ir.id order by PARSEDATETIME(ir.create_at, 'DD/MM/YYYY HH:mm:ss') asc;";
+                "group by ir.id;";
         return query(sql, new ImportReceiptMapperResultSet(), academicYear);
     }
 
@@ -51,28 +51,46 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
     }
 
     @Override
-    public long save(ImportReceiptModel importReceiptModel) throws DaoException {
-        String sql = "INSERT INTO import_receipt (invoice_number, create_at, delivered_by, invoice, company_name, warehouse_name, total_price, total_price_in_word, academic_year) " +
-                    " values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        List<Object[]> parameters = new ArrayList<>();
-        parameters.add(new Object[]{
-                importReceiptModel.getInvoice(),
-                importReceiptModel.getCreateAt(),
-                importReceiptModel.getDeliveredBy(),
-                importReceiptModel.getInvoiceNumber(),
-                importReceiptModel.getCompanyName(),
-                importReceiptModel.getWarehouseName(),
-                importReceiptModel.getTotalPrice(),
-                importReceiptModel.getTotalPriceInWord(),
-                importReceiptModel.getAcademicYear()
-        });
-        return save(sql, parameters);
+    public ImportReceiptModel findById(long id) {
+        String sql = "select * from import_receipt where id = ?";
+        List<ImportReceiptModel> importReceiptModels = query(sql, new ImportReceiptMapperResultSet(), id);
+        if(importReceiptModels.isEmpty()) {
+            return null;
+        } else {
+            return importReceiptModels.get(0);
+        }
     }
 
     @Override
-    public void update(ImportReceiptModel importReceiptModel) throws DaoException {
+    public long save(ImportReceiptModel importReceiptModel) throws DaoException {
+        String sqlSelect = "select * from import_receipt where id = ?";
+        List<ImportReceiptModel> importReceiptModels = query(sqlSelect, new ImportReceiptMapperResultSet(), importReceiptModel.getId());
+        String sql = "INSERT INTO import_receipt (invoice_number, create_at, delivered_by, invoice, company_name, warehouse_name, total_price, total_price_in_word, academic_year) " +
+                    " values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        if(importReceiptModels.isEmpty()) {
+            List<Object[]> parameters = new ArrayList<>();
+            parameters.add(new Object[]{
+                    importReceiptModel.getInvoice(),
+                    importReceiptModel.getCreateAt(),
+                    importReceiptModel.getDeliveredBy(),
+                    importReceiptModel.getInvoiceNumber(),
+                    importReceiptModel.getCompanyName(),
+                    importReceiptModel.getWarehouseName(),
+                    importReceiptModel.getTotalPrice(),
+                    importReceiptModel.getTotalPriceInWord(),
+                    importReceiptModel.getAcademicYear()
+            });
+            return save(sql, parameters);
+        } else {
+            update(importReceiptModel);
+            return importReceiptModel.getId();
+        }
+    }
+
+    @Override
+    public long update(ImportReceiptModel importReceiptModel) throws DaoException {
         String sql = "UPDATE import_receipt set invoice = ?, create_at = ?, delivered_by = ?, " +
-                    "invoice_number = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ? " +
+                    "invoice_number = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ?, academic_year = ? " +
                     " where id = ?";
         List<Object[]> parameters = new ArrayList<>();
         parameters.add(new Object[]{
@@ -84,9 +102,10 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
                 importReceiptModel.getWarehouseName(),
                 importReceiptModel.getTotalPrice(),
                 importReceiptModel.getTotalPriceInWord(),
+                importReceiptModel.getAcademicYear(),
                 importReceiptModel.getId()
         });
-        save(sql, parameters);
+        return save(sql, parameters);
     }
 
     @Override
@@ -116,5 +135,17 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
     @Override
     public void rollback() {
         super.rollback();
+    }
+
+    @Override
+    public void delete(long id) {
+        String sqlDetail = "delete from import_receipt_detail where import_receipt_id = ?";
+        String sql = "delete from import_receipt where id = ?";
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[] {
+                id
+        });
+        save(sqlDetail, parameters);
+        save(sql, parameters);
     }
 }

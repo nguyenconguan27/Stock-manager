@@ -116,7 +116,6 @@ public class AbstractDao<T> implements GenericDao<T> {
                 stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 setParams(stmt, parameters.get(0));
                 int affectedRows = stmt.executeUpdate();
-//                connection.commit();
                 if (affectedRows == 0) {
                     return affectedRows;
                 }
@@ -130,7 +129,7 @@ public class AbstractDao<T> implements GenericDao<T> {
                             return 1;
                         }
                     } else {
-                        throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
+//                        throw new DaoException("Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.");
                     }
                 }
             }

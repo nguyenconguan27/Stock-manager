@@ -22,4 +22,5 @@ public interface IExportReceiptService {
     void update(ExportReceiptModel exportReceiptModel);
     void commit();
     void rollback();
+    void delete(long id);
 }

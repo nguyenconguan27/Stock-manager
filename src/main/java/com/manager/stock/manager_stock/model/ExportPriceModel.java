@@ -1,6 +1,7 @@
 package com.manager.stock.manager_stock.model;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * @author Trọng Hướng
@@ -17,6 +18,10 @@ public class ExportPriceModel {
     private Long importReceiptId;
 
     public ExportPriceModel() {
+    }
+
+    public ExportPriceModel(Long importReceiptId) {
+        this.importReceiptId = importReceiptId;
     }
 
     public ExportPriceModel(long id, long productId, LocalDateTime exportTime, double exportPrice, int quantityInStock, int quantityImported, double totalImportPrice, double totalPriceInStock) {
@@ -100,5 +105,10 @@ public class ExportPriceModel {
 
     public void setImportReceiptId(Long importReceiptId) {
         this.importReceiptId = importReceiptId;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return Objects.equals(this.importReceiptId, ((ExportPriceModel) obj).getImportReceiptId());
     }
 }

@@ -5,6 +5,7 @@ import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.exception.DivisionByZeroException;
 import com.manager.stock.manager_stock.exception.StockUnderFlowException;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptDetailModelMapper;
+import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptModelMapper;
 import com.manager.stock.manager_stock.model.*;
 import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndExportTimeAndExportPrice;
 import com.manager.stock.manager_stock.model.tableData.ImportReceiptDetailModelTable;
@@ -15,7 +16,9 @@ import com.manager.stock.manager_stock.utils.AlertUtils;
 import com.manager.stock.manager_stock.utils.FormatMoney;
 import com.manager.stock.manager_stock.utils.GenericConverterBetweenModelAndTableData;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -36,9 +39,11 @@ public class ImportReceiptPresenter {
     private static ImportReceiptPresenter instance;
     private final ProductService productService;
     private final DateTimeFormatter formatter;
+    private final ComputService computService;
     private final DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private ImportReceiptPresenter() {
+        computService = ComputeServiceImpl.getInstance();
         importReceiptService = ImportReceiptServiceImpl.getInstance();
         importReceiptDetailService = ImportReceiptDetailServiceImpl.getInstance();
         inventoryDetailService = InventoryDetailServiceImpl.getInstance();
@@ -80,102 +85,119 @@ public class ImportReceiptPresenter {
     }
 
     public void saveImportReceipt(ImportReceiptModel importReceiptModel, ObservableList<ImportReceiptDetailModelTable> importReceiptDetailModelsTable,
-                                  HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap) throws DaoException, StockUnderFlowException{
-        try {
-            int academicYear = getYearOfImportReceipt(importReceiptModel.getCreateAt());
-            importReceiptModel.setAcademicYear(academicYear);
-            long importReceiptId = importReceiptService.save(importReceiptModel);
-            importReceiptModel.setId(importReceiptId);
-            List<ImportReceiptDetailModel> importReceiptDetailModels = GenericConverterBetweenModelAndTableData.convertToListModel(
+                                  HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap) {
+
+        List<ImportReceiptDetailModel> importReceiptDetailModels = GenericConverterBetweenModelAndTableData.convertToListModel(
                     importReceiptDetailModelsTable, ImportReceiptDetailModelMapper.INSTANCE::fromViewModelToModel);
-
-
-
-
-            importReceiptDetailService.save(importReceiptDetailModels, importReceiptId);
-            LocalDateTime importDate = LocalDateTime.parse(importReceiptModel.getCreateAt(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-            List<Long> productIds = importReceiptDetailModels.stream()
-                    .map(ImportReceiptDetailModel::getProductId)
-                    .collect(Collectors.toList());
-            if (importNextExportDate(productIds, importDate, importReceiptModel.getId(), changeQuantityByProductMap, changeTotalPriceByProductMap)) {
-                importReceiptService.commit();
-                return;
-            }
-            updateInventory(academicYear, importReceiptDetailModels, changeQuantityByProductMap, changeTotalPriceByProductMap, true, importDate, importReceiptId);
-            LocalDateTime newImportDate = LocalDateTime.parse(importReceiptModel.getCreateAt(), formatter);
-//            updateForeignExportDetail(importReceiptDetailModels, newImportDate, newImportDate, false);
-            importReceiptService.commit();
+        try {
+            computService.compute(importReceiptModel, importReceiptDetailModels, "save");
+        } catch (SQLException e) {
+            AlertUtils.alert(e.getMessage(),"", "", "");
         }
-        catch (Exception e) {
-            importReceiptService.rollback();
-            e.printStackTrace();
-        }
+        //        try {
+//            int academicYear = getYearOfImportReceipt(importReceiptModel.getCreateAt());
+//            importReceiptModel.setAcademicYear(academicYear);
+//            long importReceiptId = importReceiptService.save(importReceiptModel);
+//            importReceiptModel.setId(importReceiptId);
+//            List<ImportReceiptDetailModel> importReceiptDetailModels = GenericConverterBetweenModelAndTableData.convertToListModel(
+//                    importReceiptDetailModelsTable, ImportReceiptDetailModelMapper.INSTANCE::fromViewModelToModel);
+//
+//
+//
+//
+//            importReceiptDetailService.save(importReceiptDetailModels, importReceiptId);
+//            LocalDateTime importDate = LocalDateTime.parse(importReceiptModel.getCreateAt(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+//            List<Long> productIds = importReceiptDetailModels.stream()
+//                    .map(ImportReceiptDetailModel::getProductId)
+//                    .collect(Collectors.toList());
+//            if (importNextExportDate(productIds, importDate, importReceiptModel.getId(), changeQuantityByProductMap, changeTotalPriceByProductMap)) {
+//                importReceiptService.commit();
+//                return;
+//            }
+//            updateInventory(academicYear, importReceiptDetailModels, changeQuantityByProductMap, changeTotalPriceByProductMap, true, importDate, importReceiptId);
+//            LocalDateTime newImportDate = LocalDateTime.parse(importReceiptModel.getCreateAt(), formatter);
+////            updateForeignExportDetail(importReceiptDetailModels, newImportDate, newImportDate, false);
+//            importReceiptService.commit();
+//        }
+//        catch (Exception e) {
+//            importReceiptService.rollback();
+//            e.printStackTrace();
+//        }
     }
 
     public void updateImportReceipt(ImportReceiptModel importReceiptModel, List<ImportReceiptDetailModelTable> importReceiptDetailModelTables,
                                     HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap,
-                                    Set<Long> receiptDetailIds, String oldImportDateStr, List<ImportReceiptDetailModelTable> importReceiptDetails) throws DaoException, StockUnderFlowException {
+                                    Set<Long> receiptDetailIds, String oldImportDateStr, List<ImportReceiptDetailModelTable> importReceiptDetails) {
+
+        List<ImportReceiptDetailModel> importReceiptDetailModels = GenericConverterBetweenModelAndTableData.convertToListModel(
+                importReceiptDetails, ImportReceiptDetailModelMapper.INSTANCE::fromViewModelToModel);
         try {
-            // cập nhật thông tin của phiếu nhập
-            List<ImportReceiptDetailModel> allProductOfImportReceipt = GenericConverterBetweenModelAndTableData.convertToListModel(importReceiptDetails,
-                    ImportReceiptDetailModelMapper.INSTANCE::fromViewModelToModel);
-
-
-
-
-            LocalDateTime oldImportDate = LocalDateTime.parse(oldImportDateStr.trim(), formatter);
-            LocalDateTime newImportDate = LocalDateTime.parse(importReceiptModel.getCreateAt().trim(), formatter);
-            updateForeignExportDetail(allProductOfImportReceipt, newImportDate, oldImportDate);
-            importReceiptService.update(importReceiptModel);
-
-            if(!changeQuantityByProductMap.isEmpty() || !changeTotalPriceByProductMap.isEmpty()) {
-                // danh sách sản phẩm thêm mới
-                List<ImportReceiptDetailModelTable> newImportReceiptDetailModelTable = new ArrayList<>();
-                // danh sách sản phẩm chỉnh sửa
-                List<ImportReceiptDetailModelTable> editImportReceiptDetailModelTable = new ArrayList<>();
-
-                for(ImportReceiptDetailModelTable importReceiptDetailModelTable : importReceiptDetailModelTables) {
-                    if(importReceiptDetailModelTable.getId() == -1) {
-                        newImportReceiptDetailModelTable.add(importReceiptDetailModelTable);
-                    }
-                    else {
-                        editImportReceiptDetailModelTable.add(importReceiptDetailModelTable);
-                    }
-                }
-
-                List<ImportReceiptDetailModel> newImportReceiptDetailModel = GenericConverterBetweenModelAndTableData.convertToListModel(newImportReceiptDetailModelTable,
-                        ImportReceiptDetailModelMapper.INSTANCE::fromViewModelToModel);
-                List<ImportReceiptDetailModel> editImportReceiptDetailModel = GenericConverterBetweenModelAndTableData.convertToListModel(editImportReceiptDetailModelTable,
-                        ImportReceiptDetailModelMapper.INSTANCE::fromViewModelToModel);
-
-                if(!newImportReceiptDetailModel.isEmpty()) {
-                    importReceiptDetailService.save(newImportReceiptDetailModel, importReceiptModel.getId());
-                }
-                else if(!editImportReceiptDetailModel.isEmpty()) {
-                    importReceiptDetailService.update(editImportReceiptDetailModel);
-                }
-                List<ImportReceiptDetailModel> importReceiptDetailModelsOverNewAndEdit = new ArrayList<>(newImportReceiptDetailModel);
-                importReceiptDetailModelsOverNewAndEdit.addAll(editImportReceiptDetailModel);
-                int year = getYearOfImportReceipt(importReceiptModel.getCreateAt());
-                LocalDateTime importDate = LocalDateTime.parse(importReceiptModel.getCreateAt(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-                updateInventory(year, importReceiptDetailModelsOverNewAndEdit, changeQuantityByProductMap, changeTotalPriceByProductMap, false, importDate, importReceiptModel.getId());
-            }
-            // xóa đi những chi tiết phiếu nhập đã bị xóa
-            // danh sách sản phẩm bị xóa trong phiếu nhập
-            if(!receiptDetailIds.isEmpty()) {
-                importReceiptDetailService.deleteByIds(receiptDetailIds);
-            }
-            importReceiptService.commit();
+            computService.compute(importReceiptModel, importReceiptDetailModels, "update");
+        } catch (SQLException e) {
+            AlertUtils.alert(e.getMessage(),"", "", "");
         }
-        catch (DaoException | StockUnderFlowException exception) {
-            importReceiptService.rollback();
-            exception.printStackTrace();
-            throw exception;
-        }
-        catch (Exception e) {
-            importReceiptService.rollback();
-            e.printStackTrace();
-        }
+
+//        try {
+//            // cập nhật thông tin của phiếu nhập
+//            List<ImportReceiptDetailModel> allProductOfImportReceipt = GenericConverterBetweenModelAndTableData.convertToListModel(importReceiptDetails,
+//                    ImportReceiptDetailModelMapper.INSTANCE::fromViewModelToModel);
+//
+//
+//
+//
+//            LocalDateTime oldImportDate = LocalDateTime.parse(oldImportDateStr.trim(), formatter);
+//            LocalDateTime newImportDate = LocalDateTime.parse(importReceiptModel.getCreateAt().trim(), formatter);
+//            updateForeignExportDetail(allProductOfImportReceipt, newImportDate, oldImportDate);
+//            importReceiptService.update(importReceiptModel);
+//
+//            if(!changeQuantityByProductMap.isEmpty() || !changeTotalPriceByProductMap.isEmpty()) {
+//                // danh sách sản phẩm thêm mới
+//                List<ImportReceiptDetailModelTable> newImportReceiptDetailModelTable = new ArrayList<>();
+//                // danh sách sản phẩm chỉnh sửa
+//                List<ImportReceiptDetailModelTable> editImportReceiptDetailModelTable = new ArrayList<>();
+//
+//                for(ImportReceiptDetailModelTable importReceiptDetailModelTable : importReceiptDetailModelTables) {
+//                    if(importReceiptDetailModelTable.getId() == -1) {
+//                        newImportReceiptDetailModelTable.add(importReceiptDetailModelTable);
+//                    }
+//                    else {
+//                        editImportReceiptDetailModelTable.add(importReceiptDetailModelTable);
+//                    }
+//                }
+//
+//                List<ImportReceiptDetailModel> newImportReceiptDetailModel = GenericConverterBetweenModelAndTableData.convertToListModel(newImportReceiptDetailModelTable,
+//                        ImportReceiptDetailModelMapper.INSTANCE::fromViewModelToModel);
+//                List<ImportReceiptDetailModel> editImportReceiptDetailModel = GenericConverterBetweenModelAndTableData.convertToListModel(editImportReceiptDetailModelTable,
+//                        ImportReceiptDetailModelMapper.INSTANCE::fromViewModelToModel);
+//
+//                if(!newImportReceiptDetailModel.isEmpty()) {
+//                    importReceiptDetailService.save(newImportReceiptDetailModel, importReceiptModel.getId());
+//                }
+//                else if(!editImportReceiptDetailModel.isEmpty()) {
+//                    importReceiptDetailService.update(editImportReceiptDetailModel);
+//                }
+//                List<ImportReceiptDetailModel> importReceiptDetailModelsOverNewAndEdit = new ArrayList<>(newImportReceiptDetailModel);
+//                importReceiptDetailModelsOverNewAndEdit.addAll(editImportReceiptDetailModel);
+//                int year = getYearOfImportReceipt(importReceiptModel.getCreateAt());
+//                LocalDateTime importDate = LocalDateTime.parse(importReceiptModel.getCreateAt(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+//                updateInventory(year, importReceiptDetailModelsOverNewAndEdit, changeQuantityByProductMap, changeTotalPriceByProductMap, false, importDate, importReceiptModel.getId());
+//            }
+//            // xóa đi những chi tiết phiếu nhập đã bị xóa
+//            // danh sách sản phẩm bị xóa trong phiếu nhập
+//            if(!receiptDetailIds.isEmpty()) {
+//                importReceiptDetailService.deleteByIds(receiptDetailIds);
+//            }
+//            importReceiptService.commit();
+//        }
+//        catch (DaoException | StockUnderFlowException exception) {
+//            importReceiptService.rollback();
+//            exception.printStackTrace();
+//            throw exception;
+//        }
+//        catch (Exception e) {
+//            importReceiptService.rollback();
+//            e.printStackTrace();
+//        }
     }
 
     public ExportPriceModel exportPrice2Update(Long productId, ExportPriceModel current, ExportPriceModel pre,
@@ -612,39 +634,49 @@ public class ImportReceiptPresenter {
     }
 
     public boolean deleteImportReceipt(ImportReceiptModelTable importReceiptModelTable) throws DaoException, StockUnderFlowException {
+
         try {
-            int academicYear = getYearOfImportReceipt(importReceiptModelTable.getCreateAt());
-            if (academicYear <= 0) {
-                AlertUtils.alert("Không xác định được năm học của phiếu nhập, vui lòng kiểm tra lại ngày tạo.", "ERROR", "Lỗi dữ liệu", "");
-                return false;
-            }
-            // xóa phiếu nhập mà làm âm tồn kho ==> không cho xóa
-            // lấy danh sách sản phẩm trong phiếu nhập
             List<ImportReceiptDetailModel> importReceiptDetailModels = importReceiptDetailService.findAllByImportReceiptId(importReceiptModelTable.getId());
-            HashMap<Long, Integer> changeQuantityMap = new HashMap<>();
-            HashMap<Long, Double> changeTotalPriceMap = new HashMap<>();
-            importReceiptDetailModels.forEach(importReceiptDetailModel -> {
-                changeQuantityMap.put(importReceiptDetailModel.getProductId(), (-1) * importReceiptDetailModel.getActualQuantity());
-                changeTotalPriceMap.put(importReceiptDetailModel.getProductId(), (-1) * importReceiptDetailModel.getActualQuantity() * importReceiptDetailModel.getUnitPrice());
-                importReceiptDetailModel.setTotalPrice(0.0);
-                importReceiptDetailModel.setActualQuantity(0);
-            });
-            // cập nhật tồn kho
-            LocalDateTime importDate = LocalDateTime.parse(importReceiptModelTable.getCreateAt(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-            updateInventory(academicYear, importReceiptDetailModels, changeQuantityMap, changeTotalPriceMap, false, importDate, importReceiptModelTable.getId());
-
-            updateForeignExportDetail(importReceiptDetailModels, null, importDate);
-            // cập nhật tồn kho + giá xuất thành công ==> xóa phiếu nhập
-            importReceiptService.delete(importReceiptModelTable.getId());
-
-            importReceiptService.commit();
+            computService.compute(ImportReceiptModelMapper.INSTANCE.fromViewModelToModel(importReceiptModelTable), importReceiptDetailModels, "delete");
             return true;
+        } catch (SQLException e) {
+            AlertUtils.alert(e.getMessage(),"", "", "");
+            return false;
         }
-        catch (Exception e) {
-            importReceiptService.rollback();
-            e.printStackTrace();
-            throw e;
-        }
+
+        //        try {
+//            int academicYear = getYearOfImportReceipt(importReceiptModelTable.getCreateAt());
+//            if (academicYear <= 0) {
+//                AlertUtils.alert("Không xác định được năm học của phiếu nhập, vui lòng kiểm tra lại ngày tạo.", "ERROR", "Lỗi dữ liệu", "");
+//                return false;
+//            }
+//            // xóa phiếu nhập mà làm âm tồn kho ==> không cho xóa
+//            // lấy danh sách sản phẩm trong phiếu nhập
+//            List<ImportReceiptDetailModel> importReceiptDetailModels = importReceiptDetailService.findAllByImportReceiptId(importReceiptModelTable.getId());
+//            HashMap<Long, Integer> changeQuantityMap = new HashMap<>();
+//            HashMap<Long, Double> changeTotalPriceMap = new HashMap<>();
+//            importReceiptDetailModels.forEach(importReceiptDetailModel -> {
+//                changeQuantityMap.put(importReceiptDetailModel.getProductId(), (-1) * importReceiptDetailModel.getActualQuantity());
+//                changeTotalPriceMap.put(importReceiptDetailModel.getProductId(), (-1) * importReceiptDetailModel.getActualQuantity() * importReceiptDetailModel.getUnitPrice());
+//                importReceiptDetailModel.setTotalPrice(0.0);
+//                importReceiptDetailModel.setActualQuantity(0);
+//            });
+//            // cập nhật tồn kho
+//            LocalDateTime importDate = LocalDateTime.parse(importReceiptModelTable.getCreateAt(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+//            updateInventory(academicYear, importReceiptDetailModels, changeQuantityMap, changeTotalPriceMap, false, importDate, importReceiptModelTable.getId());
+//
+//            updateForeignExportDetail(importReceiptDetailModels, null, importDate);
+//            // cập nhật tồn kho + giá xuất thành công ==> xóa phiếu nhập
+//            importReceiptService.delete(importReceiptModelTable.getId());
+//
+//            importReceiptService.commit();
+//            return true;
+//        }
+//        catch (Exception e) {
+//            importReceiptService.rollback();
+//            e.printStackTrace();
+//            throw e;
+//        }
     }
 
     public int findQuantityInStockByProductIdAndAcademicYear(long productId, int academicYear) throws DaoException{

@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface IImportReceiptService {
     List<ImportReceiptModel> findAllByAcademicYear(Optional<Integer> academicYear);
     List<ImportReceiptModel> findAllByProductAndYear(long productId, int year);
+    ImportReceiptModel findById(long id);
     long save(ImportReceiptModel importReceiptModel);
     void update(ImportReceiptModel importReceiptModel);
     void delete(long id);

@@ -73,4 +73,9 @@ public class ImportReceiptDetailServiceImpl implements IImportReceiptDetailServi
     public double calculateTotalPriceImportedByProduct(long productId, LocalDateTime startDate, LocalDateTime endTime, LocalDateTime oldImportDate) {
         return importReceiptDetailDao.calculateTotalPriceImportedByProduct(productId, startDate, endTime, oldImportDate);
     }
+
+    @Override
+    public void save(ImportReceiptDetailModel detailModel, long receiptId) {
+        importReceiptDetailDao.save(detailModel, receiptId);
+    }
 }

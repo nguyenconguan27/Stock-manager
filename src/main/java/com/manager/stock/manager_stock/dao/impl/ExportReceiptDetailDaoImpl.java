@@ -4,6 +4,7 @@ import com.manager.stock.manager_stock.dao.IExportReceiptDetailDao;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.mapper.modelMapperResultSet.ExportReceiptDetailMapperResultSet;
 import com.manager.stock.manager_stock.model.ExportReceiptDetailModel;
+import com.manager.stock.manager_stock.model.ExportReceiptModel;
 
 import java.net.DatagramPacket;
 import java.time.LocalDateTime;
@@ -269,6 +270,36 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
             return -1;
         }
         return totalPrices.get(0);
+    }
+
+    @Override
+    public void save(ExportReceiptDetailModel detailModel, long receiptId) {
+        String sqlSelect = "select * from export_receipt_detail where id = ?";
+        String sqlUpdate = "UPDATE export_receipt_detail set actual_quantity = ?, original_unit_price = ?, export_price_id = ?" +
+                " WHERE id = ?";
+        String sqlInsert = "INSERT INTO export_receipt_detail(export_receipt_id, product_id, planned_quantity, actual_quantity, export_price_id, original_unit_price) " +
+                " values(?, ?, ?, ?, ?, ?);";
+        List<ExportReceiptDetailModel> exportReceiptDetailModels = query(sqlSelect, new ExportReceiptDetailMapperResultSet(), detailModel.getId());
+        List<Object[]> parameters = new ArrayList<>();
+        if(exportReceiptDetailModels.isEmpty()) {
+            parameters.add(new Object[]{
+                    receiptId,
+                    detailModel.getProductId(),
+                    detailModel.getPlannedQuantity(),
+                    detailModel.getActualQuantity(),
+                    detailModel.getExportPriceId(),
+                    detailModel.getOriginalUnitPrice()
+            });
+            save(sqlInsert, parameters);
+        } else {
+            parameters.add(new Object[]{
+                    detailModel.getActualQuantity(),
+                    detailModel.getOriginalUnitPrice(),
+                    detailModel.getExportPriceId(),
+                    detailModel.getId()
+            });
+            save(sqlUpdate, parameters);
+        }
     }
 
     @Override

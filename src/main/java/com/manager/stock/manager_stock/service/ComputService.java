@@ -7,5 +7,5 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface ComputService {
-    void compute(ReceiptModel receipt, List<? extends DetailModel> details) throws SQLException;
+    void compute(ReceiptModel receipt, List<? extends DetailModel> details, String action) throws SQLException;
 }

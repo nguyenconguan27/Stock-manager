@@ -82,4 +82,14 @@ public class InventoryDetailServiceImpl implements IInventoryDetailService {
     public InventoryDetailModel findByYearAndProduct(long productId, int year) {
         return inventoryDetailDao.getByYearAndProduct(productId, year);
     }
+
+    @Override
+    public void save(InventoryDetailModel inventoryDetailModel) {
+        inventoryDetailDao.save(inventoryDetailModel);
+    }
+
+    @Override
+    public void delete(long productId, int year) {
+        inventoryDetailDao.delete(productId, year);
+    }
 }

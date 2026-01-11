@@ -6,6 +6,7 @@ import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.exception.DivisionByZeroException;
 import com.manager.stock.manager_stock.exception.StockUnderFlowException;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ExportReceiptDetailModelTableMapper;
+import com.manager.stock.manager_stock.mapper.viewModelMapper.ExportReceiptModelTableMapper;
 import com.manager.stock.manager_stock.model.*;
 import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndExportTimeAndExportPrice;
 import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
@@ -20,6 +21,7 @@ import javafx.animation.ScaleTransition;
 import javafx.scene.control.Alert;
 
 import javax.sound.midi.Soundbank;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -38,8 +40,10 @@ public class ExportReceiptPresenter {
     private final IExportPriceService exportPriceService;
     private static ExportReceiptPresenter instance;
     private final DateTimeFormatter formatter;
+    private final ComputService computService;
 
     private ExportReceiptPresenter() {
+        computService = ComputeServiceImpl.getInstance();
         exportReceiptDetailService = ExportReceiptDetailServiceImpl.getInstance();
         exportReceiptService = ExportReceiptServiceImpl.getInstance();
         productService = ProductServiceImpl.getInstance();
@@ -97,38 +101,48 @@ public class ExportReceiptPresenter {
     }
 
     public void save(ExportReceiptModel exportReceiptModel, List<ExportReceiptDetailModelTable> exportReceiptDetailModelTables, HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap) {
-        // lấy danh sách tồn kho theo sản phẩm và theo năm của phiếu xuất
+
         List<ExportReceiptDetailModel> exportReceiptDetailModels = GenericConverterBetweenModelAndTableData.convertToListModel(
                 exportReceiptDetailModelTables, ExportReceiptDetailModelTableMapper.INSTANCE::fromViewModelToModel
         );
-        int academicYearValue = getYearOfExportReceipt(exportReceiptModel.getCreateAt());
-        List<Long> productIds = exportReceiptDetailModels.stream().map(ExportReceiptDetailModel::getProductId).collect(Collectors.toList());
-        // thêm mới phiếu xuất
-        List<Long> exportReceiptDetailIds = new ArrayList<>();
-        long exportReceiptId = -1;
         try {
-            exportReceiptModel.setAcademicYear(academicYearValue);
-            exportReceiptId = exportReceiptService.save(exportReceiptModel);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-            LocalDateTime time = LocalDateTime.parse(exportReceiptModel.getCreateAt(), formatter);
-            if(checkDate2AddNewReceipt(productIds, time)) {
-                if (!updateExportReceiptDate(LocalDateTime.now(), time, exportReceiptId, true, exportReceiptDetailModels)) {
-                    AlertUtils.alert("Không đủ điều kiện cập nhập phiếu nhập", "ERROR", "Lỗi", "Lỗi cập nhập ngày phiếu nhập");
-                }
-            }
-            else {
-                // thêm mới danh sách phiếu xuất chi tiết
-                exportReceiptDetailIds = exportReceiptDetailService.save(exportReceiptDetailModels, exportReceiptId);
-
-                updateInventory(exportReceiptDetailModels, academicYearValue, productIds, changeQuantityByProductMap);
-            }
-            exportReceiptService.commit();
-        } catch (DaoException | CanNotFoundException | StockUnderFlowException e) {
-            // gọi rollback
-            exportReceiptService.rollback();
-            e.printStackTrace();
-            throw e;
+            computService.compute(exportReceiptModel, exportReceiptDetailModels, "save");
+        } catch (SQLException e) {
+            AlertUtils.alert(e.getMessage(),"", "", "");
         }
+
+        //        // lấy danh sách tồn kho theo sản phẩm và theo năm của phiếu xuất
+//        List<ExportReceiptDetailModel> exportReceiptDetailModels = GenericConverterBetweenModelAndTableData.convertToListModel(
+//                exportReceiptDetailModelTables, ExportReceiptDetailModelTableMapper.INSTANCE::fromViewModelToModel
+//        );
+//        int academicYearValue = getYearOfExportReceipt(exportReceiptModel.getCreateAt());
+//        List<Long> productIds = exportReceiptDetailModels.stream().map(ExportReceiptDetailModel::getProductId).collect(Collectors.toList());
+//        // thêm mới phiếu xuất
+//        List<Long> exportReceiptDetailIds = new ArrayList<>();
+//        long exportReceiptId = -1;
+//        try {
+//            exportReceiptModel.setAcademicYear(academicYearValue);
+//            exportReceiptId = exportReceiptService.save(exportReceiptModel);
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+//            LocalDateTime time = LocalDateTime.parse(exportReceiptModel.getCreateAt(), formatter);
+//            if(checkDate2AddNewReceipt(productIds, time)) {
+//                if (!updateExportReceiptDate(LocalDateTime.now(), time, exportReceiptId, true, exportReceiptDetailModels)) {
+//                    AlertUtils.alert("Không đủ điều kiện cập nhập phiếu nhập", "ERROR", "Lỗi", "Lỗi cập nhập ngày phiếu nhập");
+//                }
+//            }
+//            else {
+//                // thêm mới danh sách phiếu xuất chi tiết
+//                exportReceiptDetailIds = exportReceiptDetailService.save(exportReceiptDetailModels, exportReceiptId);
+//
+//                updateInventory(exportReceiptDetailModels, academicYearValue, productIds, changeQuantityByProductMap);
+//            }
+//            exportReceiptService.commit();
+//        } catch (DaoException | CanNotFoundException | StockUnderFlowException e) {
+//            // gọi rollback
+//            exportReceiptService.rollback();
+//            e.printStackTrace();
+//            throw e;
+//        }
     }
 
     private void updateInventory(List<ExportReceiptDetailModel> exportReceiptDetailModels, int academicYear, List<Long> productIds, HashMap<Long, Integer> changeQuantityByProductMap) throws DaoException {
@@ -357,78 +371,95 @@ public class ExportReceiptPresenter {
 
 
     public void updateExportReceipt(ExportReceiptModel newExportReceipt, ExportReceiptModel oldExportReceipt, List<ExportReceiptDetailModelTable> exportReceiptDetailModelTables, HashMap<Long, Integer> changeQuantityByProductMap, HashMap<Long, Double> changeTotalPriceByProductMap) throws DaoException {
-        try {
-            if (!Objects.equals(newExportReceipt.getCreateAt(), oldExportReceipt.getCreateAt())) {
-                LocalDateTime fromDate = LocalDateTime.parse(oldExportReceipt.getCreateAt(), formatter);
-                LocalDateTime toDate = LocalDateTime.parse(newExportReceipt.getCreateAt(), formatter);
-                if (!updateExportReceiptDate(fromDate, toDate, oldExportReceipt.getId(), false, null)) {
-                    AlertUtils.alert("Không đủ điều kiện cập nhập phiếu nhập", "ERROR", "Lỗi", "Lỗi cập nhập ngày phiếu nhập");
-                }
-                newExportReceipt.setCreatedAtTs(toDate);
-                exportReceiptService.update(newExportReceipt);
-                exportReceiptService.commit();
-                return;
-            }
-            List<ExportReceiptDetailModel> exportReceiptDetailModels = GenericConverterBetweenModelAndTableData.convertToListModel(
+
+        List<ExportReceiptDetailModel> exportReceiptDetailModels = GenericConverterBetweenModelAndTableData.convertToListModel(
                     exportReceiptDetailModelTables, ExportReceiptDetailModelTableMapper.INSTANCE::fromViewModelToModel);
-            // thêm mới export detail trong TH chỉnh sửa phiếu xuất có add thêm sản phẩm mới
-            List<ExportReceiptDetailModel> newExportReceiptDetails = exportReceiptDetailModels.stream().filter(ep -> ep.getId() == -1)
-                    .collect(Collectors.toList());
-            exportReceiptDetailService.save(newExportReceiptDetails, oldExportReceipt.getId());
-
-            List<Long> productIds = exportReceiptDetailModelTables.stream().map(ExportReceiptDetailModelTable::getProductId).collect(Collectors.toList());
-            int academicYear = getYearOfExportReceipt(oldExportReceipt.getCreateAt());
-            // cập nhật tồn kho
-            updateInventory(exportReceiptDetailModels, academicYear, productIds, changeQuantityByProductMap);
-            // cập nhật giá xuất
-            LocalDateTime exportDate = LocalDateTime.parse(oldExportReceipt.getCreateAt(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-            updateExportPrice(productIds, exportReceiptDetailModels, exportDate, changeQuantityByProductMap, changeTotalPriceByProductMap);
-
-            if(!newExportReceipt.getCreateAt().equals(oldExportReceipt.getCreateAt())) {
-                LocalDateTime oldExportDate = LocalDateTime.parse(oldExportReceipt.getCreateAt(), formatter);
-                LocalDateTime newExportDate = LocalDateTime.parse(newExportReceipt.getCreateAt(), formatter);
-                // cập nhật lại tồn kho + đơn giá xuất
-                updateForeignExportDetail(exportReceiptDetailModels, oldExportDate, newExportDate);
-            }
-            // cập nhật danh sách chi tiết phiếu xuất
-            exportReceiptDetailService.update(exportReceiptDetailModels);
-            // commit
-            exportReceiptService.commit();
-        } catch (Exception e) {
-            exportReceiptService.rollback();
-            throw e;
+        try {
+            computService.compute(newExportReceipt, exportReceiptDetailModels, "update");
+        } catch (SQLException e) {
+            AlertUtils.alert(e.getMessage(),"", "", "");
         }
+
+        //        try {
+//            if (!Objects.equals(newExportReceipt.getCreateAt(), oldExportReceipt.getCreateAt())) {
+//                LocalDateTime fromDate = LocalDateTime.parse(oldExportReceipt.getCreateAt(), formatter);
+//                LocalDateTime toDate = LocalDateTime.parse(newExportReceipt.getCreateAt(), formatter);
+//                if (!updateExportReceiptDate(fromDate, toDate, oldExportReceipt.getId(), false, null)) {
+//                    AlertUtils.alert("Không đủ điều kiện cập nhập phiếu nhập", "ERROR", "Lỗi", "Lỗi cập nhập ngày phiếu nhập");
+//                }
+//                newExportReceipt.setCreatedAtTs(toDate);
+//                exportReceiptService.update(newExportReceipt);
+//                exportReceiptService.commit();
+//                return;
+//            }
+//            List<ExportReceiptDetailModel> exportReceiptDetailModels = GenericConverterBetweenModelAndTableData.convertToListModel(
+//                    exportReceiptDetailModelTables, ExportReceiptDetailModelTableMapper.INSTANCE::fromViewModelToModel);
+//            // thêm mới export detail trong TH chỉnh sửa phiếu xuất có add thêm sản phẩm mới
+//            List<ExportReceiptDetailModel> newExportReceiptDetails = exportReceiptDetailModels.stream().filter(ep -> ep.getId() == -1)
+//                    .collect(Collectors.toList());
+//            exportReceiptDetailService.save(newExportReceiptDetails, oldExportReceipt.getId());
+//
+//            List<Long> productIds = exportReceiptDetailModelTables.stream().map(ExportReceiptDetailModelTable::getProductId).collect(Collectors.toList());
+//            int academicYear = getYearOfExportReceipt(oldExportReceipt.getCreateAt());
+//            // cập nhật tồn kho
+//            updateInventory(exportReceiptDetailModels, academicYear, productIds, changeQuantityByProductMap);
+//            // cập nhật giá xuất
+//            LocalDateTime exportDate = LocalDateTime.parse(oldExportReceipt.getCreateAt(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+//            updateExportPrice(productIds, exportReceiptDetailModels, exportDate, changeQuantityByProductMap, changeTotalPriceByProductMap);
+//
+//            if(!newExportReceipt.getCreateAt().equals(oldExportReceipt.getCreateAt())) {
+//                LocalDateTime oldExportDate = LocalDateTime.parse(oldExportReceipt.getCreateAt(), formatter);
+//                LocalDateTime newExportDate = LocalDateTime.parse(newExportReceipt.getCreateAt(), formatter);
+//                // cập nhật lại tồn kho + đơn giá xuất
+//                updateForeignExportDetail(exportReceiptDetailModels, oldExportDate, newExportDate);
+//            }
+//            // cập nhật danh sách chi tiết phiếu xuất
+//            exportReceiptDetailService.update(exportReceiptDetailModels);
+//            // commit
+//            exportReceiptService.commit();
+//        } catch (Exception e) {
+//            exportReceiptService.rollback();
+//            throw e;
+//        }
     }
 
     public boolean deleteExportReceipt(ExportReceiptModelTable exportReceiptModel) throws DaoException {
         try {
-            // lấy danh sách chi tiết phiếu xuất
             List<ExportReceiptDetailModel> exportReceiptDetailModels = exportReceiptDetailService.findAllByExportReceipt(exportReceiptModel.getId());
-            HashMap<Long, Integer> changeQuantityByProductMap = new HashMap<>();
-            HashMap<Long, Double> changeTotalPriceByProductMap = new HashMap<>();
-            List<Long> productIds = new ArrayList<>();
-            exportReceiptDetailModels.forEach(exportReceiptDetailModel -> {
-                changeQuantityByProductMap.put(exportReceiptDetailModel.getProductId(), (-1) * exportReceiptDetailModel.getActualQuantity());
-                changeTotalPriceByProductMap.put(exportReceiptDetailModel.getProductId(), (-1) * exportReceiptDetailModel.getActualQuantity() * exportReceiptDetailModel.getOriginalUnitPrice());
-                productIds.add(exportReceiptDetailModel.getProductId());
-            });
-            // cập nhật tồn kho
-            int academicYear = getYearOfExportReceipt(exportReceiptModel.getCreateAt());
-            LocalDateTime exportDate = LocalDateTime.parse(exportReceiptModel.getCreateAt(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-            updateInventory(exportReceiptDetailModels, academicYear, productIds, changeQuantityByProductMap);
-
-            // cập nhật lại đơn giá
-            updateExportPrice(productIds, exportReceiptDetailModels, exportDate, changeQuantityByProductMap, changeTotalPriceByProductMap);
-            List<Long> exportReceiptIds = new ArrayList<>();
-            exportReceiptIds.add(exportReceiptModel.getId());
-            exportReceiptService.deleteByIds(exportReceiptIds);
-
+            computService.compute(ExportReceiptModelTableMapper.INSTANCE.fromViewModelToModel(exportReceiptModel), exportReceiptDetailModels, "delete");
             return true;
-        } catch (Exception e) {
-            exportReceiptService.rollback();
-            e.printStackTrace();
-            throw e;
+        } catch (SQLException e) {
+            AlertUtils.alert(e.getMessage(),"", "", "");
+            return false;
         }
+//        try {
+//            // lấy danh sách chi tiết phiếu xuất
+//            List<ExportReceiptDetailModel> exportReceiptDetailModels = exportReceiptDetailService.findAllByExportReceipt(exportReceiptModel.getId());
+//            HashMap<Long, Integer> changeQuantityByProductMap = new HashMap<>();
+//            HashMap<Long, Double> changeTotalPriceByProductMap = new HashMap<>();
+//            List<Long> productIds = new ArrayList<>();
+//            exportReceiptDetailModels.forEach(exportReceiptDetailModel -> {
+//                changeQuantityByProductMap.put(exportReceiptDetailModel.getProductId(), (-1) * exportReceiptDetailModel.getActualQuantity());
+//                changeTotalPriceByProductMap.put(exportReceiptDetailModel.getProductId(), (-1) * exportReceiptDetailModel.getActualQuantity() * exportReceiptDetailModel.getOriginalUnitPrice());
+//                productIds.add(exportReceiptDetailModel.getProductId());
+//            });
+//            // cập nhật tồn kho
+//            int academicYear = getYearOfExportReceipt(exportReceiptModel.getCreateAt());
+//            LocalDateTime exportDate = LocalDateTime.parse(exportReceiptModel.getCreateAt(), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+//            updateInventory(exportReceiptDetailModels, academicYear, productIds, changeQuantityByProductMap);
+//
+//            // cập nhật lại đơn giá
+//            updateExportPrice(productIds, exportReceiptDetailModels, exportDate, changeQuantityByProductMap, changeTotalPriceByProductMap);
+//            List<Long> exportReceiptIds = new ArrayList<>();
+//            exportReceiptIds.add(exportReceiptModel.getId());
+//            exportReceiptService.deleteByIds(exportReceiptIds);
+//
+//            return true;
+//        } catch (Exception e) {
+//            exportReceiptService.rollback();
+//            e.printStackTrace();
+//            throw e;
+//        }
     }
 
     private int getYearOfExportReceipt(String createAt) {

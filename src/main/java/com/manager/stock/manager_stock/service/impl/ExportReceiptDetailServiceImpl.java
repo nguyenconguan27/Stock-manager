@@ -96,4 +96,9 @@ public class ExportReceiptDetailServiceImpl implements IExportReceiptDetailServi
     public long calculateTotalQuantityByProductAndTimeRange(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId) {
         return exportReceiptDetailDao.calculateTotalQuantityByProductAndTimeRange(exportPriceTime, startDate, endDate, productId);
     }
+
+    @Override
+    public void save(ExportReceiptDetailModel detailModel, long receiptId) {
+        exportReceiptDetailDao.save(detailModel, receiptId);
+    }
 }

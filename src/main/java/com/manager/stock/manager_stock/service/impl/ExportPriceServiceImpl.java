@@ -208,7 +208,12 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     }
 
     @Override
-    public void delete(long productId, LocalDateTime time) {
-        exportPriceDao.delete(productId, time);
+    public void delete(long productId, int year ) {
+        exportPriceDao.delete(productId, year);
+    }
+
+    @Override
+    public List<ExportPriceModel> findByProductAndYear(long productId, int year) {
+        return exportPriceDao.findByProductAndYear(productId, year);
     }
 }

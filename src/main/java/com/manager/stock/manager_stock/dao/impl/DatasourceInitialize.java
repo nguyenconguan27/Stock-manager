@@ -39,6 +39,7 @@ public class DatasourceInitialize {
             String jdbcUrl = "jdbc:h2:file:"+ dbPath +";INIT=RUNSCRIPT FROM '" + scriptFile.getAbsolutePath().replace("\\", "/") + "'";
             Class.forName("org.h2.Driver");
             Connection conn = DriverManager.getConnection(jdbcUrl, user, pass);
+            conn.setAutoCommit(false);
             return conn;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -52,6 +53,7 @@ public class DatasourceInitialize {
         Connection connection = threadConnection.get();
         try {
             if(connection == null || connection.isClosed()) {
+                System.out.println("========== create connection ==========");
                 connection = init();
                 threadConnection.set(connection);
             }
