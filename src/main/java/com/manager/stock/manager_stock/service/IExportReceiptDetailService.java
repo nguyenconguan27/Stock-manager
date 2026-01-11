@@ -24,5 +24,5 @@ public interface IExportReceiptDetailService {
     long calculateActualQuantityByProductBetweenImportDates(LocalDateTime startDate, LocalDateTime endDate, long productId);
     long calculateTotalQuantityByProductAndTimeRange(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId);
 
-    List<ExportReceiptDetailModel> findAllByProduct(long productId);
+    List<ExportReceiptDetailModel> findAllByProduct(long productId, int currentYear);
 }

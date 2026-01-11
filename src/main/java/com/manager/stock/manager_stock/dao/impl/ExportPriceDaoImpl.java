@@ -12,6 +12,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -453,8 +454,39 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
     }
 
     @Override
+    public void updateQuantityImportedAndTotalPriceImportedByProductAndImportReceipt(int quantityImported, double totalPriceImported, long importReceiptId, long productId) {
+        String sql = """
+                    UPDATE DB.EXPORT_PRICE SET DB.EXPORT_PRICE.QUANTITY_IMPORTED = ?, DB.EXPORT_PRICE.TOTAL_PRICE_IMPORT = ?
+                    WHERE DB.EXPORT_PRICE.PRODUCT_ID = ? AND DB.EXPORT_PRICE.IMPORT_RECEIPT_ID = ?;
+                """;
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[]{quantityImported, totalPriceImported, productId, importReceiptId});
+        save(sql, parameters);
+    }
+
+    @Override
     public void deleteByImportReceipt(long importReceiptId) {
         String sql = "delete from export_price where import_receipt = ?";
         delete(sql, importReceiptId);
+    }
+
+    @Override
+    public void deleteByImportReceiptAndProduct(long importReceiptId, Set<Long> productIds) {
+        if (productIds == null || productIds.isEmpty()) {
+            return;
+        }
+        String placeholders = productIds.stream()
+                .map(id -> "?")
+                .collect(Collectors.joining(","));
+
+        String sql = "delete from export_price " +
+                "where import_receipt_id = ? " +
+                "and product_id in (" + placeholders + ")";
+
+        List<Object> params = new ArrayList<>();
+        params.add(importReceiptId);
+        params.addAll(productIds);
+
+        delete(sql, params.toArray());
     }
 }

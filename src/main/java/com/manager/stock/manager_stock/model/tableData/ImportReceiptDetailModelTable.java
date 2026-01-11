@@ -18,6 +18,7 @@ public class ImportReceiptDetailModelTable {
     private final StringProperty unitPriceFormat = new SimpleStringProperty();
     private final StringProperty totalPriceFormat = new SimpleStringProperty();
     private final BooleanProperty isDeleted = new SimpleBooleanProperty(false);
+    private final BooleanProperty isNew = new SimpleBooleanProperty(false);
 
     public ImportReceiptDetailModelTable(long id, long importReceiptId, long productId,
                                          int plannedQuantity, int actualQuantity,
@@ -70,4 +71,7 @@ public class ImportReceiptDetailModelTable {
         this.isDeleted.set(isDeleted);
     }
     public boolean isDeleted() { return isDeleted.get(); }
+
+    public boolean isNew() { return isNew.get(); }
+    public void setIsNew(boolean isNew) { this.isNew.set(isNew); }
 }

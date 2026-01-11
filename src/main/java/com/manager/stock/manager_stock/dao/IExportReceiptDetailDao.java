@@ -23,5 +23,5 @@ public interface IExportReceiptDetailDao {
     long calculateActualQuantityByProductBetweenImportDates(LocalDateTime startDate, LocalDateTime endDate, long productId);
     long calculateTotalQuantityByProductAndTimeRange(LocalDateTime exportPriceTime, LocalDateTime startDate, LocalDateTime endDate, long productId);
     List<ExportReceiptDetailModel> findAllByProduct(long productId);
-    List<ExportReceiptDetailModel> findAllByProductIdAndOrderByExportDateAsc(long productId);
+    List<ExportReceiptDetailModel> findAllByProductIdAndOrderByExportDateAsc(long productId, LocalDateTime createAt);
 }

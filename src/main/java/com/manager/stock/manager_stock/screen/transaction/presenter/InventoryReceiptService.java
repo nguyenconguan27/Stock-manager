@@ -7,6 +7,7 @@ import com.manager.stock.manager_stock.dao.impl.*;
 import com.manager.stock.manager_stock.exception.DaoException;
 import com.manager.stock.manager_stock.exception.DivisionByZeroException;
 import com.manager.stock.manager_stock.exception.StockUnderFlowException;
+import com.manager.stock.manager_stock.mapper.viewModelMapper.ExportReceiptDetailModelTableMapper;
 import com.manager.stock.manager_stock.mapper.viewModelMapper.ImportReceiptDetailModelMapper;
 import com.manager.stock.manager_stock.model.*;
 import com.manager.stock.manager_stock.model.tableData.ExportReceiptDetailModelTable;
@@ -32,6 +33,7 @@ public class InventoryReceiptService {
     private final IImportReceiptDetailService importReceiptDetailService;
     private final IExportReceiptDetailService exportReceiptDetailService;
     private final IInventoryDetailService inventoryDetailService;
+    private final IExportReceiptService exportReceiptService;
     private static InventoryReceiptService INSTANCE;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
@@ -42,6 +44,7 @@ public class InventoryReceiptService {
         importReceiptService = ImportReceiptServiceImpl.getInstance();
         exportReceiptDetailService = ExportReceiptDetailServiceImpl.getInstance();
         inventoryDetailService = InventoryDetailServiceImpl.getInstance();
+        exportReceiptService = ExportReceiptServiceImpl.getInstance();
     }
 
     public static InventoryReceiptService getInstance() {
@@ -51,18 +54,25 @@ public class InventoryReceiptService {
         return INSTANCE;
     }
 
-    public void solveImportReceipt(ImportReceiptModel newImportReceiptModel, ObservableList<ImportReceiptDetailModelTable> importReceiptDetailModelsTable, String oldCreateAt) {
+    public void solveImportReceipt(ImportReceiptModel newImportReceiptModel, ObservableList<ImportReceiptDetailModelTable> importReceiptDetailModelsTable, String oldCreateAt, ObservableList<ImportReceiptDetailModelTable> productDetailToDelete) {
         try {
             List<ImportReceiptDetailModel> importDetailToUpdate = new ArrayList<>();
             List<ImportReceiptDetailModel> importDetailToInsert = new ArrayList<>();
-            Set<Long> importDetailIdsToDelete = new HashSet<>();
+            Set<Long> importDetailIdsToDelete = productDetailToDelete.stream().filter(detail -> detail.getId() != -1)
+                    .map(detail -> detail.getId())
+                    .collect(Collectors.toSet());
+            Set<Long> productDeleted = productDetailToDelete.stream().map(detail -> detail.getProductId()).collect(Collectors.toSet());
             Map<String, Long> productIdsToUpdate = new HashMap<>();
+            productDetailToDelete.forEach(importDetail -> {
+                productIdsToUpdate.put(importDetail.getProductCode(), importDetail.getProductId());
+            });
             List<ExportPriceModel> exportPriceModelsToInsert = new ArrayList<>();
             long newImportReceiptId;
             int currentYear = Math.min(LocalDateTime.parse(newImportReceiptModel.getCreateAt(), formatter2).getYear(),
                                         LocalDateTime.parse(oldCreateAt, formatter2).getYear());
             // 2. cập nhật hoặc thêm mới thông tin phiếu nhập
-            if (newImportReceiptModel.isInsert()) {
+            newImportReceiptModel.setAcademicYear(LocalDateTime.parse(newImportReceiptModel.getCreateAt(), formatter2).getYear());
+            if (newImportReceiptModel.getId() == -1) {
                 newImportReceiptId = importReceiptService.save(newImportReceiptModel);
             } else {
                 importReceiptService.update(newImportReceiptModel);
@@ -73,14 +83,15 @@ public class InventoryReceiptService {
             importReceiptDetailModelsTable.forEach(viewModel -> {
                 boolean isDeleted = viewModel.isDeleted();
                 boolean isNew = viewModel.getId() == -1;
-                if (isDeleted) {
-                    importDetailIdsToDelete.add(viewModel.getId());
-                    return;
-                }
+                System.out.println(isNew);
+//                if (isDeleted) {
+//                    importDetailIdsToDelete.add(viewModel.getId());
+//                    return;
+//                }
                 // Chỉ update product khi không bị xóa
                 productIdsToUpdate.put(viewModel.getProductCode(), viewModel.getProductId());
-                ImportReceiptDetailModel model =
-                        ImportReceiptDetailModelMapper.INSTANCE.fromViewModelToModel(viewModel);
+                ImportReceiptDetailModel model = ImportReceiptDetailModelMapper.INSTANCE.fromViewModelToModel(viewModel);
+                model.setImportReceiptId(newImportReceiptId);
                 if (isNew) {
                     importDetailToInsert.add(model);
                     exportPriceModelsToInsert.add(
@@ -91,11 +102,14 @@ public class InventoryReceiptService {
                                     0, 0,
                                     viewModel.getActualQuantity(),
                                     viewModel.getTotalPrice(),
-                                    0.0
+                                    0.0,
+                                    newImportReceiptId
                             )
                     );
                 } else {
                     importDetailToUpdate.add(model);
+                    exportPriceService.updateQuantityImportedAndTotalPriceImportedByProductAndImportReceipt(model.getActualQuantity(),
+                            model.getTotalPrice(), newImportReceiptId, model.getProductId());
                 }
             });
             // Nếu đang thực hiện xóa phiếu nhập ==> xóa phiếu nhâp + exportPrice
@@ -115,6 +129,8 @@ public class InventoryReceiptService {
             importReceiptDetailService.update(importDetailToUpdate);
             // 6. thêm mới exportPrice nếu có sản phẩm thêm mới
             exportPriceService.save(exportPriceModelsToInsert);
+
+            exportPriceService.deleteByImportReceiptAndProduct(newImportReceiptId, productDeleted);
             // 7 Cập nhật lại toàn bộ đơn giá, tồn kho
             updateInventoryAndExportPrice(productIdsToUpdate, currentYear);
             importReceiptService.commit();
@@ -129,8 +145,57 @@ public class InventoryReceiptService {
         }
     }
 
-    public void solveExportReceipt(ExportReceiptModel exportReceiptModel, ObservableList<ExportReceiptDetailModelTable> exportReceiptDetailModelsTable) {
+    public void solveExportReceipt(ExportReceiptModel exportReceiptModel, String oldExportDate, ObservableList<ExportReceiptDetailModelTable> exportReceiptDetailModelsTable) {
+        try {
+            List<ExportReceiptDetailModel> exportDetailToUpdate = new ArrayList<>();
+            List<ExportReceiptDetailModel> exportDetailToInsert = new ArrayList<>();
+            List<Long> exportDetailIdsToDelete = new ArrayList<>();
+            Map<String, Long> productIdsToUpdate = new HashMap<>();
 
+            long newExportReceiptId;
+            int currentYear = Math.min(LocalDateTime.parse(exportReceiptModel.getCreateAt(), formatter2).getYear(),
+                    LocalDateTime.parse(oldExportDate, formatter2).getYear());
+            if(exportReceiptModel.getId() == -1) {
+                newExportReceiptId = exportReceiptService.save(exportReceiptModel);
+            }
+            else {
+                exportReceiptService.update(exportReceiptModel);
+                newExportReceiptId = exportReceiptModel.getId();
+            }
+
+            exportReceiptDetailModelsTable.forEach(viewModel -> {
+                boolean isDeleted = viewModel.isDelete();
+                boolean isNew = viewModel.getId() == -1;
+                System.out.println(isNew);
+                if (isDeleted) {
+                    exportDetailIdsToDelete.add(viewModel.getId());
+                    return;
+                }
+                productIdsToUpdate.put(viewModel.getProductCode(), viewModel.getProductId());
+                ExportReceiptDetailModel exportReceiptDetailModel = ExportReceiptDetailModelTableMapper.INSTANCE.fromViewModelToModel(viewModel);
+                exportReceiptDetailModel.setExportPriceId(null);
+//                exportReceiptDetailModel.setExportReceiptId(newExportReceiptId);
+                if (isNew) {
+                    exportDetailToInsert.add(exportReceiptDetailModel);
+                } else {
+                    exportDetailToUpdate.add(exportReceiptDetailModel);
+                }
+            });
+            exportReceiptDetailService.save(exportDetailToInsert, newExportReceiptId);
+            exportReceiptDetailService.update(exportDetailToUpdate);
+            exportReceiptDetailService.delete(exportDetailIdsToDelete);
+
+            updateInventoryAndExportPrice(productIdsToUpdate, currentYear);
+            exportPriceService.commit();
+        }
+        catch (DaoException | StockUnderFlowException exception) {
+            exportReceiptService.rollback();
+            throw exception;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            exportReceiptService.rollback();
+        }
     }
 
     // danh sách product ở đây là danh sách trong phiếu hiện tại
@@ -140,9 +205,9 @@ public class InventoryReceiptService {
             long productId = entry.getValue();
             String productCode = entry.getKey();
             // 1. lấy danh sách toàn bộ đơn giá
-            List<ExportPriceModel> exportPricesByProduct = exportPriceService.findAllExportPriceByProductAndOrderByAsc(productId);
+            List<ExportPriceModel> exportPricesByProduct = exportPriceService.findAllExportPriceByProductAndCreateAtAndOrderByAsc(productId, y);
             // 2. Lấy danh sách export receipt detail
-            List<ExportReceiptDetailModel> exportReceiptDetailsByProduct = exportReceiptDetailService.findAllByProduct(productId);
+            List<ExportReceiptDetailModel> exportReceiptDetailsByProduct = exportReceiptDetailService.findAllByProduct(productId, y);
             // 3. lấy tồn kho đầu kì của current year
             InventoryDetailModel inventoryDetailModel = null;
             for(int year = currentYear.get() - 1; year >= 2020;  year--) {
@@ -189,6 +254,7 @@ public class InventoryReceiptService {
 
             exportPriceService.update(exportPricesByProduct);
             exportReceiptDetailService.update(exportReceiptDetailsByProduct);
+            saveInventory(quantityInStock.get(), totalPriceInStock.get(), currentYear.get(), productId);
         }
     }
 
@@ -197,10 +263,10 @@ public class InventoryReceiptService {
             saveInventory(quantityInStock.get(), totalPriceInStock.get(), currentYear.get(), productId);
             currentYear.set(exportPriceModel.getExportTime().getYear());
         }
-        quantityInStock.set(quantityInStock.get() + exportPriceModel.getQuantityImported());
-        totalPriceInStock.set(totalPriceInStock.get() + exportPriceModel.getTotalImportPrice());
         // tính lại đơn giá
         calculateUnitPriceOfProduct(quantityInStock.get(), totalPriceInStock.get(), exportPriceModel.getTotalImportPrice(), exportPriceModel.getQuantityImported(), exportPriceModel);
+        quantityInStock.set(quantityInStock.get() + exportPriceModel.getQuantityImported());
+        totalPriceInStock.set(totalPriceInStock.get() + exportPriceModel.getTotalImportPrice());
     }
 
     private void updateExportReceipt(ExportReceiptDetailModel exportReceiptDetailModel, ExportPriceModel exportPriceModel, AtomicInteger currentYear, AtomicInteger quantityInStock, AtomicDouble totalPriceInStock, long productId, String productCode) {
@@ -237,15 +303,17 @@ public class InventoryReceiptService {
         if(inventoryDetailModelCurrentYear == null) {
             // năm hiện tại chưa có tồn kho ==> thêm mới
             inventoryDetailModelCurrentYear = new InventoryDetailModel();
+            inventoryDetailModelCurrentYear.setId(-1L);
             inventoryDetailModelCurrentYear.setProductId(productId);
+            inventoryDetailModelCurrentYear.setAcademicYear(year);
         }
         inventoryDetailModelCurrentYear.setQuantity(quantityInStock);
         inventoryDetailModelCurrentYear.setTotalPrice(totalPriceInStock);
-        inventoryDetailService.save(List.of(inventoryDetailModelCurrentYear));
+        if(inventoryDetailModelCurrentYear.getId() == -1) {
+            inventoryDetailService.save(List.of(inventoryDetailModelCurrentYear));
+        }
+        else {
+            inventoryDetailService.update(List.of(inventoryDetailModelCurrentYear));
+        }
     }
-
-//    private LocalDateTime parseDate(String date) {
-//        LocalDateTime time1 = LocalDateTime.parse(date, formatter2);
-//        return LocalDateTime.parse(time1.format(formatter), formatter);
-//    }
 }

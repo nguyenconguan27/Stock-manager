@@ -17,6 +17,7 @@ import com.manager.stock.manager_stock.model.tableData.ImportReceiptDetailModelT
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.transaction.presenter.ExportReceiptPresenter;
 import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter;
+import com.manager.stock.manager_stock.screen.transaction.presenter.InventoryReceiptService;
 import com.manager.stock.manager_stock.utils.*;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -292,6 +293,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
                     int totalQuantity = Integer.parseInt(totalQuantityLabel.getText()) - item.getActualQuantity();
                     totalQuantityLabel.setText(totalQuantity + "");
+                    productDetailsToDelete.add(item);
                     getTableView().getItems().remove(item);
                 });
 
@@ -385,18 +387,21 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     return;
                 }
                 // thêm mới hóa đơn xxuất
-                if(receiptModelTable == null) {
-                    // changeQuantityByProductMap: số lượng sản phẩm thay đổi
-                    // changeTotalPriceByProductMap: tổng tiền thay đổi
-                    exportReceiptPresenter.save(exportReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
-                    AlertUtils.alert("Thêm mới phiếu xuất thành công.", "INFORMATION", "Thành công", "Thành công");
-                }
-                // Cập nhật hóa đơn xuất
-                else {
-                    ExportReceiptModel oldExportReceiptModel = ExportReceiptModelTableMapper.INSTANCE.fromViewModelToModel(receiptModelTable);
-                    exportReceiptPresenter.updateExportReceipt(exportReceiptModel, oldExportReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
-                    AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
-                }
+//                if(receiptModelTable == null) {
+//                    // changeQuantityByProductMap: số lượng sản phẩm thay đổi
+//                    // changeTotalPriceByProductMap: tổng tiền thay đổi
+//                    exportReceiptPresenter.save(exportReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
+//                    AlertUtils.alert("Thêm mới phiếu xuất thành công.", "INFORMATION", "Thành công", "Thành công");
+//                }
+//                // Cập nhật hóa đơn xuất
+//                else {
+                assert receiptModelTable != null;
+                ExportReceiptModel oldExportReceiptModel = ExportReceiptModelTableMapper.INSTANCE.fromViewModelToModel(receiptModelTable);
+//                    exportReceiptPresenter.updateExportReceipt(exportReceiptModel, oldExportReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
+//                    AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
+//                }
+                InventoryReceiptService inventoryReceiptService = InventoryReceiptService.getInstance();
+                inventoryReceiptService.solveExportReceipt(exportReceiptModel, oldExportReceiptModel == null ? exportReceiptModel.getCreateAt() : oldExportReceiptModel.getCreateAt(), productDetails);
                 ExportReceiptScreen exportReceiptScreen = new ExportReceiptScreen();
                 exportReceiptScreen.showTable(selectedYear);
                 ScreenNavigator.navigateTo(exportReceiptScreen);

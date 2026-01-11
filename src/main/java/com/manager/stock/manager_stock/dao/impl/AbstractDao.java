@@ -170,9 +170,9 @@ public class AbstractDao<T> implements GenericDao<T> {
             connection = DatasourceInitialize.getInstance();
             connection.setAutoCommit(false);
             stmt = connection.prepareStatement(sql);
-            for(Object id : params) {
-                setParams(stmt, id);
-            }
+//            for(Object id : params) {
+                setParams(stmt, params);
+//            }
             stmt.executeUpdate();
         }
         catch (SQLException e) {

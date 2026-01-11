@@ -9,6 +9,7 @@ import com.manager.stock.manager_stock.model.dto.ExportPriceIdAndPrice;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Trọng Hướng
@@ -44,5 +45,7 @@ public interface IExportPriceDao {
     List<ExportPriceModel> findByProductIdAndBeforeTime(long productId, LocalDateTime time);
     List<ExportPriceModel> findAllByProductIdAndAfterTime(long productId, LocalDateTime time);
     List<ExportPriceModel> findLastByProductIdAndYear(long productId, int year);
+    void updateQuantityImportedAndTotalPriceImportedByProductAndImportReceipt(int quantityImported, double totalPriceImported, long importReceiptId, long productId);
     void deleteByImportReceipt(long importReceiptId);
+    void deleteByImportReceiptAndProduct(long importReceiptId, Set<Long> productIds);
 }

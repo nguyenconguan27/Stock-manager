@@ -19,6 +19,7 @@ public class ExportReceiptDetailModelTable {
     private final LongProperty exportPriceId = new SimpleLongProperty();
     private final DoubleProperty displayUnitPrice = new SimpleDoubleProperty();
     private final DoubleProperty originalUnitPrice = new SimpleDoubleProperty();
+    private final BooleanProperty isDelete = new SimpleBooleanProperty(false);
 
     public ExportReceiptDetailModelTable(long id, long exportReceiptId, long productId, int plannedQuantity, int actualQuantity, double totalPrice, double displayUnitPrice,
                                          String productName, String displayUnitPriceFormat, String displayTotalPriceFormat, String productCoe, long exportPriceId, double originalUnitPrice) {
@@ -66,4 +67,10 @@ public class ExportReceiptDetailModelTable {
     public void setTotalPrice(double totalPrice) {this.totalPrice.set(totalPrice);}
     public void setPlannedQuantity(int plannedQuantity) {this.plannedQuantity.set(plannedQuantity);}
     public void setDisplayTotalPriceFormat(String displayTotalPriceFormat) {this.displayTotalPriceFormat.set(displayTotalPriceFormat);}
+
+    public boolean isDelete() {
+        return isDelete.get();
+    }
+
+    public void setIsDelete(boolean isDelete) {this.isDelete.set(isDelete);}
 }

@@ -8,6 +8,7 @@ import com.manager.stock.manager_stock.model.ProductModel;
 import com.manager.stock.manager_stock.service.IExportReceiptDetailService;
 
 import java.net.DatagramPacket;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ public class ExportReceiptDetailServiceImpl implements IExportReceiptDetailServi
 
     @Override
     public List<Long> save(List<ExportReceiptDetailModel> exportReceiptDetailModels, long exportReceiptId) {
+        if(exportReceiptDetailModels == null || exportReceiptDetailModels.isEmpty()) return List.of();
         return exportReceiptDetailDao.save(exportReceiptDetailModels, exportReceiptId);
     }
 
@@ -58,11 +60,13 @@ public class ExportReceiptDetailServiceImpl implements IExportReceiptDetailServi
 
     @Override
     public void delete(List<Long> ids) throws DaoException {
+        if(ids == null || ids.isEmpty()) return;
         exportReceiptDetailDao.delete(ids);
     }
 
     @Override
     public void update(List<ExportReceiptDetailModel> exportReceiptDetailModels) {
+        if(exportReceiptDetailModels == null || exportReceiptDetailModels.isEmpty()) return ;
         exportReceiptDetailDao.update(exportReceiptDetailModels);
     }
 
@@ -99,7 +103,8 @@ public class ExportReceiptDetailServiceImpl implements IExportReceiptDetailServi
     }
 
     @Override
-    public List<ExportReceiptDetailModel> findAllByProduct(long productId) {
-        return exportReceiptDetailDao.findAllByProduct(productId);
+    public List<ExportReceiptDetailModel> findAllByProduct(long productId, int currentYear) {
+        LocalDateTime startCurrentYear = LocalDateTime.of(currentYear, 1, 1, 0, 0, 0);
+        return exportReceiptDetailDao.findAllByProductIdAndOrderByExportDateAsc(productId, startCurrentYear);
     }
 }

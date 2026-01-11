@@ -119,7 +119,7 @@ public class ExportReceiptDetailModel {
         return exportPriceId;
     }
 
-    public void setExportPriceId(long exportPriceId) {
+    public void setExportPriceId(Long exportPriceId) {
             this.exportPriceId = exportPriceId;
     }
 

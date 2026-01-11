@@ -30,6 +30,18 @@ public class ExportPriceModel {
         this.totalPriceInStock = totalPriceInStock;
     }
 
+    public ExportPriceModel(long id, long productId, LocalDateTime exportTime, double exportPrice, int quantityInStock, int quantityImported, double totalImportPrice, double totalPriceInStock, long importReceiptId) {
+        this.id = id;
+        this.productId = productId;
+        this.exportTime = exportTime;
+        this.exportPrice = exportPrice;
+        this.quantityInStock = quantityInStock;
+        this.quantityImported = quantityImported;
+        this.totalImportPrice = totalImportPrice;
+        this.totalPriceInStock = totalPriceInStock;
+        this.importReceiptId = importReceiptId;
+    }
+
     public long getId() {
         return id;
     }

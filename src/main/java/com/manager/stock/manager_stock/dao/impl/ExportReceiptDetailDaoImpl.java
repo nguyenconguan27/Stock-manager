@@ -6,6 +6,7 @@ import com.manager.stock.manager_stock.mapper.modelMapperResultSet.ExportReceipt
 import com.manager.stock.manager_stock.model.ExportReceiptDetailModel;
 
 import java.net.DatagramPacket;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -63,15 +64,14 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
 
     @Override
     public List<Long> save(List<ExportReceiptDetailModel> exportReceiptDetailModels, long exportReceiptId) {
-        String sql = "INSERT INTO export_receipt_detail(id, export_receipt_id, product_id, planned_quantity, actual_quantity, export_price_id, original_unit_price) " +
+        String sql = "INSERT INTO export_receipt_detail(export_receipt_id, product_id, planned_quantity, actual_quantity, export_price_id, original_unit_price) " +
                 " OVERRIDING SYSTEM VALUE" +
-                " values(?, ?, ?, ?, ?, ?, ?);";
+                " values(?, ?, ?, ?, ?, ?);";
         List<Long> ids = new ArrayList<>();
         List<Object[]> parameters = new ArrayList<>();
         for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
             long id = System.nanoTime();
             parameters.add(new Object[]{
-                    id,
                     exportReceiptId,
                     exportReceiptDetailModel.getProductId(),
                     exportReceiptDetailModel.getPlannedQuantity(),
@@ -275,22 +275,23 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
     @Override
     public List<ExportReceiptDetailModel> findAllByProduct(long productId) {
         String sql = """
-                SELECT DB.EXPORT_RECEIPT_DETAIL.*,  CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) as create_at FROM DB.EXPORT_RECEIPT_DETAIL\s
+                SELECT DB.EXPORT_RECEIPT_DETAIL.*, CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) as create_at FROM DB.EXPORT_RECEIPT_DETAIL\s
                 join DB.EXPORT_RECEIPT on DB.EXPORT_RECEIPT.id = DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID\s
-                where DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID = ?;
+                where DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID = ?
                 """;
         return query(sql, new ExportReceiptDetailMapperResultSet(), productId);
     }
 
     @Override
-    public List<ExportReceiptDetailModel> findAllByProductIdAndOrderByExportDateAsc(long productId) {
+    public List<ExportReceiptDetailModel> findAllByProductIdAndOrderByExportDateAsc(long productId, LocalDateTime createAt) {
         String sql = """
                     select DB.EXPORT_RECEIPT_DETAIL.*, DB.EXPORT_RECEIPT.CREATE_AT from DB.EXPORT_RECEIPT_DETAIL
                        join DB.EXPORT_RECEIPT on DB.EXPORT_RECEIPT_DETAIL.EXPORT_RECEIPT_ID = DB.EXPORT_RECEIPT.ID
                        WHERE DB.EXPORT_RECEIPT_DETAIL.PRODUCT_ID = ?
+                       AND CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) >= ?
                        ORDER BY CAST(PARSEDATETIME(DB.EXPORT_RECEIPT.CREATE_AT, 'dd/MM/yyyy HH:mm:ss') AS TIMESTAMP) ASC;
                 """;
-        return query(sql, new ExportReceiptDetailMapperResultSet(), productId);
+        return query(sql, new ExportReceiptDetailMapperResultSet(), productId, createAt);
     }
 
     @Override

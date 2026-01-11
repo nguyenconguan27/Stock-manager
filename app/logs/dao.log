@@ -1,32 +1,46 @@
-2026-01-11 00:04:43.710 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
-2026-01-11 00:04:54.600 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - INSERT INTO import_receipt (invoice_number, create_at, delivered_by, invoice, company_name, warehouse_name, total_price, total_price_in_word, academic_year)  values (?, ?, ?, ?, ?, ?, ?, ?, ?)
-2026-01-11 00:04:57.709 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
-2026-01-11 00:04:58.864 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ImportReceiptDetailDaoImpl - INSERT INTO import_receipt_detail (import_receipt_id, product_id, planned_quantity, actual_quantity, unit_price, product_name) values (?, ?, ?, ?, ?, ?)
-2026-01-11 00:05:00.336 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - INSERT INTO export_price(product_id, export_time, export_price, quantity_in_stock, quantity_imported, total_price_import, total_price_in_stock, import_receipt_id) values (?, ?, ?, ?, ?, ?, ?, ?)
-2026-01-11 00:05:55.564 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - INSERT INTO inventory_detail(product_id, quantity, total_price, academic_year) values(?, ?, ?, ?)
-2026-01-11 00:05:55.568 [JavaFX Application Thread] ERROR c.m.s.m.d.i.InventoryDetailDaoImpl - SQL Exception while save database with sql: INSERT INTO inventory_detail(product_id, quantity, total_price, academic_year) values(?, ?, ?, ?)
-org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException: NULL not allowed for column "PRODUCT_ID"; SQL statement:
-INSERT INTO inventory_detail(product_id, quantity, total_price, academic_year) values(?, ?, ?, ?) [23502-222]
-	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:520)
+2026-01-12 00:01:21.823 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2026-01-12 00:01:36.322 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2026-01-12 00:01:48.818 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - INSERT INTO import_receipt (invoice_number, create_at, delivered_by, invoice, company_name, warehouse_name, total_price, total_price_in_word, academic_year)  values (?, ?, ?, ?, ?, ?, ?, ?, ?)
+2026-01-12 00:01:50.472 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2026-01-12 00:01:50.480 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ImportReceiptDetailDaoImpl - INSERT INTO import_receipt_detail (import_receipt_id, product_id, planned_quantity, actual_quantity, unit_price, product_name) values (?, ?, ?, ?, ?, ?)
+2026-01-12 00:01:50.591 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - INSERT INTO export_price(product_id, export_time, export_price, quantity_in_stock, quantity_imported, total_price_import, total_price_in_stock, import_receipt_id) values (?, ?, ?, ?, ?, ?, ?, ?)
+2026-01-12 00:01:51.141 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ? WHERE id = ?
+2026-01-12 00:01:51.266 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - INSERT INTO inventory_detail(product_id, quantity, total_price, academic_year) values(?, ?, ?, ?)
+2026-01-12 00:01:51.675 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ? WHERE id = ?
+2026-01-12 00:01:51.802 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - INSERT INTO inventory_detail(product_id, quantity, total_price, academic_year) values(?, ?, ?, ?)
+2026-01-12 00:07:58.823 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2026-01-12 00:08:40.641 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - UPDATE import_receipt set invoice = ?, create_at = ?, delivered_by = ?, invoice_number = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ?  where id = ?
+2026-01-12 00:08:40.644 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2026-01-12 00:08:40.648 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl -     UPDATE DB.EXPORT_PRICE SET DB.EXPORT_PRICE.QUANTITY_IMPORTED = ?, DB.EXPORT_PRICE.TOTAL_PRICE_IMPORT = ?
+    WHERE DB.EXPORT_PRICE.PRODUCT_ID = ? AND DB.EXPORT_PRICE.IMPORT_RECEIPT_ID = ?;
+
+2026-01-12 00:08:40.649 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2026-01-12 00:08:40.651 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ImportReceiptDetailDaoImpl - UPDATE import_receipt_detail set planned_quantity = ?, actual_quantity = ?, unit_price = ? where id = ?
+2026-01-12 00:08:40.654 [JavaFX Application Thread] ERROR c.m.s.m.dao.impl.ExportPriceDaoImpl - SQL Exception while deleting database with sql: delete from export_price where import_receipt = ? and product_id in (?)
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "IMPORT_RECEIPT" not found; SQL statement:
+delete from export_price where import_receipt = ? and product_id in (?) [42122-222]
+	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:514)
 	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
 	at com.h2database@2.2.222/org.h2.message.DbException.get(DbException.java:223)
 	at com.h2database@2.2.222/org.h2.message.DbException.get(DbException.java:199)
-	at com.h2database@2.2.222/org.h2.table.Column.validateConvertUpdateSequence(Column.java:365)
-	at com.h2database@2.2.222/org.h2.table.Table.convertInsertRow(Table.java:936)
-	at com.h2database@2.2.222/org.h2.command.dml.Insert.insertRows(Insert.java:167)
-	at com.h2database@2.2.222/org.h2.command.dml.Insert.update(Insert.java:135)
-	at com.h2database@2.2.222/org.h2.command.CommandContainer.executeUpdateWithGeneratedKeys(CommandContainer.java:242)
-	at com.h2database@2.2.222/org.h2.command.CommandContainer.update(CommandContainer.java:163)
-	at com.h2database@2.2.222/org.h2.command.Command.executeUpdate(Command.java:256)
-	at com.h2database@2.2.222/org.h2.jdbc.JdbcPreparedStatement.executeUpdateInternal(JdbcPreparedStatement.java:216)
-	at com.h2database@2.2.222/org.h2.jdbc.JdbcPreparedStatement.executeUpdate(JdbcPreparedStatement.java:174)
-	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.dao.impl.AbstractDao.save(AbstractDao.java:118)
-	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.dao.impl.InventoryDetailDaoImpl.save(InventoryDetailDaoImpl.java:56)
-	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.service.impl.InventoryDetailServiceImpl.save(InventoryDetailServiceImpl.java:48)
-	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.transaction.presenter.InventoryReceiptService.saveInventory(InventoryReceiptService.java:229)
-	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.transaction.presenter.InventoryReceiptService.updateImportReceipt(InventoryReceiptService.java:183)
-	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.transaction.presenter.InventoryReceiptService.updateInventoryAndExportPrice(InventoryReceiptService.java:166)
-	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.transaction.presenter.InventoryReceiptService.solveImportReceipt(InventoryReceiptService.java:115)
+	at com.h2database@2.2.222/org.h2.expression.ExpressionColumn.getColumnException(ExpressionColumn.java:244)
+	at com.h2database@2.2.222/org.h2.expression.ExpressionColumn.optimizeOther(ExpressionColumn.java:226)
+	at com.h2database@2.2.222/org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:213)
+	at com.h2database@2.2.222/org.h2.expression.condition.Comparison.optimize(Comparison.java:147)
+	at com.h2database@2.2.222/org.h2.expression.condition.ConditionAndOr.optimize(ConditionAndOr.java:136)
+	at com.h2database@2.2.222/org.h2.expression.Expression.optimizeCondition(Expression.java:148)
+	at com.h2database@2.2.222/org.h2.command.dml.Delete.doPrepare(Delete.java:112)
+	at com.h2database@2.2.222/org.h2.command.dml.DataChangeStatement.prepare(DataChangeStatement.java:37)
+	at com.h2database@2.2.222/org.h2.command.Parser.prepareCommand(Parser.java:489)
+	at com.h2database@2.2.222/org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:639)
+	at com.h2database@2.2.222/org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:559)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1166)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:93)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:316)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.dao.impl.AbstractDao.delete(AbstractDao.java:172)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.dao.impl.ExportPriceDaoImpl.deleteByImportReceiptAndProduct(ExportPriceDaoImpl.java:490)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.service.impl.ExportPriceServiceImpl.deleteByImportReceiptAndProduct(ExportPriceServiceImpl.java:191)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.transaction.presenter.InventoryReceiptService.solveImportReceipt(InventoryReceiptService.java:133)
 	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.transaction.AddOrUpdateImportReceiptScreen.lambda$createTableItemDetailByReceipt$15(AddOrUpdateImportReceiptScreen.java:412)
 	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86)
 	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:234)
@@ -56,49 +70,219 @@ INSERT INTO inventory_detail(product_id, quantity, total_price, academic_year) v
 	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
 	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:184)
 	at java.base/java.lang.Thread.run(Thread.java:842)
-2026-01-11 00:07:03.518 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
-2026-01-11 00:07:15.259 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - INSERT INTO import_receipt (invoice_number, create_at, delivered_by, invoice, company_name, warehouse_name, total_price, total_price_in_word, academic_year)  values (?, ?, ?, ?, ?, ?, ?, ?, ?)
-2026-01-11 00:07:16.817 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
-2026-01-11 00:07:17.636 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ImportReceiptDetailDaoImpl - INSERT INTO import_receipt_detail (import_receipt_id, product_id, planned_quantity, actual_quantity, unit_price, product_name) values (?, ?, ?, ?, ?, ?)
-2026-01-11 00:07:18.491 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - INSERT INTO export_price(product_id, export_time, export_price, quantity_in_stock, quantity_imported, total_price_import, total_price_in_stock, import_receipt_id) values (?, ?, ?, ?, ?, ?, ?, ?)
-2026-01-11 00:09:04.011 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - INSERT INTO inventory_detail(product_id, quantity, total_price, academic_year) values(?, ?, ?, ?)
-2026-01-11 00:09:04.017 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - INSERT INTO inventory_detail(product_id, quantity, total_price, academic_year) values(?, ?, ?, ?)
-2026-01-11 00:09:04.019 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ? WHERE id = ?
-2026-01-11 00:09:04.027 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE export_receipt_detail set actual_quantity = ?, original_unit_price = ?, export_price_id = ? WHERE id = ?
-2026-01-11 00:09:10.773 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
-2026-01-11 00:10:25.546 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
-2026-01-11 00:10:34.946 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - INSERT INTO import_receipt (invoice_number, create_at, delivered_by, invoice, company_name, warehouse_name, total_price, total_price_in_word, academic_year)  values (?, ?, ?, ?, ?, ?, ?, ?, ?)
-2026-01-11 00:10:38.124 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
-2026-01-11 00:10:39.006 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ImportReceiptDetailDaoImpl - INSERT INTO import_receipt_detail (import_receipt_id, product_id, planned_quantity, actual_quantity, unit_price, product_name) values (?, ?, ?, ?, ?, ?)
-2026-01-11 00:10:39.937 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - INSERT INTO export_price(product_id, export_time, export_price, quantity_in_stock, quantity_imported, total_price_import, total_price_in_stock, import_receipt_id) values (?, ?, ?, ?, ?, ?, ?, ?)
-2026-01-11 00:11:02.026 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - INSERT INTO inventory_detail(product_id, quantity, total_price, academic_year) values(?, ?, ?, ?)
-2026-01-11 00:11:27.982 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - INSERT INTO inventory_detail(product_id, quantity, total_price, academic_year) values(?, ?, ?, ?)
-2026-01-11 00:12:14.207 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ? WHERE id = ?
-2026-01-11 00:12:14.759 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE export_receipt_detail set actual_quantity = ?, original_unit_price = ?, export_price_id = ? WHERE id = ?
-2026-01-11 00:13:40.729 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
-2026-01-11 00:15:04.983 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - INSERT INTO import_receipt (invoice_number, create_at, delivered_by, invoice, company_name, warehouse_name, total_price, total_price_in_word, academic_year)  values (?, ?, ?, ?, ?, ?, ?, ?, ?)
-2026-01-11 00:15:04.988 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
-2026-01-11 00:15:04.993 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ImportReceiptDetailDaoImpl - INSERT INTO import_receipt_detail (import_receipt_id, product_id, planned_quantity, actual_quantity, unit_price, product_name) values (?, ?, ?, ?, ?, ?)
-2026-01-11 00:15:04.993 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - INSERT INTO export_price(product_id, export_time, export_price, quantity_in_stock, quantity_imported, total_price_import, total_price_in_stock, import_receipt_id) values (?, ?, ?, ?, ?, ?, ?, ?)
-2026-01-11 00:15:05.000 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - INSERT INTO inventory_detail(product_id, quantity, total_price, academic_year) values(?, ?, ?, ?)
-2026-01-11 00:15:05.000 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - INSERT INTO inventory_detail(product_id, quantity, total_price, academic_year) values(?, ?, ?, ?)
-2026-01-11 00:15:05.000 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ? WHERE id = ?
-2026-01-11 00:15:05.001 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE export_receipt_detail set actual_quantity = ?, original_unit_price = ?, export_price_id = ? WHERE id = ?
-2026-01-11 00:16:56.623 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
-2026-01-11 00:17:04.671 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - INSERT INTO import_receipt (invoice_number, create_at, delivered_by, invoice, company_name, warehouse_name, total_price, total_price_in_word, academic_year)  values (?, ?, ?, ?, ?, ?, ?, ?, ?)
-2026-01-11 00:17:04.675 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
-2026-01-11 00:17:04.682 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ImportReceiptDetailDaoImpl - INSERT INTO import_receipt_detail (import_receipt_id, product_id, planned_quantity, actual_quantity, unit_price, product_name) values (?, ?, ?, ?, ?, ?)
-2026-01-11 00:17:04.682 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - INSERT INTO export_price(product_id, export_time, export_price, quantity_in_stock, quantity_imported, total_price_import, total_price_in_stock, import_receipt_id) values (?, ?, ?, ?, ?, ?, ?, ?)
-2026-01-11 00:19:44.934 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - INSERT INTO inventory_detail(product_id, quantity, total_price, academic_year) values(?, ?, ?, ?)
-2026-01-11 00:19:44.939 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - INSERT INTO inventory_detail(product_id, quantity, total_price, academic_year) values(?, ?, ?, ?)
-2026-01-11 00:19:44.941 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ? WHERE id = ?
-2026-01-11 00:19:44.950 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE export_receipt_detail set actual_quantity = ?, original_unit_price = ?, export_price_id = ? WHERE id = ?
-2026-01-11 00:24:12.695 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
-2026-01-11 00:24:20.449 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - INSERT INTO import_receipt (invoice_number, create_at, delivered_by, invoice, company_name, warehouse_name, total_price, total_price_in_word, academic_year)  values (?, ?, ?, ?, ?, ?, ?, ?, ?)
-2026-01-11 00:24:20.453 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
-2026-01-11 00:24:20.457 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ImportReceiptDetailDaoImpl - INSERT INTO import_receipt_detail (import_receipt_id, product_id, planned_quantity, actual_quantity, unit_price, product_name) values (?, ?, ?, ?, ?, ?)
-2026-01-11 00:24:20.458 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - INSERT INTO export_price(product_id, export_time, export_price, quantity_in_stock, quantity_imported, total_price_import, total_price_in_stock, import_receipt_id) values (?, ?, ?, ?, ?, ?, ?, ?)
-2026-01-11 00:24:53.162 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - INSERT INTO inventory_detail(product_id, quantity, total_price, academic_year) values(?, ?, ?, ?)
-2026-01-11 00:24:53.167 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - INSERT INTO inventory_detail(product_id, quantity, total_price, academic_year) values(?, ?, ?, ?)
-2026-01-11 00:24:53.169 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ? WHERE id = ?
-2026-01-11 00:24:53.178 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ExportReceiptDetailDaoImpl - UPDATE export_receipt_detail set actual_quantity = ?, original_unit_price = ?, export_price_id = ? WHERE id = ?
+2026-01-12 00:09:53.214 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2026-01-12 00:09:55.541 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - UPDATE import_receipt set invoice = ?, create_at = ?, delivered_by = ?, invoice_number = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ?  where id = ?
+2026-01-12 00:09:55.544 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2026-01-12 00:09:55.548 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl -     UPDATE DB.EXPORT_PRICE SET DB.EXPORT_PRICE.QUANTITY_IMPORTED = ?, DB.EXPORT_PRICE.TOTAL_PRICE_IMPORT = ?
+    WHERE DB.EXPORT_PRICE.PRODUCT_ID = ? AND DB.EXPORT_PRICE.IMPORT_RECEIPT_ID = ?;
+
+2026-01-12 00:09:55.548 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2026-01-12 00:09:55.551 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ImportReceiptDetailDaoImpl - UPDATE import_receipt_detail set planned_quantity = ?, actual_quantity = ?, unit_price = ? where id = ?
+2026-01-12 00:09:55.553 [JavaFX Application Thread] ERROR c.m.s.m.dao.impl.ExportPriceDaoImpl - SQL Exception while deleting database with sql: delete from export_price where import_receipt_id = ? and product_id in (?)
+org.h2.jdbc.JdbcSQLDataException: Parameter "#2" is not set; SQL statement:
+delete from export_price where import_receipt_id = ? and product_id in (?) [90012-222]
+	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:658)
+	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at com.h2database@2.2.222/org.h2.message.DbException.get(DbException.java:223)
+	at com.h2database@2.2.222/org.h2.message.DbException.get(DbException.java:199)
+	at com.h2database@2.2.222/org.h2.expression.Parameter.checkSet(Parameter.java:75)
+	at com.h2database@2.2.222/org.h2.command.Prepared.checkParameters(Prepared.java:207)
+	at com.h2database@2.2.222/org.h2.command.CommandContainer.update(CommandContainer.java:159)
+	at com.h2database@2.2.222/org.h2.command.Command.executeUpdate(Command.java:256)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcPreparedStatement.executeUpdateInternal(JdbcPreparedStatement.java:216)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcPreparedStatement.executeUpdate(JdbcPreparedStatement.java:174)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.dao.impl.AbstractDao.delete(AbstractDao.java:176)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.dao.impl.ExportPriceDaoImpl.deleteByImportReceiptAndProduct(ExportPriceDaoImpl.java:490)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.service.impl.ExportPriceServiceImpl.deleteByImportReceiptAndProduct(ExportPriceServiceImpl.java:191)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.transaction.presenter.InventoryReceiptService.solveImportReceipt(InventoryReceiptService.java:133)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.transaction.AddOrUpdateImportReceiptScreen.lambda$createTableItemDetailByReceipt$15(AddOrUpdateImportReceiptScreen.java:412)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:234)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:191)
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54)
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198)
+	at javafx.graphics/javafx.scene.Scene$ClickGenerator.postProcess(Scene.java:3602)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Scene.java:3906)
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Scene.java:1878)
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Scene.java:2623)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:411)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:301)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(GlassViewEventHandler.java:450)
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:424)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(GlassViewEventHandler.java:449)
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(View.java:557)
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(View.java:943)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:184)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+2026-01-12 00:11:03.165 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2026-01-12 00:11:06.247 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - UPDATE import_receipt set invoice = ?, create_at = ?, delivered_by = ?, invoice_number = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ?  where id = ?
+2026-01-12 00:11:06.249 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2026-01-12 00:11:08.521 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl -     UPDATE DB.EXPORT_PRICE SET DB.EXPORT_PRICE.QUANTITY_IMPORTED = ?, DB.EXPORT_PRICE.TOTAL_PRICE_IMPORT = ?
+    WHERE DB.EXPORT_PRICE.PRODUCT_ID = ? AND DB.EXPORT_PRICE.IMPORT_RECEIPT_ID = ?;
+
+2026-01-12 00:11:09.586 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2026-01-12 00:11:10.863 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ImportReceiptDetailDaoImpl - UPDATE import_receipt_detail set planned_quantity = ?, actual_quantity = ?, unit_price = ? where id = ?
+2026-01-12 00:11:23.690 [JavaFX Application Thread] ERROR c.m.s.m.dao.impl.ExportPriceDaoImpl - SQL Exception while deleting database with sql: delete from export_price where import_receipt_id = ? and product_id in (?)
+org.h2.jdbc.JdbcSQLDataException: Parameter "#2" is not set; SQL statement:
+delete from export_price where import_receipt_id = ? and product_id in (?) [90012-222]
+	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:658)
+	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at com.h2database@2.2.222/org.h2.message.DbException.get(DbException.java:223)
+	at com.h2database@2.2.222/org.h2.message.DbException.get(DbException.java:199)
+	at com.h2database@2.2.222/org.h2.expression.Parameter.checkSet(Parameter.java:75)
+	at com.h2database@2.2.222/org.h2.command.Prepared.checkParameters(Prepared.java:207)
+	at com.h2database@2.2.222/org.h2.command.CommandContainer.update(CommandContainer.java:159)
+	at com.h2database@2.2.222/org.h2.command.Command.executeUpdate(Command.java:256)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcPreparedStatement.executeUpdateInternal(JdbcPreparedStatement.java:216)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcPreparedStatement.executeUpdate(JdbcPreparedStatement.java:174)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.dao.impl.AbstractDao.delete(AbstractDao.java:176)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.dao.impl.ExportPriceDaoImpl.deleteByImportReceiptAndProduct(ExportPriceDaoImpl.java:490)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.service.impl.ExportPriceServiceImpl.deleteByImportReceiptAndProduct(ExportPriceServiceImpl.java:191)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.transaction.presenter.InventoryReceiptService.solveImportReceipt(InventoryReceiptService.java:133)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.transaction.AddOrUpdateImportReceiptScreen.lambda$createTableItemDetailByReceipt$15(AddOrUpdateImportReceiptScreen.java:412)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:234)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:191)
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54)
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198)
+	at javafx.graphics/javafx.scene.Scene$ClickGenerator.postProcess(Scene.java:3602)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Scene.java:3906)
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Scene.java:1878)
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Scene.java:2623)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:411)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:301)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(GlassViewEventHandler.java:450)
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:424)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(GlassViewEventHandler.java:449)
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(View.java:557)
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(View.java:943)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:184)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+2026-01-12 00:13:41.454 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - UPDATE import_receipt set invoice = ?, create_at = ?, delivered_by = ?, invoice_number = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ?  where id = ?
+2026-01-12 00:13:41.455 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2026-01-12 00:13:42.731 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl -     UPDATE DB.EXPORT_PRICE SET DB.EXPORT_PRICE.QUANTITY_IMPORTED = ?, DB.EXPORT_PRICE.TOTAL_PRICE_IMPORT = ?
+    WHERE DB.EXPORT_PRICE.PRODUCT_ID = ? AND DB.EXPORT_PRICE.IMPORT_RECEIPT_ID = ?;
+
+2026-01-12 00:13:43.207 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2026-01-12 00:13:44.102 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ImportReceiptDetailDaoImpl - UPDATE import_receipt_detail set planned_quantity = ?, actual_quantity = ?, unit_price = ? where id = ?
+2026-01-12 00:16:23.211 [JavaFX Application Thread] ERROR c.m.s.m.dao.impl.ExportPriceDaoImpl - SQL Exception while deleting database with sql: delete from export_price where import_receipt_id = ? and product_id in (?)
+org.h2.jdbc.JdbcSQLDataException: Parameter "#2" is not set; SQL statement:
+delete from export_price where import_receipt_id = ? and product_id in (?) [90012-222]
+	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:658)
+	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at com.h2database@2.2.222/org.h2.message.DbException.get(DbException.java:223)
+	at com.h2database@2.2.222/org.h2.message.DbException.get(DbException.java:199)
+	at com.h2database@2.2.222/org.h2.expression.Parameter.checkSet(Parameter.java:75)
+	at com.h2database@2.2.222/org.h2.command.Prepared.checkParameters(Prepared.java:207)
+	at com.h2database@2.2.222/org.h2.command.CommandContainer.update(CommandContainer.java:159)
+	at com.h2database@2.2.222/org.h2.command.Command.executeUpdate(Command.java:256)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcPreparedStatement.executeUpdateInternal(JdbcPreparedStatement.java:216)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcPreparedStatement.executeUpdate(JdbcPreparedStatement.java:174)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.dao.impl.AbstractDao.delete(AbstractDao.java:176)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.dao.impl.ExportPriceDaoImpl.deleteByImportReceiptAndProduct(ExportPriceDaoImpl.java:490)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.service.impl.ExportPriceServiceImpl.deleteByImportReceiptAndProduct(ExportPriceServiceImpl.java:191)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.transaction.presenter.InventoryReceiptService.solveImportReceipt(InventoryReceiptService.java:133)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.transaction.AddOrUpdateImportReceiptScreen.lambda$createTableItemDetailByReceipt$15(AddOrUpdateImportReceiptScreen.java:412)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:234)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:191)
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54)
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198)
+	at javafx.graphics/javafx.scene.Scene$ClickGenerator.postProcess(Scene.java:3602)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Scene.java:3906)
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Scene.java:1878)
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Scene.java:2623)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:411)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:301)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(GlassViewEventHandler.java:450)
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:424)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(GlassViewEventHandler.java:449)
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(View.java:557)
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(View.java:943)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:184)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+2026-01-12 00:16:31.068 [JavaFX Application Thread] ERROR c.m.s.m.dao.impl.ProductDao - SQL Exception while querying database with sql: select ep.export_price from export_price as ep inner join product as p on p.id = ep.product_id where p.id = ? order by ep.export_time desc limit 1
+org.h2.jdbc.JdbcSQLNonTransientConnectionException: The database is open in exclusive mode; can not open additional connections [90135-222]
+	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:690)
+	at com.h2database@2.2.222/org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at com.h2database@2.2.222/org.h2.message.DbException.get(DbException.java:223)
+	at com.h2database@2.2.222/org.h2.message.DbException.get(DbException.java:199)
+	at com.h2database@2.2.222/org.h2.message.DbException.get(DbException.java:188)
+	at com.h2database@2.2.222/org.h2.engine.SessionLocal.checkSuspended(SessionLocal.java:1255)
+	at com.h2database@2.2.222/org.h2.engine.SessionLocal.transitionToState(SessionLocal.java:1247)
+	at com.h2database@2.2.222/org.h2.engine.SessionLocal.setCurrentCommand(SessionLocal.java:1225)
+	at com.h2database@2.2.222/org.h2.engine.SessionLocal.endStatement(SessionLocal.java:1708)
+	at com.h2database@2.2.222/org.h2.command.Command.executeQuery(Command.java:229)
+	at com.h2database@2.2.222/org.h2.jdbc.JdbcPreparedStatement.executeQuery(JdbcPreparedStatement.java:131)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.dao.impl.AbstractDao.query(AbstractDao.java:78)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.dao.impl.ProductDao.getPrice(ProductDao.java:45)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.dao.impl.ProductDao.getAll(ProductDao.java:121)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.service.impl.ProductServiceImpl.getAllProducts(ProductServiceImpl.java:28)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.product.productList.ProductPresenter.loadProductListData(ProductPresenter.java:25)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.screen.product.productList.ProductScreen.showProducts(ProductScreen.java:328)
+	at com.manager.stock.manager_stock/com.manager.stock.manager_stock.MainApplication.start(MainApplication.java:38)
+	at javafx.graphics/com.sun.javafx.application.LauncherImpl.lambda$launchApplication1$9(LauncherImpl.java:847)
+	at javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runAndWait$12(PlatformImpl.java:484)
+	at javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runLater$10(PlatformImpl.java:457)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
+	at javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runLater$11(PlatformImpl.java:456)
+	at javafx.graphics/com.sun.glass.ui.InvokeLaterDispatcher$Future.run$$$capture(InvokeLaterDispatcher.java:96)
+	at javafx.graphics/com.sun.glass.ui.InvokeLaterDispatcher$Future.run(InvokeLaterDispatcher.java)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:184)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+2026-01-12 00:16:38.422 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.dao.impl.UpFileDao - insert into upfilestatus(id, status) values(?, ?);
+2026-01-12 00:16:41.136 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - UPDATE import_receipt set invoice = ?, create_at = ?, delivered_by = ?, invoice_number = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ?  where id = ?
+2026-01-12 00:16:41.138 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2026-01-12 00:16:41.142 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl -     UPDATE DB.EXPORT_PRICE SET DB.EXPORT_PRICE.QUANTITY_IMPORTED = ?, DB.EXPORT_PRICE.TOTAL_PRICE_IMPORT = ?
+    WHERE DB.EXPORT_PRICE.PRODUCT_ID = ? AND DB.EXPORT_PRICE.IMPORT_RECEIPT_ID = ?;
+
+2026-01-12 00:16:41.143 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2026-01-12 00:16:41.145 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ImportReceiptDetailDaoImpl - UPDATE import_receipt_detail set planned_quantity = ?, actual_quantity = ?, unit_price = ? where id = ?
+2026-01-12 00:16:41.152 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ? WHERE id = ?
+2026-01-12 00:16:41.152 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - UPDATE inventory_detail set quantity = ?, total_price = ? where id = ?
+2026-01-12 00:16:41.153 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ? WHERE id = ?
+2026-01-12 00:16:41.153 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - UPDATE inventory_detail set quantity = ?, total_price = ? where id = ?
+2026-01-12 00:17:26.698 [JavaFX Application Thread] INFO  c.m.s.m.d.impl.ImportReceiptDaoImpl - UPDATE import_receipt set invoice = ?, create_at = ?, delivered_by = ?, invoice_number = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ?  where id = ?
+2026-01-12 00:17:26.699 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2026-01-12 00:17:26.699 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl -     UPDATE DB.EXPORT_PRICE SET DB.EXPORT_PRICE.QUANTITY_IMPORTED = ?, DB.EXPORT_PRICE.TOTAL_PRICE_IMPORT = ?
+    WHERE DB.EXPORT_PRICE.PRODUCT_ID = ? AND DB.EXPORT_PRICE.IMPORT_RECEIPT_ID = ?;
+
+2026-01-12 00:17:26.699 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - Update export_price set export_time = ? where import_receipt_id = ?
+2026-01-12 00:17:26.700 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ImportReceiptDetailDaoImpl - INSERT INTO import_receipt_detail (import_receipt_id, product_id, planned_quantity, actual_quantity, unit_price, product_name) values (?, ?, ?, ?, ?, ?)
+2026-01-12 00:17:26.701 [JavaFX Application Thread] INFO  c.m.s.m.d.i.ImportReceiptDetailDaoImpl - UPDATE import_receipt_detail set planned_quantity = ?, actual_quantity = ?, unit_price = ? where id = ?
+2026-01-12 00:17:26.701 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - INSERT INTO export_price(product_id, export_time, export_price, quantity_in_stock, quantity_imported, total_price_import, total_price_in_stock, import_receipt_id) values (?, ?, ?, ?, ?, ?, ?, ?)
+2026-01-12 00:17:26.702 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ? WHERE id = ?
+2026-01-12 00:17:26.703 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - UPDATE inventory_detail set quantity = ?, total_price = ? where id = ?
+2026-01-12 00:17:26.703 [JavaFX Application Thread] INFO  c.m.s.m.dao.impl.ExportPriceDaoImpl - UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ? WHERE id = ?
+2026-01-12 00:17:26.704 [JavaFX Application Thread] INFO  c.m.s.m.d.i.InventoryDetailDaoImpl - UPDATE inventory_detail set quantity = ?, total_price = ? where id = ?

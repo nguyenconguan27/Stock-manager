@@ -314,7 +314,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     item.setActualQuantity(0);
                     item.setTotalPrice(0);
                     productDetailsToDelete.add(item);
-                    item.setIsDeleted(true);
+//                    item.setIsDeleted(true);
                     getTableView().getItems().remove(item);
                 });
             }
@@ -401,7 +401,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     totalPriceOfReceipt,
                     FormatMoney.formatMoneyToWord((long)totalPriceOfReceipt)
             );
-            importReceiptModel.setInsert(true);
+//            importReceiptModel.setInsert(true);
             ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
             InventoryReceiptService inventoryReceiptService = InventoryReceiptService.getInstance();
             if(productDetails.isEmpty()) {
@@ -409,7 +409,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 return;
             }
             try {
-                inventoryReceiptService.solveImportReceipt(importReceiptModel, productDetails, oldImportReceiptModelTable == null ? importReceiptModel.getCreateAt() : oldImportReceiptModelTable.getCreateAt());
+                inventoryReceiptService.solveImportReceipt(importReceiptModel, productDetails, oldImportReceiptModelTable == null ? importReceiptModel.getCreateAt() : oldImportReceiptModelTable.getCreateAt(), productDetailsToDelete);
                 // thêm mới hóa đơn nhập
 //                if(oldImportReceiptModelTable == null) {
 //                    presenter.saveImportReceipt(importReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
@@ -499,7 +499,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             }
         }
         else {
-            productDetails.add(new ImportReceiptDetailModelTable(
+            ImportReceiptDetailModelTable importReceiptDetailModelTable = new ImportReceiptDetailModelTable(
                     -1,
                     0,
                     product.getId(),
@@ -511,7 +511,9 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     FormatMoney.format(unitPrice),
                     FormatMoney.format(currentTotalPrice),
                     product.getCode()
-            ));
+            );
+            importReceiptDetailModelTable.setIsNew(true);
+            productDetails.add(importReceiptDetailModelTable);
             changeQuantityByProductMap.put(product.getId(), changeQuantityByProduct + actualQuantity);
             changeTotalPriceByProductMap.put(product.getId(), changeTotalPriceByProduct + currentTotalPrice);
         }

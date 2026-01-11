@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -170,8 +171,9 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     }
 
     @Override
-    public List<ExportPriceModel> findAllExportPriceByProductAndOrderByAsc(long productId) {
-        return exportPriceDao.findAllByProductIdAndAfterTime(productId, LocalDateTime.now().minusYears(100));
+    public List<ExportPriceModel> findAllExportPriceByProductAndCreateAtAndOrderByAsc(long productId, int currentYear) {
+        LocalDateTime startCurrentYear = LocalDateTime.of(currentYear, 1, 1, 0, 0, 0);
+        return exportPriceDao.findAllByProductIdAndAfterTime(productId, startCurrentYear);
     }
 
     @Override
@@ -182,6 +184,16 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     @Override
     public void deleteByImportReceipt(long importReceiptId) {
         exportPriceDao.deleteByImportReceipt(importReceiptId);
+    }
+
+    @Override
+    public void deleteByImportReceiptAndProduct(long importReceiptId, Set<Long> productIds) {
+        exportPriceDao.deleteByImportReceiptAndProduct(importReceiptId, productIds);
+    }
+
+    @Override
+    public void updateQuantityImportedAndTotalPriceImportedByProductAndImportReceipt(int quantityImported, double totalPriceImported, long importReceiptId, long productId) {
+        exportPriceDao.updateQuantityImportedAndTotalPriceImportedByProductAndImportReceipt(quantityImported, totalPriceImported, importReceiptId, productId);
     }
 
     @Override
