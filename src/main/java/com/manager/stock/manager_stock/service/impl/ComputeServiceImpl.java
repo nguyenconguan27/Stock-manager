@@ -178,6 +178,7 @@ public class ComputeServiceImpl implements ComputService{
         long importReceiptId = importReceiptService.save(importReceipt);
         ExportPriceModel exportPrice = calculateUnitPriceOfProduct(inventoryDetail, importReceiptDetail.getTotalPrice(),
                 importReceiptDetail.getActualQuantity(), importReceiptId, importDate);
+        exportPrice.setExportTime(LocalDateTime.parse(importReceipt.getCreateAt(), formatter));
         long id = exportPriceService.save(exportPrice);
         exportPrice.setId(id);
         inventoryDetail.setQuantity(inventoryDetail.getQuantity() + importReceiptDetail.getActualQuantity());
