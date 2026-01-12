@@ -47,4 +47,6 @@ public interface IExportPriceService {
 
     void delete(long productId, int year);
     List<ExportPriceModel> findByProductAndYear(long productId, int year);
+    void deleteByImportReceiptId(long id);
+    ExportPriceModel findByProductIdAndImportReceipt(long productId, long receiptId);
 }

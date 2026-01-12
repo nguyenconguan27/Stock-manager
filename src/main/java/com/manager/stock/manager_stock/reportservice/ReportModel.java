@@ -153,10 +153,10 @@ public class ReportModel {
     public static class ReportDetail {
         String idReceipt;
         int quantity;
-        int unit_price;
-        int total;
+        double unit_price;
+        double total;
 
-        public ReportDetail(String idReceipt, int quantity, int unit_price, int total) {
+        public ReportDetail(String idReceipt, int quantity, double unit_price, double total) {
             this.idReceipt = idReceipt;
             this.quantity = quantity;
             this.unit_price = unit_price;
@@ -174,11 +174,11 @@ public class ReportModel {
             this.quantity = quantity;
         }
 
-        public void setUnit_price(int unit_price) {
+        public void setUnit_price(double unit_price) {
             this.unit_price = unit_price;
         }
 
-        public void setTotal(int total) {
+        public void setTotal(double total) {
             this.total = total;
         }
 
@@ -190,11 +190,11 @@ public class ReportModel {
             return quantity;
         }
 
-        public int getUnit_price() {
+        public double getUnit_price() {
             return unit_price;
         }
 
-        public int getTotal() {
+        public double getTotal() {
             return total;
         }
     }

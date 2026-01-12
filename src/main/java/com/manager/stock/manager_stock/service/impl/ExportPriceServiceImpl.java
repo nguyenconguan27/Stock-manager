@@ -216,4 +216,14 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     public List<ExportPriceModel> findByProductAndYear(long productId, int year) {
         return exportPriceDao.findByProductAndYear(productId, year);
     }
+
+    @Override
+   public void deleteByImportReceiptId(long id) {
+        exportPriceDao.deleteByImportReceiptId(id);
+    }
+
+    @Override
+    public ExportPriceModel findByProductIdAndImportReceipt(long productId, long receiptId) {
+        return exportPriceDao.findByProductIdAndImportReceipt(productId, receiptId);
+    }
 }

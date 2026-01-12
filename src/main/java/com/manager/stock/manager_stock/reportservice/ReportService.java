@@ -70,22 +70,22 @@ public class ReportService {
                 ReportModel.ReportDetail startSem;
                 ReportModel.ReportDetail endSem;
                 if(sInventoryDetail != null) {
-                    startSem = new ReportModel.ReportDetail("startsem", sInventoryDetail.getQuantity(), (int)(sInventoryDetail.getTotalPrice() / (sInventoryDetail.getQuantity() == 0 ? 1 : sInventoryDetail.getQuantity())), (int) (sInventoryDetail.getTotalPrice() / 1));
+                    startSem = new ReportModel.ReportDetail("startsem", sInventoryDetail.getQuantity(), (sInventoryDetail.getTotalPrice() / (sInventoryDetail.getQuantity() == 0 ? 1 : sInventoryDetail.getQuantity())), (sInventoryDetail.getTotalPrice() / 1));
                 }
                 else {
                     startSem = new ReportModel.ReportDetail("startsem", 0, 0, 0);
                 }
                 if(eInventoryDetail != null) {
-                    endSem = new ReportModel.ReportDetail("endsem", eInventoryDetail.getQuantity(), (int)(eInventoryDetail.getTotalPrice() / (eInventoryDetail.getQuantity() == 0 ? 1 : eInventoryDetail.getQuantity())), (int) (eInventoryDetail.getTotalPrice() / 1));
+                    endSem = new ReportModel.ReportDetail("endsem", eInventoryDetail.getQuantity(), (eInventoryDetail.getTotalPrice() / (eInventoryDetail.getQuantity() == 0 ? 1 : eInventoryDetail.getQuantity())), (eInventoryDetail.getTotalPrice() / 1));
                 }
                 else if(sInventoryDetail != null) {
-                    endSem = new ReportModel.ReportDetail("endsem", sInventoryDetail.getQuantity(), (int)(sInventoryDetail.getTotalPrice() / (sInventoryDetail.getQuantity() == 0 ? 1 : sInventoryDetail.getQuantity())), (int) (sInventoryDetail.getTotalPrice() / 1));
+                    endSem = new ReportModel.ReportDetail("endsem", sInventoryDetail.getQuantity(), (sInventoryDetail.getTotalPrice() / (sInventoryDetail.getQuantity() == 0 ? 1 : sInventoryDetail.getQuantity())),  (sInventoryDetail.getTotalPrice() / 1));
                 }
                 else {
                     endSem = new ReportModel.ReportDetail("endsem", 0, 0, 0);
                 }
-                int totalImportQ = 0; int totalImportP = 0;
-                int totalExportQ = 0; int totalExportP = 0;
+                int totalImportQ = 0; double totalImportP = 0;
+                int totalExportQ = 0; double totalExportP = 0;
                 if(productModel.getGroupId() == group.getId()) {
                     ReportModel.ReportProduct reportProduct = new ReportModel.ReportProduct();
                     reportProduct.setId(productModel.getId());
@@ -97,30 +97,33 @@ public class ReportService {
                     for(ImportReceiptDetailModel detailModel: importReceiptDetailList) {
                         if(detailModel.getProductId() == productModel.getId()) {
                             totalImportQ += detailModel.getActualQuantity();
-                            totalImportP += (int) detailModel.getTotalPrice();
+                            totalImportP += detailModel.getTotalPrice();
                             ReportModel.ReportDetail reportDetail = new ReportModel.ReportDetail();
                             reportDetail.setId("i" + detailModel.getImportReceiptId());
                             reportDetail.setQuantity(detailModel.getActualQuantity());
-                            reportDetail.setUnit_price((int) detailModel.getUnitPrice());
-                            reportDetail.setTotal((int) detailModel.getTotalPrice());
+                            reportDetail.setUnit_price( detailModel.getUnitPrice());
+                            reportDetail.setTotal(detailModel.getTotalPrice());
                             importDetails.add(reportDetail);
                         }
                     }
                     for(ExportReceiptDetailModel detailModel: exportReceiptDetailList) {
                         if(detailModel.getProductId() == productModel.getId()) {
                             totalExportQ += detailModel.getActualQuantity();
-                            totalExportP += (int )detailModel.getDisplayUnitPrice() * detailModel.getActualQuantity();
+                            totalExportP += detailModel.getDisplayUnitPrice() * detailModel.getActualQuantity();
                             ReportModel.ReportDetail reportDetail = new ReportModel.ReportDetail();
                             reportDetail.setId("e" + detailModel.getExportReceiptId());
                             reportDetail.setQuantity(detailModel.getActualQuantity());
-                            reportDetail.setUnit_price((int) detailModel.getDisplayUnitPrice());
-                            reportDetail.setTotal((int) detailModel.getTotalPrice());
+                            reportDetail.setUnit_price(detailModel.getDisplayUnitPrice());
+                            reportDetail.setTotal(detailModel.getTotalPrice());
                             exportDetails.add(reportDetail);
                         }
                     }
                     int importCount = importDetails.size(); int exportCount = exportDetails.size();
-                    ReportModel.ReportDetail totalImport = new ReportModel.ReportDetail("totalimport", totalImportQ, totalImportP / (importCount == 0 ? 1 : importCount), totalImportP);
-                    ReportModel.ReportDetail totalExport = new ReportModel.ReportDetail("totalexport", totalExportQ, totalExportP / (exportCount == 0 ? 1 : exportCount), totalExportP);
+                    ReportModel.ReportDetail totalImport = new ReportModel.ReportDetail("totalimport", totalImportQ, (totalImportP / (totalImportQ == 0 ? 1 : totalImportQ)), totalImportP);
+                    ReportModel.ReportDetail totalExport = new ReportModel.ReportDetail("totalexport", totalExportQ, (totalExportP / (totalExportQ == 0 ? 1 : totalExportQ)), totalExportP);
+                    if(importCount != 0) {
+                        System.out.println(totalImport.getUnit_price() + " " + totalImport.getTotal());
+                    }
                     reportProduct.setStartSem(startSem);
                     reportProduct.setEndSem(endSem);
                     reportProduct.setTotalImport(totalImport);

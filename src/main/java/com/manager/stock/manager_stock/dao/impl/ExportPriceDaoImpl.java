@@ -102,7 +102,7 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
 
     @Override
     public void update(List<ExportPriceModel> exportPriceModels) {
-        String sql = "UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ?" +
+        String sql = "UPDATE export_price SET quantity_in_stock = ?, quantity_imported = ?, total_price_import = ?, export_price = ?, total_price_in_stock = ?, export_time = ?" +
                     " WHERE id = ?";
         List<Object[]> parameters = new ArrayList<>();
         for(ExportPriceModel exportPriceModel : exportPriceModels){
@@ -112,6 +112,7 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
                exportPriceModel.getTotalImportPrice(),
                exportPriceModel.getExportPrice(),
                exportPriceModel.getTotalPriceInStock(),
+                    exportPriceModel.getExportTime(),
                exportPriceModel.getId()
             });
         }
@@ -487,6 +488,22 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
         return query(sql, new ExportPriceMapperResultSet(), productId, year);
     }
 
+    @Override
+    public void deleteByImportReceiptId(long id) {
+        String sql = "delete from export_price where import_receipt_id = ?";
+        List<Object[]> parameters = new ArrayList<>();
+        parameters.add(new Object[] {
+                id
+        });
+        save(sql, parameters);
+    }
+
+    @Override
+    public ExportPriceModel findByProductIdAndImportReceipt(long productId, long receiptId) {
+        String sql = "select * from export_price where product_id = ? and import_receipt_id = ?";
+        List<ExportPriceModel> exportPriceModels = query(sql, new ExportPriceMapperResultSet(), productId, receiptId);
+        return exportPriceModels.isEmpty() ? new ExportPriceModel() : exportPriceModels.get(0);
+    }
 
 
 }

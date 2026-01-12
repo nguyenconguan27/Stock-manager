@@ -46,7 +46,7 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
                 "join import_receipt_detail ird on\n" +
                 "ir.id = ird.import_receipt_id\n" +
                 "where ir.academic_year = ? and ird.product_id = ?\n" +
-                "group by ir.id order by PARSEDATETIME(ir.create_at, 'DD/MM/YYYY HH:mm:ss') asc;";
+                "group by ir.id order by PARSEDATETIME(ir.create_at, 'dd/MM/yyyy HH:mm:ss') asc;";
         return query(sql, new ImportReceiptMapperResultSet(), academicYear, productId);
     }
 

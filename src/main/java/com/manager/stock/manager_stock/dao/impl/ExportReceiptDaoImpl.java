@@ -178,7 +178,7 @@ public class ExportReceiptDaoImpl extends AbstractDao<ExportReceiptModel> implem
                 "join export_price ep on\n" +
                 "ep.id = erd.export_price_id \n" +
                 "where er.academic_year = ? and erd.product_id = ?\n" +
-                "group by er.id order by PARSEDATETIME(er.create_at, 'DD/MM/YYYY HH:mm:ss') asc;";
+                "group by er.id order by PARSEDATETIME(er.create_at, 'dd/MM/yyyy HH:mm:ss') asc;";
         return query(sql, new ExportReceiptMapperResultSet(), year, productId);
     }
 
