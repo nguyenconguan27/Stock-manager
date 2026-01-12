@@ -303,13 +303,13 @@ public class InventoryReceiptService {
         }
         exportReceiptDetailModel.setOriginalUnitPrice(exportPriceModel.getExportPrice());
         quantityInStock.set(quantityInStock.get() - exportReceiptDetailModel.getActualQuantity());
-        totalPriceInStock.set(quantityInStock.get() == 0 ? 0 : (totalPriceInStock.get() - (exportReceiptDetailModel.getActualQuantity() * exportPriceModel.getExportPrice())));
+        totalPriceInStock.set(totalPriceInStock.get() - (exportReceiptDetailModel.getActualQuantity() * exportPriceModel.getExportPrice()));
     }
 
     private void calculateUnitPriceOfProduct(int quantityInStock, double totalPriceInStock, double totalPriceImported, int quantityImported, ExportPriceModel exportPriceModel) {
         try {
             exportPriceModel.setQuantityInStock(quantityInStock);
-            double newUnitPrice = Math.round((totalPriceInStock + totalPriceImported) / (quantityImported + quantityInStock));
+            double newUnitPrice = (totalPriceInStock + totalPriceImported) / (quantityImported + quantityInStock);
             exportPriceModel.setExportPrice(newUnitPrice);
             exportPriceModel.setTotalPriceInStock(totalPriceInStock);
         } catch (ArithmeticException e) {

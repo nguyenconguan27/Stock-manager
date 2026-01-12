@@ -399,7 +399,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
 //                }
                 InventoryReceiptService inventoryReceiptService = InventoryReceiptService.getInstance();
                 inventoryReceiptService.solveExportReceipt(exportReceiptModel, receiptModelTable == null ? exportReceiptModel.getCreateAt() : receiptModelTable.getCreateAt(), productDetails, productDetailsToDelete);
-                String messageAlert = exportReceiptModel.getId() != -1 ? "Cập nhật phiếu nhập thành công." : "Thêm mới phiếu xuất thành công.";
+                String messageAlert = exportReceiptModel.getId() != -1 ? "Cập nhật phiếu xuất thành công." : "Thêm mới phiếu xuất thành công.";
                 AlertUtils.alert(messageAlert, "INFORMATION", "Thành công", "Thành công");
                 ExportReceiptScreen exportReceiptScreen = new ExportReceiptScreen();
                 exportReceiptScreen.showTable(selectedYear);

@@ -124,9 +124,8 @@ public class ReportService {
                             exportDetails.add(reportDetail);
                         }
                     }
-                    int importCount = importDetails.size(); int exportCount = exportDetails.size();
-                    ReportModel.ReportDetail totalImport = new ReportModel.ReportDetail("totalimport", totalImportQ, totalImportP / (importCount == 0 ? 1 : importCount), totalImportP);
-                    ReportModel.ReportDetail totalExport = new ReportModel.ReportDetail("totalexport", totalExportQ, totalExportP / (exportCount == 0 ? 1 : exportCount), totalExportP);
+                    ReportModel.ReportDetail totalImport = new ReportModel.ReportDetail("totalimport", totalImportQ, totalImportP / (totalImportQ == 0 ? 1 : totalImportQ), totalImportP);
+                    ReportModel.ReportDetail totalExport = new ReportModel.ReportDetail("totalexport", totalExportQ, totalExportP / (totalExportQ == 0 ? 1 : totalExportQ), totalExportP);
                     reportProduct.setStartSem(startSem);
                     reportProduct.setEndSem(endSem);
                     reportProduct.setTotalImport(totalImport);

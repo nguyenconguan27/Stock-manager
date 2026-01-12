@@ -422,7 +422,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
 //                            .collect(Collectors.toList());
 //                    newProductDetails.addAll(productDetailsToDelete);
 //                    presenter.updateImportReceipt(importReceiptModel, newProductDetails, changeQuantityByProductMap, changeTotalPriceByProductMap, receiptDetailIdsDeleted, oldImportReceiptModelTable.getCreateAt(), productDetails);
-                String messageAlert = importReceiptModel.getId() != -1 ? "Thêm mới phiếu nhập thành công." : "Cập nhật phiếu nhập thành công.";
+                String messageAlert = importReceiptModel.getId() == -1 ? "Thêm mới phiếu nhập thành công." : "Cập nhật phiếu nhập thành công.";
                 AlertUtils.alert(messageAlert, "INFORMATION", "Thành công", "Thành công");
 //                }
 
