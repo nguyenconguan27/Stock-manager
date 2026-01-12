@@ -13,6 +13,7 @@ import com.manager.stock.manager_stock.reportservice.ExportAll;
 import com.manager.stock.manager_stock.reportservice.ReceiptReportService;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter;
+import com.manager.stock.manager_stock.screen.transaction.presenter.InventoryReceiptService;
 import com.manager.stock.manager_stock.utils.AlertUtils;
 import com.manager.stock.manager_stock.utils.ChoosesFolderOutput;
 import com.manager.stock.manager_stock.utils.CreateColumnTableUtil;
@@ -195,11 +196,15 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
                     if(isConfirmDelete) {
                         ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
                         try {
-                            boolean isDeleteSuccess = presenter.deleteImportReceipt(selected);
-                            if(isDeleteSuccess) {
-                                AlertUtils.alert("Xóa phiếu nhập thành công.", "INFORMATION", "Thành công", "Xóa thành công");
-                                showTable(selectedYear);
-                            }
+//                            boolean isDeleteSuccess = presenter.deleteImportReceipt(selected);
+                            ImportReceiptModel importReceiptModel = ImportReceiptModelMapper.INSTANCE.fromViewModelToModel(selected);
+                            importReceiptModel.setIsDeleted(true);
+                            InventoryReceiptService.getInstance().solveImportReceipt(importReceiptModel, FXCollections.observableArrayList(),
+                                    importReceiptModel.getCreateAt(), productData);
+//                            if(isDeleteSuccess) {
+                            AlertUtils.alert("Xóa phiếu nhập thành công.", "INFORMATION", "Thành công", "Xóa thành công");
+                            showTable(selectedYear);
+//                            }
                         }
                         catch (DaoException | StockUnderFlowException e) {
                             AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi", "Lỗi xóa phiếu nhập.");
@@ -322,6 +327,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
             );
             allReceiptData.setAll(tableModels);
             receiptData.setAll(tableModels);
+            productTable.getItems().clear();
             updatePagination();
         }
         catch (DaoException e) {

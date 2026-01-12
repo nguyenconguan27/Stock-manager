@@ -20,6 +20,7 @@ public class ExportReceiptModel {
     private String totalPriceInWord;
     private int academicYear;
     private List<ExportReceiptDetailModel> exportReceiptDetailModels;
+    private boolean isDeleted;
 
     private LocalDateTime createdAtTs;
     public ExportReceiptModel() {
@@ -132,6 +133,14 @@ public class ExportReceiptModel {
 
     public void setAcademicYear(int academicYear) {
         this.academicYear = academicYear;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 
     @Override

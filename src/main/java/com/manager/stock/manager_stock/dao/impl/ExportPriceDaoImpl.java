@@ -466,7 +466,7 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
 
     @Override
     public void deleteByImportReceipt(long importReceiptId) {
-        String sql = "delete from export_price where import_receipt = ?";
+        String sql = "delete from export_price where import_receipt_id = ?";
         delete(sql, importReceiptId);
     }
 

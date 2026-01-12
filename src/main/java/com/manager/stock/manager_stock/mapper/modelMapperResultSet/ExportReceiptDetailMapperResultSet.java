@@ -39,6 +39,7 @@ public class ExportReceiptDetailMapperResultSet implements RowMapper<ExportRecei
                     break;
                 case "original_unit_price":
                     exportReceiptDetailModel.setOriginalUnitPrice(resultSet.getDouble(columnName));
+                    exportReceiptDetailModel.setDisplayUnitPrice(resultSet.getDouble(columnName));
                     break;
                 case "product_name":
                     exportReceiptDetailModel.setProductName(resultSet.getString(columnName));
@@ -46,9 +47,9 @@ public class ExportReceiptDetailMapperResultSet implements RowMapper<ExportRecei
                 case "product_code":
                     exportReceiptDetailModel.setProductCode(resultSet.getString(columnName));
                     break;
-                case "export_price":
-                    exportReceiptDetailModel.setDisplayUnitPrice(resultSet.getDouble(columnName));
-                    break;
+//                case "export_price":
+//                    exportReceiptDetailModel.setDisplayUnitPrice(resultSet.getDouble(columnName));
+//                    break;
                 case "unit":
                     exportReceiptDetailModel.setUnit(resultSet.getString(columnName));
                     break;
@@ -56,8 +57,9 @@ public class ExportReceiptDetailMapperResultSet implements RowMapper<ExportRecei
                     exportReceiptDetailModel.setExportPriceId(resultSet.getLong(columnName));
                     break;
                 case "create_at":
-                    LocalDateTime exportDate = LocalDateTime.parse(resultSet.getString(columnName), formatter);
-                    exportReceiptDetailModel.setExportDate(LocalDateTime.parse(exportDate.format(dbFmt)));
+                    String createAt = resultSet.getString(columnName);
+                    LocalDateTime exportDate = LocalDateTime.parse(createAt, formatter);
+                    exportReceiptDetailModel.setExportDate(exportDate);
                     break;
             }
         }

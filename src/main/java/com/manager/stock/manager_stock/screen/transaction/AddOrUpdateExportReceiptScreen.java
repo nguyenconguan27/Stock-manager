@@ -391,17 +391,16 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
 //                    // changeQuantityByProductMap: số lượng sản phẩm thay đổi
 //                    // changeTotalPriceByProductMap: tổng tiền thay đổi
 //                    exportReceiptPresenter.save(exportReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
-//                    AlertUtils.alert("Thêm mới phiếu xuất thành công.", "INFORMATION", "Thành công", "Thành công");
+//                    AlertUtils.alert("", "INFORMATION", "Thành công", "Thành công");
 //                }
 //                // Cập nhật hóa đơn xuất
 //                else {
-                assert receiptModelTable != null;
-                ExportReceiptModel oldExportReceiptModel = ExportReceiptModelTableMapper.INSTANCE.fromViewModelToModel(receiptModelTable);
 //                    exportReceiptPresenter.updateExportReceipt(exportReceiptModel, oldExportReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
-//                    AlertUtils.alert("Cập nhật phiếu nhập thành công.", "INFORMATION", "Thành công", "Thành công");
 //                }
                 InventoryReceiptService inventoryReceiptService = InventoryReceiptService.getInstance();
-                inventoryReceiptService.solveExportReceipt(exportReceiptModel, oldExportReceiptModel == null ? exportReceiptModel.getCreateAt() : oldExportReceiptModel.getCreateAt(), productDetails);
+                inventoryReceiptService.solveExportReceipt(exportReceiptModel, receiptModelTable == null ? exportReceiptModel.getCreateAt() : receiptModelTable.getCreateAt(), productDetails, productDetailsToDelete);
+                String messageAlert = exportReceiptModel.getId() != -1 ? "Cập nhật phiếu nhập thành công." : "Thêm mới phiếu xuất thành công.";
+                AlertUtils.alert(messageAlert, "INFORMATION", "Thành công", "Thành công");
                 ExportReceiptScreen exportReceiptScreen = new ExportReceiptScreen();
                 exportReceiptScreen.showTable(selectedYear);
                 ScreenNavigator.navigateTo(exportReceiptScreen);
