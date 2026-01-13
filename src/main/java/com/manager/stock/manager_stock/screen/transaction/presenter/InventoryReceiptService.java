@@ -208,8 +208,8 @@ public class InventoryReceiptService {
 
     // danh sách product ở đây là danh sách trong phiếu hiện tại
     private void updateInventoryAndExportPrice(Map<String, Long> productIds, int y) {
-        AtomicInteger currentYear = new AtomicInteger(y);
         for(Map.Entry<String, Long> entry : productIds.entrySet()) {
+            AtomicInteger currentYear = new AtomicInteger(y);
             long productId = entry.getValue();
             String productCode = entry.getKey();
             // 1. lấy danh sách toàn bộ đơn giá
@@ -226,7 +226,7 @@ public class InventoryReceiptService {
             if(inventoryDetailModel == null) {
                 inventoryDetailModel = new InventoryDetailModel(
                     System.currentTimeMillis(),
-                    productId, 0, 0.0, currentYear.get()
+                    productId, 0, 0.0, currentYear.get() - 1
                 );
                 inventoryDetailService.save(List.of(inventoryDetailModel));
             }

@@ -20,6 +20,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.File;
 import java.text.Normalizer;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -44,7 +45,7 @@ public abstract class BaseAddOrUpdateReceiptScreen<T, D> extends VBox {
     protected HashMap<Long, Double> changeTotalPriceByProductMap = new HashMap<>();
     protected Set<Long> receiptDetailIdsDeleted = new HashSet<>();
     protected TextField tfInvoiceNumber, tfWareHouse;
-    protected int selectedYear;
+    protected int selectedYear = LocalDate.now().getYear() - 1;
 
     public BaseAddOrUpdateReceiptScreen(T receiptModelTable) {
         HBox topBar = CreateTopBarOfReceiptUtil.createTopBar(new TopBarActionHandler() {
@@ -83,6 +84,7 @@ public abstract class BaseAddOrUpdateReceiptScreen<T, D> extends VBox {
                 try {
                     File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
                     String outputPath = file.getAbsolutePath();
+                    System.out.println(selectedYear);
                     ExportAll exportService = new ExportAll(selectedYear);
                     exportService.exportTotal(outputPath);
                     // gọi hàm tạo file xlsx

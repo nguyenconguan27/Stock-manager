@@ -520,8 +520,8 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
 
             LocalDateTime createAtStr = dateTimePicker.dateTimeProperty().get();
             int academicYear = createAtStr.getYear();
-            int quantityInStock = exportReceiptPresenter.findQuantityInStockByProductIdAndAcademicYear(newP.getId(), academicYear);
-            tfInventory.setText(String.valueOf(quantityInStock));
+//            int quantityInStock = exportReceiptPresenter.findQuantityInStockByProductIdAndAcademicYear(newP.getId(), academicYear);
+            tfInventory.setText(String.valueOf(ep.quantityInStock()));
             selected.set(newP);
         }
     }
