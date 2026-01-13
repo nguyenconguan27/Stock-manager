@@ -175,9 +175,7 @@ public class ComputeServiceImpl implements ComputService{
                 exportPriceModel = doImport(current, imports.get(i), time, importDate);
                 i++;
             } else {
-                if(current.getId() != null) {
-                    doExport(exportPriceModel, exports.get(j), current, time);
-                }
+                doExport(exportPriceModel, exports.get(j), current, time);
                 j++;
             }
         }
