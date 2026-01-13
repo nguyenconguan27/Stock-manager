@@ -121,9 +121,6 @@ public class ReportService {
                     int importCount = importDetails.size(); int exportCount = exportDetails.size();
                     ReportModel.ReportDetail totalImport = new ReportModel.ReportDetail("totalimport", totalImportQ, (totalImportP / (totalImportQ == 0 ? 1 : totalImportQ)), totalImportP);
                     ReportModel.ReportDetail totalExport = new ReportModel.ReportDetail("totalexport", totalExportQ, (totalExportP / (totalExportQ == 0 ? 1 : totalExportQ)), totalExportP);
-                    if(importCount != 0) {
-                        System.out.println(totalImport.getUnit_price() + " " + totalImport.getTotal());
-                    }
                     reportProduct.setStartSem(startSem);
                     reportProduct.setEndSem(endSem);
                     reportProduct.setTotalImport(totalImport);

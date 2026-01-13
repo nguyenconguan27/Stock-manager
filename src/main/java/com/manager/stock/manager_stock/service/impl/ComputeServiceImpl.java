@@ -229,7 +229,7 @@ public class ComputeServiceImpl implements ComputService{
         setTotalPrice(exportReceipt);
         long exportReceiptId = exportReceiptService.save(exportReceipt);
         for (ExportReceiptDetailModel exportReceiptDetail : exportReceipt.getExportReceiptDetailModels()) {
-            if (exportReceiptDetail.getProductId() == inventoryDetail.getProductId()) {
+            if (Objects.equals(exportReceiptDetail.getProductId(), inventoryDetail.getProductId())) {
                 exportReceiptDetail.setOriginalUnitPrice(exportPrice.getExportPrice());
                 exportReceiptDetail.setDisplayUnitPrice(exportPrice.getExportPrice());
                 exportReceiptDetail.setTotalPrice(exportPrice.getExportPrice() * exportReceiptDetail.getActualQuantity());
