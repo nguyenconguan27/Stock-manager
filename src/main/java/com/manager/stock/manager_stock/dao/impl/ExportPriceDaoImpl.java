@@ -484,7 +484,7 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
 
     @Override
     public List<ExportPriceModel> findByProductAndYear(long productId, int year) {
-        String sql = "select * from export_price where product_id = ? and year(export_time) = ?";
+        String sql = "select top 1 * from export_price where product_id = ? and year(export_time) = ? order by export_time desc";
         return query(sql, new ExportPriceMapperResultSet(), productId, year);
     }
 

@@ -98,7 +98,7 @@ public class ProductDao extends AbstractDao<ProductModel>{
         String sqlProduct = "select p.id, p.code, p.name, p.unit, p.group_id from product as p";
         List<ProductModel> productList = query(sqlProduct, new ProductMapperResultSet());
         for(ProductModel product: productList) {
-            QuantityAndTotal start = getQuantityAndTotal(product, year - 1);
+            QuantityAndTotal start = getQuantityAndTotal(product, year);
             if(start == null) {
                 year -= 1;
                 start = getQuantityAndTotal(product, year - 1);

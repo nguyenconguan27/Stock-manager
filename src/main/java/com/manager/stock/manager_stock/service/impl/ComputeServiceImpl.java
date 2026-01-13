@@ -134,37 +134,60 @@ public class ComputeServiceImpl implements ComputService{
         return temp.size();
     }
 
+    public ExportPriceModel findExportPriceModel(long productId, int year) {
+        for(int y = year; y >= 2020; y--) {
+            List<ExportPriceModel> exportPriceModels = exportPriceService.findByProductAndYear(productId, y);
+            if(exportPriceModels != null && !exportPriceModels.isEmpty()) {
+                return exportPriceModels.get(0);
+            }
+        }
+        return new ExportPriceModel();
+    }
+
+    public InventoryDetailModel findInventory(long productId, int year) {
+        for(int y = year; y >= 2020; y--) {
+            InventoryDetailModel pre = inventoryDetailService.findByYearAndProduct(productId, year);
+            if(pre != null && pre.getId() != null) {
+                return pre;
+            }
+        }
+        return new InventoryDetailModel();
+    }
+
     public void computeForProduct(long productId, int year, List<ImportReceiptModel> imports, List<ExportReceiptModel> exports, LocalDateTime time) {
-        ExportPriceModel exportPrice = exportPriceService.findLastByProductIdAndYear(productId, year - 1);
         int i = 0, j = 0;
         InventoryDetailModel current = inventoryDetailService.findByYearAndProduct(productId, year);
-        InventoryDetailModel pre = inventoryDetailService.findByYearAndProduct(productId, year - 1);
-        if(pre.getId() == null) {
-            pre = inventoryDetailService.findByYearAndProduct(productId, year - 2);
+        InventoryDetailModel pre = findInventory(productId, year - 1);
+        ExportPriceModel exportPriceModel = findExportPriceModel(productId, year - 1);
+        if(pre.getId() != null) {
+            current.setQuantity(pre.getQuantity());
+            current.setTotalPrice(pre.getTotalPrice());
+        } else {
+            current.setQuantity(0);
+            current.setTotalPrice((double) 0);
         }
-        current.setQuantity(pre.getQuantity());
-        current.setTotalPrice(pre.getTotalPrice());
         current.setProductId(productId);
         current.setAcademicYear(year);
-        List<ExportPriceModel> exportPriceModels = exportPriceService.findByProductAndYear(productId, year);
         while (i < imports.size() && j < exports.size()) {
             LocalDateTime importDate = LocalDateTime.parse(imports.get(i).getCreateAt(), formatter);
             LocalDateTime exportDate = LocalDateTime.parse(exports.get(j).getCreateAt(), formatter);
             if (importDate.isBefore(exportDate)) {
-                 doImport(current, imports.get(i), time, importDate);
+                exportPriceModel = doImport(current, imports.get(i), time, importDate);
                 i++;
             } else {
-                doExport(i > 0 ? exportPriceModels.get(exportPriceModels.indexOf(new ExportPriceModel(imports.get(i - 1).getId()))) : exportPrice, exports.get(j), current, time);
+                if(current.getId() != null) {
+                    doExport(exportPriceModel, exports.get(j), current, time);
+                }
                 j++;
             }
         }
         while (i < imports.size()) {
             LocalDateTime importDate = LocalDateTime.parse(imports.get(i).getCreateAt(), formatter);
-            doImport(current, imports.get(i), time, importDate);
+            exportPriceModel = doImport(current, imports.get(i), time, importDate);
             i++;
         }
         while (j < exports.size()) {
-            doExport(i > 0 ? exportPriceModels.get(exportPriceModels.indexOf(new ExportPriceModel(imports.get(i - 1).getId()))) : exportPrice, exports.get(j), current, time);
+            doExport(exportPriceModel, exports.get(j), current, time);
             j++;
         }
 //        save or update
@@ -174,7 +197,6 @@ public class ComputeServiceImpl implements ComputService{
     public ExportPriceModel doImport(InventoryDetailModel inventoryDetail, ImportReceiptModel importReceipt, LocalDateTime updateTime, LocalDateTime importDate) {
         ImportReceiptDetailModel importReceiptDetail = null;
         for (ImportReceiptDetailModel importReceiptDetailModel : importReceipt.getImportReceiptDetails()) {
-            System.out.println(Objects.equals(importReceiptDetailModel.getProductId(), inventoryDetail.getProductId()));
             if (Objects.equals(importReceiptDetailModel.getProductId(), inventoryDetail.getProductId())) {
                 importReceiptDetail = importReceiptDetailModel;
                 break;
@@ -186,7 +208,8 @@ public class ComputeServiceImpl implements ComputService{
         exportPrice = calculateUnitPriceOfProduct(inventoryDetail, importReceiptDetail.getTotalPrice(),
                 importReceiptDetail.getActualQuantity(), importReceiptId, importDate, exportPrice);
         exportPrice.setExportTime(LocalDateTime.parse(importReceipt.getCreateAt(), formatter));
-        exportPriceService.save(exportPrice);
+        long id = exportPriceService.save(exportPrice);
+        exportPrice.setId(id);
         inventoryDetail.setQuantity(inventoryDetail.getQuantity() + importReceiptDetail.getActualQuantity());
         inventoryDetail.setTotalPrice(inventoryDetail.getTotalPrice() + importReceiptDetail.getUnitPrice() * importReceiptDetail.getActualQuantity());
 //       save or update
