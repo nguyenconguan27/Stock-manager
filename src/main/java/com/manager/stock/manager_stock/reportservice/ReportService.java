@@ -76,16 +76,13 @@ public class ReportService {
                 ReportModel.ReportDetail startSem;
                 ReportModel.ReportDetail endSem;
                 if(sInventoryDetail != null) {
-                    startSem = new ReportModel.ReportDetail("startsem", sInventoryDetail.getQuantity(), (int)(sInventoryDetail.getTotalPrice() / (sInventoryDetail.getQuantity() == 0 ? 1 : sInventoryDetail.getQuantity())), (int) (sInventoryDetail.getTotalPrice() / 1));
+                    startSem = new ReportModel.ReportDetail("startsem", sInventoryDetail.getQuantity(), (sInventoryDetail.getTotalPrice() / (sInventoryDetail.getQuantity() == 0 ? 1 : sInventoryDetail.getQuantity())), sInventoryDetail.getTotalPrice());
                 }
                 else {
                     startSem = new ReportModel.ReportDetail("startsem", 0, 0, 0);
                 }
                 if(eInventoryDetail != null) {
-                    endSem = new ReportModel.ReportDetail("endsem", eInventoryDetail.getQuantity(), (int)(eInventoryDetail.getTotalPrice() / (eInventoryDetail.getQuantity() == 0 ? 1 : eInventoryDetail.getQuantity())), (int) (eInventoryDetail.getTotalPrice() / 1));
-                }
-                else if(sInventoryDetail != null) {
-                    endSem = new ReportModel.ReportDetail("endsem", sInventoryDetail.getQuantity(), (int)(sInventoryDetail.getTotalPrice() / (sInventoryDetail.getQuantity() == 0 ? 1 : sInventoryDetail.getQuantity())), (int) (sInventoryDetail.getTotalPrice() / 1));
+                    endSem = new ReportModel.ReportDetail("endsem", eInventoryDetail.getQuantity(), (eInventoryDetail.getTotalPrice() / (eInventoryDetail.getQuantity() == 0 ? 1 : eInventoryDetail.getQuantity())), eInventoryDetail.getTotalPrice());
                 }
                 else {
                     endSem = new ReportModel.ReportDetail("endsem", 0, 0, 0);
@@ -124,8 +121,8 @@ public class ReportService {
                             exportDetails.add(reportDetail);
                         }
                     }
-                    ReportModel.ReportDetail totalImport = new ReportModel.ReportDetail("totalimport", totalImportQ, totalImportP / (totalImportQ == 0 ? 1 : totalImportQ), totalImportP);
-                    ReportModel.ReportDetail totalExport = new ReportModel.ReportDetail("totalexport", totalExportQ, totalExportP / (totalExportQ == 0 ? 1 : totalExportQ), totalExportP);
+                    ReportModel.ReportDetail totalImport = new ReportModel.ReportDetail("totalimport", totalImportQ, ((float)totalImportP / (totalImportQ == 0 ? 1 : totalImportQ)), totalImportP);
+                    ReportModel.ReportDetail totalExport = new ReportModel.ReportDetail("totalexport", totalExportQ, ((float)totalExportP / (totalExportQ == 0 ? 1 : totalExportQ)), totalExportP);
                     reportProduct.setStartSem(startSem);
                     reportProduct.setEndSem(endSem);
                     reportProduct.setTotalImport(totalImport);
