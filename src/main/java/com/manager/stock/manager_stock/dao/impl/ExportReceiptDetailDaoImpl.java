@@ -177,12 +177,13 @@ public class ExportReceiptDetailDaoImpl extends AbstractDao<ExportReceiptDetailM
 
     @Override
     public void update(List<ExportReceiptDetailModel> exportReceiptDetailModels) {
-        String sql = "UPDATE export_receipt_detail set actual_quantity = ?, original_unit_price = ?, export_price_id = ?" +
+        String sql = "UPDATE export_receipt_detail set actual_quantity = ?, planned_quantity = ?, original_unit_price = ?, export_price_id = ?" +
                 " WHERE id = ?";
         List<Object[]> parameters = new ArrayList<>();
         for (ExportReceiptDetailModel exportReceiptDetailModel : exportReceiptDetailModels) {
             parameters.add(new Object[]{
                 exportReceiptDetailModel.getActualQuantity(),
+                exportReceiptDetailModel.getPlannedQuantity(),
                 exportReceiptDetailModel.getOriginalUnitPrice(),
                 exportReceiptDetailModel.getExportPriceId(),
                 exportReceiptDetailModel.getId()

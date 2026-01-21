@@ -48,6 +48,7 @@ public interface IExportPriceService {
     void deleteByImportReceipt(long importReceiptId);
     void deleteByImportReceiptAndProduct(long importReceiptId, Set<Long> productIds);
     void updateQuantityImportedAndTotalPriceImportedByProductAndImportReceipt(int quantityImported, double totalPriceImported, long importReceiptId, long productId);
+    ExportPriceIdAndPrice findInventoryByExportTimeAndProduct(long productId, LocalDateTime exportDate);
     void commit();
     void rollback();
 }

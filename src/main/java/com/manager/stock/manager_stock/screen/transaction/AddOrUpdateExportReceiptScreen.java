@@ -43,7 +43,6 @@ import java.util.stream.Collectors;
  */
 public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen<ExportReceiptModelTable, ExportReceiptDetailModelTable> {
     private TextField tfReceiver, tfReceiveAddress, tfReason;
-    private int selectedYear;
     private ExportReceiptPresenter exportReceiptPresenter;
 
     public AddOrUpdateExportReceiptScreen(ExportReceiptModelTable exportReceiptModelTable, int year) {
@@ -521,8 +520,18 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             LocalDateTime createAtStr = dateTimePicker.dateTimeProperty().get();
             int academicYear = createAtStr.getYear();
 //            int quantityInStock = exportReceiptPresenter.findQuantityInStockByProductIdAndAcademicYear(newP.getId(), academicYear);
-            tfInventory.setText(String.valueOf(ep.quantityInStock()));
+            // Lấy tồn kho của sản phẩm theo thời điểm xuất hiện tại
             selected.set(newP);
+            try {
+                ExportPriceIdAndPrice inventoryByTime = exportReceiptPresenter.findInventoryByExportTimeAndProduct(newP.getId(), exportDate);
+                int inventory = inventoryDetailService.findQuantityInStockByProductIdAndAcademicYear(newP.getId(), exportDate.getYear());
+
+                tfInventory.setText(String.valueOf(inventoryByTime != null ? inventoryByTime.quantityInStock() : inventory));
+            }
+            catch (CanNotFoundException e) {
+                e.printStackTrace();
+                tfInventory.setText(String.valueOf(ep.quantityInStock() + (ep.quantityImported() != -1  ? ep.quantityImported() : 0)));
+            }
         }
     }
 }

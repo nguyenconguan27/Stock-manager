@@ -48,4 +48,5 @@ public interface IExportPriceDao {
     void updateQuantityImportedAndTotalPriceImportedByProductAndImportReceipt(int quantityImported, double totalPriceImported, long importReceiptId, long productId);
     void deleteByImportReceipt(long importReceiptId);
     void deleteByImportReceiptAndProduct(long importReceiptId, Set<Long> productIds);
+    ExportPriceIdAndPrice findInventoryByExportTimeAndProduct(long productId, LocalDateTime exportDate);
 }

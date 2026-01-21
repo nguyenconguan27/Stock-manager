@@ -87,6 +87,10 @@ public class ExportReceiptPresenter {
         return exportPriceService.findExportPriceByProductAndLastTime(productId, exportDate);
     }
 
+    public ExportPriceIdAndPrice findInventoryByExportTimeAndProduct(long productId, LocalDateTime exportDate) {
+        return exportPriceService.findInventoryByExportTimeAndProduct(productId, exportDate);
+    }
+
     public boolean checkDate2AddNewReceipt(List<Long> productIds, LocalDateTime time) {
         Map<Long, List<ExportReceiptDetailModel>> detailModelMap = exportReceiptDetailService.findAllByProductAndMinTime(productIds, time);
         Map<Long, List<ExportPriceModel>> exportPriceMap = exportPriceService.findAllByProductAndMinTime(productIds, time);

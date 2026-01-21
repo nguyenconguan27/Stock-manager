@@ -1,10 +1,14 @@
 package com.manager.stock.manager_stock.screen.transaction;
 
 import com.browniebytes.javafx.control.DateTimePicker;
+import com.manager.stock.manager_stock.dao.impl.InventoryDetailDaoImpl;
 import com.manager.stock.manager_stock.interfaceActionHandler.TopBarActionHandler;
 import com.manager.stock.manager_stock.model.ProductModel;
 import com.manager.stock.manager_stock.reportservice.ExportAll;
 import com.manager.stock.manager_stock.reportservice.ReceiptReportService;
+import com.manager.stock.manager_stock.screen.transaction.presenter.InventoryReceiptService;
+import com.manager.stock.manager_stock.service.IInventoryDetailService;
+import com.manager.stock.manager_stock.service.impl.InventoryDetailServiceImpl;
 import com.manager.stock.manager_stock.utils.AlertUtils;
 import com.manager.stock.manager_stock.utils.ChoosesFolderOutput;
 import com.manager.stock.manager_stock.utils.CreateTopBarOfReceiptUtil;
@@ -45,7 +49,8 @@ public abstract class BaseAddOrUpdateReceiptScreen<T, D> extends VBox {
     protected HashMap<Long, Double> changeTotalPriceByProductMap = new HashMap<>();
     protected Set<Long> receiptDetailIdsDeleted = new HashSet<>();
     protected TextField tfInvoiceNumber, tfWareHouse;
-    protected int selectedYear = LocalDate.now().getYear() - 1;
+    protected int selectedYear = LocalDate.now().getYear();
+    protected final IInventoryDetailService inventoryDetailService = InventoryDetailServiceImpl.getInstance();
 
     public BaseAddOrUpdateReceiptScreen(T receiptModelTable) {
         HBox topBar = CreateTopBarOfReceiptUtil.createTopBar(new TopBarActionHandler() {

@@ -35,7 +35,7 @@ import java.util.Optional;
 public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTable, ImportReceiptDetailModelTable> {
 
     private TextField tfId, tfInvoiceNumber, tfCreateAt, tfInvoice, tfCompany, tfWarehouse, tfProductNameImportReceipt, tfProductIdImportReceipt;
-    private int selectedYear = Year.now().getValue() - 1;
+    private int selectedYear = Year.now().getValue();
     public ImportReceiptScreen() {
         super();
     }

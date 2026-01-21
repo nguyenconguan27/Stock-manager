@@ -98,6 +98,8 @@ public class ExportPriceServiceImpl implements IExportPriceService {
         return exportPriceDao.findExportPriceIdAndPriceByProductAndLastTime(productId, exportDate);
     }
 
+
+
     @Override
     public long save(ExportPriceModel exportPriceModel) {
         return exportPriceDao.save(exportPriceModel);
@@ -194,6 +196,11 @@ public class ExportPriceServiceImpl implements IExportPriceService {
     @Override
     public void updateQuantityImportedAndTotalPriceImportedByProductAndImportReceipt(int quantityImported, double totalPriceImported, long importReceiptId, long productId) {
         exportPriceDao.updateQuantityImportedAndTotalPriceImportedByProductAndImportReceipt(quantityImported, totalPriceImported, importReceiptId, productId);
+    }
+
+    @Override
+    public ExportPriceIdAndPrice findInventoryByExportTimeAndProduct(long productId, LocalDateTime exportDate) {
+        return exportPriceDao.findInventoryByExportTimeAndProduct(productId, exportDate);
     }
 
     @Override

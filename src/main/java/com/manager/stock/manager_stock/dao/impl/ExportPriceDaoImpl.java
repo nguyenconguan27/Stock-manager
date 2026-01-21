@@ -175,16 +175,30 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
 
     @Override
     public ExportPriceIdAndPrice findExportPriceIdAndPriceByProductAndLastTime(long productId, LocalDateTime exportDate) throws DaoException{
-        String sql = "select id, export_price, quantity_in_stock from export_price ep \n" +
+        String sql = "select id, export_price, quantity_in_stock, quantity_imported from export_price ep \n" +
                 "where product_id = ? and export_time <= ?\n" +
                 "order by export_time desc limit 1;";
         List<ExportPriceIdAndPrice> exportPriceIdAndPrices = query(sql, rs -> new ExportPriceIdAndPrice(
-                rs.getLong("ID"), rs.getDouble("EXPORT_PRICE"), rs.getInt("QUANTITY_IN_STOCK")
+                rs.getLong("ID"), rs.getDouble("EXPORT_PRICE"), rs.getInt("QUANTITY_IN_STOCK"), rs.getInt("QUANTITY_IMPORTED")
         ), productId, exportDate);
         if(!exportPriceIdAndPrices.isEmpty()){
             return exportPriceIdAndPrices.get(0);
         }
-        return new ExportPriceIdAndPrice(-1,-1, 0);
+        return new ExportPriceIdAndPrice(-1,-1, 0, 0);
+    }
+
+    @Override
+    public ExportPriceIdAndPrice findInventoryByExportTimeAndProduct(long productId, LocalDateTime exportDate) throws DaoException{
+        String sql = "select id, export_price, quantity_in_stock, QUANTITY_IMPORTED from export_price ep \n" +
+                "where product_id = ? and export_time > ?\n" +
+                "order by export_time desc limit 1;";
+        List<ExportPriceIdAndPrice> exportPriceIdAndPrices = query(sql, rs -> new ExportPriceIdAndPrice(
+                rs.getLong("ID"), rs.getDouble("EXPORT_PRICE"), rs.getInt("QUANTITY_IN_STOCK"), rs.getInt("QUANTITY_IMPORTED")
+        ), productId, exportDate);
+        if(!exportPriceIdAndPrices.isEmpty()){
+            return exportPriceIdAndPrices.get(0);
+        }
+        return null;
     }
 
     @Override
@@ -201,9 +215,9 @@ public class ExportPriceDaoImpl extends AbstractDao<ExportPriceModel> implements
     @Override
     public List<ExportPriceIdAndPrice> findAllById(List<Long> ids) {
         String idsStr = ids.stream().map(Object::toString).collect(Collectors.joining(","));
-        String sql = "select export_price, id, quantity_in_stock from export_price where id in (" + idsStr + ") order by id asc";
+        String sql = "select export_price, id, quantity_in_stock, QUANTITY_IMPORTED from export_price where id in (" + idsStr + ") order by id asc";
         return query(sql, rs -> new ExportPriceIdAndPrice(
-                rs.getLong("ID"), rs.getDouble("EXPORT_PRICE"), rs.getInt("QUANTITY_IN_STOCK")
+                rs.getLong("ID"), rs.getDouble("EXPORT_PRICE"), rs.getInt("QUANTITY_IN_STOCK"), rs.getInt("QUANTITY_IMPORTED")
         ));
     }
 
