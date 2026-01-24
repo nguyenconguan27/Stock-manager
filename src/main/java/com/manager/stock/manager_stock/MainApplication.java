@@ -9,6 +9,7 @@ import com.manager.stock.manager_stock.screen.dashBroad.DashBoardScreen;
 import com.manager.stock.manager_stock.screen.product.productList.ProductScreen;
 import com.manager.stock.manager_stock.service.UpfileService;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Border;
@@ -44,6 +45,11 @@ public class MainApplication extends Application {
         stage.show();
 
         stage.setOnCloseRequest(e -> {
+            e.consume();
+            stage.hide();
+
+            UpfileService.upFile();
+            Platform.exit();
             System.exit(0);
         });
     }

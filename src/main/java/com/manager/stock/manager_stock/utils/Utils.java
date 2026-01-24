@@ -6,6 +6,8 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Utils {
 
@@ -88,10 +90,12 @@ public class Utils {
         sheet.addMergedRegion(new CellRangeAddress(6, 6, 0, 5));
         cell6.setCellValue(title); cell6.setCellStyle(rightBold);
         cell6_.setCellValue("Số: " + code); cell6_.setCellStyle(leftStyle);
-        LocalDate today = LocalDate.now();
-        int day = today.getDayOfMonth();
-        int month = today.getMonthValue();
-        int year = today.getYear();
+//        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        LocalDateTime date = LocalDateTime.parse(createdAt, formatter);
+        int day = date.getDayOfMonth();
+        int month = date.getMonthValue();
+        int year = date.getYear();
         cell7.setCellValue("Ngày " + day + " tháng " + month + " năm " + year); cell7.setCellStyle(italicStyle);
         cell7_.setCellValue("Nợ: "); cell7_.setCellStyle(leftStyle);
         cell8_.setCellValue("Có: "); cell8_.setCellStyle(leftStyle);

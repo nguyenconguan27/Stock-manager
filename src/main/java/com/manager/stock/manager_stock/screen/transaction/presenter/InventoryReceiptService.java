@@ -328,7 +328,7 @@ public class InventoryReceiptService {
             inventoryDetailModelCurrentYear.setAcademicYear(year);
         }
         inventoryDetailModelCurrentYear.setQuantity(quantityInStock);
-        inventoryDetailModelCurrentYear.setTotalPrice(totalPriceInStock);
+        inventoryDetailModelCurrentYear.setTotalPrice(quantityInStock == 0 ? 0 : totalPriceInStock);
         if(inventoryDetailModelCurrentYear.getId() == -1) {
             inventoryDetailService.save(List.of(inventoryDetailModelCurrentYear));
         }

@@ -81,11 +81,12 @@ public class FormatMoney {
                 .replaceAll("\\s+", " ")
                 .trim();
 
+        String resultStrFinal = resultStr.substring(0, 1).toUpperCase() + resultStr.substring(1);
         if (groups.length > 0 && Integer.parseInt(groups[0]) == 0) {
-            return resultStr + " đồng";
+            return resultStrFinal + " đồng";
         }
 
-        return resultStr + " đồng";
+        return resultStrFinal + " đồng";
     }
 
     private static String[] splitToGroups(String number) {
