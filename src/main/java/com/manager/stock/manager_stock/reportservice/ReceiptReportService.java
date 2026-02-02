@@ -7,6 +7,7 @@ import com.manager.stock.manager_stock.model.ImportReceiptModel;
 import com.manager.stock.manager_stock.utils.FormatMoney;
 import com.manager.stock.manager_stock.utils.Utils;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileOutputStream;
@@ -76,6 +77,9 @@ public class ReceiptReportService {
             planTotal += detail.getPlannedQuantity();
             actualTotal += detail.getActualQuantity();
         }
+        for(int c = 0; c <= 100; c++) {
+            sheet.autoSizeColumn(c);
+        }
         Utils.fillFooter(sheet, planTotal, actualTotal, total, FormatMoney.formatMoneyToWord(total),
                 null, importReceipt.getDeliveredBy(), null, r,  importReceipt.getCreateAt(), workbook);
     }
@@ -96,7 +100,9 @@ public class ReceiptReportService {
             planTotal += detail.getPlannedQuantity();
             actualTotal += detail.getActualQuantity();
         }
-
+        for(int c = 0; c <= 100; c++) {
+            sheet.autoSizeColumn(c);
+        }
         Utils.fillFooter(sheet, planTotal, actualTotal, total, FormatMoney.formatMoneyToWord(total),
                 null, exportReceipt.getReceiver(), null, r, exportReceipt.getCreateAt(), workbook);
     }

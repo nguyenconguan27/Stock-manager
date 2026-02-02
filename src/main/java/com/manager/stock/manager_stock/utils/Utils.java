@@ -90,10 +90,12 @@ public class Utils {
         sheet.addMergedRegion(new CellRangeAddress(6, 6, 0, 5));
         cell6.setCellValue(title); cell6.setCellStyle(rightBold);
         cell6_.setCellValue("Số: " + code); cell6_.setCellStyle(leftStyle);
-        LocalDate today = LocalDate.now();
-        int day = today.getDayOfMonth();
-        int month = today.getMonthValue();
-        int year = today.getYear();
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.parse(createdAt, formatter);
+        int day = dateTime.getDayOfMonth();
+        int month = dateTime.getMonthValue();
+        int year = dateTime.getYear();
         cell7.setCellValue("Ngày " + day + " tháng " + month + " năm " + year); cell7.setCellStyle(italicStyle);
         cell7_.setCellValue("Nợ: "); cell7_.setCellStyle(leftStyle);
         cell8_.setCellValue("Có: "); cell8_.setCellStyle(leftStyle);
@@ -200,7 +202,7 @@ public class Utils {
         setBorder(r + 15, r + 15, 0, 9, borderStyle, sheet);
         upcell.setCellStyle(priceStyle); tcell.setCellStyle(priceStyle);
 
-        ocell.setCellValue(r + 1); ncell.setCellValue(name); ccell.setCellValue(code);
+            ocell.setCellValue(r + 1); ncell.setCellValue(name); ccell.setCellValue(code);
         ucell.setCellValue(unit); qcell1.setCellValue(preQuan); qcell2.setCellValue(relQuan);
         upcell.setCellValue(unitPrice); tcell.setCellValue(total);
     }
@@ -274,6 +276,12 @@ public class Utils {
         Cell scell1 = srow.createCell(0);
         Cell scell2 = srow.createCell(3);
         Cell scell3 = srow.createCell(7);
+        sheet.setColumnWidth(1, 25 * 256);
+        sheet.setColumnWidth(2, 25 * 256);
+        sheet.setColumnWidth(3, 25 * 256);
+        sheet.addMergedRegion(new CellRangeAddress(r + 4, r + 4, 0, 2));
+        sheet.addMergedRegion(new CellRangeAddress(r + 4, r + 4, 3, 6));
+        sheet.addMergedRegion(new CellRangeAddress(r + 4, r + 4, 7, 9));
         sheet.addMergedRegion(new CellRangeAddress(r + 3, r + 3, 0, 2));
         sheet.addMergedRegion(new CellRangeAddress(r + 3, r + 3, 3, 6));
         sheet.addMergedRegion(new CellRangeAddress(r + 3, r + 3, 7, 9));
