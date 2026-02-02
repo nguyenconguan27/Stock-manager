@@ -1,5 +1,6 @@
 package com.manager.stock.manager_stock.utils;
 
+import com.manager.stock.manager_stock.dao.GenericDao;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.apache.poi.ss.usermodel.*;
@@ -297,7 +298,14 @@ public class Utils {
         tpqCell.setCellValue(planTotal);
         taqCell.setCellValue(actualTotal);
         tpCell.setCellStyle(priceStyle);
+        CellStyle endRowStype = workbook.createCellStyle();
+        endRowStype.cloneStyleFrom(borderStyle);
+        endRowStype.setFont(bold);
+        endRowStype.setAlignment(HorizontalAlignment.CENTER);
         tpCell.setCellValue(total);
+        tcell.setCellStyle(endRowStype);
+        priceStyle.setFont(bold);
+        taqCell.setCellStyle(priceStyle);
 
         twcell.setCellValue("Tổng số tiên: " + totalInword);
 
@@ -314,9 +322,9 @@ public class Utils {
         scell2.setCellValue("NGƯỜI NHẬN");
         scell3.setCellValue("THỦ KHO");
 
-        Cell scell1_ = strow.createCell(0);
-        Cell scell2_ = strow.createCell(3);
-        Cell scell3_ = strow.createCell(7);
+        Cell scell1_ = strow.createCell(0); scell1_.setCellStyle(boldStyle);
+        Cell scell2_ = strow.createCell(3); scell2_.setCellStyle(boldStyle);
+        Cell scell3_ = strow.createCell(7); scell3_.setCellStyle(boldStyle);
         sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 0, 2));
         sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 3, 6));
         sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 7, 9));
