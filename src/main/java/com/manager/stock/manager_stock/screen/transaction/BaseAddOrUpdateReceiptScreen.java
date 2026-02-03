@@ -9,13 +9,11 @@ import com.manager.stock.manager_stock.reportservice.ReceiptReportService;
 import com.manager.stock.manager_stock.screen.transaction.presenter.InventoryReceiptService;
 import com.manager.stock.manager_stock.service.IInventoryDetailService;
 import com.manager.stock.manager_stock.service.impl.InventoryDetailServiceImpl;
-import com.manager.stock.manager_stock.utils.AlertUtils;
-import com.manager.stock.manager_stock.utils.ChoosesFolderOutput;
-import com.manager.stock.manager_stock.utils.CreateTopBarOfReceiptUtil;
-import com.manager.stock.manager_stock.utils.FormatMoney;
+import com.manager.stock.manager_stock.utils.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -49,64 +47,66 @@ public abstract class BaseAddOrUpdateReceiptScreen<T, D> extends VBox {
     protected HashMap<Long, Double> changeTotalPriceByProductMap = new HashMap<>();
     protected Set<Long> receiptDetailIdsDeleted = new HashSet<>();
     protected TextField tfInvoiceNumber, tfWareHouse;
-    protected int selectedYear = LocalDate.now().getYear();
+//    protected int selectedYear = LocalDate.now().getYear();
     protected final IInventoryDetailService inventoryDetailService = InventoryDetailServiceImpl.getInstance();
 
     public BaseAddOrUpdateReceiptScreen(T receiptModelTable) {
-        HBox topBar = CreateTopBarOfReceiptUtil.createTopBar(new TopBarActionHandler() {
-            @Override
-            public void onAdd() {
+        HBox topBar = CreateTopBarOfReceiptUtil.createTopBar(
+            new TopBarActionHandler() {
+                @Override
+                public void onAdd() {
 
-            }
-
-            @Override
-            public void onEdit() {
-
-            }
-
-            @Override
-            public void onDelete() {
-
-            }
-
-            @Override
-            public void onReload() {
-
-            }
-
-            @Override
-            public void onPrint() {
-
-            }
-
-            @Override
-            public void onExport() {
-
-            }
-
-            @Override
-            public void onExportAll() {
-                try {
-                    File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
-                    String outputPath = file.getAbsolutePath();
-                    System.out.println(selectedYear);
-                    ExportAll exportService = new ExportAll(selectedYear);
-                    exportService.exportTotal(outputPath);
-                    // gọi hàm tạo file xlsx
-                    AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
-                            "INFORMATION", "Thành công", "Xuất dữ liệu");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    AlertUtils.alert("Có lỗi khi xuất file: " + e.getMessage(),
-                            "ERROR", "Lỗi", "Xuất dữ liệu thất bại");
                 }
-            }
 
-            @Override
-            public void onSelectYear(int year) {
-                selectedYear = year;
-            }
-        });
+                @Override
+                public void onEdit() {
+
+                }
+
+                @Override
+                public void onDelete() {
+
+                }
+
+                @Override
+                public void onReload() {
+
+                }
+
+                @Override
+                public void onPrint() {
+
+                }
+
+                @Override
+                public void onExport() {
+
+                }
+
+                @Override
+                public void onExportAll() {
+                    try {
+                        File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
+                        String outputPath = file.getAbsolutePath();
+                        System.out.println(ConstVariableUtils.selectYear.getValue());
+                        ExportAll exportService = new ExportAll(Integer.parseInt(ConstVariableUtils.selectYear.getValue()));
+                        exportService.exportTotal(outputPath);
+                        // gọi hàm tạo file xlsx
+                        AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
+                                "INFORMATION", "Thành công", "Xuất dữ liệu");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        AlertUtils.alert("Có lỗi khi xuất file: " + e.getMessage(),
+                                "ERROR", "Lỗi", "Xuất dữ liệu thất bại");
+                    }
+                }
+
+                @Override
+                public void onSelectYear(int year) {
+                    ConstVariableUtils.selectYear.setValue(String.valueOf(year));
+                }
+            },
+            ConstVariableUtils.selectYear);
 
         VBox formAddNew = createFormAddNew(receiptModelTable);
         getChildren().addAll(topBar, formAddNew, createTableItemDetailByReceipt(receiptModelTable));

@@ -5,6 +5,7 @@ import com.manager.stock.manager_stock.screen.product.productList.ProductScreen;
 import com.manager.stock.manager_stock.screen.productGroup.ProductGroupScreen;
 import com.manager.stock.manager_stock.screen.transaction.ExportReceiptScreen;
 import com.manager.stock.manager_stock.screen.transaction.ImportReceiptScreen;
+import com.manager.stock.manager_stock.utils.ConstVariableUtils;
 import com.manager.stock.manager_stock.utils.CreateLoadingUtil;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -121,7 +122,7 @@ public class ScreenNavigator {
                     new Thread(() -> {
                         ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
                         Platform.runLater(() -> {
-                            importReceiptScreen.showTable(Year.now().getValue());
+                            importReceiptScreen.showTable(Integer.parseInt(ConstVariableUtils.selectYear.getValue()));
                             ScreenNavigator.navigateTo(importReceiptScreen);
                         });
                     }).start();
@@ -131,7 +132,7 @@ public class ScreenNavigator {
                     new Thread(() -> {
                         ExportReceiptScreen exportReceiptScreen = new ExportReceiptScreen();
                         Platform.runLater(() -> {
-                            exportReceiptScreen.showTable(Year.now().getValue());
+                            exportReceiptScreen.showTable(Integer.parseInt(ConstVariableUtils.selectYear.getValue()));
                             ScreenNavigator.navigateTo(exportReceiptScreen);
                         });
                     }).start();

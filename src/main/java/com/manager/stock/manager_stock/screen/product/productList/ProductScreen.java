@@ -48,7 +48,6 @@ public class ProductScreen extends VBox {
     private final ProductGroupPresenter productGroupPresenter;
     private TextField tfGroupName;
     private ProductGroup currentProductGroup;
-    private int selectedYear = LocalDate.now().getYear();
 
     private void createPagination() {
         pagination = new Pagination();
@@ -113,66 +112,69 @@ public class ProductScreen extends VBox {
     }
 
     private VBox initHeader() {
-        HBox topBar = CreateTopBarOfReceiptUtil.createTopBar(new TopBarActionHandler() {
-            @Override
-            public void onAdd() {
-                ProductDetailScreen productDetailScreen = new ProductDetailScreen(productData);
-                productDetailScreen.showProduct(-1);
-                ScreenNavigator.navigateTo(productDetailScreen);
-            }
-
-            @Override
-            public void onEdit() {
-
-            }
-
-            @Override
-            public void onDelete() {
-
-            }
-
-            @Override
-            public void onReload() {
-
-            }
-
-            @Override
-            public void onPrint() {
-
-            }
-
-            @Override
-            public void onExport() {
-
-            }
-
-            @Override
-            public void onSelectYear(int year) {
-                selectedYear = year;
-                System.out.println("Selected year: " + selectedYear);
-            }
-
-            @Override
-            public void onExportAll() {
-                try {
-                    File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
-                    if (file == null) {
-                        return;
-                    }
-                    String outputPath = file.getAbsolutePath();
-                    System.out.println(selectedYear);
-                    ExportAll exportService = new ExportAll(selectedYear);
-                    exportService.exportTotal(outputPath);
-                    // gọi hàm tạo file xlsx
-                    AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
-                            "INFORMATION", "Thành công", "Xuất dữ liệu");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    AlertUtils.alert("Có lỗi khi xuất file: " + e.getMessage(),
-                            "ERROR", "Lỗi", "Xuất dữ liệu thất bại");
+        HBox topBar = CreateTopBarOfReceiptUtil.createTopBar(
+            new TopBarActionHandler() {
+                @Override
+                public void onAdd() {
+                    ProductDetailScreen productDetailScreen = new ProductDetailScreen(productData);
+                    productDetailScreen.showProduct(-1);
+                    ScreenNavigator.navigateTo(productDetailScreen);
                 }
-            }
-        });
+
+                @Override
+                public void onEdit() {
+
+                }
+
+                @Override
+                public void onDelete() {
+
+                }
+
+                @Override
+                public void onReload() {
+
+                }
+
+                @Override
+                public void onPrint() {
+
+                }
+
+                @Override
+                public void onExport() {
+
+                }
+
+                @Override
+                public void onSelectYear(int year) {
+    //                selectedYear = year;
+                    ConstVariableUtils.selectYear.setValue(Integer.toString(year));
+    //                System.out.println("Selected year: " + selectedYear);
+                }
+
+                @Override
+                public void onExportAll() {
+                    try {
+                        File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
+                        if (file == null) {
+                            return;
+                        }
+                        String outputPath = file.getAbsolutePath();
+                        System.out.println(ConstVariableUtils.selectYear.getValue());
+                        ExportAll exportService = new ExportAll(Integer.parseInt(ConstVariableUtils.selectYear.getValue()));
+                        exportService.exportTotal(outputPath);
+                        // gọi hàm tạo file xlsx
+                        AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
+                                "INFORMATION", "Thành công", "Xuất dữ liệu");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        AlertUtils.alert("Có lỗi khi xuất file: " + e.getMessage(),
+                                "ERROR", "Lỗi", "Xuất dữ liệu thất bại");
+                    }
+                }
+            },
+            ConstVariableUtils.selectYear);
 
         VBox header = new VBox();
         HBox feature = new HBox();

@@ -16,13 +16,11 @@ import com.manager.stock.manager_stock.reportservice.ReceiptReportService;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.transaction.presenter.ExportReceiptPresenter;
 import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter;
-import com.manager.stock.manager_stock.utils.AlertUtils;
-import com.manager.stock.manager_stock.utils.ChoosesFolderOutput;
-import com.manager.stock.manager_stock.utils.CreateColumnTableUtil;
-import com.manager.stock.manager_stock.utils.GenericConverterBetweenModelAndTableData;
+import com.manager.stock.manager_stock.utils.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TextField;
@@ -42,7 +40,7 @@ import java.util.Optional;
 public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTable, ExportReceiptDetailModelTable> {
 
     private TextField tfInvoiceNumber, tfCreateAt, tfReceiver, tfProductNameExportReceipt, tfProductIdExportReceipt;
-    private int selectYear = Year.now().getValue();
+//    private int selectYear = Year.now().getValue();
     public ExportReceiptScreen() {
         super();
     }
@@ -211,7 +209,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
         return new TopBarActionHandler() {
             @Override
             public void onAdd() {
-                AddOrUpdateExportReceiptScreen addReceiptScreen = new AddOrUpdateExportReceiptScreen(null, selectYear);
+                AddOrUpdateExportReceiptScreen addReceiptScreen = new AddOrUpdateExportReceiptScreen(null, Integer.parseInt(ConstVariableUtils.selectYear.getValue()));
                 ScreenNavigator.navigateTo(addReceiptScreen);
             }
 
@@ -219,7 +217,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
             public void onEdit() {
                 try {
                     if(selected != null) {
-                        AddOrUpdateExportReceiptScreen updateReceiptScreen = new AddOrUpdateExportReceiptScreen(selected, selectYear);
+                        AddOrUpdateExportReceiptScreen updateReceiptScreen = new AddOrUpdateExportReceiptScreen(selected, Integer.parseInt(ConstVariableUtils.selectYear.getValue()));
                         ScreenNavigator.navigateTo(updateReceiptScreen);
                     }
                     else {
@@ -242,7 +240,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
                                 boolean isDeleteSuccess = presenter.deleteExportReceipt(selected);
                                 if(isDeleteSuccess) {
                                     AlertUtils.alert("Xóa phiếu xuất thành công.", "INFORMATION", "Thành công", "Xóa thành công");
-                                    showTable(selectYear);
+                                    showTable(Integer.parseInt(ConstVariableUtils.selectYear.getValue()));
                                 }
                             }
                             catch (DaoException | CanNotFoundException | StockUnderFlowException e) {
@@ -264,7 +262,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
 
             @Override
             public void onReload() {
-                showTable(selectYear);
+                showTable(Integer.parseInt(ConstVariableUtils.selectYear.getValue()));
                 showItemDetails(0);
             }
 
@@ -296,7 +294,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
                     File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
                     if(file == null) return;
                     String outputPath = file.getAbsolutePath();
-                    ExportAll exportService = new ExportAll(selectYear);
+                    ExportAll exportService = new ExportAll(Integer.parseInt(ConstVariableUtils.selectYear.getValue()));
                     exportService.exportTotal(outputPath);
                     // gọi hàm tạo file xlsx
                     AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
@@ -310,7 +308,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
 
             @Override
             public void onSelectYear(int year) {
-                selectYear = year;
+                ConstVariableUtils.selectYear.setValue(String.valueOf(year));
                 showTable(year);
             }
         };
@@ -360,6 +358,7 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
         try {
             this.getStylesheets().add(this.getClass().getResource("/com/manager/stock/manager_stock/css/importReceipt/importReceipt.css").toExternalForm());
             if(year <= 0) year = LocalDate.now().getYear();
+            System.out.println("Selected year: " + year);
             ExportReceiptPresenter presenter = ExportReceiptPresenter.getInstance();
             List<ExportReceiptModel> exportReceiptModels = presenter.findAllExportReceipt(Optional.of(year));
             List<ExportReceiptModelTable> tableModels = GenericConverterBetweenModelAndTableData.convertToList(

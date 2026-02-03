@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 public class ProductDetailScreen extends VBox {
 
     private final Logger logger = LoggerFactory.getLogger(ProductDetailScreen.class);
+    private final ComboBox<String> cbYear = new ComboBox<>();
     final ProductDetailPresenter productDetailPresenter;
     final ProductGroupPresenter productGroupPresenter;
     NumberFormat currencyFormat = NumberFormat.getNumberInstance(Locale.US);
@@ -519,9 +520,10 @@ public class ProductDetailScreen extends VBox {
 
             @Override
             public void onSelectYear(int year) {
-                selectedYear = year;
+//                selectedYear = year;
+                ConstVariableUtils.selectYear.setValue(String.valueOf(year));
             }
-        });
+        }, ConstVariableUtils.selectYear);
         VBox.setVgrow(this, Priority.ALWAYS);
         this.setStyle("-fx-background-color: #e0f2f7;");
         HBox actionRow = new HBox(10);

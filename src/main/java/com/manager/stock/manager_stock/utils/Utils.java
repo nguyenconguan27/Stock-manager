@@ -11,6 +11,8 @@ import java.time.format.DateTimeFormatter;
 
 public class Utils {
 
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
     public static <T, R> TableColumn<T, R> createColumn(String title, String property) {
         TableColumn<T, R> column = new TableColumn<>(title);
         column.setCellValueFactory(new PropertyValueFactory<>(property));
@@ -91,7 +93,6 @@ public class Utils {
         cell6.setCellValue(title); cell6.setCellStyle(rightBold);
         cell6_.setCellValue("Số: " + code); cell6_.setCellStyle(leftStyle);
 //        LocalDate today = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         LocalDateTime date = LocalDateTime.parse(createdAt, formatter);
         int day = date.getDayOfMonth();
         int month = date.getMonthValue();
@@ -294,21 +295,22 @@ public class Utils {
         tpCell.setCellValue(total);
 
         twcell.setCellValue("Tổng số tiên: " + totalInword);
-        LocalDate today = LocalDate.now();
-        int day = today.getDayOfMonth();
-        int month = today.getMonthValue();
-        int year = today.getYear();
+        LocalDateTime date = LocalDateTime.parse(createdAt, formatter);
+        int day = date.getDayOfMonth();
+        int month = date.getMonthValue();
+        int year = date.getYear();
         dshell.setCellValue("Ngày " + day + " tháng " + month + " năm " + year);
         scell1.setCellValue("PHỤ TRÁCH BỘ PHẬN");
         scell2.setCellValue("NGƯỜI NHẬN");
         scell3.setCellValue("THỦ KHO");
 
-        Cell scell1_ = strow.createCell(0);
-        Cell scell2_ = strow.createCell(3);
-        Cell scell3_ = strow.createCell(7);
-        sheet.addMergedRegion(new CellRangeAddress(r + 4, r + 4, 0, 2));
-        sheet.addMergedRegion(new CellRangeAddress(r + 4, r + 4, 3, 6));
-        sheet.addMergedRegion(new CellRangeAddress(r + 4, r + 4, 7, 9));
+        Cell scell1_ = strow.createCell(0); scell1_.setCellStyle(boldStyle);
+        Cell scell2_ = strow.createCell(3); scell2_.setCellStyle(boldStyle);
+        Cell scell3_ = strow.createCell(7); scell3_.setCellStyle(boldStyle);
+        sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 0, 2));
+        sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 3, 6));
+        sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 7, 9));
+        scell2_.setCellValue(n2);
     }
 
     static void setBorder(int sr, int er, int sc, int ec, CellStyle style, Sheet sheet) {

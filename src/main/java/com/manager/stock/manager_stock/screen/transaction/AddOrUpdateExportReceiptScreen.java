@@ -47,7 +47,6 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
 
     public AddOrUpdateExportReceiptScreen(ExportReceiptModelTable exportReceiptModelTable, int year) {
         super(exportReceiptModelTable);
-        selectedYear = year;
         exportReceiptPresenter = ExportReceiptPresenter.getInstance();
     }
 
@@ -385,23 +384,12 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     AlertUtils.alert("Phiếu nhập này chưa có sản phẩm nào, vui lòng chọn ít nhất 1 sản phẩm.", "WARNING", "Cảnh báo", "Thiếu thông tin");
                     return;
                 }
-                // thêm mới hóa đơn xxuất
-//                if(receiptModelTable == null) {
-//                    // changeQuantityByProductMap: số lượng sản phẩm thay đổi
-//                    // changeTotalPriceByProductMap: tổng tiền thay đổi
-//                    exportReceiptPresenter.save(exportReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
-//                    AlertUtils.alert("", "INFORMATION", "Thành công", "Thành công");
-//                }
-//                // Cập nhật hóa đơn xuất
-//                else {
-//                    exportReceiptPresenter.updateExportReceipt(exportReceiptModel, oldExportReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
-//                }
                 InventoryReceiptService inventoryReceiptService = InventoryReceiptService.getInstance();
                 inventoryReceiptService.solveExportReceipt(exportReceiptModel, receiptModelTable == null ? exportReceiptModel.getCreateAt() : receiptModelTable.getCreateAt(), productDetails, productDetailsToDelete);
                 String messageAlert = exportReceiptModel.getId() != -1 ? "Cập nhật phiếu xuất thành công." : "Thêm mới phiếu xuất thành công.";
                 AlertUtils.alert(messageAlert, "INFORMATION", "Thành công", "Thành công");
                 ExportReceiptScreen exportReceiptScreen = new ExportReceiptScreen();
-                exportReceiptScreen.showTable(selectedYear);
+                exportReceiptScreen.showTable(Integer.parseInt(ConstVariableUtils.selectYear.getValue()));
                 ScreenNavigator.navigateTo(exportReceiptScreen);
             }
             catch (DaoException | StockUnderFlowException | CanNotFoundException exception) {
@@ -416,7 +404,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         AddCssStyleForBtnUtil.addCssStyleForBtn(cancelBtn);
         cancelBtn.setOnMouseClicked(e -> {
             ExportReceiptScreen exportReceiptScreen = new ExportReceiptScreen();
-            exportReceiptScreen.showTable(selectedYear);
+            exportReceiptScreen.showTable(Integer.parseInt(ConstVariableUtils.selectYear.getValue()));
             ScreenNavigator.navigateTo(exportReceiptScreen);
         });
 

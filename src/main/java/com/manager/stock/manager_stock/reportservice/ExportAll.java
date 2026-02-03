@@ -31,10 +31,12 @@ public class ExportAll {
         reportModels = reportService.getData(selectedYear);
     }
 
-
     public void exportTotal(String pathFile) {
         createTitleRow();
         fillData();
+        for(int i = 0; i <= 100; i++) {
+            sheet.autoSizeColumn(i);
+        }
         try (FileOutputStream fos = new FileOutputStream(pathFile)) {
             workbook.write(fos);
             workbook.close();

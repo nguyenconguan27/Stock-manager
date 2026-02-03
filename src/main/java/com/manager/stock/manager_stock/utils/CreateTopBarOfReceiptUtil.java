@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class CreateTopBarOfReceiptUtil {
 
-    public static HBox createTopBar(TopBarActionHandler handler) {
+    public static HBox createTopBar(TopBarActionHandler handler, ComboBox<String> cbYear) {
         Image addIcon = new Image(CreateTopBarOfReceiptUtil.class.getResource("/com/manager/stock/manager_stock/icons/add.png").toExternalForm()); // Or .svg, .jpg, etc.
         Image editIcon = new Image(CreateTopBarOfReceiptUtil.class.getResource("/com/manager/stock/manager_stock/icons/pencil.png").toExternalForm());
         Image deleteIcon = new Image(CreateTopBarOfReceiptUtil.class.getResource("/com/manager/stock/manager_stock/icons/delete.png").toExternalForm());
@@ -32,15 +32,6 @@ public class CreateTopBarOfReceiptUtil {
         Button btnDelete = new Button("Xóa", new ImageView(deleteIcon));
         Button btnReload = new Button("Tải lại", new ImageView(reloadIcon));
 //        Button btnPrint = new Button("In", new ImageView(printIcon));
-        ComboBox<String> cbYear = new ComboBox<>();
-
-        int currentYear = Year.now().getValue();
-
-        for (int y = 2025; y <= currentYear; y++) {
-            cbYear.getItems().add(String.valueOf(y));
-        }
-
-        cbYear.setValue(String.valueOf(currentYear));
 
         Button btnExport = new Button("Xuất", new ImageView(exportIcon));
         Button btnExportAll = new Button("Xuất báo cáo tổng hợp", new ImageView(exportAllIcon));

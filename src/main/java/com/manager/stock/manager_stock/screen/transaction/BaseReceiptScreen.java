@@ -1,6 +1,7 @@
 package com.manager.stock.manager_stock.screen.transaction;
 
 import com.manager.stock.manager_stock.interfaceActionHandler.TopBarActionHandler;
+import com.manager.stock.manager_stock.utils.ConstVariableUtils;
 import com.manager.stock.manager_stock.utils.CreateTopBarOfReceiptUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -109,7 +110,7 @@ public abstract class BaseReceiptScreen<T, D> extends VBox {
     }
 
     private HBox createTopBar() {
-        return CreateTopBarOfReceiptUtil.createTopBar(getTopBarHandler());
+        return CreateTopBarOfReceiptUtil.createTopBar(getTopBarHandler(), ConstVariableUtils.selectYear);
     }
 
     protected void setReceiptData(List<T> data) {

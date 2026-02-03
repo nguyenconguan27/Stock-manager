@@ -427,7 +427,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
 //                }
 
                 ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
-                System.out.println("Select year: " + selectedYear);
+                System.out.println("Select year: " + ConstVariableUtils.selectYear.getValue());
                 importReceiptScreen.showTable(LocalDateTime.now().getYear());
                 ScreenNavigator.navigateTo(importReceiptScreen);
             }
@@ -445,7 +445,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         AddCssStyleForBtnUtil.addCssStyleForBtn(cancelBtn);
         cancelBtn.setOnMouseClicked(e -> {
             ImportReceiptScreen importReceiptScreen = new ImportReceiptScreen();
-            importReceiptScreen.showTable(selectedYear);
+            importReceiptScreen.showTable(Integer.parseInt(ConstVariableUtils.selectYear.getValue()));
             ScreenNavigator.navigateTo(importReceiptScreen);
         });
 

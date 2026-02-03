@@ -14,10 +14,7 @@ import com.manager.stock.manager_stock.reportservice.ReceiptReportService;
 import com.manager.stock.manager_stock.screen.ScreenNavigator;
 import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceiptPresenter;
 import com.manager.stock.manager_stock.screen.transaction.presenter.InventoryReceiptService;
-import com.manager.stock.manager_stock.utils.AlertUtils;
-import com.manager.stock.manager_stock.utils.ChoosesFolderOutput;
-import com.manager.stock.manager_stock.utils.CreateColumnTableUtil;
-import com.manager.stock.manager_stock.utils.GenericConverterBetweenModelAndTableData;
+import com.manager.stock.manager_stock.utils.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -35,7 +32,7 @@ import java.util.Optional;
 public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTable, ImportReceiptDetailModelTable> {
 
     private TextField tfId, tfInvoiceNumber, tfCreateAt, tfInvoice, tfCompany, tfWarehouse, tfProductNameImportReceipt, tfProductIdImportReceipt;
-    private int selectedYear = Year.now().getValue();
+//    private int selectedYear = Year.now().getValue();
     public ImportReceiptScreen() {
         super();
     }
@@ -203,7 +200,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
                                     importReceiptModel.getCreateAt(), productData);
 //                            if(isDeleteSuccess) {
                             AlertUtils.alert("Xóa phiếu nhập thành công.", "INFORMATION", "Thành công", "Xóa thành công");
-                            showTable(selectedYear);
+                            showTable(Integer.parseInt(ConstVariableUtils.selectYear.getValue()));
 //                            }
                         }
                         catch (DaoException | StockUnderFlowException e) {
@@ -221,7 +218,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
 
             @Override
             public void onReload() {
-                showTable(selectedYear);
+                showTable(Integer.parseInt(ConstVariableUtils.selectYear.getValue()));
                 showItemDetails(0);
             }
 
@@ -236,7 +233,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
                     File file = ChoosesFolderOutput.choosesFolderFile("Phieu_nhap");
                     if(file == null) return;
                     String outputPath = file.getAbsolutePath();
-                    ReceiptReportService.printAllImportReceipt(outputPath, selectedYear);
+                    ReceiptReportService.printAllImportReceipt(outputPath, Integer.parseInt(ConstVariableUtils.selectYear.getValue()));
                     // gọi hàm tạo file xlsx
                     AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
                             "INFORMATION", "Thành công", "Xuất dữ liệu");
@@ -253,7 +250,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
                     File file = ChoosesFolderOutput.choosesFolderFile("Tong_hop");
                     if(file == null) return;
                     String outputPath = file.getAbsolutePath();
-                    ExportAll exportService = new ExportAll(selectedYear);
+                    ExportAll exportService = new ExportAll(Integer.parseInt(ConstVariableUtils.selectYear.getValue()));
                     exportService.exportTotal(outputPath);
                     // gọi hàm tạo file xlsx
                     AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
@@ -267,7 +264,7 @@ public class ImportReceiptScreen extends BaseReceiptScreen<ImportReceiptModelTab
 
             @Override
             public void onSelectYear(int year) {
-                selectedYear = year;
+                ConstVariableUtils.selectYear.setValue(Integer.toString(year));
                 showTable(year);
             }
         };

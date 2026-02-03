@@ -19,13 +19,10 @@ public class FormatMoney {
             "không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"
     };
 
-    private static final String[] TYPE1 = {
-            "", "mươi", "trăm"
+    private static final String[] TYPE2 = {
+            "", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"
     };
 
-    private static final String[] TYPE2 = {
-            "", "nghìn", "triệu", "tỷ"
-    };
 
     public static String format(double money) {
         Locale locale = new Locale("vi", "VN");
@@ -39,54 +36,71 @@ public class FormatMoney {
     }
 
     public static String formatMoneyToWord(long amount) {
-        String value = String.valueOf(amount);
+        if (amount == 0) return "Không đồng";
+
+        String number = String.valueOf(amount);
+        String[] groups = splitToGroups(number);
+
         StringBuilder result = new StringBuilder();
-        String[] groups = splitToGroups(value);
 
-        for (int index = 0; index < groups.length; index++) {
-            String group = groups[index];
-            int groupValue = Integer.parseInt(group);
+        for (int i = 0; i < groups.length; i++) {
+            int groupValue = Integer.parseInt(groups[i]);
             if (groupValue == 0) continue;
-            if (index >= TYPE2.length) return "Số quá lớn";
 
-            StringBuilder part = new StringBuilder();
-            int count = 0;
-
-            for (int i = group.length() - 1; i >= 0; i--) {
-                char digitChar = group.charAt(i);
-                int digit = digitChar - '0';
-
-                if (i == group.length() - 1 && group.length() > 1) {
-                    part.insert(0, TYPE2[index] + " ");
-                } else if (i == group.length() - 1 && group.length() == 1) {
-                    part.insert(0, TYPE2[index] + " ");
-                }
-
-                if (digit != 0) {
-                    part.insert(0, TYPE0[digit] + " " + TYPE1[count] + " ");
-                } else if (count > 0 && part.length() > 0) {
-                    part.insert(0, "không " + TYPE1[count] + " ");
-                }
-
-                count++;
+            String groupText = convertGroupToWord(groups[i], i < groups.length - 1);
+            if (!groupText.isEmpty()) {
+                result.insert(0, groupText + " " + TYPE2[i] + " ");
             }
-
-            result.insert(0, part);
         }
 
-        String resultStr = result.toString().trim()
-                .replaceAll("mươi năm", "mươi lăm")
-                .replaceAll("mươi một", "mươi mốt")
-                .replaceAll("một mươi", "mười")
-                .replaceAll("\\s+", " ")
-                .trim();
+        String finalResult = result.toString().trim().replaceAll("\\s+", " ");
+        return Character.toUpperCase(finalResult.charAt(0)) + finalResult.substring(1) + " đồng";
+    }
 
-        String resultStrFinal = resultStr.substring(0, 1).toUpperCase() + resultStr.substring(1);
-        if (groups.length > 0 && Integer.parseInt(groups[0]) == 0) {
-            return resultStrFinal + " đồng";
+
+    private static String convertGroupToWord(String group, boolean isHigherGroup) {
+        while (group.length() < 3) group = "0" + group;
+
+        int tram = group.charAt(0) - '0';
+        int chuc = group.charAt(1) - '0';
+        int donvi = group.charAt(2) - '0';
+
+        StringBuilder sb = new StringBuilder();
+
+        // HÀNG TRĂM
+        if (tram > 0) {
+            sb.append(TYPE0[tram]).append(" trăm");
+        } else if (isHigherGroup && (chuc > 0 || donvi > 0)) {
+            sb.append("không trăm");
         }
 
-        return resultStrFinal + " đồng";
+        // HÀNG CHỤC
+        if (chuc > 1) {
+            sb.append(" ").append(TYPE0[chuc]).append(" mươi");
+            if (donvi == 1) {
+                sb.append(" mốt");
+            } else if (donvi == 5) {
+                sb.append(" lăm");
+            } else if (donvi > 0) {
+                sb.append(" ").append(TYPE0[donvi]);
+            }
+        } else if (chuc == 1) {
+            sb.append(" mười");
+            if (donvi == 5) {
+                sb.append(" lăm");
+            } else if (donvi > 0) {
+                sb.append(" ").append(TYPE0[donvi]);
+            }
+        } else { // chuc == 0
+            if (donvi > 0) {
+                if (tram > 0 || isHigherGroup) {
+                    sb.append(" linh");
+                }
+                sb.append(" ").append(TYPE0[donvi]);
+            }
+        }
+
+        return sb.toString().trim();
     }
 
     private static String[] splitToGroups(String number) {
@@ -99,13 +113,11 @@ public class FormatMoney {
             int start = Math.max(0, i - 3);
             groups[index++] = number.substring(start, i);
         }
-
         return groups;
     }
 
     public static Double parseFlexibleMoney(String moneyStr) {
         if (moneyStr == null || moneyStr.isBlank()) return null;
-
         String cleaned = moneyStr.trim()
                 .toLowerCase()
                 .replace("đ", "")
