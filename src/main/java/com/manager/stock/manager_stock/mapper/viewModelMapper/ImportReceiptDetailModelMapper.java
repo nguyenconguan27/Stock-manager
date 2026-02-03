@@ -27,7 +27,9 @@ public class ImportReceiptDetailModelMapper implements ViewModelMapper<ImportRec
                 model.getProductName(),
                 FormatMoney.format(model.getUnitPrice()),
                 FormatMoney.format(model.getTotalPrice()),
-                model.getProductCode()
+                model.getProductCode(),
+                model.getVat() == null ? 0 : model.getVat(),
+                FormatMoney.format(model.getVat() == null ? model.getUnitPrice() : (model.getVat() / 100) * model.getUnitPrice())
         );
     }
 
@@ -42,7 +44,8 @@ public class ImportReceiptDetailModelMapper implements ViewModelMapper<ImportRec
                 viewModel.getUnitPrice(),
                 viewModel.getTotalPrice(),
                 viewModel.getProductName(),
-                viewModel.getProductCode()
+                viewModel.getProductCode(),
+                viewModel.getVat()
         );
     }
 }

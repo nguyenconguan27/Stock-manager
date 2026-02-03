@@ -16,10 +16,11 @@ public class ImportReceiptDetailModel {
     private String unitPriceFormat;
     private String totalPriceFormat;
     private String productCode;
+    private Double vat;
 
     public ImportReceiptDetailModel() {}
 
-    public ImportReceiptDetailModel(long id, long importReceiptId, long productId, int plannedQuantity, int actualQuantity, double unitPrice, double totalPrice, String productName, String productCode) {
+    public ImportReceiptDetailModel(long id, long importReceiptId, long productId, int plannedQuantity, int actualQuantity, double unitPrice, double totalPrice, String productName, String productCode, double vat) {
         this.id = id;
         this.importReceiptId = importReceiptId;
         this.productId = productId;
@@ -29,6 +30,7 @@ public class ImportReceiptDetailModel {
         this.totalPrice = totalPrice;
         this.productName = productName;
         this.productCode = productCode;
+        this.vat = vat;
     }
 
     public long getId() {
@@ -125,6 +127,14 @@ public class ImportReceiptDetailModel {
 
     public void setProductCode(String productCode) {
         this.productCode = productCode;
+    }
+
+    public Double getVat() {
+        return vat;
+    }
+
+    public void setVat(Double vat) {
+        this.vat = vat;
     }
 
     @Override

@@ -204,7 +204,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 int plannedQuantity = Integer.parseInt(tfPlannedQty.getText());
                 double unitPrice = Double.parseDouble(tfUnitPrice.getText());
                 long exportPriceId = Long.parseLong(tfUnitPrice.getUserData().toString());
-                System.out.println(selectedProduct);
+                System.out.println("Export price id: " + exportPriceId);
                 addProductToTableProductOfReceipt(selectedProduct, actualQuantity, plannedQuantity, exportPriceId, unitPrice);
                 tfActualQty.clear();
                 tfPlannedQty.clear();
@@ -381,7 +381,7 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                         ""
                 );
                 if(productDetails.isEmpty()) {
-                    AlertUtils.alert("Phiếu nhập này chưa có sản phẩm nào, vui lòng chọn ít nhất 1 sản phẩm.", "WARNING", "Cảnh báo", "Thiếu thông tin");
+                    AlertUtils.alert("Phiếu xuất này chưa có sản phẩm nào, vui lòng chọn ít nhất 1 sản phẩm.", "WARNING", "Cảnh báo", "Thiếu thông tin");
                     return;
                 }
                 InventoryReceiptService inventoryReceiptService = InventoryReceiptService.getInstance();
@@ -487,9 +487,8 @@ public class AddOrUpdateExportReceiptScreen extends BaseAddOrUpdateReceiptScreen
 
     private void setExportPriceForProduct(ProductModel newP, TextField tfUnitPrice, TextField tfInventory, AtomicReference<ProductModel> selected) {
         if(newP != null) {
-            System.out.println("Chọn sản phẩm: " + newP.getCode());
             LocalDateTime exportDate = dateTimePicker.dateTimeProperty().get();
-            System.out.println("Ngày xuất: " + exportDate);
+            System.out.println(exportDate);
             if(exportDate == null) {
                 AlertUtils.alert("Vui lòng chọn ngày xuất trước khi chọn sản phẩm.", "WARNING", "Cảnh báo", "Cảnh báo");
                 return;

@@ -209,7 +209,7 @@ public class Utils {
     }
 
     public static void fillFooter(Sheet sheet, int planTotal, int actualTotal,long total, String totalInword,
-                                  String n1, String n2, String n3, int r, String createdAt, Workbook workbook) {
+                                  String n1, String receiver, String n3, int r, String createdAt, Workbook workbook) {
         Font bold = workbook.createFont();
         bold.setFontName("Times New Roman");
         bold.setBold(true);
@@ -260,11 +260,12 @@ public class Utils {
         priceStyle.setWrapText(false);
         priceStyle.setFont(light);
 
-        Row trow = sheet.createRow(r);
-        Row twrow = sheet.createRow(r + 1);
-        Row drow = sheet.createRow(r + 2);
-        Row strow = sheet.createRow(r + 3);
-        Row srow = sheet.createRow(r + 4);
+        Row trow = sheet.createRow(r); // hàng tổng tiền
+        Row twrow = sheet.createRow(r + 1); // tổng tiền bằng chữ
+        Row drow = sheet.createRow(r + 2);// ngày
+        Row strow = sheet.createRow(r + 3); // tiêu đề: PHỤ TRÁCH BỘ PHẬN			NGƯỜI NHẬN				THỦ KHO
+        Row srow = sheet.createRow(r + 4); // dòng trắng cho kí tên
+        Row nameRow = sheet.createRow(r + 5); // dong ho va ten
         Cell tcell = trow.createCell(0);
         Cell tpqCell = trow.createCell(6);
         Cell taqCell = trow.createCell(7);
@@ -274,11 +275,11 @@ public class Utils {
         sheet.addMergedRegion(new CellRangeAddress(r + 1, r + 1, 0, 5));
         Cell dshell = drow.createCell(5);
         sheet.addMergedRegion(new CellRangeAddress(r + 2, r + 2, 5, 9));
-        Cell scell1 = srow.createCell(0);
-        Cell scell2 = srow.createCell(3);
-        Cell scell3 = srow.createCell(7);
-        sheet.addMergedRegion(new CellRangeAddress(r + 3, r + 3, 0, 2));
-        sheet.addMergedRegion(new CellRangeAddress(r + 3, r + 3, 3, 6));
+        Cell scell1 = strow.createCell(0);
+        Cell scell2 = strow.createCell(4);
+        Cell scell3 = strow.createCell(7);
+        sheet.addMergedRegion(new CellRangeAddress(r + 3, r + 3, 0, 3));
+        sheet.addMergedRegion(new CellRangeAddress(r + 3, r + 3, 4, 6));
         sheet.addMergedRegion(new CellRangeAddress(r + 3, r + 3, 7, 9));
         setBorder(r, r, 0, 9, borderStyle, sheet);
         tcell.setCellStyle(priceStyle);
@@ -304,13 +305,14 @@ public class Utils {
         scell2.setCellValue("NGƯỜI NHẬN");
         scell3.setCellValue("THỦ KHO");
 
-        Cell scell1_ = strow.createCell(0); scell1_.setCellStyle(boldStyle);
-        Cell scell2_ = strow.createCell(3); scell2_.setCellStyle(boldStyle);
-        Cell scell3_ = strow.createCell(7); scell3_.setCellStyle(boldStyle);
-        sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 0, 2));
-        sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 3, 6));
+        Cell scell1_ = srow.createCell(0); scell1_.setCellStyle(boldStyle);
+        Cell scell2_ = srow.createCell(4); scell2_.setCellStyle(boldStyle);
+        Cell scell3_ = srow.createCell(7); scell3_.setCellStyle(boldStyle);
+        sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 0, 3));
+        sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 4, 6));
         sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 7, 9));
-        scell2_.setCellValue(n2);
+        Cell receiverCell = nameRow.createCell(4); receiverCell.setCellStyle(boldStyle);
+        receiverCell.setCellValue(receiver);
     }
 
     static void setBorder(int sr, int er, int sc, int ec, CellStyle style, Sheet sheet) {

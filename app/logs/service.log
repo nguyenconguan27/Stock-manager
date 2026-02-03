@@ -1,102 +1,13 @@
-2026-02-03 18:06:23.242 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-02-03 18:06:23.569 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-02-03 18:06:23.587 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-02-03 18:06:27.454 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-02-03 18:06:27.471 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-02-03 18:08:36.117 [JavaFX Application Thread] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-02-03 18:08:36.118 [JavaFX Application Thread] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-02-03 18:08:36.139 [JavaFX Application Thread] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-02-03 18:08:39.027 [JavaFX Application Thread] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-02-03 18:08:41.037 [JavaFX Application Thread] ERROR c.m.s.m.service.UpfileService - Up file fail: e
-com.manager.stock.manager_stock.exception.DaoException: Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.
-	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.dao.impl.AbstractDao.save(AbstractDao.java:148)
-	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.dao.impl.UpFileDao.insert(UpFileDao.java:35)
-	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.service.UpfileService.upFile(UpfileService.java:28)
-	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.MainApplication.lambda$start$0(MainApplication.java:51)
-	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86)
-	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:234)
-	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:191)
-	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59)
-	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58)
-	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
-	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74)
-	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54)
-	at javafx.base/javafx.event.Event.fireEvent(Event.java:198)
-	at javafx.graphics/com.sun.javafx.stage.WindowPeerListener.closing(WindowPeerListener.java:93)
-	at javafx.graphics/com.sun.javafx.tk.quantum.GlassWindowEventHandler.run(GlassWindowEventHandler.java:147)
-	at javafx.graphics/com.sun.javafx.tk.quantum.GlassWindowEventHandler.run(GlassWindowEventHandler.java:40)
-	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
-	at javafx.graphics/com.sun.javafx.tk.quantum.GlassWindowEventHandler.lambda$handleWindowEvent$4(GlassWindowEventHandler.java:178)
-	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:424)
-	at javafx.graphics/com.sun.javafx.tk.quantum.GlassWindowEventHandler.handleWindowEvent(GlassWindowEventHandler.java:176)
-	at javafx.graphics/com.sun.glass.ui.Window.handleWindowEvent(Window.java:1336)
-	at javafx.graphics/com.sun.glass.ui.Window.notifyClose(Window.java:1241)
-	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
-	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:184)
-	at java.base/java.lang.Thread.run(Thread.java:842)
-2026-02-03 18:09:18.658 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-02-03 18:09:18.991 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-02-03 18:09:19.011 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-02-03 18:09:22.773 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-02-03 18:09:22.778 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-02-03 18:11:08.908 [JavaFX Application Thread] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-02-03 18:11:08.909 [JavaFX Application Thread] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-02-03 18:11:08.920 [JavaFX Application Thread] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-02-03 18:11:11.951 [JavaFX Application Thread] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-02-03 18:11:13.956 [JavaFX Application Thread] ERROR c.m.s.m.service.UpfileService - Up file fail: e
-com.manager.stock.manager_stock.exception.DaoException: Lỗi khi kết nối với hệ thống, vui lòng thử lại sau.
-	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.dao.impl.AbstractDao.save(AbstractDao.java:148)
-	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.dao.impl.UpFileDao.insert(UpFileDao.java:35)
-	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.service.UpfileService.upFile(UpfileService.java:28)
-	at com.manager.stock.manager_stock@1.0-SNAPSHOT/com.manager.stock.manager_stock.MainApplication.lambda$start$0(MainApplication.java:51)
-	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86)
-	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:234)
-	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:191)
-	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59)
-	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58)
-	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
-	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74)
-	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54)
-	at javafx.base/javafx.event.Event.fireEvent(Event.java:198)
-	at javafx.graphics/com.sun.javafx.stage.WindowPeerListener.closing(WindowPeerListener.java:93)
-	at javafx.graphics/com.sun.javafx.tk.quantum.GlassWindowEventHandler.run(GlassWindowEventHandler.java:147)
-	at javafx.graphics/com.sun.javafx.tk.quantum.GlassWindowEventHandler.run(GlassWindowEventHandler.java:40)
-	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
-	at javafx.graphics/com.sun.javafx.tk.quantum.GlassWindowEventHandler.lambda$handleWindowEvent$4(GlassWindowEventHandler.java:178)
-	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:424)
-	at javafx.graphics/com.sun.javafx.tk.quantum.GlassWindowEventHandler.handleWindowEvent(GlassWindowEventHandler.java:176)
-	at javafx.graphics/com.sun.glass.ui.Window.handleWindowEvent(Window.java:1336)
-	at javafx.graphics/com.sun.glass.ui.Window.notifyClose(Window.java:1241)
-	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
-	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:184)
-	at java.base/java.lang.Thread.run(Thread.java:842)
-2026-02-03 20:54:15.749 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-02-03 20:54:17.209 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-02-03 20:54:17.277 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-02-03 20:54:24.646 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-02-03 20:54:24.719 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-02-03 21:00:31.811 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-02-03 21:00:33.116 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-02-03 21:00:33.202 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-02-03 21:00:39.158 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-02-03 21:00:39.183 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-02-03 21:03:08.384 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-02-03 21:03:09.732 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-02-03 21:03:09.800 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-02-03 21:03:16.033 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-02-03 21:03:16.110 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-02-03 21:05:53.947 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-02-03 21:05:55.231 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-02-03 21:05:55.306 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-02-03 21:06:01.293 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-02-03 21:06:01.387 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-02-03 21:08:56.435 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-02-03 21:08:57.707 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-02-03 21:08:57.809 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-02-03 21:09:03.724 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-02-03 21:09:03.819 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
-2026-02-03 21:15:47.833 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
-2026-02-03 21:15:49.219 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
-2026-02-03 21:15:49.308 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
-2026-02-03 21:15:55.370 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
-2026-02-03 21:15:55.394 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-02-04 00:29:01.810 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-02-04 00:29:02.257 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-02-04 00:29:02.285 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-02-04 00:29:05.771 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-02-04 00:29:05.777 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-02-04 00:44:19.626 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-02-04 00:44:19.948 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-02-04 00:44:19.981 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Backup file successfully.
+2026-02-04 00:44:23.816 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Starting up file.
+2026-02-04 00:44:23.819 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.m.service.UpfileService - Upload file successfully!
+2026-02-04 00:45:41.280 [JavaFX Application Thread] INFO  c.m.s.m.service.UpfileService - Upload file.
+2026-02-04 00:45:41.280 [JavaFX Application Thread] INFO  c.m.s.m.service.UpfileService - status: -1
+2026-02-04 00:45:41.290 [JavaFX Application Thread] INFO  c.m.s.m.service.UpfileService - Backup file successfully.

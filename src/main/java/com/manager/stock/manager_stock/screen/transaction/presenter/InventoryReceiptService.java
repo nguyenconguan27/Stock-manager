@@ -168,17 +168,11 @@ public class InventoryReceiptService {
             }
 
             exportReceiptDetailModelsTable.forEach(viewModel -> {
-//                boolean isDeleted = viewModel.isDelete();
                 boolean isNew = viewModel.getId() == -1;
-//                System.out.println(isNew);
-//                if (isDeleted) {
-//                    exportDetailIdsToDelete.add(viewModel.getId());
-//                    return;
-//                }
                 productIdsToUpdate.put(viewModel.getProductCode(), viewModel.getProductId());
                 ExportReceiptDetailModel exportReceiptDetailModel = ExportReceiptDetailModelTableMapper.INSTANCE.fromViewModelToModel(viewModel);
-//                exportReceiptDetailModel.setExportPriceId(null);
-//                exportReceiptDetailModel.setExportReceiptId(newExportReceiptId);
+                if(exportReceiptDetailModel.getProductId() == 147)
+                    System.out.println("Đơn giá: " + exportReceiptDetailModel.getOriginalUnitPrice());
                 if (isNew) {
                     exportDetailToInsert.add(exportReceiptDetailModel);
                 } else {
@@ -238,12 +232,12 @@ public class InventoryReceiptService {
                 ExportReceiptDetailModel exportReceiptDetailModel = exportReceiptDetailsByProduct.get(j);
                 // TH phiếu xuất
                 if(exportPriceModel.getExportTime().isAfter(exportReceiptDetailModel.getExportDate())) {
-                    if(j == 0) {
-                        exportPriceModel = new  ExportPriceModel();
+                    if(i == 0) {
+//                        exportPriceModel = new  ExportPriceModel();
                         exportPriceModel = new ExportPriceModel();
                         exportPriceModel.setExportPrice(inventoryDetailModel.getTotalPrice() / (inventoryDetailModel.getQuantity() == 0 ? 1 : inventoryDetailModel.getQuantity()));
                     }
-                    else exportPriceModel = exportPricesByProduct.get(i < 1 ? 0 : (i - 1));
+                    else exportPriceModel = exportPricesByProduct.get(i - 1);
                     updateExportReceipt(exportReceiptDetailModel, exportPriceModel, currentYear, quantityInStock, totalPriceInStock, productId, productCode);
                     j++;
                 }

@@ -16,6 +16,7 @@ import com.manager.stock.manager_stock.screen.transaction.presenter.ImportReceip
 import com.manager.stock.manager_stock.screen.transaction.presenter.InventoryReceiptService;
 import com.manager.stock.manager_stock.utils.*;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -23,11 +24,15 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.*;
 import javafx.util.converter.NumberStringConverter;
+import org.apache.xmlbeans.impl.xb.xsdschema.ImportDocument;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 /**
@@ -132,6 +137,49 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         TextField tfUnitPrice = new TextField("0");
         tfUnitPrice.setPrefWidth(100);
         VBox unitPriceCol = new VBox(5, lbUnitPrice, tfUnitPrice);
+        UnaryOperator<TextFormatter.Change> filter = change -> {
+            String newText = change.getControlNewText();
+            return newText.matches("\\d*(\\.\\d*)?") ? change : null;
+        };
+        tfUnitPrice.setTextFormatter(new TextFormatter<>(filter));
+
+        Label lbVat = new Label("VAT(%) *");
+        TextField tfVat = new TextField("0");
+        tfVat.setPrefWidth(100);
+        VBox vatCol = new VBox(5, lbVat, tfVat);
+        tfVat.setTextFormatter(new TextFormatter<>(filter));
+
+        Label lbUnitPriceAfterVat = new Label("Đơn giá sau vat *");
+        TextField tfUnitPriceAfterVat = new TextField("0");
+        tfUnitPriceAfterVat.setEditable(false);
+        tfUnitPriceAfterVat.setPrefWidth(100);
+        VBox unitPriceAfterVat = new VBox(5, lbUnitPriceAfterVat, tfUnitPriceAfterVat);
+
+        // khi thay doi don gia
+        tfUnitPrice.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.isEmpty()) {
+                double price = Double.parseDouble(newVal);
+                double vat = Double.parseDouble(tfVat.getText());
+                BigDecimal vatAmount = BigDecimal.valueOf(price)
+                        .multiply(BigDecimal.valueOf(vat))
+                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+
+                tfUnitPriceAfterVat.setText(vatAmount.toString());
+            }
+        });
+
+        // khi thay doi vat
+        tfVat.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.isEmpty()) {
+                double vat = Double.parseDouble(newVal);
+                double price = Double.parseDouble(tfUnitPrice.getText());
+                BigDecimal vatAmount = BigDecimal.valueOf(price)
+                        .multiply(BigDecimal.valueOf(vat))
+                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+
+                tfUnitPriceAfterVat.setText(vatAmount.toString());
+            }
+        });
 
         Label lbInventory = new Label("Tồn kho");
         TextField tfInventory = new TextField();
@@ -150,7 +198,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         VBox buttonBox = new VBox(btnAddProduct);
         buttonBox.setAlignment(Pos.BOTTOM_RIGHT);
 
-        HBox productInputs = new HBox(35, productCol, plannedQtyCol, actualQtyCol, unitPriceCol, inventoryCol);
+        HBox productInputs = new HBox(35, productCol, plannedQtyCol, actualQtyCol, unitPriceCol, vatCol, unitPriceAfterVat, inventoryCol);
         productInputs.setAlignment(Pos.CENTER_LEFT);
 
         HBox productBox = new HBox(20, productInputs, spacer, buttonBox);
@@ -185,15 +233,17 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 ProductModel selectedProduct = selected.get();
                 int actualQuantity = Integer.parseInt(tfActualQty.getText());
                 int plannedQuantity = Integer.parseInt(tfPlannedQty.getText());
+                double vat = Double.parseDouble(tfVat.getText());
                 long unitPrice = Long.parseLong(tfUnitPrice.getText());
-
-                addProductToTableProductOfReceipt(selectedProduct, actualQuantity, plannedQuantity, unitPrice);
+                addProductToTableProductOfReceipt(selectedProduct, actualQuantity, plannedQuantity, unitPrice, vat);
 
                 tfActualQty.clear();
                 tfPlannedQty.clear();
                 tfUnitPrice.clear();
                 tfProduct.clear();
                 tfInventory.clear();
+                tfVat.clear();
+                tfUnitPriceAfterVat.clear();
             } catch (NumberFormatException ex) {
                 AlertUtils.alert("Vui lòng nhập đúng định dạng số cho số lượng và đơn giá.", "WARNING", "Cảnh báo", "Lỗi định dạng");
             }
@@ -252,11 +302,19 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         });
 
         TableColumn<ImportReceiptDetailModelTable, String> colUnitPrice = new TableColumn<>("Đơn giá");
+        TableColumn<ImportReceiptDetailModelTable, String> colVat = new TableColumn<>("VAT");
+        TableColumn<ImportReceiptDetailModelTable, String> colUnitPriceAfterVat = new TableColumn<>("Đơn giá sau VAT");
         colUnitPrice.setCellValueFactory(data -> data.getValue().unitPriceFormatProperty());
+
+        colVat.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getVat() + "%"));
+        colUnitPriceAfterVat.setCellValueFactory(data -> data.getValue().unitPriceAfterVatProperty());
+
         colUnitPrice.setCellFactory(TextFieldTableCell.forTableColumn());
+        colVat.setCellFactory(TextFieldTableCell.forTableColumn());
         colUnitPrice.setOnEditCommit(event -> {
             ImportReceiptDetailModelTable row = event.getRowValue();
             String newValueStr = event.getNewValue();
+            double vat = row.getVat();
             double newValue = 0;
             try {
                 newValue = FormatMoney.parseFlexibleMoney(newValueStr);
@@ -265,21 +323,62 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                 AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi định dạng", "Lỗi định dạng");
                 return;
             }
-            double oldValue = row.getUnitPrice();
-            double changeUnitPrice = newValue - oldValue;
+            // tính lại đơn giá cũ
+            double changeUnitPrice = (newValue - row.getUnitPrice()) * (1 + (vat / 100));
+            System.out.println("Tong tien thay doi: " + changeUnitPrice);
             double changeTotalPrice = changeUnitPrice * row.getActualQuantity();
 
-            if(row.getId() != null) {
-                double changeTotalPriceByProduct = changeTotalPriceByProductMap.getOrDefault(row.getProductId(), 0.0);
-                changeTotalPriceByProductMap.put(row.getProductId(), changeTotalPriceByProduct + changeTotalPrice);
-                changeIdsOfReceiptDetails.add(row.getId());
-            }
+//            if(row.getId() != null) {
+//                double changeTotalPriceByProduct = changeTotalPriceByProductMap.getOrDefault(row.getProductId(), 0.0);
+//                changeTotalPriceByProductMap.put(row.getProductId(), changeTotalPriceByProduct + changeTotalPrice);
+//                changeIdsOfReceiptDetails.add(row.getId());
+//            }
 
-            double newTotal = newValue * row.getActualQuantity();
+            double newTotal = (newValue + (newValue * (vat / 100))) * row.getActualQuantity();
             row.setTotalPrice(newTotal);
             row.setTotalPriceFormat(FormatMoney.format(newTotal));
             row.unitPriceProperty().set(newValue);
             row.unitPriceFormatProperty().set(FormatMoney.format(newValue));
+            row.setUnitPriceAfterVat(FormatMoney.format((newValue + (newValue * (vat / 100)))));
+            totalPriceOfReceipt += changeTotalPrice;
+            totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
+
+            productTable.refresh();
+        });
+        // cho phép thay doi vat khi chỉnh sửa
+        colVat.setOnEditCommit(event -> {
+            ImportReceiptDetailModelTable row = event.getRowValue();
+            String newValueStr = event.getNewValue();
+            // gia tri vat moi
+            double newValue = 0;
+            try {
+                newValue = Double.parseDouble(newValueStr.replace("%", ""));
+            }
+            catch (InvalidException e) {
+                AlertUtils.alert(e.getMessage(), "ERROR", "Lỗi định dạng", "Lỗi định dạng");
+                return;
+            }
+            // gia tri vat cu
+            double oldValue = row.getVat();
+            // tinh tong tien thay doi
+            double changeUnitPrice = (newValue - oldValue) / 100 * row.getUnitPrice();
+            double changeTotalPrice = changeUnitPrice * row.getActualQuantity();
+
+//            if(row.getId() != null) {
+//                double changeTotalPriceByProduct = changeTotalPriceByProductMap.getOrDefault(row.getProductId(), 0.0);
+//                changeTotalPriceByProductMap.put(row.getProductId(), changeTotalPriceByProduct + changeTotalPrice);
+//                changeIdsOfReceiptDetails.add(row.getId());
+//            }
+            // tong tien moi
+            // tính lại đơn giá mới
+            double unitPriceNew = row.getUnitPrice() + (newValue / 100 * row.getUnitPrice());
+            System.out.println("Don gia moi: " + unitPriceNew);
+            double newTotal = unitPriceNew * row.getActualQuantity();
+            System.out.println("Tổng tiền mới: " + newTotal);
+            row.setTotalPrice(newTotal);
+            row.setTotalPriceFormat(FormatMoney.format(newTotal));
+            row.setUnitPriceAfterVat(FormatMoney.format(unitPriceNew));
+            row.setVat(newValue);
             totalPriceOfReceipt += changeTotalPrice;
             totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
 
@@ -328,7 +427,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
 
         productTable.getColumns().addAll(
                 colProductId, colProductName, colPlannedQty, colActualQty,
-                colUnitPrice, colTotalPrice, colAction
+                colUnitPrice, colVat, colUnitPriceAfterVat, colTotalPrice, colAction
         );
 
         productTable.setPrefHeight(600);
@@ -401,8 +500,6 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     totalPriceOfReceipt,
                     FormatMoney.formatMoneyToWord((long)totalPriceOfReceipt)
             );
-//            importReceiptModel.setInsert(true);
-            ImportReceiptPresenter presenter = ImportReceiptPresenter.getInstance();
             InventoryReceiptService inventoryReceiptService = InventoryReceiptService.getInstance();
             if(productDetails.isEmpty()) {
                 AlertUtils.alert("Phiếu nhập này chưa có sản phẩm nào, vui lòng chọn ít nhất 1 sản phẩm.", "WARNING", "Cảnh báo", "Thiếu thông tin");
@@ -410,18 +507,6 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
             }
             try {
                 inventoryReceiptService.solveImportReceipt(importReceiptModel, productDetails, oldImportReceiptModelTable == null ? importReceiptModel.getCreateAt() : oldImportReceiptModelTable.getCreateAt(), productDetailsToDelete);
-                // thêm mới hóa đơn nhập
-//                if(oldImportReceiptModelTable == null) {
-//                    presenter.saveImportReceipt(importReceiptModel, productDetails, changeQuantityByProductMap, changeTotalPriceByProductMap);
-//                    AlertUtils.alert("", "INFORMATION", "Thành công", "Thành công");
-//                }
-//                // Cập nhật hóa đơn nhập
-//                else {
-//                    List<ImportReceiptDetailModelTable> newProductDetails = productDetails.stream()
-//                            .filter(importReceiptDetailModelTable -> changeIdsOfReceiptDetails.contains(importReceiptDetailModelTable.getId()) || importReceiptDetailModelTable.getId() == -1)
-//                            .collect(Collectors.toList());
-//                    newProductDetails.addAll(productDetailsToDelete);
-//                    presenter.updateImportReceipt(importReceiptModel, newProductDetails, changeQuantityByProductMap, changeTotalPriceByProductMap, receiptDetailIdsDeleted, oldImportReceiptModelTable.getCreateAt(), productDetails);
                 String messageAlert = importReceiptModel.getId() == -1 ? "Thêm mới phiếu nhập thành công." : "Cập nhật phiếu nhập thành công.";
                 AlertUtils.alert(messageAlert, "INFORMATION", "Thành công", "Thành công");
 //                }
@@ -469,7 +554,7 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
         return box;
     }
 
-    private void addProductToTableProductOfReceipt(ProductModel product, int actualQuantity, int plannedQuantity, long unitPrice) {
+    private void addProductToTableProductOfReceipt(ProductModel product, int actualQuantity, int plannedQuantity, long unitPrice, double vat) {
         ImportReceiptDetailModelTable productExists = productDetails.stream()
                         .filter(p -> (p.getProductId().equals(product.getId()) && p.getUnitPrice() == unitPrice))
                         .findFirst()
@@ -482,7 +567,11 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
 //            AlertUtils.alert("Đơn giá không được phép nhỏ hơn 0, vui lòng nhập lại.", "WARNING", "Cảnh báo", "Nhập dữ liệu sai");
 //            return;
 //        }
-        double currentTotalPrice = actualQuantity * unitPrice;
+//        double unitAfterVat = unitPrice * (vat / 100.0);
+        BigDecimal vatAmount = BigDecimal.valueOf(unitPrice)
+                .multiply(BigDecimal.valueOf(vat))
+                .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+        double currentTotalPrice = actualQuantity * vatAmount.doubleValue();
         totalPriceOfReceipt += currentTotalPrice;
         totalPriceLabel.setText(FormatMoney.format(totalPriceOfReceipt));
         int changeQuantityByProduct = changeQuantityByProductMap.getOrDefault(product.getId(), 0);
@@ -511,7 +600,9 @@ public class AddOrUpdateImportReceiptScreen extends BaseAddOrUpdateReceiptScreen
                     product.getName(),
                     FormatMoney.format(unitPrice),
                     FormatMoney.format(currentTotalPrice),
-                    product.getCode()
+                    product.getCode(),
+                    vat,
+                    FormatMoney.format(vatAmount.doubleValue())
             );
             importReceiptDetailModelTable.setIsNew(true);
             productDetails.add(importReceiptDetailModelTable);

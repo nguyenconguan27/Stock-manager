@@ -3,6 +3,9 @@ package com.manager.stock.manager_stock.utils;
 import com.manager.stock.manager_stock.exception.InvalidException;
 import org.checkerframework.checker.units.qual.Current;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -26,14 +29,18 @@ public class FormatMoney {
 
     public static String format(double money) {
         Locale locale = new Locale("vi", "VN");
-        Currency currency = Currency.getInstance("VND");
 
-        DecimalFormatSymbols df = DecimalFormatSymbols.getInstance(locale);
-        df.setCurrency(currency);
-        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(locale);
-        numberFormat.setCurrency(currency);
-        return numberFormat.format(money);
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
+        symbols.setDecimalSeparator(',');
+        symbols.setGroupingSeparator('.');
+
+        BigDecimal value = BigDecimal.valueOf(money).stripTrailingZeros();
+
+        DecimalFormat df = new DecimalFormat("#,##0.##", symbols);
+        return df.format(value) + " đ";
     }
+
+
 
     public static String formatMoneyToWord(long amount) {
         if (amount == 0) return "Không đồng";

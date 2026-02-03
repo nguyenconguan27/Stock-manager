@@ -19,10 +19,12 @@ public class ImportReceiptDetailModelTable {
     private final StringProperty totalPriceFormat = new SimpleStringProperty();
     private final BooleanProperty isDeleted = new SimpleBooleanProperty(false);
     private final BooleanProperty isNew = new SimpleBooleanProperty(false);
+    private final DoubleProperty vat  = new SimpleDoubleProperty();
+    private final StringProperty unitPriceAfterVat = new SimpleStringProperty();
 
     public ImportReceiptDetailModelTable(long id, long importReceiptId, long productId,
                                          int plannedQuantity, int actualQuantity,
-                                         double unitPrice, double totalPrice, String productName, String unitPriceFormat, String totalPriceFormat, String productCode) {
+                                         double unitPrice, double totalPrice, String productName, String unitPriceFormat, String totalPriceFormat, String productCode, double vat, String unitPriceAfterVat) {
         this.id.set(id);
         this.importReceiptId.set(importReceiptId);
         this.productId.set(productId);
@@ -34,6 +36,8 @@ public class ImportReceiptDetailModelTable {
         this.unitPriceFormat.set(unitPriceFormat);
         this.totalPriceFormat.set(totalPriceFormat);
         this.code.set(productCode);
+        this.vat.set(vat);
+        this.unitPriceAfterVat.set(unitPriceAfterVat);
     }
 
     // Property methods
@@ -48,7 +52,23 @@ public class ImportReceiptDetailModelTable {
     public StringProperty unitPriceFormatProperty() { return unitPriceFormat; }
     public StringProperty totalPriceFormatProperty() { return totalPriceFormat; }
     public StringProperty codeProperty() {return code;}
+    public  DoubleProperty vatProperty() { return vat; }
 
+    public String getUnitPriceAfterVat() {
+        return unitPriceAfterVat.get();
+    }
+
+    public StringProperty unitPriceAfterVatProperty() {
+        return unitPriceAfterVat;
+    }
+
+    public void setUnitPriceAfterVat(String unitPriceAfterVat) {
+        this.unitPriceAfterVat.set(unitPriceAfterVat);
+    }
+
+    public void setVat(Double vat) {
+        this.vat.set(vat);
+    }
 
     // Getter methods
     public Long getId() { return id.get(); }
@@ -60,6 +80,7 @@ public class ImportReceiptDetailModelTable {
     public double getTotalPrice() { return totalPrice.get(); }
     public String getProductName() { return productName.get(); }
     public String getProductCode() { return code.get();}
+    public Double getVat() { return vat.get(); }
 
     public void setActualQuantity(int  actualQuantity) { this.actualQuantity.set(actualQuantity); }
     public void setTotalPrice(double totalPrice) { this.totalPrice.set(totalPrice); }
