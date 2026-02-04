@@ -17,6 +17,7 @@ public class ImportReceiptDetailModel {
     private String totalPriceFormat;
     private String productCode;
     private Double vat;
+    private Double unitPriceAfterVat;
 
     public ImportReceiptDetailModel() {}
 
@@ -135,6 +136,14 @@ public class ImportReceiptDetailModel {
 
     public void setVat(Double vat) {
         this.vat = vat;
+    }
+
+    public Double getUnitPriceAfterVat() {
+        return unitPriceAfterVat;
+    }
+
+    public void setUnitPriceAfterVat(Double unitPriceAfterVat) {
+        this.unitPriceAfterVat = unitPriceAfterVat;
     }
 
     @Override

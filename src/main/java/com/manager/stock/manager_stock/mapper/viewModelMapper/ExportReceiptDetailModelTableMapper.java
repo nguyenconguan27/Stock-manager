@@ -21,8 +21,8 @@ public class ExportReceiptDetailModelTableMapper implements ViewModelMapper<Expo
                 model.getTotalPrice(),
                 model.getDisplayUnitPrice(),
                 model.getProductName(),
-                FormatMoney.format(model.getDisplayUnitPrice()),
-                FormatMoney.format(model.getDisplayUnitPrice() * model.getActualQuantity()),
+                FormatMoney.format(model.getOriginalUnitPrice()),
+                FormatMoney.format(model.getOriginalUnitPrice() * model.getActualQuantity()),
                 model.getProductCode(),
                 model.getExportPriceId(),
                 model.getOriginalUnitPrice()

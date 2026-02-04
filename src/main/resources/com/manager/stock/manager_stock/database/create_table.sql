@@ -81,12 +81,12 @@ CREATE TABLE IF NOT EXISTS export_receipt_detail (
     );
 
 CREATE TABLE IF NOT EXISTS inventory_detail (
-                                                id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-                                                product_id BIGINT NOT NULL,
-                                                quantity INT,
-                                                total_price DOUBLE PRECISION,
-                                                academic_year INT,
-                                                CONSTRAINT fk_inventory_product FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE SET NULL
+                    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+                    product_id BIGINT NOT NULL,
+                    quantity INT,
+                    total_price DOUBLE PRECISION,
+                    academic_year INT,
+                    CONSTRAINT fk_inventory_product FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE SET NULL
     );
 
 CREATE TABLE IF NOT EXISTS UpfileStatus (

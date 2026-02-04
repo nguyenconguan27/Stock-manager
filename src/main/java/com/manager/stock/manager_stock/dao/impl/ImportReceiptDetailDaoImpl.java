@@ -31,7 +31,6 @@ public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailM
 
     @Override
     public List<ImportReceiptDetailModel> findAllByImportReceiptId(long importReceiptId) {
-
         String sql = "SELECT ird.*, p.code as product_code, p.unit, p.name as product_name FROM import_receipt_detail ird\n" +
                 "join import_receipt ir on ird.import_receipt_id = ir.id \n" +
                 "join product p on p.id = ird.product_id \n" +
@@ -42,8 +41,8 @@ public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailM
     @Override
     public long save(List<ImportReceiptDetailModel> importReceiptDetailModels, long importReceiptId) throws DaoException {
         try {
-            String sql = "INSERT INTO import_receipt_detail (import_receipt_id, product_id, planned_quantity, actual_quantity, unit_price, product_name)" +
-                    " values (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO import_receipt_detail (import_receipt_id, product_id, planned_quantity, actual_quantity, unit_price, product_name, vat)" +
+                    " values (?, ?, ?, ?, ?, ?, ?)";
             List<Object[]> parameters = new ArrayList<>();
             for(ImportReceiptDetailModel importReceiptDetailModel : importReceiptDetailModels){
                 parameters.add(new Object[]{
@@ -52,7 +51,8 @@ public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailM
                         importReceiptDetailModel.getPlannedQuantity(),
                         importReceiptDetailModel.getActualQuantity(),
                         importReceiptDetailModel.getUnitPrice(),
-                        importReceiptDetailModel.getProductName()
+                        importReceiptDetailModel.getProductName(),
+                        importReceiptDetailModel.getVat()
                 });
             }
             return save(sql, parameters);
@@ -64,7 +64,7 @@ public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailM
 
     @Override
     public void update(List<ImportReceiptDetailModel> importReceiptDetailModels) throws DaoException {
-        String sql = "UPDATE import_receipt_detail set planned_quantity = ?, actual_quantity = ?, unit_price = ?" +
+        String sql = "UPDATE import_receipt_detail set planned_quantity = ?, actual_quantity = ?, unit_price = ?, vat = ?" +
                     " where id = ?";
         List<Object[]> parameters = new ArrayList<>();
         for(ImportReceiptDetailModel importReceiptDetailModel : importReceiptDetailModels){
@@ -72,6 +72,7 @@ public class ImportReceiptDetailDaoImpl extends AbstractDao<ImportReceiptDetailM
                 importReceiptDetailModel.getPlannedQuantity(),
                 importReceiptDetailModel.getActualQuantity(),
                 importReceiptDetailModel.getUnitPrice(),
+                importReceiptDetailModel.getVat(),
                 importReceiptDetailModel.getId()
             });
         }

@@ -48,6 +48,9 @@ public class ImportReceiptDetailMapperResultSet implements RowMapper<ImportRecei
                 case "unit":
                     importReceiptDetailModel.setUnit(resultSet.getString(columnName));
                     break;
+                case "vat":
+                    importReceiptDetailModel.setVat(resultSet.getDouble(columnName));
+                    break;
             }
         }
         importReceiptDetailModel.setTotalPrice(importReceiptDetailModel.getUnitPrice() * importReceiptDetailModel.getActualQuantity());

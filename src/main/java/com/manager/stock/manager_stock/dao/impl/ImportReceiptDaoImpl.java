@@ -32,7 +32,7 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
 
     @Override
     public List<ImportReceiptModel> findAllByAcademicYear(int academicYear) throws DaoException {
-        String sql = "select ir.*, sum(ird.actual_quantity * ird.unit_price) as total_price_receipt from import_receipt ir \n" +
+        String sql = "select ir.*, sum(ird.actual_quantity * (ird.unit_price + (ird.vat/100 * ird.unit_price))) as total_price_receipt from import_receipt ir \n" +
                 "join import_receipt_detail ird on\n" +
                 "ir.id = ird.import_receipt_id\n" +
                 "where ir.academic_year = ? \n" +
@@ -65,6 +65,7 @@ public class ImportReceiptDaoImpl extends AbstractDao<ImportReceiptModel> implem
                     "invoice_number = ?, company_name = ?, warehouse_name = ?, total_price = ?, total_price_in_word = ?, academic_year = ?" +
                     " where id = ?";
         List<Object[]> parameters = new ArrayList<>();
+        System.out.println("Tong tien trong phieu nhap: " + importReceiptModel.getTotalPrice());
         parameters.add(new Object[]{
                 importReceiptModel.getInvoiceNumber(),
                 importReceiptModel.getCreateAt(),

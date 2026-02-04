@@ -16,6 +16,8 @@ import com.manager.stock.manager_stock.utils.FormatMoney;
 import com.manager.stock.manager_stock.utils.GenericConverterBetweenModelAndTableData;
 import javafx.collections.ObservableList;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -65,12 +67,13 @@ public class ImportReceiptPresenter {
         List<ImportReceiptDetailModel> importReceiptDetailModels = importReceiptDetailService.findAllByImportReceiptId(importReceiptId);
         importReceiptDetailModels
                 .forEach(importReceiptDetailModel -> {
-                    double totalPrice = importReceiptDetailModel.getUnitPrice() * importReceiptDetailModel.getActualQuantity();
-//                    System.out.println("Total price: " + totalPrice);
+                    double unitPriceAfterVat = importReceiptDetailModel.getUnitPrice() + (importReceiptDetailModel.getVat()/100 * importReceiptDetailModel.getUnitPrice());
+                    System.out.println(unitPriceAfterVat);
+                    double totalPrice = unitPriceAfterVat * importReceiptDetailModel.getActualQuantity();
                     importReceiptDetailModel.setUnitPriceFormat(FormatMoney.format(importReceiptDetailModel.getUnitPrice()));
                     importReceiptDetailModel.setTotalPriceFormat(FormatMoney.format(totalPrice));
                     importReceiptDetailModel.setTotalPrice(totalPrice);
-//                    System.out.println(importReceiptDetailModel);
+                    importReceiptDetailModel.setUnitPriceAfterVat(unitPriceAfterVat);
                 });
         return importReceiptDetailModels;
     }
