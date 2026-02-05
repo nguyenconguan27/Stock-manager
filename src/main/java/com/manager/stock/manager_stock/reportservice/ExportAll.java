@@ -51,15 +51,19 @@ public class ExportAll {
         Row totalRow = sheet.createRow(lastRow + 1);
         Cell textCell = totalRow.createCell(1);
         textCell.setCellValue("Tổng cộng");
-        for(int col = 4; col <= curCol; col += 2) {
+        for(int col = 4; col <= curCol ; col += 3) {
             double total = 0;
+            double price = 0;
             for (int rowIdx = 7; rowIdx <= lastRow; rowIdx++) {
                 Row row = sheet.getRow(rowIdx);
                 if (row == null) continue;
                 total += getNumeric(row.getCell(col));
+                price += getNumeric(row.getCell(col + 2));
             }
-            Cell cell = totalRow.createCell(col);
-            cell.setCellValue(total);
+            Cell qCell = totalRow.createCell(col);
+            Cell pCell = totalRow.createCell(col + 2);
+            qCell.setCellValue(total);
+            pCell.setCellValue(price);
         }
         CellStyle priceStyle = workbook.createCellStyle();
         Font bold = workbook.createFont();
