@@ -1,5 +1,6 @@
 package com.manager.stock.manager_stock.utils;
 
+import com.manager.stock.manager_stock.dao.GenericDao;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.apache.poi.ss.usermodel.*;
@@ -10,8 +11,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Utils {
-
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
     public static <T, R> TableColumn<T, R> createColumn(String title, String property) {
         TableColumn<T, R> column = new TableColumn<>(title);
@@ -92,11 +91,12 @@ public class Utils {
         sheet.addMergedRegion(new CellRangeAddress(6, 6, 0, 5));
         cell6.setCellValue(title); cell6.setCellStyle(rightBold);
         cell6_.setCellValue("Số: " + code); cell6_.setCellStyle(leftStyle);
-//        LocalDate today = LocalDate.now();
-        LocalDateTime date = LocalDateTime.parse(createdAt, formatter);
-        int day = date.getDayOfMonth();
-        int month = date.getMonthValue();
-        int year = date.getYear();
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.parse(createdAt, formatter);
+        int day = dateTime.getDayOfMonth();
+        int month = dateTime.getMonthValue();
+        int year = dateTime.getYear();
         cell7.setCellValue("Ngày " + day + " tháng " + month + " năm " + year); cell7.setCellStyle(italicStyle);
         cell7_.setCellValue("Nợ: "); cell7_.setCellStyle(leftStyle);
         cell8_.setCellValue("Có: "); cell8_.setCellStyle(leftStyle);
@@ -209,7 +209,7 @@ public class Utils {
     }
 
     public static void fillFooter(Sheet sheet, int planTotal, int actualTotal,long total, String totalInword,
-                                  String n1, String receiver, String n3, int r, String createdAt, Workbook workbook) {
+                                  String n1, String n2, String n3, int r, String createdAt, Workbook workbook) {
         Font bold = workbook.createFont();
         bold.setFontName("Times New Roman");
         bold.setBold(true);
@@ -260,12 +260,11 @@ public class Utils {
         priceStyle.setWrapText(false);
         priceStyle.setFont(light);
 
-        Row trow = sheet.createRow(r); // hàng tổng tiền
-        Row twrow = sheet.createRow(r + 1); // tổng tiền bằng chữ
-        Row drow = sheet.createRow(r + 2);// ngày
-        Row strow = sheet.createRow(r + 3); // tiêu đề: PHỤ TRÁCH BỘ PHẬN			NGƯỜI NHẬN				THỦ KHO
-        Row srow = sheet.createRow(r + 4); // dòng trắng cho kí tên
-        Row nameRow = sheet.createRow(r + 5); // dong ho va ten
+        Row trow = sheet.createRow(r);
+        Row twrow = sheet.createRow(r + 1);
+        Row drow = sheet.createRow(r + 2);
+        Row strow = sheet.createRow(r + 5);
+        Row srow = sheet.createRow(r + 4);
         Cell tcell = trow.createCell(0);
         Cell tpqCell = trow.createCell(6);
         Cell taqCell = trow.createCell(7);
@@ -275,11 +274,19 @@ public class Utils {
         sheet.addMergedRegion(new CellRangeAddress(r + 1, r + 1, 0, 5));
         Cell dshell = drow.createCell(5);
         sheet.addMergedRegion(new CellRangeAddress(r + 2, r + 2, 5, 9));
-        Cell scell1 = strow.createCell(0);
-        Cell scell2 = strow.createCell(4);
-        Cell scell3 = strow.createCell(7);
-        sheet.addMergedRegion(new CellRangeAddress(r + 3, r + 3, 0, 3));
-        sheet.addMergedRegion(new CellRangeAddress(r + 3, r + 3, 4, 6));
+        Cell scell1 = srow.createCell(0);
+        Cell scell2 = srow.createCell(3);
+        Cell scell3 = srow.createCell(7);
+        sheet.setColumnWidth(1, 25 * 256);
+        sheet.setColumnWidth(2, 25 * 256);
+        sheet.setColumnWidth(3, 25 * 256);
+        sheet.setColumnWidth(8, 20 * 256);
+        sheet.setColumnWidth(9, 20 * 256);
+        sheet.addMergedRegion(new CellRangeAddress(r + 4, r + 4, 0, 2));
+        sheet.addMergedRegion(new CellRangeAddress(r + 4, r + 4, 3, 6));
+        sheet.addMergedRegion(new CellRangeAddress(r + 4, r + 4, 7, 9));
+        sheet.addMergedRegion(new CellRangeAddress(r + 3, r + 3, 0, 2));
+        sheet.addMergedRegion(new CellRangeAddress(r + 3, r + 3, 3, 6));
         sheet.addMergedRegion(new CellRangeAddress(r + 3, r + 3, 7, 9));
         setBorder(r, r, 0, 9, borderStyle, sheet);
         tcell.setCellStyle(priceStyle);
@@ -293,26 +300,37 @@ public class Utils {
         tpqCell.setCellValue(planTotal);
         taqCell.setCellValue(actualTotal);
         tpCell.setCellStyle(priceStyle);
+        CellStyle endRowStype = workbook.createCellStyle();
+        endRowStype.cloneStyleFrom(borderStyle);
+        endRowStype.setFont(bold);
+        endRowStype.setAlignment(HorizontalAlignment.CENTER);
         tpCell.setCellValue(total);
+        tcell.setCellStyle(endRowStype);
+        priceStyle.setFont(bold);
+        taqCell.setCellStyle(priceStyle);
 
         twcell.setCellValue("Tổng số tiên: " + totalInword);
-        LocalDateTime date = LocalDateTime.parse(createdAt, formatter);
-        int day = date.getDayOfMonth();
-        int month = date.getMonthValue();
-        int year = date.getYear();
+
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.parse(createdAt, formatter);
+
+        int day = dateTime.getDayOfMonth();
+        int month = dateTime.getMonthValue();
+        int year = dateTime.getYear();
+
         dshell.setCellValue("Ngày " + day + " tháng " + month + " năm " + year);
         scell1.setCellValue("PHỤ TRÁCH BỘ PHẬN");
         scell2.setCellValue("NGƯỜI NHẬN");
         scell3.setCellValue("THỦ KHO");
 
-        Cell scell1_ = srow.createCell(0); scell1_.setCellStyle(boldStyle);
-        Cell scell2_ = srow.createCell(4); scell2_.setCellStyle(boldStyle);
-        Cell scell3_ = srow.createCell(7); scell3_.setCellStyle(boldStyle);
-        sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 0, 3));
-        sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 4, 6));
+        Cell scell1_ = strow.createCell(0); scell1_.setCellStyle(boldStyle);
+        Cell scell2_ = strow.createCell(3); scell2_.setCellStyle(boldStyle);
+        Cell scell3_ = strow.createCell(7); scell3_.setCellStyle(boldStyle);
+        sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 0, 2));
+        sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 3, 6));
         sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 7, 9));
-        Cell receiverCell = nameRow.createCell(4); receiverCell.setCellStyle(boldStyle);
-        receiverCell.setCellValue(receiver);
+        scell2_.setCellValue(n2);
     }
 
     static void setBorder(int sr, int er, int sc, int ec, CellStyle style, Sheet sheet) {

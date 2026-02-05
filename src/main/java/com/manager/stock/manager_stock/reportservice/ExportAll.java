@@ -31,9 +31,11 @@ public class ExportAll {
         reportModels = reportService.getData(selectedYear);
     }
 
+
     public void exportTotal(String pathFile) {
         createTitleRow();
         fillData();
+        fieldTotal();
         for(int i = 0; i <= 100; i++) {
             sheet.autoSizeColumn(i);
         }
@@ -42,6 +44,48 @@ public class ExportAll {
             workbook.close();
         } catch (Exception e) {
         }
+    }
+
+    void fieldTotal() {
+        int lastRow = sheet.getLastRowNum();
+        Row totalRow = sheet.createRow(lastRow + 1);
+        Cell textCell = totalRow.createCell(1);
+        textCell.setCellValue("Tổng cộng");
+        for(int col = 4; col <= curCol; col += 2) {
+            double total = 0;
+            for (int rowIdx = 7; rowIdx <= lastRow; rowIdx++) {
+                Row row = sheet.getRow(rowIdx);
+                if (row == null) continue;
+                total += getNumeric(row.getCell(col));
+            }
+            Cell cell = totalRow.createCell(col);
+            cell.setCellValue(total);
+        }
+        CellStyle priceStyle = workbook.createCellStyle();
+        Font bold = workbook.createFont();
+        bold.setFontName("Times New Roman");
+        bold.setBold(true);
+        DataFormat format = workbook.createDataFormat();
+        priceStyle.setDataFormat(format.getFormat("#,##0"));
+        priceStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        priceStyle.setBorderTop(BorderStyle.THIN);
+        priceStyle.setFont(bold);
+        priceStyle.setBorderBottom(BorderStyle.THIN);
+        priceStyle.setBorderLeft(BorderStyle.THIN);
+        priceStyle.setBorderRight(BorderStyle.THIN);
+        setBorder(lastRow + 1, lastRow + 1, 0, curCol, priceStyle);
+    }
+
+    private static double getNumeric(Cell cell) {
+        if (cell == null) return 0;
+        return switch (cell.getCellType()) {
+            case NUMERIC -> cell.getNumericCellValue();
+            case STRING -> {
+                String v = cell.getStringCellValue().replace(",", "");
+                yield v.isBlank() ? 0 : Double.parseDouble(v);
+            }
+            default -> 0;
+        };
     }
 
     void setBorder(int sr, int er, int sc, int ec, CellStyle style) {
@@ -140,6 +184,7 @@ public class ExportAll {
         style.setBorderRight(BorderStyle.THIN);
         Font font = workbook.createFont();
         font.setBold(true);
+        font.setFontName("Times New Roman");
         style.setFont(font);
         style.setWrapText(false);
         setBorder(rTemp, rTemp + 1, 0, curCol, style);
@@ -168,6 +213,7 @@ public class ExportAll {
         style.setBorderRight(BorderStyle.THIN);
         Font font = workbook.createFont();
         font.setBold(false);
+        font.setFontName("Times New Roman");
         style.setFont(font);
         style.setWrapText(false);
         for (ReportModel reportModel : reportModels) {

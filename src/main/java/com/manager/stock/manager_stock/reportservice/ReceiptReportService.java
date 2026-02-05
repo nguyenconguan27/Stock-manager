@@ -31,14 +31,10 @@ public class ReceiptReportService {
     public static void printAllExportReceipt(String fileName, int year) {
         workbook = new XSSFWorkbook();
         exportReceiptModelList = reportService.getExportDetail(year);
-        for (ExportReceiptModel exportReceiptModel : exportReceiptModelList) {
+        for(int i = 0; i < exportReceiptModelList.size(); i++) {
+            ExportReceiptModel exportReceiptModel = exportReceiptModelList.get(i);
             Sheet sheet = workbook.createSheet(exportReceiptModel.getInvoiceNumber());
             printExportDetailReceipt(sheet, exportReceiptModel);
-            for (int j = 0; j <= 100; j++) {
-                sheet.autoSizeColumn(j);
-                int currentWidth = sheet.getColumnWidth(j);
-                sheet.setColumnWidth(j, currentWidth + 1200);
-            }
         }
         try(FileOutputStream fos = new FileOutputStream(fileName)) {
             workbook.write(fos);
@@ -51,14 +47,10 @@ public class ReceiptReportService {
     public static void printAllImportReceipt(String fileName, int year) {
         workbook = new XSSFWorkbook();
         importReceiptModelList = reportService.getImportDetail(year);
-        for (ImportReceiptModel importReceipt : importReceiptModelList) {
+        for(int i = 0; i < importReceiptModelList.size(); i++) {
+            ImportReceiptModel importReceipt = importReceiptModelList.get(i);
             Sheet sheet = workbook.createSheet(importReceipt.getInvoice());
             printImportDetailReceipt(sheet, importReceipt);
-            for(int i = 0; i <= 100; i++) {
-                sheet.autoSizeColumn(i);
-                int currentWidth = sheet.getColumnWidth(i);
-                sheet.setColumnWidth(i, currentWidth + 1200);
-            }
         }
         try(FileOutputStream fos = new FileOutputStream(fileName)) {
             workbook.write(fos);
@@ -85,9 +77,9 @@ public class ReceiptReportService {
             planTotal += detail.getPlannedQuantity();
             actualTotal += detail.getActualQuantity();
         }
-//        for(int c = 0; c <= 100; c++) {
-//            sheet.autoSizeColumn(c);
-//        }
+        for(int c = 0; c <= 100; c++) {
+            sheet.autoSizeColumn(c);
+        }
         Utils.fillFooter(sheet, planTotal, actualTotal, total, FormatMoney.formatMoneyToWord(total),
                 null, importReceipt.getDeliveredBy(), null, r,  importReceipt.getCreateAt(), workbook);
     }
