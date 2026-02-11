@@ -4,13 +4,14 @@ import com.manager.stock.manager_stock.model.ExportReceiptModel;
 import com.manager.stock.manager_stock.model.ImportReceiptModel;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileOutputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ExportAll {
     ReportService reportService = new ReportService();
@@ -21,7 +22,9 @@ public class ExportAll {
     Workbook workbook = new XSSFWorkbook();
     Sheet sheet = workbook.createSheet("Export");
     Map<String, Integer> receiptPosMap = new HashMap<>();
-
+    BigDecimal tmp = new BigDecimal("0.00");
+    int startColumnExport = 100000;
+    int endColumnExport = -1;
     int selectedYear;
 
     public ExportAll(int selectedYear) {
@@ -30,7 +33,6 @@ public class ExportAll {
         imports = reportService.getImport(selectedYear);
         reportModels = reportService.getData(selectedYear);
     }
-
 
     public void exportTotal(String pathFile) {
         createTitleRow();
@@ -51,24 +53,77 @@ public class ExportAll {
         Row totalRow = sheet.createRow(lastRow + 1);
         Cell textCell = totalRow.createCell(1);
         textCell.setCellValue("Tổng cộng");
+        // ===== 1. TÍNH TỔNG THEO HÀNG DỌC (tổng thật từ các dòng xuất) =====
+        BigDecimal totalTmp = BigDecimal.ZERO;
         for(int col = 4; col <= curCol ; col += 3) {
-            double total = 0;
-            double price = 0;
+            BigDecimal tmp = new BigDecimal("0.00");
             for (int rowIdx = 7; rowIdx <= lastRow; rowIdx++) {
                 Row row = sheet.getRow(rowIdx);
                 if (row == null) continue;
-                total += getNumeric(row.getCell(col));
-                price += getNumeric(row.getCell(col + 2));
+                if(col >= startColumnExport && col <= endColumnExport) {
+                    BigDecimal val = BigDecimal.valueOf(getNumeric(row.getCell(col+2)));
+                    tmp = tmp.add(val);
+                }
+            }
+            if(tmp.doubleValue() > 0) {
+                tmp = tmp.setScale(0, RoundingMode.HALF_UP);
+                totalTmp = totalTmp.add(tmp);
+            }
+        }
+        System.out.println("Tong xuat trong bao cao, tinh theo hang doc: " + totalTmp);
+        // tmp = tổng lineAmount bạn đã tính từ DB
+        BigDecimal difference = totalTmp.subtract(tmp);
+        long diff = difference.longValue();
+        int step = diff > 0 ? 1 : -1;
+        diff = Math.abs(diff);
+        Map<Integer, BigDecimal> exportColumnPrice = new LinkedHashMap<>();
+        for(int col = 4; col <= curCol ; col += 3) {
+            BigDecimal total = BigDecimal.ZERO;
+            BigDecimal price = BigDecimal.ZERO;
+            for (int rowIdx = 7; rowIdx <= lastRow; rowIdx++) {
+                Row row = sheet.getRow(rowIdx);
+                if (row == null) continue;
+                total = total.add(BigDecimal.valueOf(getNumeric(row.getCell(col))));
+                price = price.add(BigDecimal.valueOf(getNumeric(row.getCell(col + 2))));
             }
             Cell qCell = totalRow.createCell(col);
-            Cell pCell = totalRow.createCell(col + 2);
-            qCell.setCellValue(total);
-            pCell.setCellValue(price);
+            qCell.setCellValue(total.doubleValue());
+            if(col >= startColumnExport && col <= endColumnExport) {
+                exportColumnPrice.put(col, price);
+            }
+            else if(col >= endColumnExport + 6 && col < endColumnExport + 9) {
+                Cell pCell = totalRow.createCell(col + 2);
+                pCell.setCellValue(tmp.doubleValue());
+            }
+            else {
+                Cell pCell = totalRow.createCell(col + 2);
+                pCell.setCellValue(price.longValue());
+            }
         }
+        if(diff > 0 && !exportColumnPrice.isEmpty()) {
+            Iterator<Map.Entry<Integer, BigDecimal>> it = exportColumnPrice.entrySet().iterator();
+            while(diff > 0) {
+                if(!it.hasNext())
+                    it = exportColumnPrice.entrySet().iterator();
+                Map.Entry<Integer, BigDecimal> entry = it.next();
+                BigDecimal price = entry.getValue();
+                price = price.add(BigDecimal.valueOf(step));
+                entry.setValue(price);
+                diff--;
+            }
+        }
+        for(Map.Entry<Integer, BigDecimal> entry : exportColumnPrice.entrySet()) {
+            int col = entry.getKey();
+            BigDecimal price = entry.getValue();
+            Cell pCell = totalRow.createCell(col + 2);
+            pCell.setCellValue(price.longValue());
+        }
+
         CellStyle priceStyle = workbook.createCellStyle();
         Font bold = workbook.createFont();
         bold.setFontName("Times New Roman");
         bold.setBold(true);
+
         DataFormat format = workbook.createDataFormat();
         priceStyle.setDataFormat(format.getFormat("#,##0"));
         priceStyle.setVerticalAlignment(VerticalAlignment.CENTER);
@@ -77,8 +132,14 @@ public class ExportAll {
         priceStyle.setBorderBottom(BorderStyle.THIN);
         priceStyle.setBorderLeft(BorderStyle.THIN);
         priceStyle.setBorderRight(BorderStyle.THIN);
+
         setBorder(lastRow + 1, lastRow + 1, 0, curCol, priceStyle);
+
+        if(diff != 0){
+            System.out.println("WARNING: rounding difference still remains = " + diff);
+        }
     }
+
 
     private static double getNumeric(Cell cell) {
         if (cell == null) return 0;
@@ -194,17 +255,31 @@ public class ExportAll {
         setBorder(rTemp, rTemp + 1, 0, curCol, style);
     }
 
-    void fillDetailData(int r, int c, ReportModel.ReportDetail data) {
+    void fillDetailData(int r, int c, ReportModel.ReportDetail data, boolean isUsingRound) {
         Row row = sheet.getRow(r);
-        Cell qCol = row.createCell(c);
-        Cell pCol = row.createCell(c + 1);
-        Cell tCol = row.createCell(c + 2);
-
+        if (row == null) row = sheet.createRow(r);
+        Cell qCol = row.createCell(c, CellType.NUMERIC);
+        Cell pCol = row.createCell(c + 1, CellType.NUMERIC);
+        Cell tCol = row.createCell(c + 2, CellType.FORMULA);
         qCol.setCellValue(data.getQuantity());
         pCol.setCellValue(data.getUnit_price());
-        tCol.setCellValue(data.getTotal());
-    }
+        String qColName = CellReference.convertNumToColString(c);
+        String pColName = CellReference.convertNumToColString(c + 1);
+        int excelRow = r + 1;
+        // thành tiền từng phiếu (đúng: có ROUND)
+        if(isUsingRound) {
+            String formula = String.format(
+                    "ROUND(%s%d*%s%d,0)",
+                    qColName, excelRow,
+                    pColName, excelRow
+            );
 
+            tCol.setCellFormula(formula);
+        }
+        else {
+            tCol.setCellValue(data.getQuantity() * data.getUnit_price());
+        }
+    }
     void fillData() {
         int r = 6;
         int ord = 1;
@@ -252,16 +327,30 @@ public class ExportAll {
                 ReportModel.ReportDetail endSem = reportProduct.getEndSem();
                 List<ReportModel.ReportDetail> importList = reportProduct.getImportDetail();
                 List<ReportModel.ReportDetail> exportList = reportProduct.getExportDetail();
-                fillDetailData(r, c, startSem);
+                fillDetailData(r, c, startSem, true);
                 for (ReportModel.ReportDetail reportDetail : importList) {
-                    fillDetailData(r, receiptPosMap.get(reportDetail.getId()), reportDetail);
+                    fillDetailData(r, receiptPosMap.get(reportDetail.getId()), reportDetail, false);
                 }
                 for (ReportModel.ReportDetail reportDetail : exportList) {
-                    fillDetailData(r, receiptPosMap.get(reportDetail.getId()), reportDetail);
+//                    if(startColumnExport == -1) {
+                    startColumnExport = Math.min(receiptPosMap.get(reportDetail.getId()), startColumnExport);
+//                    }
+//                    if(endColumnExport == -1) {
+                    endColumnExport = Math.max(receiptPosMap.get(reportDetail.getId()), endColumnExport);
+//                    }
+                    fillDetailData(r, receiptPosMap.get(reportDetail.getId()), reportDetail, false);
                 }
-                fillDetailData(r, receiptPosMap.get("totalimport"), totalImport);
-                fillDetailData(r, receiptPosMap.get("totalexport"), totalExport);
-                fillDetailData(r, receiptPosMap.get("endsem"), endSem);
+                System.out.println("start: " + startColumnExport + ", end: " + endColumnExport);
+                fillDetailData(r, receiptPosMap.get("totalimport"), totalImport, true);
+                fillDetailData(r, receiptPosMap.get("totalexport"), totalExport, true);
+                BigDecimal price = BigDecimal.valueOf(totalExport.getUnit_price());
+                BigDecimal qty   = BigDecimal.valueOf(totalExport.getQuantity());
+
+                BigDecimal lineAmount =
+                        price.multiply(qty)
+                                .setScale(0, RoundingMode.HALF_UP);
+                tmp = tmp.add(lineAmount);
+                fillDetailData(r, receiptPosMap.get("endsem"), endSem, true);
                 CellStyle style1 = workbook.createCellStyle();
                 style1.cloneStyleFrom(style);
                 style1.setAlignment(HorizontalAlignment.RIGHT);
@@ -277,6 +366,7 @@ public class ExportAll {
                 r++;
             }
         }
+        System.out.println("Tong xua trong bao cao tong hop: " + tmp);
     }
 
     private boolean isMergedRegionExists(Sheet sheet, int firstRow, int lastRow, int firstCol, int lastCol) {

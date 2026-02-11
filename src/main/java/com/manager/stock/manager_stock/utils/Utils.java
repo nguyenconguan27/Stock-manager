@@ -5,6 +5,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -159,17 +160,17 @@ public class Utils {
     }
 
     public static void fillData(Sheet sheet, int r, String name, String code, String unit,
-                                int preQuan, int relQuan, int unitPrice, int total, Workbook workbook) {
+                                int preQuan, int relQuan, double unitPrice, double totalPrice, Workbook workbook) {
 
-        Font bold = workbook.createFont();
-        bold.setFontName("Times New Roman");
-        bold.setBold(true);
-
+        // ================= FONT =================
         Font light = workbook.createFont();
         light.setFontName("Times New Roman");
         light.setBold(false);
 
+        // ================= DATA FORMAT =================
         DataFormat format = workbook.createDataFormat();
+
+        // Style tiền (VND không có số lẻ)
         CellStyle priceStyle = workbook.createCellStyle();
         priceStyle.setDataFormat(format.getFormat("#,##0"));
         priceStyle.setVerticalAlignment(VerticalAlignment.CENTER);
@@ -180,6 +181,7 @@ public class Utils {
         priceStyle.setWrapText(false);
         priceStyle.setFont(light);
 
+        // Style text + border
         CellStyle borderStyle = workbook.createCellStyle();
         borderStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         borderStyle.setBorderTop(BorderStyle.THIN);
@@ -189,26 +191,210 @@ public class Utils {
         borderStyle.setWrapText(false);
         borderStyle.setFont(light);
 
-
+        // ================= CREATE ROW =================
         Row row = sheet.createRow(r + 15);
-        Cell ocell = row.createCell(0);
-        Cell ncell = row.createCell(1);
+
+        Cell ocell = row.createCell(0); // STT
+        Cell ncell = row.createCell(1); // Tên hàng
+        Cell ccell = row.createCell(4); // Mã
+        Cell ucell = row.createCell(5); // Đơn vị
+        Cell qcell1 = row.createCell(6); // SL đầu
+        Cell qcell2 = row.createCell(7); // SL xuất (dùng để tính tiền)
+        Cell upcell = row.createCell(8); // Đơn giá
+        Cell tcell = row.createCell(9); // Thành tiền
+
+        // merge tên hàng
         sheet.addMergedRegion(new CellRangeAddress(r + 15, r + 15, 1, 3));
-        Cell ccell = row.createCell(4);
-        Cell ucell = row.createCell(5);
-        Cell qcell1 = row.createCell(6);
-        Cell qcell2 = row.createCell(7);
-        Cell upcell = row.createCell(8);
-        Cell tcell = row.createCell(9);
+
+        // set border
         setBorder(r + 15, r + 15, 0, 9, borderStyle, sheet);
-        upcell.setCellStyle(priceStyle); tcell.setCellStyle(priceStyle);
 
-        ocell.setCellValue(r + 1); ncell.setCellValue(name); ccell.setCellValue(code);
-        ucell.setCellValue(unit); qcell1.setCellValue(preQuan); qcell2.setCellValue(relQuan);
-        upcell.setCellValue(unitPrice); tcell.setCellValue(total);
+        // style tiền
+        upcell.setCellStyle(priceStyle);
+        tcell.setCellStyle(priceStyle);
+
+        // ================= SET VALUE =================
+        ocell.setCellValue(r + 1);
+        ncell.setCellValue(name);
+        ccell.setCellValue(code);
+        ucell.setCellValue(unit);
+        qcell1.setCellValue(preQuan);
+        qcell2.setCellValue(relQuan);
+        upcell.setCellValue(unitPrice);
+
+        // =====================================================
+        //          CÔNG THỨC THÀNH TIỀN (QUAN TRỌNG NHẤT)
+        //          ROUND(Đơn giá * Số lượng, 0)
+        // =====================================================
+
+        // Excel row bắt đầu từ 1
+        int excelRow = row.getRowNum() + 1;
+
+        // Lấy tên cột Excel tự động
+        String qtyCol   = CellReference.convertNumToColString(qcell2.getColumnIndex());
+        String priceCol = CellReference.convertNumToColString(upcell.getColumnIndex());
+
+        // cach lam ra so dung
+//        String formula = "ROUND(" + priceCol + excelRow + "*" + qtyCol + excelRow + ",0)";
+//        tcell.setCellFormula(formula);
+        // cach lam hien tai
+        tcell.setCellValue(relQuan * unitPrice);
     }
+//Utils.fillFooter(sheet, planTotal, actualTotal,
+//                null, importReceipt.getDeliveredBy(), null, r,  importReceipt.getCreateAt(), workbook);
 
-    public static void fillFooter(Sheet sheet, int planTotal, int actualTotal,long total, String totalInword,
+//    public static void fillFooter(Sheet sheet, int planTotal, int actualTotal,
+//                                  String n1, String n2, String n3,
+//                                  int r, String createdAt, Workbook workbook) {
+//
+//        // ================= FONT =================
+//        Font bold = workbook.createFont();
+//        bold.setFontName("Times New Roman");
+//        bold.setBold(true);
+//
+//        Font light = workbook.createFont();
+//        light.setFontName("Times New Roman");
+//        light.setBold(false);
+//
+//        Font italicFont = workbook.createFont();
+//        italicFont.setFontName("Times New Roman");
+//        italicFont.setItalic(true);
+//
+//        // ================= BASE STYLE =================
+//        CellStyle baseCenter = workbook.createCellStyle();
+//        baseCenter.setFont(light);
+//        baseCenter.setAlignment(HorizontalAlignment.CENTER);
+//        baseCenter.setVerticalAlignment(VerticalAlignment.CENTER);
+//
+//        CellStyle italicStyle = workbook.createCellStyle();
+//        italicStyle.cloneStyleFrom(baseCenter);
+//        italicStyle.setFont(italicFont);
+//
+//        CellStyle boldCenter = workbook.createCellStyle();
+//        boldCenter.cloneStyleFrom(baseCenter);
+//        boldCenter.setFont(bold);
+//
+//        // ================= MONEY STYLE =================
+//        DataFormat format = workbook.createDataFormat();
+//        CellStyle moneyStyle = workbook.createCellStyle();
+//        moneyStyle.setDataFormat(format.getFormat("#,##0"));
+//        moneyStyle.setBorderTop(BorderStyle.THIN);
+//        moneyStyle.setBorderBottom(BorderStyle.THIN);
+//        moneyStyle.setBorderLeft(BorderStyle.THIN);
+//        moneyStyle.setBorderRight(BorderStyle.THIN);
+//        moneyStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+//        moneyStyle.setFont(light);
+//
+//        CellStyle boldMoney = workbook.createCellStyle();
+//        boldMoney.cloneStyleFrom(moneyStyle);
+//        boldMoney.setFont(bold);
+//
+//        // ================= CREATE ROW =================
+//        Row totalRow = sheet.createRow(r);
+//        Row textRow = sheet.createRow(r + 1);
+//        Row dateRow = sheet.createRow(r + 2);
+//        Row signTitle = sheet.createRow(r + 4);
+//        Row signName = sheet.createRow(r + 5);
+//
+//        Cell labelCell = totalRow.createCell(0);
+//        Cell planCell = totalRow.createCell(6);
+//        Cell actualCell = totalRow.createCell(7);
+//        Cell totalCell = totalRow.createCell(9);
+//
+//        // merge label
+//        sheet.addMergedRegion(new CellRangeAddress(r, r, 0, 5));
+//
+//        // ========= LABEL =========
+//        labelCell.setCellValue("Tổng cộng");
+//        labelCell.setCellStyle(boldCenter);
+//
+//        planCell.setCellValue(planTotal);
+//        actualCell.setCellValue(actualTotal);
+//        actualCell.setCellStyle(boldMoney);
+//
+//        // ======================================================
+//        //                SUM TỔNG TIỀN TỰ ĐỘNG
+//        // ======================================================
+//
+//        // lấy tên cột của ô thành tiền (tự động, không hardcode J)
+//        String totalCol = CellReference.convertNumToColString(totalCell.getColumnIndex());
+//
+//        // dòng đầu tiên của dữ liệu (fillData ghi tại r+15 → Excel row = 16)
+//        int firstDataRow = 16;
+//
+//        // dòng cuối cùng trước footer
+//        int lastDataRow = r;
+//
+//        String sumFormula = "SUM(" + totalCol + firstDataRow + ":" + totalCol + lastDataRow + ")";
+//        totalCell.setCellFormula(sumFormula);
+//        totalCell.setCellStyle(boldMoney);
+//
+//        // ======================================================
+//        //        ĐỌC KẾT QUẢ SUM → ĐỔI SANG CHỮ
+//        // ======================================================
+//        FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+//        CellValue value = evaluator.evaluate(totalCell);
+//
+//        long totalValue = 0;
+//        if (value != null && value.getCellType() == CellType.NUMERIC) {
+//            totalValue = Math.round(value.getNumberValue());
+//        }
+//
+//        String totalInword = FormatMoney.formatMoneyToWord(totalValue);
+//
+//        // ========= TIỀN BẰNG CHỮ =========
+//        Cell textCell = textRow.createCell(0);
+//        sheet.addMergedRegion(new CellRangeAddress(r + 1, r + 1, 0, 5));
+//        textCell.setCellStyle(boldCenter);
+//        textCell.setCellValue("Tổng số tiền: " + totalInword);
+//
+//        // ========= NGÀY =========
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+//        LocalDateTime dt = LocalDateTime.parse(createdAt, formatter);
+//
+//        Cell dateCell = dateRow.createCell(5);
+//        sheet.addMergedRegion(new CellRangeAddress(r + 2, r + 2, 5, 9));
+//        dateCell.setCellStyle(italicStyle);
+//        dateCell.setCellValue("Ngày " + dt.getDayOfMonth()
+//                + " tháng " + dt.getMonthValue()
+//                + " năm " + dt.getYear());
+//
+//        // ========= SIGN TITLE =========
+//        Cell s1 = signTitle.createCell(0);
+//        Cell s2 = signTitle.createCell(3);
+//        Cell s3 = signTitle.createCell(7);
+//
+//        sheet.addMergedRegion(new CellRangeAddress(r + 4, r + 4, 0, 2));
+//        sheet.addMergedRegion(new CellRangeAddress(r + 4, r + 4, 3, 6));
+//        sheet.addMergedRegion(new CellRangeAddress(r + 4, r + 4, 7, 9));
+//
+//        s1.setCellValue("PHỤ TRÁCH BỘ PHẬN");
+//        s2.setCellValue("NGƯỜI NHẬN");
+//        s3.setCellValue("THỦ KHO");
+//
+//        s1.setCellStyle(boldCenter);
+//        s2.setCellStyle(boldCenter);
+//        s3.setCellStyle(boldCenter);
+//
+//        // ========= SIGN NAME =========
+//        Cell sn1 = signName.createCell(0);
+//        Cell sn2 = signName.createCell(3);
+//        Cell sn3 = signName.createCell(7);
+//
+//        sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 0, 2));
+//        sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 3, 6));
+//        sheet.addMergedRegion(new CellRangeAddress(r + 5, r + 5, 7, 9));
+//
+//        sn1.setCellValue(n1);
+//        sn2.setCellValue(n2);
+//        sn3.setCellValue(n3);
+//
+//        sn1.setCellStyle(boldCenter);
+//        sn2.setCellStyle(boldCenter);
+//        sn3.setCellStyle(boldCenter);
+//    }
+
+    public static void fillFooter(Sheet sheet, int planTotal, int actualTotal,double total, String totalInword,
                                   String n1, String n2, String n3, int r, String createdAt, Workbook workbook) {
         Font bold = workbook.createFont();
         bold.setFontName("Times New Roman");
@@ -305,6 +491,12 @@ public class Utils {
         endRowStype.setFont(bold);
         endRowStype.setAlignment(HorizontalAlignment.CENTER);
         tpCell.setCellValue(total);
+        String formula = String.format(
+                "ROUND(%f,0)",
+                total
+        );
+
+        tpCell.setCellFormula(formula);
         tcell.setCellStyle(endRowStype);
         priceStyle.setFont(bold);
         taqCell.setCellStyle(priceStyle);

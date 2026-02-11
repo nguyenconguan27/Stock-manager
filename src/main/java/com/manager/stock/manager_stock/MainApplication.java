@@ -27,8 +27,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainApplication extends Application {
+    private static final ExecutorService uploadExecutor =
+            Executors.newSingleThreadExecutor(r -> {
+                Thread t = new Thread(r);
+                t.setDaemon(true);
+                t.setName("upload-thread");
+                return t;
+            });
+
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -44,25 +54,49 @@ public class MainApplication extends Application {
         stage.setScene(scene);
         stage.show();
 
-        stage.setOnCloseRequest(e -> {
-            e.consume();
-            stage.hide();
-
-            UpfileService.upFile();
-            Platform.exit();
-            System.exit(0);
-        });
+//        stage.setOnCloseRequest(e -> {
+//            e.consume();
+//            stage.close();
+//            System.out.println("Uploading before exit...");
+//            CompletableFuture
+//                .runAsync(() -> UpfileService.upFile())
+//                .whenComplete((v, ex) -> {
+//                    if (ex != null) {
+//                        ex.printStackTrace();
+//                    } else {
+//                        System.out.println("Upload done.");
+//                    }
+////                    Platform.runLater(() -> {
+//                    uploadExecutor.shutdown();
+//                    Platform.exit();
+////                    });
+//                });
+//        });
     }
 
-    public static void main(String[] args) throws InterruptedException, URISyntaxException {
-
-        CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(UpfileService::upFile);
-        completableFuture.thenAccept((Void v) -> {
-            System.out.println("Upload file success.");
-        });
+    public static void main(String[] args) {
+//        CompletableFuture<Void> completableFuture =
+//                CompletableFuture.runAsync(UpfileService::upFile);
+//        completableFuture.whenComplete((v, ex) -> {
+//            if (ex != null) {
+//                System.out.println("Upload failed: " + ex.getMessage());
+//            } else {
+//                System.out.println("Upload file success.");
+//            }
+//            uploadExecutor.shutdownNow();
+//        });
         System.out.println("LOG_DIR=" + System.getProperty("LOG_DIR"));
         System.out.println("LoggerFactory implementation = " + LoggerFactory.getILoggerFactory().getClass());
-
         launch();
     }
+
+    @Override
+    public void stop() {
+        System.out.println("Uploading before exit...");
+        UpfileService.upFile();
+        System.out.println("Upload done.");
+        Platform.exit();
+        System.exit(0);
+    }
+
 }

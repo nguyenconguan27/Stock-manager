@@ -1,54 +1,38 @@
-2026-02-04 00:29:01.815 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 00:29:01.817 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 00:44:19.628 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 00:44:19.628 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 21:46:04.125 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 21:46:04.126 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 22:00:03.948 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 22:00:03.949 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 22:13:49.325 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 22:13:49.326 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 22:14:33.555 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 22:14:33.556 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 22:15:17.328 [main] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 22:15:17.329 [main] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 22:16:07.156 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 22:16:07.157 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 22:17:01.640 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 22:17:01.641 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 22:20:41.706 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 22:20:41.707 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 22:24:38.159 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 22:24:38.160 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 22:32:50.189 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 22:32:50.190 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 22:38:35.580 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 22:38:35.580 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 22:40:58.386 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 22:40:58.387 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 22:48:44.653 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 22:48:44.653 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 22:52:19.819 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 22:52:19.820 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 22:59:14.138 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 22:59:14.138 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 23:01:57.496 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 23:01:57.496 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 23:02:28.723 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 23:02:28.723 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 23:09:59.550 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 23:09:59.551 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 23:11:52.766 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 23:11:52.766 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 23:12:57.522 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 23:12:57.522 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 23:14:28.077 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 23:14:28.078 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 23:15:20.566 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 23:15:20.566 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 23:20:30.858 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 23:20:30.858 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 23:21:32.456 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 23:21:32.456 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
-2026-02-04 23:23:58.600 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
-2026-02-04 23:23:58.600 [ForkJoinPool.commonPool-worker-1] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 00:03:09.994 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 00:03:09.997 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 00:05:43.554 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 00:05:43.555 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 00:07:09.869 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 00:07:09.869 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 00:09:38.728 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 00:09:38.729 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 00:13:18.902 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 00:13:18.904 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 00:16:37.623 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 00:16:37.623 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 00:18:19.946 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 00:18:19.947 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 00:18:47.152 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 00:18:47.153 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 00:19:35.468 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 00:19:35.469 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 00:27:36.826 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 00:27:36.827 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 00:31:10.449 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 00:31:10.450 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 00:37:40.102 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 00:37:40.103 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 00:39:31.539 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 00:39:31.540 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 01:04:27.848 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 01:04:27.849 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 01:08:03.871 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 01:08:03.871 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 01:08:26.279 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 01:08:26.280 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 01:10:20.469 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 01:10:20.471 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 01:11:52.519 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 01:11:52.520 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 01:22:42.551 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 01:22:42.552 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!

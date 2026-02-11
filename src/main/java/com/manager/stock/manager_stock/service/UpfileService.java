@@ -10,7 +10,6 @@ public class UpfileService {
     public static void upFile() {
         try {
             logger.info("Upload file.");
-//            com.upfileservice.UpfileService upFileService = new com.upfileservice.UpfileService();
             String credential_path = AppConfig.getString("credential.path");
             String tokens_path = AppConfig.getString("tokens.path");
             String local_path = AppConfig.getString("localfile.path");

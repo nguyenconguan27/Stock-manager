@@ -228,7 +228,7 @@ public class InventoryReceiptService {
                 ExportReceiptDetailModel exportReceiptDetailModel = exportReceiptDetailsByProduct.get(j);
                 // TH phiếu xuất
                 if(exportPriceModel.getExportTime().isAfter(exportReceiptDetailModel.getExportDate())) {
-                    if(exportPriceForExportReceipt == null) {
+                    if(exportPriceForExportReceipt == null && i == 0) {
                         exportPriceForExportReceipt = new ExportPriceModel();
                         exportPriceForExportReceipt.setExportPrice(inventoryDetailModel.getTotalPrice() / (inventoryDetailModel.getQuantity() == 0 ? 1 : inventoryDetailModel.getQuantity()));
                     }
@@ -248,7 +248,7 @@ public class InventoryReceiptService {
                 i++;
             }
             while(j < exportReceiptDetailsByProduct.size()) {
-                if(exportPriceForExportReceipt == null) {
+                if(exportPriceForExportReceipt == null && i == 0) {
                     exportPriceForExportReceipt = new ExportPriceModel();
                     exportPriceForExportReceipt.setExportPrice(inventoryDetailModel.getTotalPrice() / (inventoryDetailModel.getQuantity() == 0 ? 1 : inventoryDetailModel.getQuantity()));
                 }
