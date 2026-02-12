@@ -36,3 +36,7 @@
 2026-02-12 01:11:52.520 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
 2026-02-12 01:22:42.551 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
 2026-02-12 01:22:42.552 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 12:13:48.887 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 12:13:48.889 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!
+2026-02-12 12:23:50.460 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - Load file config from resource
+2026-02-12 12:23:50.460 [JavaFX Application Thread] INFO  c.m.s.manager_stock.config.AppConfig - ✅ Loaded config file successfully!

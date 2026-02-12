@@ -4,6 +4,7 @@ import com.manager.stock.manager_stock.model.ExportReceiptDetailModel;
 import com.manager.stock.manager_stock.model.ExportReceiptModel;
 import com.manager.stock.manager_stock.model.ImportReceiptDetailModel;
 import com.manager.stock.manager_stock.model.ImportReceiptModel;
+import com.manager.stock.manager_stock.utils.ExportRoundingAllocator;
 import com.manager.stock.manager_stock.utils.FormatMoney;
 import com.manager.stock.manager_stock.utils.Utils;
 import org.apache.poi.ss.usermodel.*;
@@ -33,12 +34,16 @@ public class ReceiptReportService {
     public static void printAllExportReceipt(String fileName, int year) {
         workbook = new XSSFWorkbook();
         exportReceiptModelList = reportService.getExportDetail(year);
+        BigDecimal totalExport = fetchData(year);
+        ExportRoundingAllocator allocator = new ExportRoundingAllocator(totalExport);
         for(int i = 0; i < exportReceiptModelList.size(); i++) {
             ExportReceiptModel exportReceiptModel = exportReceiptModelList.get(i);
+            boolean isLast = (i == exportReceiptModelList.size() - 1);
             Sheet sheet = workbook.createSheet(exportReceiptModel.getInvoiceNumber());
-            printExportDetailReceipt(sheet, exportReceiptModel);
+            printExportDetailReceipt(sheet, exportReceiptModel, allocator, isLast);
             autoFitColumnsByDisplayedText(sheet, workbook);
         }
+
         try(FileOutputStream fos = new FileOutputStream(fileName)) {
             workbook.write(fos);
             workbook.close();
@@ -88,26 +93,60 @@ public class ReceiptReportService {
 //                null, importReceipt.getDeliveredBy(), null, r,  importReceipt.getCreateAt(), workbook);
     }
 
-    public static void printExportDetailReceipt(Sheet sheet, ExportReceiptModel exportReceipt) {
+    public static void printExportDetailReceipt(
+            Sheet sheet,
+            ExportReceiptModel exportReceipt,
+            ExportRoundingAllocator allocator,
+            boolean isLastReceipt
+    ) {
+        System.out.println("Tong tin chuan: " + allocator.getExpectedTotal());
         Utils.createReceiptForm(sheet, "PHIẾU XUẤT KHO  ", exportReceipt.getInvoiceNumber(), "Họ tên người nhận hàng " + exportReceipt.getReceiver(),
                 "Địa chỉ: " + exportReceipt.getReceiveAddress(), "Lý do xuất kho: " + exportReceipt.getReason(), "Xuất tại kho " + exportReceipt.getWareHouse(), exportReceipt.getCreateAt(), workbook);
-        double total = 0;
+        BigDecimal total = BigDecimal.ZERO;
         int planTotal = 0;
         int actualTotal = 0;
         int r = 15;
         for(int i = 0; i < exportReceipt.getExportReceiptDetailModels().size(); i++) {
             r++;
             ExportReceiptDetailModel detail = exportReceipt.getExportReceiptDetailModels().get(i);
-            Utils.fillData(sheet, i, detail.getProductName(), detail.getProductCode(), detail.getUnit(),
-                    detail.getPlannedQuantity(), detail.getActualQuantity(), detail.getDisplayUnitPrice(), detail.getTotalPrice(), workbook);
-            total += (detail.getDisplayUnitPrice() * detail.getActualQuantity());
+
+            Utils.fillData(sheet, i,
+                    detail.getProductName(),
+                    detail.getProductCode(),
+                    detail.getUnit(),
+                    detail.getPlannedQuantity(),
+                    detail.getActualQuantity(),
+                    detail.getDisplayUnitPrice(),
+                    detail.getTotalPrice(),
+                    workbook);
+
+            // tính total CHUẨN bằng BigDecimal
+            BigDecimal lineTotal =
+                    BigDecimal.valueOf(detail.getDisplayUnitPrice())
+                            .multiply(BigDecimal.valueOf(detail.getActualQuantity()));
+
+            total = total.add(lineTotal);
+
             planTotal += detail.getPlannedQuantity();
             actualTotal += detail.getActualQuantity();
         }
-        Utils.fillFooter(sheet, planTotal, actualTotal, total,
-                FormatMoney.formatMoneyToWord((long)total),
-                null, exportReceipt.getReceiver(), null, r,
-                exportReceipt.getCreateAt(), workbook);
+        BigDecimal adjustedTotal = allocator.adjustReceipt(total, isLastReceipt);
+        System.out.println(adjustedTotal);
+        Utils.fillFooter(sheet, planTotal, actualTotal, adjustedTotal.doubleValue(),
+                FormatMoney.formatMoneyToWord((long) adjustedTotal.doubleValue()), null, exportReceipt.getReceiver(), null, r, exportReceipt.getCreateAt(), workbook);
+//        Utils.fillFooter(
+//                sheet,
+//                planTotal,
+//                actualTotal,
+//                adjustedTotal.doubleValue(),
+//                FormatMoney.formatMoneyToWord(adjustedTotal.longValue()),
+//                null,
+//                exportReceipt.getReceiver(),
+//                null,
+//                r,
+//                exportReceipt.getCreateAt(),
+//                workbook
+//        );
 //        Utils.fillFooter(sheet, planTotal, actualTotal,
 //                null, exportReceipt.getReceiver(), null, r,  exportReceipt.getCreateAt(), workbook);
     }
@@ -139,7 +178,8 @@ public class ReceiptReportService {
         }
     }
 
-    private static void fetchData(int selectYear) {
+    private static BigDecimal fetchData(int selectYear) {
+        BigDecimal totalExportFinal = new BigDecimal("0.00");
         List<ReportModel> reportModels = reportService.getData(selectYear);
         for (ReportModel reportModel : reportModels) {
             for (ReportModel.ReportProduct reportProduct : reportModel.getReportProducts()) {
@@ -150,7 +190,9 @@ public class ReceiptReportService {
                 BigDecimal lineAmount =
                         price.multiply(qty)
                                 .setScale(0, RoundingMode.HALF_UP);
+                totalExportFinal = totalExportFinal.add(lineAmount);
             }
         }
+        return totalExportFinal;
     }
 }

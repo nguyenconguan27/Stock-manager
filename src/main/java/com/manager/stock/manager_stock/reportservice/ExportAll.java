@@ -35,18 +35,19 @@ public class ExportAll {
     }
 
     public void exportTotal(String pathFile) {
+
         createTitleRow();
         fillData();
         fieldTotal();
-        for(int i = 0; i <= 100; i++) {
-            sheet.autoSizeColumn(i);
-        }
+        resizeColumnByContent(sheet, workbook);
         try (FileOutputStream fos = new FileOutputStream(pathFile)) {
             workbook.write(fos);
             workbook.close();
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+
 
     void fieldTotal() {
         int lastRow = sheet.getLastRowNum();
@@ -380,6 +381,37 @@ public class ExportAll {
             }
         }
         return false;
+    }
+
+    private String getCellText(Cell cell, Workbook workbook) {
+        if (cell == null) return "";
+        DataFormatter formatter = new DataFormatter();
+        FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+        return formatter.formatCellValue(cell, evaluator);
+    }
+
+    private void resizeColumnByContent(Sheet sheet, Workbook workbook) {
+        int maxColumn = 0;
+        for (Row row : sheet) {
+            if (row.getLastCellNum() > maxColumn) {
+                maxColumn = row.getLastCellNum();
+            }
+        }
+        for (int col = 0; col < maxColumn; col++) {
+            int maxLength = 0;
+            for (Row row : sheet) {
+                Cell cell = row.getCell(col);
+                String text = getCellText(cell, workbook);
+                if (text != null) {
+                    maxLength = Math.max(maxLength, text.length());
+                }
+            }
+            int width = (maxLength + 4) * 256;
+            if (width > 255 * 256) {
+                width = 255 * 256;
+            }
+            sheet.setColumnWidth(col, width);
+        }
     }
 
 }
