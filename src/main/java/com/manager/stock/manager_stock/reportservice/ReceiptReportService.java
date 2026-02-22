@@ -31,19 +31,20 @@ public class ReceiptReportService {
         reportService = ReportService.getInstance();
     }
 
-    public static void printAllExportReceipt(String fileName, int year) {
+    public static void printAllExportReceipt(String fileName, int year, String receiptId) {
         workbook = new XSSFWorkbook();
         exportReceiptModelList = reportService.getExportDetail(year);
         BigDecimal totalExport = fetchData(year);
         ExportRoundingAllocator allocator = new ExportRoundingAllocator(totalExport);
         for(int i = 0; i < exportReceiptModelList.size(); i++) {
             ExportReceiptModel exportReceiptModel = exportReceiptModelList.get(i);
-            boolean isLast = (i == exportReceiptModelList.size() - 1);
-            Sheet sheet = workbook.createSheet(exportReceiptModel.getInvoiceNumber());
-            printExportDetailReceipt(sheet, exportReceiptModel, allocator, isLast);
-            autoFitColumnsByDisplayedText(sheet, workbook);
+            if(receiptId.equals(exportReceiptModel.getInvoiceNumber()) || receiptId.equals("Phieu_xuat")) {
+                boolean isLast = (i == exportReceiptModelList.size() - 1);
+                Sheet sheet = workbook.createSheet(exportReceiptModel.getInvoiceNumber());
+                printExportDetailReceipt(sheet, exportReceiptModel, allocator, isLast);
+                autoFitColumnsByDisplayedText(sheet, workbook);
+            }
         }
-
         try(FileOutputStream fos = new FileOutputStream(fileName)) {
             workbook.write(fos);
             workbook.close();
@@ -52,14 +53,16 @@ public class ReceiptReportService {
         }
     }
 
-    public static void printAllImportReceipt(String fileName, int year) {
+    public static void printAllImportReceipt(String fileName, int year, String receiptId) {
         workbook = new XSSFWorkbook();
         importReceiptModelList = reportService.getImportDetail(year);
         for(int i = 0; i < importReceiptModelList.size(); i++) {
             ImportReceiptModel importReceipt = importReceiptModelList.get(i);
-            Sheet sheet = workbook.createSheet(importReceipt.getInvoice());
-            printImportDetailReceipt(sheet, importReceipt);
-            autoFitColumnsByDisplayedText(sheet, workbook);
+            if(receiptId.equals(importReceipt.getInvoice()) || receiptId.equals("Phieu_nhap")) {
+                Sheet sheet = workbook.createSheet(importReceipt.getInvoice());
+                printImportDetailReceipt(sheet, importReceipt);
+                autoFitColumnsByDisplayedText(sheet, workbook);
+            }
         }
         try(FileOutputStream fos = new FileOutputStream(fileName)) {
             workbook.write(fos);

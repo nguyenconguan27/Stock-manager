@@ -273,11 +273,20 @@ public class ExportReceiptScreen extends BaseReceiptScreen<ExportReceiptModelTab
 
             @Override
             public void onExport() {
+                String baseFileName = "Phieu_xuat";
+                if(selected == null) {
+                    boolean checkConfirm = AlertUtils.confirm("Chưa chọn file, xuất tất cả phiếu xuất?");
+                    if(!checkConfirm) return;
+                } else {
+                    boolean checkConfirm = AlertUtils.confirm(String.format("Xuất phiếu xuất %s ?", selected.getInvoiceNumber()));
+                    baseFileName = selected.getInvoiceNumber();
+                    if(!checkConfirm) return;
+                }
                 try {
-                    File file = ChoosesFolderOutput.choosesFolderFile("Phieu_xuat");
+                    File file = ChoosesFolderOutput.choosesFolderFile(baseFileName);
                     if(file == null) return;
                     String outputPath = file.getAbsolutePath();
-                    ReceiptReportService.printAllExportReceipt(outputPath, 2025);
+                    ReceiptReportService.printAllExportReceipt(outputPath, Integer.parseInt(ConstVariableUtils.selectYear.getValue()), baseFileName);
                     // gọi hàm tạo file xlsx
                     AlertUtils.alert("Xuất file thành công:\n" + file.getAbsolutePath(),
                             "INFORMATION", "Thành công", "Xuất dữ liệu");
